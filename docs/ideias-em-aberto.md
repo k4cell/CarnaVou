@@ -17,6 +17,7 @@ não é como eu pensei e algumas são boas, mas ainda não separei quais.
 | O principal: descobrir ou decidir em grupo? | Descobrir |
 | Só carnaval ou o ano todo? | Só o carnaval de 2027 |
 | Distância como filtro importante | Não é o ponto principal; pode existir, sem ênfase |
+| Site que instala como app (PWA) | Aprovado: o formato é um site que se instala como app |
 
 ## Funcionalidades sugeridas
 
@@ -71,11 +72,6 @@ O "Em alta" juntaria os três, com mais peso para o que é recente.
    guardar", poucos toques, tela legível no sol.
 5. **Informação falsa.** O "tô aqui" só valeria perto do lugar, os relatos expirariam
    rápido e cada pessoa teria um limite.
-
-## Formato sugerido
-
-Um **site que se instala como app (PWA)**. O link abre direto, sem precisar instalar nada,
-e não depende de aprovação na App Store. Se pegar, faz um app nativo depois.
 
 ## Primeira versão sugerida
 

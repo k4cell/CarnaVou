@@ -35,6 +35,7 @@ Daí veio o CarnaVou, uma central que mostra:
 | **Compartilhar** | Um botão que copia o link. Sem integração nem API do WhatsApp. |
 | **Ideia central** | Uma central: eu abro e já está tudo lá. Clico num dos pontos principais (ex.: Ibirapuera) e vejo quem toca hoje. |
 | **Distância** | Não é o ponto principal. Todo mundo vai, perto ou longe. Pode ter a informação, mas sem ênfase. |
+| **Formato** | Um site que se instala como app (PWA). Sem app de loja por enquanto: o link abre direto e não tem taxa nem aprovação de loja. |
 
 ### Sobre compartilhar
 
@@ -97,7 +98,7 @@ nelas. Só depois escolho a stack e começo a programar.
 
 - Como o CarnaVou vai ganhar dinheiro.
 - De onde vêm os dados dos blocos (lista da prefeitura, cadastro manual, organizadores…).
-- Stack e formato (site, app, site que instala como app).
+- A stack, ou seja, as ferramentas para programar o site.
 
 ## Arquivos do projeto
 
