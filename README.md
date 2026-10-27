@@ -33,6 +33,8 @@ Daí veio o CarnaVou, uma central que mostra:
 | **Foco** | Carnaval de rua, "de chão": gastar pouco pra beber muito, onde está bombando, onde vai ter artista. Festas pagas e camarotes não são o foco. |
 | **Horizonte** | Só o carnaval de 2027. O foco é o agora. |
 | **Compartilhar** | Um botão que copia o link. Sem integração nem API do WhatsApp. |
+| **Ideia central** | Uma central: eu abro e já está tudo lá. Clico num dos pontos principais (ex.: Ibirapuera) e vejo quem toca hoje. |
+| **Distância** | Não é o ponto principal. Todo mundo vai, perto ou longe. Pode ter a informação, mas sem ênfase. |
 
 ### Sobre compartilhar
 
@@ -62,17 +64,34 @@ três não muda o custo.
 Em São Paulo costuma ter blocos também nos fins de semana antes do carnaval
 (pré-carnaval) e depois dele (pós-carnaval).
 
+## Como foi o meu carnaval de 2026
+
+**Como a gente descobria os blocos.** Eu e meus amigos, no boca a boca, no Instagram e no
+TikTok: "onde vai ter?", "fulano postou tal coisa". Pra saber o artista era igual: "quem vai
+tocar?", "o artista postou". Sempre ficava meio bagunçado, e ninguém sabia se estava bom:
+"será que tá bom? será que não tá? alguém já chegou lá?"
+
+**O que eu quero resolver.** Uma central: eu abro e já está tudo lá. Clico num dos pontos
+principais, por exemplo o Ibirapuera, e vejo quem toca hoje (Pablo Vittar, Anitta…).
+
+**Por que a gente escolhia um bloco e não outro.** Quase ninguém quer saber de detalhe: o
+povo quer a farra. Beijar, beber muito, esquecer de tudo, porque no carnaval pode tudo.
+Então eu quero ir no bloco que vai estar lotado. O bloco é quase um grande filtro. Só quem
+está mais receoso de ir olha depois o artista, o estilo e o clima (calor, chuva).
+
+Perto ou longe eu não quero dar ênfase, porque no fim todo mundo vai. É bom ter a
+informação, mas não é o ponto principal.
+
+**O que deu errado.** Sim, deu errado várias vezes: chegar e estar lotado demais, chegar e
+estar desanimado ou diferente do que eu esperava, chegar e ter quase ninguém, ou chegar e
+já estar acabando, meio morto. O aplicativo seria muito bom se até me avisasse.
+
+**O que eu queria ter no celular naquela hora.** Outra opção de lugar pra ir.
+
 ## Próximo passo
 
-Quero anotar como foi o meu carnaval de 2026. **Estas perguntas eu ainda vou responder:**
-
-1. Como a gente descobria os blocos (Instagram, TikTok, amigos, lista da prefeitura…)?
-2. Por que a gente escolhia um bloco e não outro (artista, perto, barato, estilo)?
-3. Teve algum momento em que deu errado, tipo chegar e já ter acabado, estar lotado demais
-   ou ninguém saber pra onde ir?
-4. O que eu queria ter no celular naquela hora?
-
-Com as respostas eu fecho o conceito. Só depois escolho a stack e começo a programar.
+Já respondi as perguntas sobre o carnaval de 2026. Agora eu fecho o conceito com base
+nelas. Só depois escolho a stack e começo a programar.
 
 ### Ainda não pensei
 

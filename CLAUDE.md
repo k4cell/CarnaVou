@@ -36,7 +36,10 @@ calendário e as perguntas que eu ainda vou responder.
   forks nem cópias do projeto.
 - No meu computador, a pasta do projeto é a **`Carnaval`, na minha Área de Trabalho**. O
   código vai ali, e ela fica ligada a este repositório.
-- **Sempre faça commit e envie (push)** o que for feito. Só o que está no GitHub fica.
+- Faça o **commit** do que for feito, mas **não dê push sem eu autorizar**. Depois do
+  commit, pergunte: "Fiz o commit, posso dar o push?". Eu confiro tudo e respondo, por
+  exemplo, "pode dar" ou "pode publicar o commit". Só publique depois desse aval, e só o
+  que eu autorizei. Só o que está no GitHub fica.
 - Mensagens de commit em português.
 - Este projeto não tem relação com o CiBase, outro projeto meu. Não mexa em outros
   repositórios.

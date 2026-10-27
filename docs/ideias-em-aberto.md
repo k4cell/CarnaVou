@@ -16,6 +16,7 @@ não é como eu pensei e algumas são boas, mas ainda não separei quais.
 | Festas pagas e camarotes na primeira versão? | Foco no carnaval de rua, de chão |
 | O principal: descobrir ou decidir em grupo? | Descobrir |
 | Só carnaval ou o ano todo? | Só o carnaval de 2027 |
+| Distância como filtro importante | Não é o ponto principal; pode existir, sem ênfase |
 
 ## Funcionalidades sugeridas
 
