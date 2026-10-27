@@ -24,7 +24,7 @@ o calendário e as perguntas que estão esperando resposta.
 
 ## Repositório
 
-- Trabalhe **direto na `main`** deste repositório (`k4cell/carnavou`). Não crie branches,
+- Trabalhe **direto na `main`** deste repositório (`k4cell/CarnaVou`). Não crie branches,
   forks nem cópias do projeto.
 - **Sempre faça commit e envie (push)** o que for feito. A pasta da sessão é temporária, e
   só o que está no GitHub fica.
