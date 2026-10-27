@@ -16,7 +16,7 @@ que **muitos pontos não são como ele pensou e alguns são bons**, mas ainda n�
 | Compartilhar com um cartão bonito no WhatsApp | Botão que copia o link, sem integração com o WhatsApp |
 | Festas pagas e camarotes na primeira versão? | Foco no carnaval de rua, de chão |
 | O principal: descobrir ou decidir em grupo? | Descobrir |
-| Só carnaval ou o ano todo? | Só carnaval (2027 e 2028) |
+| Só carnaval ou o ano todo? | Só o carnaval de 2027 |
 
 ## Funcionalidades sugeridas
 

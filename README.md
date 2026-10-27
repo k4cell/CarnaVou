@@ -31,7 +31,7 @@ O CarnaVou é uma central que mostra:
 | **Objetivo** | Ganhar dinheiro. É um projeto pessoal (pra não ficar parado), mas com esse objetivo. |
 | **O principal** | **Descobrir**: o que tem, onde fica, onde está bombando. |
 | **Foco** | Carnaval de rua, "de chão": gastar pouco pra beber muito, onde está bombando, onde vai ter artista. Festas pagas e camarotes não são o foco. |
-| **Horizonte** | Só carnaval: o de 2027 e o de 2028. Depois disso, ver como fica. |
+| **Horizonte** | Só o carnaval de 2027. O foco é o agora. |
 | **Compartilhar** | Um botão que copia o link. Sem integração nem API do WhatsApp. |
 
 ### Sobre compartilhar
@@ -58,7 +58,6 @@ Ter os três não muda o custo.
 |---|---|---|---|
 | 2026 (a vivência do dono) | 14/02/2026 | 17/02/2026 | 18/02/2026 |
 | **2027 (o alvo)** | **06/02/2027** | **09/02/2027** | **10/02/2027** |
-| 2028 | 26/02/2028 | 29/02/2028 | 01/03/2028 |
 
 Em São Paulo costuma ter blocos também nos fins de semana antes do carnaval
 (pré-carnaval) e depois dele (pós-carnaval).
