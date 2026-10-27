@@ -1,0 +1,92 @@
+@use 'sass:list';
+
+// Cada estilo tem um degradê. Os dois lados têm contraste bom com texto branco.
+$estilos: (
+  samba: (#c2410c, #9d174d),
+  marchinha: (#b45309, #be123c),
+  axe: (#0e7490, #1d4ed8),
+  funk: (#7e22ce, #be185d),
+  pop: (#be185d, #6d28d9),
+  frevo: (#15803d, #0f766e),
+  eletronico: (#4338ca, #0e7490),
+);
+
+.aviso {
+  margin: 0 0 16px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: rgb(255 255 255 / 10%);
+  font-size: 0.875rem;
+}
+
+.lista {
+  display: grid;
+  gap: 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.banner {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  padding: 16px;
+  border-radius: 16px;
+  color: #fff;
+}
+
+@each $nome, $cores in $estilos {
+  .estilo-#{$nome} {
+    background: linear-gradient(135deg, list.nth($cores, 1), list.nth($cores, 2));
+  }
+}
+
+.data {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  align-items: center;
+  min-width: 64px;
+  line-height: 1.1;
+  text-transform: uppercase;
+}
+
+.semana,
+.mes {
+  font-size: 0.875rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+.dia {
+  font-size: 2.5rem;
+  font-weight: 800;
+}
+
+.info {
+  min-width: 0;
+
+  p {
+    margin: 4px 0 0;
+  }
+}
+
+.nome {
+  margin: 0;
+  font-size: 1.3rem;
+  line-height: 1.2;
+}
+
+.local {
+  font-weight: 600;
+}
+
+.atracoes {
+  font-size: 0.95rem;
+}
+
+.horario {
+  font-size: 0.95rem;
+  font-weight: 700;
+}

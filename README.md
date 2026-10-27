@@ -3,8 +3,8 @@
 **A central do "point" do carnaval de rua de São Paulo.** Quero responder a pergunta que
 todo grupo faz no carnaval: *"pra onde a gente vai agora?"*
 
-> **Situação (27/10/2026): fase de ideia.** Ainda não tem código e ainda não escolhi a
-> stack. Agora estou fechando o conceito.
+> **Situação (27/10/2026): começando o beta.** Já tem o projeto criado e a primeira tela, um
+> catálogo de banners, mas com dados fictícios. Ainda não tem nenhum bloco de verdade.
 
 ---
 
@@ -36,6 +36,9 @@ Daí veio o CarnaVou, uma central que mostra:
 | **Ideia central** | Uma central: eu abro e já está tudo lá. Clico num dos pontos principais (ex.: Ibirapuera) e vejo quem toca hoje. |
 | **Distância** | Não é o ponto principal. Todo mundo vai, perto ou longe. Pode ter a informação, mas sem ênfase. |
 | **Formato** | Um site que se instala como app (PWA). Sem app de loja por enquanto: o link abre direto e não tem taxa nem aprovação de loja. |
+| **Stack** | Angular, na pasta `app/`. Sem servidor nem banco de dados por enquanto: os dados ficam em arquivos dentro do projeto e as páginas são geradas prontas. |
+| **Beta** | Sem "Vou", "Tô aqui" e "Como tá?". A raiz do negócio é **pra onde eu vou** e qual é a tendência de hoje, não importa se está cheio ou não. |
+| **Primeira tela** | Um catálogo de banners dos principais blocos. Cada banner mostra o dia, o local, as atrações e a hora que começa. A hora que termina só aparece se tiver. "Começando agora / Daqui a pouco / Mais tarde" fica pra depois. |
 
 ### Sobre compartilhar
 
@@ -91,17 +94,20 @@ já estar acabando, meio morto. O aplicativo seria muito bom se até me avisasse
 
 ## Próximo passo
 
-Já respondi as perguntas sobre o carnaval de 2026. Agora eu fecho o conceito com base
-nelas. Só depois escolho a stack e começo a programar.
+Já respondi as perguntas sobre o carnaval de 2026 e já escolhi a stack. Agora vou montando
+o beta aos poucos, começando pelo catálogo de banners. O mapa e a página de cada bloco vêm
+depois.
 
 ### Ainda não pensei
 
 - Como o CarnaVou vai ganhar dinheiro.
 - De onde vêm os dados dos blocos (lista da prefeitura, cadastro manual, organizadores…).
-- A stack, ou seja, as ferramentas para programar o site.
+  Por enquanto tudo é fictício.
+- Como definir a "tendência de hoje" sem os votos dos usuários.
 
 ## Arquivos do projeto
 
+- [`app/`](app): o site, feito em Angular.
 - [`CLAUDE.md`](CLAUDE.md): minhas regras de trabalho para o Claude Code neste projeto.
 - [`docs/ideias-em-aberto.md`](docs/ideias-em-aberto.md): ideias que surgiram e que eu
   **ainda não aprovei**.

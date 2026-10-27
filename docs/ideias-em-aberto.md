@@ -18,6 +18,8 @@ não é como eu pensei e algumas são boas, mas ainda não separei quais.
 | Só carnaval ou o ano todo? | Só o carnaval de 2027 |
 | Distância como filtro importante | Não é o ponto principal; pode existir, sem ênfase |
 | Site que instala como app (PWA) | Aprovado: o formato é um site que se instala como app |
+| "Começando agora / Daqui a pouco / Mais tarde" na agenda | Fica pra depois. A primeira tela é um catálogo de banners |
+| "Vou", "Tô aqui" e "Como tá?" no beta | Ficam de fora do beta. A raiz é pra onde eu vou e a tendência de hoje |
 
 ## Funcionalidades sugeridas
 
@@ -79,7 +81,7 @@ O "Em alta" juntaria os três, com mais peso para o que é recente.
 2. Agenda do dia com filtros
 3. Mapa com local e percurso
 4. Página do bloco e botão de compartilhar
-5. "Vou" e o ranking dos mais esperados
-6. "Tô aqui" e "Como tá?" simples
+5. "Vou" e o ranking dos mais esperados (fora do beta)
+6. "Tô aqui" e "Como tá?" simples (fora do beta)
 7. Agenda do dia funcionando offline
 8. Ver tudo sem cadastro; login rápido só pra interagir

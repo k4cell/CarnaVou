@@ -1,12 +1,12 @@
 # Como trabalhar no CarnaVou
 
 Leia o [`README.md`](README.md) antes de tudo: ali estão a ideia, o que eu já decidi, o
-calendário e as perguntas que eu ainda vou responder.
+calendário e o que eu ainda não pensei.
 
 ## Comigo
 
 - O projeto é meu: eu tenho as ideias, tomo as decisões e acompanho o código como gerente.
-  Você me ajuda a executar.
+  Você me ajuda a executar e assume o comando do código: escolhe como fazer, e eu confiro.
 - Fale sempre em **português do Brasil**, de forma simples e direta. Prefira respostas
   curtas.
 - **Eu tenho a palavra final.** A gente decide junto, com o tempo. Traga informação que
@@ -21,21 +21,38 @@ calendário e as perguntas que eu ainda vou responder.
   estivesse escrevendo**: "eu tive a ideia", "eu decidi". Nada de "o dono", e não cite o
   Claude nesses arquivos.
 
-## Fase atual: ideia
+## Fase atual: beta
 
-- Ainda **não é pra programar**. Só comece código quando eu pedir.
+- Já pode programar. O beta é um catálogo de banners dos blocos, com **dados fictícios**.
+  Fica de fora, por enquanto, o "Vou", o "Tô aqui" e o "Como tá?".
 - Toda decisão nova vai para a tabela "O que já decidi" do `README.md`, na hora em que eu
   decidir.
 - O que está em [`docs/ideias-em-aberto.md`](docs/ideias-em-aberto.md) são **sugestões que
   eu ainda não aprovei**. Não trate como decisão e não construa nada dali sem eu aprovar.
   Quando eu aprovar ou descartar uma delas, atualize o arquivo e o README.
 
+## Código
+
+- O site é um Angular na pasta `app/`: instala como app (PWA), páginas geradas prontas
+  (SSR com prerender) e sem `zone.js`.
+- Comandos, rodando dentro de `app/`:
+  - `ng serve`: abre o site em `http://localhost:4200`;
+  - `ng test --no-watch`: roda os testes;
+  - `ng build`: gera a versão de produção.
+- **Tem que ser leve.** O povo vai usar no celular fraco, com internet ruim no meio da
+  multidão. Sem fontes da internet nem bibliotecas pesadas, e o que não for da primeira
+  tela (como o mapa) só carrega quando for aberto.
+- Os dados fictícios ficam em `app/src/app/dados/`, e a tela avisa que são de exemplo.
+  Nada fictício pode parecer um evento de verdade.
+
 ## Repositório
 
 - Trabalhe **direto na `main`** deste repositório (`k4cell/CarnaVou`). Não crie branches,
   forks nem cópias do projeto.
-- No meu computador, a pasta do projeto é a **`Carnaval`, na minha Área de Trabalho**. O
+- No meu computador, a pasta do projeto é a **`carnavou`, na minha Área de Trabalho**. O
   código vai ali, e ela fica ligada a este repositório.
+- Eu prefiro **poucos commits, mais concretos**, principalmente neste começo. Nada de
+  várias mudanças pequenas: junte o trabalho num commit que faça sentido.
 - Faça o **commit** do que for feito, mas **não dê push sem eu autorizar**. Depois do
   commit, pergunte: "Fiz o commit, posso dar o push?". Eu confiro tudo e respondo, por
   exemplo, "pode dar" ou "pode publicar o commit". Só publique depois desse aval, e só o
