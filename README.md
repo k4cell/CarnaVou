@@ -1,33 +1,33 @@
 # CarnaVou
 
-**A central do "point" do carnaval de rua de São Paulo.** Responde a pergunta que todo
-grupo faz no carnaval: *"pra onde a gente vai agora?"*
+**A central do "point" do carnaval de rua de São Paulo.** Quero responder a pergunta que
+todo grupo faz no carnaval: *"pra onde a gente vai agora?"*
 
-> **Situação (27/10/2026): fase de ideia.** Ainda não tem código e a stack (as
-> tecnologias) não foi escolhida. Agora estamos fechando o conceito.
+> **Situação (27/10/2026): fase de ideia.** Ainda não tem código e ainda não escolhi a
+> stack. Agora estou fechando o conceito.
 
 ---
 
 ## De onde veio a ideia
 
-No Carnaval de 2026 o dono do projeto foi com os amigos, e descobrir e decidir aonde ir
-era sempre uma bagunça: não ficava claro onde estavam os bloquinhos, as festas e os
-lugares com muita gente.
+No carnaval de 2026 eu fui com meus amigos, e descobrir e decidir aonde ir era sempre uma
+bagunça: nunca ficava claro onde estavam os bloquinhos, as festas e os lugares com mais
+gente.
 
-O CarnaVou é uma central que mostra:
+Daí veio o CarnaVou, uma central que mostra:
 
-- onde vão acontecer os principais blocos e shows de cada dia;
+- onde vão rolar os principais blocos e shows de cada dia;
 - a localização de cada um;
 - as "trends" do momento: onde está bombando, aonde mais gente diz que vai;
 - um jeito de compartilhar.
 
-## Decisões já tomadas
+## O que já decidi
 
 | Tema | Decisão |
 |---|---|
 | **Nome** | **CarnaVou**. Combina com a ideia de um botão "Vou". |
 | **Cidade** | São Paulo e Grande SP. Só isso por enquanto. |
-| **Público** | Todo mundo, desde o começo. O dono e os amigos estão incluídos. |
+| **Público** | Todo mundo, desde o começo. Eu e meus amigos incluídos. |
 | **Objetivo** | Ganhar dinheiro. É um projeto pessoal (pra não ficar parado), mas com esse objetivo. |
 | **O principal** | **Descobrir**: o que tem, onde fica, onde está bombando. |
 | **Foco** | Carnaval de rua, "de chão": gastar pouco pra beber muito, onde está bombando, onde vai ter artista. Festas pagas e camarotes não são o foco. |
@@ -36,27 +36,27 @@ O CarnaVou é uma central que mostra:
 
 ### Sobre compartilhar
 
-Compartilhar não custa nada, nem no WhatsApp nem no Instagram. A API que ficou cara é a do
-WhatsApp para empresas, que serve pra um negócio mandar mensagem automática pros clientes.
-Não é o caso aqui.
+Compartilhar não custa nada, nem no WhatsApp nem no Instagram. A API cara é a do WhatsApp
+para empresas, que serve pra um negócio mandar mensagem automática pros clientes. Não é o
+meu caso.
 
 O que dá pra ter de graça:
 
-- **Copiar link**, que é o que está decidido.
+- **Copiar link**, que é o que eu decidi.
 - **O menu de compartilhar do próprio celular**, que já mostra WhatsApp, Instagram,
   Telegram etc. Funciona direto do site, sem API. Dá pra mandar até uma imagem do bloco
   pros Stories.
 - **Prévia do link**: quando alguém cola o link numa conversa, aparece uma imagem com o
   nome do bloco, o horário e o local.
 
-Ainda não foi decidido se o menu do celular e a prévia entram junto com o "copiar link".
-Ter os três não muda o custo.
+Ainda não decidi se o menu do celular e a prévia entram junto com o "copiar link". Ter os
+três não muda o custo.
 
 ## Calendário
 
 | Carnaval | Sábado | Terça | Quarta de Cinzas |
 |---|---|---|---|
-| 2026 (a vivência do dono) | 14/02/2026 | 17/02/2026 | 18/02/2026 |
+| 2026 (o que eu vivi) | 14/02/2026 | 17/02/2026 | 18/02/2026 |
 | **2027 (o alvo)** | **06/02/2027** | **09/02/2027** | **10/02/2027** |
 
 Em São Paulo costuma ter blocos também nos fins de semana antes do carnaval
@@ -64,18 +64,17 @@ Em São Paulo costuma ter blocos também nos fins de semana antes do carnaval
 
 ## Próximo passo
 
-O dono vai contar como foi o carnaval de 2026 dele. **Estas perguntas ainda não foram
-respondidas:**
+Quero anotar como foi o meu carnaval de 2026. **Estas perguntas eu ainda vou responder:**
 
-1. Como vocês descobriam os blocos (Instagram, TikTok, amigos, lista da prefeitura…)?
-2. Por que escolhiam um bloco e não outro (artista, perto, barato, estilo)?
+1. Como a gente descobria os blocos (Instagram, TikTok, amigos, lista da prefeitura…)?
+2. Por que a gente escolhia um bloco e não outro (artista, perto, barato, estilo)?
 3. Teve algum momento em que deu errado, tipo chegar e já ter acabado, estar lotado demais
    ou ninguém saber pra onde ir?
-4. O que você queria ter no celular naquela hora?
+4. O que eu queria ter no celular naquela hora?
 
-Com as respostas, a gente fecha o conceito. Só depois escolhe a stack e começa a programar.
+Com as respostas eu fecho o conceito. Só depois escolho a stack e começo a programar.
 
-### Ainda não discutido
+### Ainda não pensei
 
 - Como o CarnaVou vai ganhar dinheiro.
 - De onde vêm os dados dos blocos (lista da prefeitura, cadastro manual, organizadores…).
@@ -83,7 +82,6 @@ Com as respostas, a gente fecha o conceito. Só depois escolhe a stack e começa
 
 ## Arquivos do projeto
 
-- [`CLAUDE.md`](CLAUDE.md): como trabalhar neste projeto. O Claude Code lê esse arquivo
-  sozinho ao abrir o repositório.
-- [`docs/ideias-em-aberto.md`](docs/ideias-em-aberto.md): ideias levantadas na primeira
-  conversa que **ainda não foram aprovadas**.
+- [`CLAUDE.md`](CLAUDE.md): minhas regras de trabalho para o Claude Code neste projeto.
+- [`docs/ideias-em-aberto.md`](docs/ideias-em-aberto.md): ideias que surgiram e que eu
+  **ainda não aprovei**.

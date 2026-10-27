@@ -1,10 +1,9 @@
 # Ideias em aberto
 
-Estas ideias foram sugeridas pelo Claude na primeira conversa (27/10/2026). O dono disse
-que **muitos pontos não são como ele pensou e alguns são bons**, mas ainda não disse quais.
+Ideias que surgiram nas primeiras conversas sobre o projeto (27/10/2026). Muita coisa aqui
+não é como eu pensei e algumas são boas, mas ainda não separei quais.
 
-**Nada aqui é decisão.** Não construa nada daqui sem o dono aprovar. As decisões ficam no
-[`README.md`](../README.md).
+**Nada aqui é decisão.** O que eu decidir vai para o [`README.md`](../README.md).
 
 ---
 
@@ -54,13 +53,13 @@ O "Em alta" juntaria os três, com mais peso para o que é recente.
 **Para depois da primeira versão**
 - Notificações ("seu bloco começa em 30 min", "tem um bombando perto de você").
 - Cadastro de blocos feito pelos próprios organizadores, com aprovação.
-- Dinheiro: destaque pago, parcerias com venda de ingresso. O modelo de receita ainda não
-  foi discutido.
+- Dinheiro: destaque pago, parcerias com venda de ingresso. Ainda não pensei no modelo de
+  receita.
 
 ## Pontos difíceis levantados
 
 1. **De onde vêm os dados.** Opções: a lista oficial da prefeitura, que costuma sair perto
-   do carnaval; cadastro manual (o dono e amigos); formulário para organizadores; sugestões
+   do carnaval; cadastro manual (eu e meus amigos); formulário para organizadores; sugestões
    dos usuários.
 2. **O ovo e a galinha.** "Onde tem mais gente" depende de ter usuários, e no primeiro dia
    ninguém usa. O app precisa ser útil com zero usuários: agenda, mapa e tamanho estimado
