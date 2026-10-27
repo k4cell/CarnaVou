@@ -34,6 +34,8 @@ calendário e as perguntas que eu ainda vou responder.
 
 - Trabalhe **direto na `main`** deste repositório (`k4cell/CarnaVou`). Não crie branches,
   forks nem cópias do projeto.
+- No meu computador, a pasta do projeto é a **`Carnaval`, na minha Área de Trabalho**. O
+  código vai ali, e ela fica ligada a este repositório.
 - **Sempre faça commit e envie (push)** o que for feito. Só o que está no GitHub fica.
 - Mensagens de commit em português.
 - Este projeto não tem relação com o CiBase, outro projeto meu. Não mexa em outros
