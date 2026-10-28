@@ -3,7 +3,7 @@
 **A central do "point" do carnaval de rua de São Paulo.** Quero responder a pergunta que
 todo grupo faz no carnaval: *"pra onde a gente vai agora?"*
 
-> **Situação (28/10/2026): começando o beta, versão 0.3.1.** Já tem o projeto criado e as três telas do
+> **Situação (28/10/2026): começando o beta, versão 0.4.0.** Já tem o projeto criado e as três telas do
 > esqueleto (lugares em destaque, um lugar e um bloco), mas com blocos fictícios e só a
 > primeira camada de cor. Ainda não tem nenhum bloco de verdade.
 
@@ -39,12 +39,16 @@ Daí veio o CarnaVou, uma central que mostra:
 | **Formato** | Um site que se instala como app (PWA). Sem app de loja por enquanto: o link abre direto e não tem taxa nem aprovação de loja. |
 | **Stack** | Angular, na pasta `app/`. Sem servidor nem banco de dados por enquanto: os dados ficam em arquivos dentro do projeto e as páginas são geradas prontas. |
 | **Beta** | Sem "Vou", "Tô aqui" e "Como tá?". A raiz do negócio é **pra onde eu vou** e qual é a tendência de hoje, não importa se está cheio ou não. |
-| **Telas do beta** | Uma "árvore de opções": a cada clique fica mais específico. **1.** Em destaque: a lista dos lugares, cada um com a zona numa etiqueta colorida, os artistas (o primeiro em destaque) e uma faixa de cor, num padrão de sete cores. **2.** Um lugar: os dias de festa e os principais artistas dali, em banners (o dia, as atrações e a hora que começa; a hora que termina só aparece se tiver). **3.** Um bloco: a lista detalhada de todos os artistas e atrações e, quando for claro, o público-alvo (como LGBTQIA+, mulheres ou eletrônica). "Começando agora / Daqui a pouco / Mais tarde" fica pra depois. |
+| **Telas do beta** | Uma "árvore de opções": a cada clique fica mais específico. **1.** Em alta: a lista dos lugares, com o filtro Hoje / Amanhã / Geral no topo. Cada lugar mostra um selo, a zona numa etiqueta colorida, os artistas (o primeiro em destaque) e uma faixa de cor, num padrão de sete cores. **2.** Um lugar: os dias de festa e os principais artistas dali, em banners (o dia, as atrações e a hora que começa; a hora que termina só aparece se tiver). **3.** Um bloco: a lista detalhada de todos os artistas e atrações e, quando for claro, o público-alvo (como LGBTQIA+, mulheres ou eletrônica). "Começando agora / Daqui a pouco / Mais tarde" fica pra depois. |
 | **Lugares em destaque** | Os 10 lugares que mais tiveram megablocos no carnaval de 2026 em SP: Parque Ibirapuera, Rua da Consolação, Av. Faria Lima, Av. Luís Carlos Berrini, Av. Henrique Schaumann, República, Minhocão, Av. Ipiranga com São João, Av. Paulo VI e Largo da Batata. Não achei um ranking oficial de público por lugar, então a lista veio dos megablocos citados na imprensa. |
 | **Cores** | Páginas de fundo claro, pra ler no sol, e texto quase preto (`#121214`). O cabeçalho usa o azul bem escuro da logo (`#130A29`). Roxo `#6A0DAD` nos títulos e no dia do banner, amarelo `#FFC200` nos botões. As sete cores (rosa `#E21D89`, amarelo, verde `#00E676`, laranja `#FB6F18`, roxo, vermelho `#D62828` e azul `#2563EB`) se revezam nas faixas dos cartões, do rosa ao azul. A borda de fora da página tem a cor escura do cabeçalho, nunca branca. Amarelo, laranja e verde só como fundo, com texto escuro. Sem degradê. As letras eu decido mais pra frente. |
 | **Zonas** | Cada zona da cidade tem a sua cor, numa etiqueta no lugar: Centro roxo, Zona Sul verde, Zona Leste amarelo, Zona Oeste vermelho e Zona Norte azul. |
 | **Logo** | A logo oficial é um pin de mapa com uma máscara de carnaval, e o "o" do "Vou" também é um pin. Ela e as imagens de referência ficam na pasta `design/`. O ícone do app é o pin com a máscara. |
 | **Menu de baixo** | Descobrir, Mapa, Amigos e Favoritos. Mapa, Amigos e Favoritos mostram só "Em breve" por enquanto. Ainda vou pensar no que serão os Amigos e os Favoritos. |
+| **Filtro por dia** | No topo da tela inicial. Hoje mostra só os lugares com bloco hoje, Amanhã só os com bloco amanhã e Geral mostra todos. A tela abre em Hoje quando tem bloco hoje e, quando não tem, abre em Geral. |
+| **Selos** | Cada lugar tem um selo no canto do cartão: "Já começou" (ou "Hoje às 16h", se ainda não começou) para hoje, "Amanhã às 11h" (a hora do primeiro bloco) para amanhã e "5 blocos" (quantos ainda vão passar ali) para quem não tem bloco nem hoje nem amanhã. Sem cor por enquanto. |
+| **Data de teste** | Pra testar, eu abro o site com uma data no endereço, como `?hoje=2027-02-06T14:00`. Aí "hoje" fica parado nesse dia e hora, e a tela avisa que é uma data de teste. |
+| **Em alta** | A ordem não vai ser a que eu escolho: vai vir das tendências (top trends). Por enquanto a ordem é a da lista de lugares. |
 
 ### Sobre compartilhar
 
@@ -101,8 +105,9 @@ já estar acabando, meio morto. O aplicativo seria muito bom se até me avisasse
 ## Próximo passo
 
 Já respondi as perguntas sobre o carnaval de 2026 e já escolhi a stack. Mandei o primeiro
-desenho (a árvore de opções) e o beta já tem as três telas, com blocos fictícios. O mapa
-vem depois. Vou continuar desenhando o projeto pra definir o visual.
+desenho (a árvore de opções) e o beta já tem as três telas, com blocos fictícios. Mandei também o segundo
+desenho (o filtro Hoje / Amanhã / Geral) e ele já está na tela inicial. A próxima fase é o
+macro: as tendências de verdade e o mapa. Vou continuar desenhando o projeto pra definir o visual.
 
 ### Ainda não pensei
 
@@ -110,6 +115,9 @@ vem depois. Vou continuar desenhando o projeto pra definir o visual.
 - De onde vêm os dados dos blocos (lista da prefeitura, cadastro manual, organizadores…).
   Por enquanto os blocos e os artistas são fictícios. Só os lugares são de verdade.
 - Como definir a "tendência de hoje" sem os votos dos usuários.
+- De onde vêm as tendências do "Em alta". Penso em usar as APIs do Google Maps, do
+  Instagram e do X, mas ainda não pesquisei o que cada uma deixa fazer, quanto custa e quais
+  são os limites.
 
 ## Arquivos do projeto
 

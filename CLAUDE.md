@@ -23,8 +23,8 @@ calendário e o que eu ainda não pensei.
 
 ## Fase atual: beta
 
-- Já pode programar. O beta é uma **árvore de opções** com três telas: Em destaque (os
-  lugares), um lugar (os dias de festa e os principais artistas) e um bloco (a lista
+- Já pode programar. O beta é uma **árvore de opções** com três telas: Em alta (os lugares,
+  com o filtro Hoje / Amanhã / Geral), um lugar (os dias de festa e os principais artistas) e um bloco (a lista
   detalhada de atrações). Embaixo fica o menu fixo: Descobrir, Mapa, Amigos e Favoritos, e
   as três últimas abas mostram só "Em breve" por enquanto. Os blocos e os artistas são
   **fictícios**. Fica de fora, por enquanto, o "Vou", o "Tô aqui" e o "Como tá?".
@@ -37,6 +37,8 @@ calendário e o que eu ainda não pensei.
   fora da página (`html`) tem a cor escura do cabeçalho: nunca deixe branca. Amarelo, verde e laranja só como fundo, com texto escuro. Rosa nunca
   em texto pequeno. Sem degradê. As letras e o resto do estilo eu decido mais pra frente:
   não capriche antes de eu pedir.
+- Os **selos** dos cartões ("Já começou", "Hoje às 16h", "Amanhã às 11h", "5 blocos") ficam **sem cor** por
+  enquanto: não coloque cor neles até eu pedir.
 - Toda decisão nova vai para a tabela "O que já decidi" do `README.md`, na hora em que eu
   decidir.
 - O que está em [`docs/ideias-em-aberto.md`](docs/ideias-em-aberto.md) são **sugestões que
@@ -58,6 +60,10 @@ calendário e o que eu ainda não pensei.
   `banner/`, o menu de baixo em `menu/` e a tela "Em breve" em `em-breve/`. Os endereços
   são `/`, `/local/:local`, `/local/:local/:bloco`, `/mapa`, `/amigos` e `/favoritos`, e
   cada um vira uma página pronta no `ng build`.
+- As páginas prontas não sabem o dia de hoje. O que depende da data (as abas Hoje e Amanhã
+  e os selos) é calculado no navegador, depois da primeira pintura, pelo serviço em
+  `relogio/`. Pra testar, abra o site com `?hoje=2027-02-06T14:00` no endereço: aí "hoje" fica
+  parado nessa data e a tela avisa que é uma data de teste.
 - A logo e as imagens de referência ficam em `design/`, cada uma com legenda no
   `design/README.md`. O que o site usa fica em `app/public/logo/` e `app/public/icons/`:
   se a logo mudar, gere de novo a partir de `design/logo/`.
@@ -79,13 +85,14 @@ calendário e o que eu ainda não pensei.
   commit, pergunte: "Fiz o commit, posso dar o push?". Eu confiro tudo e respondo, por
   exemplo, "pode dar" ou "pode publicar o commit". Só publique depois desse aval, e só o
   que eu autorizei. Só o que está no GitHub fica.
-- **Versões:** o número da versão fica em `app/package.json` e o histórico no
+- **Versões:** **todo push leva um número de versão**, não esqueça. O número fica em `app/package.json` e o histórico no
   `CHANGELOG.md`. Enquanto o app está em beta uso `0.MEIO.FINAL`: o número do meio sobe
-  quando entra tela ou funcionalidade nova (0.4.0) e o último, numa correção pequena
-  (0.3.1). Eu digo quando é uma versão nova. Aí você sobe o número no `package.json`
-  (`npm version X.Y.Z --no-git-tag-version`, dentro de `app/`), escreve o que mudou no
-  `CHANGELOG.md` e marca o commit com a etiqueta `vX.Y.Z` (git tag). A etiqueta só vai pro
-  GitHub com o meu aval, junto com o push.
+  quando entra tela ou funcionalidade nova (0.5.0) e o último, numa correção pequena
+  (0.4.1). Antes de pedir o aval do push, escolha o número, diga qual é e por quê, e suba
+  no `package.json` (`npm version X.Y.Z --no-git-tag-version`, dentro de `app/`), troque o título "Próxima versão" do
+  `CHANGELOG.md` pelo número e a data, ponha o número na linha da Situação do README e
+  marque o commit com a etiqueta `vX.Y.Z` (git tag). A etiqueta vai pro GitHub junto com o
+  push, com o meu aval. Se eu disser outro número, troque.
 - Mensagens de commit em português, com um **título claro**. Quando falar de um commit
   comigo, use o título dele, por extenso. Nunca o código curto (hash): aqueles números só
   uma IA entende.

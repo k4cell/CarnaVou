@@ -29,6 +29,9 @@ não é como eu pensei e algumas são boas, mas ainda não separei quais.
 | Artistas mais evidentes nos cartões | Aprovado: o primeiro nome em negrito e maior, e sem o "da semana" |
 | Público-alvo do bloco | Aprovado: aparece na página do bloco, só quando for claro |
 | Menu de baixo | Aprovado: Descobrir, Mapa, Amigos e Favoritos. Mapa, Amigos e Favoritos mostram "Em breve" |
+| Filtro Hoje / Amanhã / Geral | Aprovado: no topo da tela inicial |
+| Selos nos cartões ("Já começou", "Hoje às 14h", "Amanhã às 11h", "5 blocos") | Aprovados, sem cor por enquanto |
+| Data de teste no endereço | Aprovada: `?hoje=2027-02-06T14:00` |
 
 ## Funcionalidades sugeridas
 
@@ -88,6 +91,12 @@ Um desenho de como o app poderia ficar trouxe estas ideias. Nenhuma está aprova
   a localização atual.
 - Fonte própria (como Syne, Outfit ou Inter). Pesa na internet fraca, então hoje usamos só as
   fontes que já vêm no celular.
+
+## De onde vêm as tendências do "Em alta"
+
+Ideia, ainda não aprovada: usar as APIs do Google Maps, do Instagram e do X (o antigo
+Twitter) para saber o que está em alta e ordenar a lista. Falta pesquisar o que cada API
+deixa fazer, quanto custa e quais são os limites e as regras de uso.
 
 ## Pontos difíceis levantados
 

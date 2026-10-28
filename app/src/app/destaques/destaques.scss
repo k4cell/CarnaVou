@@ -1,20 +1,84 @@
-@use 'sass:list';
-
-// Uma cor de faixa para cada lugar, do rosa ao azul, repetindo a cada sete.
-$faixas: (
-  var(--rosa),
-  var(--amarelo),
-  var(--verde),
-  var(--laranja),
-  var(--roxo),
-  var(--vermelho),
-  var(--azul)
-);
-
-@for $i from 1 through list.length($faixas) {
-  li:nth-child(#{list.length($faixas)}n + #{$i}) .cartao {
-    border-left-color: list.nth($faixas, $i);
+// Uma cor de faixa para cada lugar, do rosa ao azul. A ordem é a mesma de FAIXAS em agenda.ts.
+@each $cor in (rosa, amarelo, verde, laranja, roxo, vermelho, azul) {
+  .cartao[data-faixa='#{$cor}'] {
+    border-left-color: var(--#{$cor});
   }
+}
+
+// O filtro de dia: Hoje, Amanhã e Geral.
+.abas {
+  display: flex;
+  border-bottom: 1px solid var(--borda);
+}
+
+.aba {
+  flex: 1;
+  min-height: 48px;
+  padding: 0 8px;
+  border: 0;
+  border-bottom: 3px solid transparent;
+  background: none;
+  color: var(--texto-suave);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+
+  &[aria-pressed='true'] {
+    border-bottom-color: var(--amarelo);
+    color: var(--roxo);
+    font-weight: 800;
+  }
+
+  &:focus-visible {
+    outline: 3px solid var(--texto);
+    outline-offset: -3px;
+  }
+}
+
+.teste {
+  margin: 12px 0 0;
+  padding: 8px 12px;
+  border: 1px dashed var(--texto-suave);
+  border-radius: 8px;
+  font-size: 0.875rem;
+}
+
+.titulo {
+  margin-top: 20px;
+}
+
+.chama {
+  width: 1em;
+  height: 1em;
+  vertical-align: -0.1em;
+  fill: none;
+  stroke: currentcolor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.vazio {
+  margin: 24px 0;
+}
+
+// Nome do lugar à esquerda e o selo no canto de cima, à direita. O selo ainda não tem cor.
+.cabeca {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.selo {
+  flex: none;
+  padding: 2px 10px;
+  border: 1px solid var(--texto-suave);
+  border-radius: 999px;
+  background: var(--cartao);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  white-space: nowrap;
 }
 
 // Os artistas são o que chama o clique: o primeiro nome vem maior e em negrito.
