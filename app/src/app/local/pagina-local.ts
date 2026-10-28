@@ -3,10 +3,11 @@ import { RouterLink } from '@angular/router';
 
 import { BannerBloco } from '../banner/banner-bloco';
 import { acharLocal, blocosDoLocal } from '../dados/consultas';
+import { ZonaTag } from '../zona/zona-tag';
 
 @Component({
   selector: 'app-pagina-local',
-  imports: [RouterLink, BannerBloco],
+  imports: [RouterLink, BannerBloco, ZonaTag],
   templateUrl: './pagina-local.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

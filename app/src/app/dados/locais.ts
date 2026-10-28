@@ -8,14 +8,14 @@ import { Local } from './tipos';
  * Os nomes dos lugares são de verdade; os blocos de cada um (ver blocos.ts) são fictícios.
  */
 export const LOCAIS: Local[] = [
-  { id: 'ibirapuera', nome: 'Parque Ibirapuera', regiao: 'Zona Sul' },
-  { id: 'consolacao', nome: 'Rua da Consolação', regiao: 'Centro' },
-  { id: 'faria-lima', nome: 'Avenida Faria Lima', regiao: 'Zona Oeste' },
-  { id: 'berrini', nome: 'Avenida Luís Carlos Berrini', regiao: 'Zona Sul' },
-  { id: 'henrique-schaumann', nome: 'Avenida Henrique Schaumann', regiao: 'Zona Oeste' },
-  { id: 'republica', nome: 'República', regiao: 'Centro' },
-  { id: 'minhocao', nome: 'Minhocão', regiao: 'Centro' },
-  { id: 'ipiranga-sao-joao', nome: 'Avenida Ipiranga com São João', regiao: 'Centro' },
-  { id: 'paulo-vi', nome: 'Avenida Paulo VI', regiao: 'Zona Oeste' },
-  { id: 'largo-da-batata', nome: 'Largo da Batata', regiao: 'Zona Oeste' },
+  { id: 'ibirapuera', nome: 'Parque Ibirapuera', zona: 'sul' },
+  { id: 'consolacao', nome: 'Rua da Consolação', zona: 'centro' },
+  { id: 'faria-lima', nome: 'Avenida Faria Lima', zona: 'oeste' },
+  { id: 'berrini', nome: 'Avenida Luís Carlos Berrini', zona: 'sul' },
+  { id: 'henrique-schaumann', nome: 'Avenida Henrique Schaumann', zona: 'oeste' },
+  { id: 'republica', nome: 'República', zona: 'centro' },
+  { id: 'minhocao', nome: 'Minhocão', zona: 'centro' },
+  { id: 'ipiranga-sao-joao', nome: 'Avenida Ipiranga com São João', zona: 'centro' },
+  { id: 'paulo-vi', nome: 'Avenida Paulo VI', zona: 'oeste' },
+  { id: 'largo-da-batata', nome: 'Largo da Batata', zona: 'oeste' },
 ];

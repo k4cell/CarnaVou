@@ -1,17 +1,19 @@
 // Paleta do CarnaVou. Para trocar uma cor, troque aqui e só aqui.
 // As cores da logo (noite, amarelo, rosa e laranja) vêm da imagem da logo.
 :root {
-  // Fundo da logo. Usado no cabeçalho, pra logo aparecer sem caixa em volta.
+  // Fundo da logo. Usado no cabeçalho e na moldura de fora da página.
   --noite: #130a29;
   // Títulos e o dia do banner.
   --roxo: #6a0dad;
-  // Amarelo e laranja: só como fundo, sempre com texto escuro (nunca como texto).
+  // Amarelo, laranja e verde: só como fundo, sempre com texto escuro (nunca como texto).
   --amarelo: #ffc200;
   --laranja: #fb6f18;
+  --verde: #00e676;
   // Rosa: nunca em texto pequeno, o contraste não chega.
   --rosa: #e21d89;
-  // Verde: só como fundo, com texto escuro. Entra nas faixas e no status ao vivo.
-  --verde: #00e676;
+  // Vermelho e azul: aguentam texto branco. Entram nas faixas dos cartões e nas zonas.
+  --vermelho: #d62828;
+  --azul: #2563eb;
   // Base: fundo claro e texto escuro, para ler no sol.
   --fundo: #f8f9fa;
   --cartao: #fff;
@@ -26,7 +28,14 @@
   box-sizing: border-box;
 }
 
+// A borda de fora da página tem a cor do cabeçalho, nunca branca.
+html {
+  background: var(--noite);
+}
+
 body {
+  min-height: 100vh;
+  min-height: 100dvh;
   margin: 0;
   background: var(--fundo);
   color: var(--texto);

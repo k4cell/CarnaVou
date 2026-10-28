@@ -1,0 +1,39 @@
+:host {
+  display: inline-block;
+  align-self: flex-start;
+  margin: 4px 0;
+}
+
+.zona {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 0.8125rem;
+  font-weight: 700;
+}
+
+// Verde e amarelo pedem texto escuro; roxo, vermelho e azul aguentam texto branco.
+.centro {
+  background: var(--roxo);
+  color: #fff;
+}
+
+.sul {
+  background: var(--verde);
+  color: var(--texto);
+}
+
+.leste {
+  background: var(--amarelo);
+  color: var(--texto);
+}
+
+.oeste {
+  background: var(--vermelho);
+  color: #fff;
+}
+
+.norte {
+  background: var(--azul);
+  color: #fff;
+}

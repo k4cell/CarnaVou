@@ -2,6 +2,7 @@
 
 @if (lugar(); as achado) {
   <h2 class="titulo">{{ achado.nome }}</h2>
+  <app-zona-tag [zona]="achado.zona" />
   <p class="subtitulo">Dias de festa e principais artistas</p>
 
   <ul class="lista">

@@ -44,6 +44,13 @@ describe('PaginaLocal', () => {
     expect(horarios.some((h) => !h.includes('vai até'))).toBe(true);
   });
 
+  it('mostra a zona do lugar na etiqueta de cor', async () => {
+    const tela = await renderizar('ibirapuera');
+    const etiqueta = tela.querySelector('.zona');
+    expect(etiqueta?.textContent).toBe('Zona Sul');
+    expect(etiqueta?.classList.contains('sul')).toBe(true);
+  });
+
   it('avisa quando o lugar não existe', async () => {
     const tela = await renderizar('lugar-que-nao-existe');
     expect(tela.textContent).toContain('Não achei esse lugar');

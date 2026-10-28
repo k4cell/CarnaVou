@@ -1,4 +1,4 @@
-import { Bloco, Estilo } from './tipos';
+import { Bloco, Estilo, Zona } from './tipos';
 
 const FORMATO_SEMANA = new Intl.DateTimeFormat('pt-BR', { weekday: 'short' });
 const FORMATO_MES = new Intl.DateTimeFormat('pt-BR', { month: 'short' });
@@ -16,6 +16,14 @@ export const NOMES_DOS_ESTILOS: Record<Estilo, string> = {
   pop: 'Pop',
   frevo: 'Frevo',
   eletronico: 'Eletrônico',
+};
+
+export const NOMES_DAS_ZONAS: Record<Zona, string> = {
+  centro: 'Centro',
+  sul: 'Zona Sul',
+  leste: 'Zona Leste',
+  oeste: 'Zona Oeste',
+  norte: 'Zona Norte',
 };
 
 /** Cria a data a partir de "AAAA-MM-DD" sem mudar de dia por causa do fuso horário. */
