@@ -22,6 +22,7 @@ não é como eu pensei e algumas são boas, mas ainda não separei quais.
 | "Vou", "Tô aqui" e "Como tá?" no beta | Ficam de fora do beta. A raiz é pra onde eu vou e a tendência de hoje |
 | Como organizar as telas | Árvore de opções: Em destaque, depois um lugar, depois um bloco |
 | Quais lugares destacar | Os 10 lugares com mais megablocos no carnaval de 2026 em SP |
+| Paleta de cores | Aprovada: fundo claro, roxo, amarelo e rosa como detalhe. Verde e laranja guardados pros status ao vivo |
 
 ## Funcionalidades sugeridas
 
@@ -61,6 +62,25 @@ O "Em alta" juntaria os três, com mais peso para o que é recente.
 - Cadastro de blocos feito pelos próprios organizadores, com aprovação.
 - Dinheiro: destaque pago, parcerias com venda de ingresso. Ainda não pensei no modelo de
   receita.
+
+## Sugestões que vieram do desenho de referência
+
+Um desenho de como o app poderia ficar trouxe estas ideias. Nenhuma está aprovada.
+
+- Busca por bloco, bairro ou estilo.
+- Filtros de um toque: "Agora", "Gratuito", "Perto de mim", infantil, pet friendly e estilo
+  musical.
+- Abas "Hoje", "Amanhã" e "Esta semana".
+- Favoritos (um coração no banner) e um menu de baixo: Descobrir, Mapa, Favoritos e
+  Info/Ajuda.
+- Um mapa da folia com pins, o botão "Como chegar" e um jeito de alternar entre lista e mapa.
+- Etiquetas "Bombando agora", "Ao vivo" e "Muito lotado". Dependem de sinal de quem está no
+  lugar, então ficam fora do beta.
+- Modo noite, com fundo roxo escuro. O de dia continua claro, pra ler no sol.
+- Atalhos de utilidade: postos médicos, pontos de táxi e de carro de aplicativo, e compartilhar
+  a localização atual.
+- Fonte própria (como Syne, Outfit ou Inter). Pesa na internet fraca, então hoje usamos só as
+  fontes que já vêm no celular.
 
 ## Pontos difíceis levantados
 

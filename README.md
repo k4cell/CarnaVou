@@ -4,8 +4,8 @@
 todo grupo faz no carnaval: *"pra onde a gente vai agora?"*
 
 > **Situação (28/10/2026): começando o beta.** Já tem o projeto criado e as três telas do
-> esqueleto (lugares em destaque, um lugar e um bloco), mas com blocos fictícios e só o
-> esqueleto do visual. Ainda não tem nenhum bloco de verdade.
+> esqueleto (lugares em destaque, um lugar e um bloco), mas com blocos fictícios e só a
+> primeira camada de cor. Ainda não tem nenhum bloco de verdade.
 
 ---
 
@@ -41,7 +41,7 @@ Daí veio o CarnaVou, uma central que mostra:
 | **Beta** | Sem "Vou", "Tô aqui" e "Como tá?". A raiz do negócio é **pra onde eu vou** e qual é a tendência de hoje, não importa se está cheio ou não. |
 | **Telas do beta** | Uma "árvore de opções": a cada clique fica mais específico. **1.** Em destaque: a lista dos lugares. **2.** Um lugar: os dias de festa e os principais artistas dali, em banners (o dia, as atrações e a hora que começa; a hora que termina só aparece se tiver). **3.** Um bloco: a lista detalhada de todos os artistas e atrações. "Começando agora / Daqui a pouco / Mais tarde" fica pra depois. |
 | **Lugares em destaque** | Os 10 lugares que mais tiveram megablocos no carnaval de 2026 em SP: Parque Ibirapuera, Rua da Consolação, Av. Faria Lima, Av. Luís Carlos Berrini, Av. Henrique Schaumann, República, Minhocão, Av. Ipiranga com São João, Av. Paulo VI e Largo da Batata. Não achei um ranking oficial de público por lugar, então a lista veio dos megablocos citados na imprensa. |
-| **Visual** | Por enquanto é só um esqueleto: fundo claro, cores simples e sem degradê. Cores e letras eu decido mais pra frente. |
+| **Cores** | Fundo claro, pra ler no sol, e texto quase preto (`#121214`). Roxo `#6A0DAD` na marca e nos títulos, amarelo `#FFD100` nos botões e rosa `#FF007A` só como detalhe. Verde `#00E676` e laranja `#FF6B00` ficam guardados pros status ao vivo. Sem degradê. O ícone do app é um "V" roxo num círculo amarelo. As letras eu decido mais pra frente. |
 
 ### Sobre compartilhar
 

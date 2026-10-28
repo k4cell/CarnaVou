@@ -27,8 +27,11 @@ calendário e o que eu ainda não pensei.
   lugares), um lugar (os dias de festa e os principais artistas) e um bloco (a lista
   detalhada de atrações). Os blocos e os artistas são **fictícios**. Fica de fora, por
   enquanto, o "Vou", o "Tô aqui" e o "Como tá?".
-- O visual é só um **esqueleto**: fundo claro, cores simples e sem degradê. Cores, letras
-  e estilo eu decido mais pra frente. Não capriche no visual antes de eu pedir.
+- O visual tem só a **primeira camada de cor**. A paleta fica em variáveis no topo de
+  `app/src/styles.scss`: use sempre essas variáveis, nunca uma cor solta. Fundo claro (pra
+  ler no sol), roxo na marca, amarelo nos botões e rosa só como detalhe. Amarelo, verde e
+  laranja só como fundo, com texto escuro. Rosa nunca em texto pequeno. Sem degradê. As
+  letras e o resto do estilo eu decido mais pra frente: não capriche antes de eu pedir.
 - Toda decisão nova vai para a tabela "O que já decidi" do `README.md`, na hora em que eu
   decidir.
 - O que está em [`docs/ideias-em-aberto.md`](docs/ideias-em-aberto.md) são **sugestões que

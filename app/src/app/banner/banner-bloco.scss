@@ -5,17 +5,19 @@
   align-items: center;
   min-width: 56px;
   line-height: 1.2;
+  color: var(--roxo);
   text-transform: uppercase;
 }
 
 .semana,
 .mes {
   font-size: 0.875rem;
+  font-weight: 700;
 }
 
 .dia {
   font-size: 2rem;
-  font-weight: 700;
+  font-weight: 800;
 }
 
 .info {
