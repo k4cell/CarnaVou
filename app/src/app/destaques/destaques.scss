@@ -1,0 +1,15 @@
+@use 'sass:list';
+
+// Uma cor de faixa para cada lugar, repetindo a cada cinco (as cinco cores da paleta).
+$faixas: (var(--rosa), var(--amarelo), var(--verde), var(--laranja), var(--roxo));
+
+@for $i from 1 through list.length($faixas) {
+  li:nth-child(#{list.length($faixas)}n + #{$i}) .cartao {
+    border-left-color: list.nth($faixas, $i);
+  }
+}
+
+.artistas {
+  margin-top: 4px;
+  font-size: 0.95rem;
+}

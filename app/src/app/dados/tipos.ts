@@ -24,4 +24,6 @@ export interface Bloco {
   localId: string;
   atracoes: Atracao[];
   estilo: Estilo;
+  /** Público-alvo, só quando for claro (ex.: "LGBTQIA+", "Mulheres", "Eletrônica"). */
+  publico?: string;
 }

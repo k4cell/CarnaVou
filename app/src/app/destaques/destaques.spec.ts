@@ -27,4 +27,20 @@ describe('Destaques', () => {
     const nomes = Array.from(tela.querySelectorAll('.nome')).map((nome) => nome.textContent);
     expect(nomes).toEqual(LOCAIS.map((local) => local.nome));
   });
+
+  it('mostra os artistas da semana em cada lugar', async () => {
+    const tela = await renderizar();
+    const artistas = Array.from(tela.querySelectorAll('.artistas')).map((a) => a.textContent ?? '');
+    expect(artistas.length).toBe(LOCAIS.length);
+    expect(artistas.every((texto) => texto.startsWith('Artistas da semana: '))).toBe(true);
+  });
+
+  it('mostra só os três primeiros artistas e conta os outros', async () => {
+    const tela = await renderizar();
+    // O Ibirapuera tem sete artistas na semana: três aparecem e "mais 4" resume o resto.
+    const ibirapuera = tela.querySelector('a[href="/local/ibirapuera"] .artistas')?.textContent;
+    expect(ibirapuera).toBe(
+      'Artistas da semana: Banda Serpentina, Mariana Tamborim, DJ Purpurina e mais 4',
+    );
+  });
 });

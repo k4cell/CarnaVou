@@ -1,5 +1,6 @@
 import { BLOCOS } from './blocos';
 import { LOCAIS } from './locais';
+import { SEMANA_EM_DESTAQUE } from './semana';
 import { Bloco, Local } from './tipos';
 
 function porDataEHora(a: Bloco, b: Bloco): number {
@@ -17,4 +18,20 @@ export function blocosDoLocal(localId: string): Bloco[] {
 
 export function acharBloco(localId: string, blocoId: string): Bloco | undefined {
   return BLOCOS.find((bloco) => bloco.localId === localId && bloco.id === blocoId);
+}
+
+/** Os artistas de um lugar na semana em destaque, sem repetir, na ordem em que aparecem. */
+export function artistasDaSemana(localId: string): string[] {
+  const nomes: string[] = [];
+  for (const bloco of blocosDoLocal(localId)) {
+    if (bloco.data < SEMANA_EM_DESTAQUE.inicio || bloco.data > SEMANA_EM_DESTAQUE.fim) {
+      continue;
+    }
+    for (const atracao of bloco.atracoes) {
+      if (!nomes.includes(atracao.nome)) {
+        nomes.push(atracao.nome);
+      }
+    }
+  }
+  return nomes;
 }

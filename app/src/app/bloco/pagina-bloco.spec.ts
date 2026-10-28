@@ -52,4 +52,14 @@ describe('PaginaBloco', () => {
     const tela = await renderizar('consolacao', 'megabloco-do-ibira');
     expect(tela.textContent).toContain('Não achei esse bloco');
   });
+
+  it('mostra o público-alvo quando o bloco tem', async () => {
+    const tela = await renderizar('republica', 'cordao-da-fantasia');
+    expect(tela.textContent).toContain('Público: LGBTQIA+');
+  });
+
+  it('não mostra público-alvo quando o bloco não tem', async () => {
+    const tela = await renderizar('ibirapuera', 'megabloco-do-ibira');
+    expect(tela.textContent).not.toContain('Público:');
+  });
 });

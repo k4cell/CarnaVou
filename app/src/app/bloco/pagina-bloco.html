@@ -5,6 +5,9 @@
   <p class="subtitulo">{{ resumo()?.dia }} · {{ lugar()?.nome }}</p>
   <p class="horario">{{ resumo()?.horario }}</p>
   <p>Estilo: {{ resumo()?.estilo }}</p>
+  @if (bloco.publico) {
+    <p>Público: {{ bloco.publico }}</p>
+  }
 
   <h3 class="secao">Atrações</h3>
   <ul class="atracoes">

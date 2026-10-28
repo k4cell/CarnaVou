@@ -1,21 +1,23 @@
 // Paleta do CarnaVou. Para trocar uma cor, troque aqui e só aqui.
+// As cores da logo (noite, amarelo, rosa e laranja) vêm da imagem da logo.
 :root {
-  // Marca: cabeçalho, títulos e o dia do banner.
+  // Fundo da logo. Usado no cabeçalho, pra logo aparecer sem caixa em volta.
+  --noite: #130a29;
+  // Títulos e o dia do banner.
   --roxo: #6a0dad;
-  // Botões e destaques. Só como fundo, sempre com texto escuro (nunca como texto).
-  --amarelo: #ffd100;
-  --amarelo-claro: #fff4bf;
-  // Só detalhe (faixa, ícone). Nunca em texto pequeno: o contraste não chega.
-  --rosa: #ff007a;
-  // Guardadas para quando houver status ao vivo e alerta de horário.
-  // Só como fundo, com texto escuro.
+  // Amarelo e laranja: só como fundo, sempre com texto escuro (nunca como texto).
+  --amarelo: #ffc200;
+  --laranja: #fb6f18;
+  // Rosa: nunca em texto pequeno, o contraste não chega.
+  --rosa: #e21d89;
+  // Verde: só como fundo, com texto escuro. Entra nas faixas e no status ao vivo.
   --verde: #00e676;
-  --laranja: #ff6b00;
   // Base: fundo claro e texto escuro, para ler no sol.
   --fundo: #f8f9fa;
   --cartao: #fff;
   --borda: #dcdce2;
   --texto: #121214;
+  --texto-suave: #55556a;
 }
 
 *,
