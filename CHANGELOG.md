@@ -7,6 +7,21 @@ Enquanto o app está em beta, o número é `0.MEIO.FINAL`. O número do meio sob
 uma tela ou funcionalidade nova (0.3.0, 0.4.0…) e o último, quando é só uma correção pequena
 (0.3.1). Cada versão tem uma etiqueta no GitHub, como `v0.3.0`.
 
+## Próxima versão (ainda sem número)
+
+### Entrou
+
+- **Uma etiqueta colorida com a zona** em cada lugar, na tela Em destaque e na página do
+  lugar: Centro roxo, Zona Sul verde, Zona Leste amarelo, Zona Oeste vermelho e Zona Norte azul.
+- **Duas cores novas**, vermelho e azul, nas faixas dos cartões. O padrão agora tem sete
+  cores, do rosa ao azul.
+
+### Mudou
+
+- Os artistas ficaram mais evidentes: o primeiro nome vem em negrito e maior, e o "da
+  semana" saiu.
+- A borda de fora da página agora tem a cor escura do cabeçalho, em vez de ficar branca.
+
 ## 0.3.1 (28/10/2026)
 
 ### Mudou

@@ -1,7 +1,15 @@
 @use 'sass:list';
 
-// Uma cor de faixa para cada lugar, repetindo a cada cinco (as cinco cores da paleta).
-$faixas: (var(--rosa), var(--amarelo), var(--verde), var(--laranja), var(--roxo));
+// Uma cor de faixa para cada lugar, do rosa ao azul, repetindo a cada sete.
+$faixas: (
+  var(--rosa),
+  var(--amarelo),
+  var(--verde),
+  var(--laranja),
+  var(--roxo),
+  var(--vermelho),
+  var(--azul)
+);
 
 @for $i from 1 through list.length($faixas) {
   li:nth-child(#{list.length($faixas)}n + #{$i}) .cartao {
@@ -9,7 +17,12 @@ $faixas: (var(--rosa), var(--amarelo), var(--verde), var(--laranja), var(--roxo)
   }
 }
 
+// Os artistas são o que chama o clique: o primeiro nome vem maior e em negrito.
 .artistas {
   margin-top: 4px;
-  font-size: 0.95rem;
+  font-size: 1rem;
+}
+
+.principal {
+  font-size: 1.125rem;
 }

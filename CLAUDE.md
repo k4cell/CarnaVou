@@ -31,8 +31,10 @@ calendário e o que eu ainda não pensei.
 - O visual tem só a **primeira camada de cor**. A paleta fica em variáveis no topo de
   `app/src/styles.scss`: use sempre essas variáveis, nunca uma cor solta. Fundo claro (pra
   ler no sol); o cabeçalho usa o fundo escuro da logo (`--noite`). Roxo nos títulos e
-  amarelo nos botões. As cinco cores (roxo, amarelo, rosa, verde e laranja) se revezam nas
-  faixas dos cartões. Amarelo, verde e laranja só como fundo, com texto escuro. Rosa nunca
+  amarelo nos botões. As sete cores (rosa, amarelo, verde, laranja, roxo, vermelho e azul) se
+  revezam nas faixas dos cartões, do rosa ao azul. Cada zona da cidade tem a sua cor na
+  etiqueta: Centro roxo, Sul verde, Leste amarelo, Oeste vermelho e Norte azul. A borda de
+  fora da página (`html`) tem a cor escura do cabeçalho: nunca deixe branca. Amarelo, verde e laranja só como fundo, com texto escuro. Rosa nunca
   em texto pequeno. Sem degradê. As letras e o resto do estilo eu decido mais pra frente:
   não capriche antes de eu pedir.
 - Toda decisão nova vai para a tabela "O que já decidi" do `README.md`, na hora em que eu

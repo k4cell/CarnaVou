@@ -24,7 +24,9 @@ não é como eu pensei e algumas são boas, mas ainda não separei quais.
 | Quais lugares destacar | Os 10 lugares com mais megablocos no carnaval de 2026 em SP |
 | Paleta de cores | Aprovada: fundo claro, cabeçalho escuro da logo, roxo e amarelo. As cinco cores se revezam nas faixas |
 | Artistas da semana em cada lugar | Aprovado: aparecem no cartão de cada lugar em "Em destaque" |
-| Uma cor de faixa para cada lugar | Aprovado: num padrão de cinco cores |
+| Uma cor de faixa para cada lugar | Aprovado: num padrão de sete cores, do rosa ao azul |
+| Uma cor para cada zona | Aprovado: Centro roxo, Sul verde, Leste amarelo, Oeste vermelho e Norte azul |
+| Artistas mais evidentes nos cartões | Aprovado: o primeiro nome em negrito e maior, e sem o "da semana" |
 | Público-alvo do bloco | Aprovado: aparece na página do bloco, só quando for claro |
 | Menu de baixo | Aprovado: Descobrir, Mapa, Amigos e Favoritos. Mapa, Amigos e Favoritos mostram "Em breve" |
 

@@ -1,9 +1,12 @@
 export type Estilo = 'samba' | 'marchinha' | 'axe' | 'funk' | 'pop' | 'frevo' | 'eletronico';
 
+/** As zonas de São Paulo. Cada uma tem a sua cor (ver zona-tag). */
+export type Zona = 'centro' | 'sul' | 'leste' | 'oeste' | 'norte';
+
 export interface Local {
   id: string;
   nome: string;
-  regiao: string;
+  zona: Zona;
 }
 
 export interface Atracao {

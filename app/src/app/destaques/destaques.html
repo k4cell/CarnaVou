@@ -6,9 +6,9 @@
       <a class="cartao" [routerLink]="['/local', item.id]">
         <span class="texto">
           <strong class="nome">{{ item.nome }}</strong>
-          <span>{{ item.regiao }}</span>
-          @if (item.artistas) {
-            <span class="artistas">Artistas da semana: {{ item.artistas }}</span>
+          <app-zona-tag [zona]="item.zona" />
+          @if (item.principal) {
+            <span class="artistas">Artistas: <strong class="principal">{{ item.principal }}</strong>{{ item.resto }}</span>
           }
         </span>
         <span class="seta" aria-hidden="true">›</span>
