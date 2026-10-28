@@ -1,27 +1,22 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
-import { artistasDaSemana } from '../dados/consultas';
-import { LOCAIS } from '../dados/locais';
+import { Aba, cartoesDaAba, diaIso, horaIso } from '../dados/agenda';
+import { dataPorExtenso, formatarHora } from '../dados/formato';
+import { Relogio } from '../relogio/relogio';
 import { ZonaTag } from '../zona/zona-tag';
 
-const MAXIMO_DE_ARTISTAS = 3;
+const ABAS: { id: Aba; nome: string }[] = [
+  { id: 'hoje', nome: 'Hoje' },
+  { id: 'amanha', nome: 'Amanhã' },
+  { id: 'geral', nome: 'Geral' },
+];
 
-/**
- * Separa o primeiro artista (que aparece em destaque) dos outros.
- * "resto" vem pronto com a vírgula: ", B, C e mais 4".
- */
-function artistasDoCartao(localId: string): { principal: string; resto: string } {
-  const [principal = '', ...outros] = artistasDaSemana(localId);
-  const mostrados = outros.slice(0, MAXIMO_DE_ARTISTAS - 1);
-  const escondidos = outros.length - mostrados.length;
-
-  let resto = mostrados.length > 0 ? `, ${mostrados.join(', ')}` : '';
-  if (escondidos > 0) {
-    resto += ` e mais ${escondidos}`;
-  }
-  return { principal, resto };
-}
+const MENSAGEM_DA_ABA_VAZIA: Record<Aba, string> = {
+  hoje: 'Nenhum bloco hoje. Veja a aba Geral.',
+  amanha: 'Nenhum bloco amanhã. Veja a aba Geral.',
+  geral: 'Nenhum lugar por aqui ainda.',
+};
 
 @Component({
   selector: 'app-destaques',
@@ -31,8 +26,31 @@ function artistasDoCartao(localId: string): { principal: string; resto: string }
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Destaques {
-  protected readonly itens = LOCAIS.map((local) => ({
-    ...local,
-    ...artistasDoCartao(local.id),
-  }));
+  private readonly relogio = inject(Relogio);
+
+  protected readonly abas = ABAS;
+  protected readonly simulado = this.relogio.simulado;
+
+  /** A aba que a pessoa tocou. Enquanto ela não toca em nenhuma, o site escolhe. */
+  private readonly escolhida = signal<Aba | null>(null);
+
+  private readonly temBlocoHoje = computed(() => cartoesDaAba('hoje', this.relogio.agora()).length > 0);
+
+  /** Abre em Hoje quando tem bloco hoje; senão, em Geral (para não abrir numa lista vazia). */
+  protected readonly ativa = computed<Aba>(
+    () => this.escolhida() ?? (this.temBlocoHoje() ? 'hoje' : 'geral'),
+  );
+
+  protected readonly cartoes = computed(() => cartoesDaAba(this.ativa(), this.relogio.agora()));
+  protected readonly mensagemVazia = computed(() => MENSAGEM_DA_ABA_VAZIA[this.ativa()]);
+
+  /** "Sábado, 6 de fevereiro, 14h": só aparece quando a data vem do endereço (?hoje=...). */
+  protected readonly dataDeTeste = computed(() => {
+    const agora = this.relogio.agora();
+    return agora ? `${dataPorExtenso(diaIso(agora))}, ${formatarHora(horaIso(agora))}` : '';
+  });
+
+  protected escolher(aba: Aba): void {
+    this.escolhida.set(aba);
+  }
 }

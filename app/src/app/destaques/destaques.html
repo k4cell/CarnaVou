@@ -1,18 +1,45 @@
-<h2 class="titulo">Em destaque</h2>
-
-<ul class="lista">
-  @for (item of itens; track item.id) {
-    <li>
-      <a class="cartao" [routerLink]="['/local', item.id]">
-        <span class="texto">
-          <strong class="nome">{{ item.nome }}</strong>
-          <app-zona-tag [zona]="item.zona" />
-          @if (item.principal) {
-            <span class="artistas">Artistas: <strong class="principal">{{ item.principal }}</strong>{{ item.resto }}</span>
-          }
-        </span>
-        <span class="seta" aria-hidden="true">›</span>
-      </a>
-    </li>
+<div class="abas" role="group" aria-label="Filtrar por dia">
+  @for (aba of abas; track aba.id) {
+    <button type="button" class="aba" [attr.aria-pressed]="ativa() === aba.id" (click)="escolher(aba.id)">
+      {{ aba.nome }}
+    </button>
   }
-</ul>
+</div>
+
+@if (simulado()) {
+  <p class="teste">Data de teste: {{ dataDeTeste() }}</p>
+}
+
+<h2 class="titulo">
+  Em alta
+  <!-- Ícone de chama: Lucide (licença ISC). -->
+  <svg class="chama" viewBox="0 0 24 24" aria-hidden="true">
+    <path
+      d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"
+    />
+  </svg>
+</h2>
+
+@if (cartoes().length === 0) {
+  <p class="vazio">{{ mensagemVazia() }}</p>
+} @else {
+  <ul class="lista">
+    @for (cartao of cartoes(); track cartao.local.id) {
+      <li>
+        <a class="cartao" [attr.data-faixa]="cartao.faixa" [routerLink]="['/local', cartao.local.id]">
+          <span class="texto">
+            <span class="cabeca">
+              <strong class="nome">{{ cartao.local.nome }}</strong>
+              <span class="selo">{{ cartao.selo }}</span>
+            </span>
+            <app-zona-tag [zona]="cartao.local.zona" />
+            @if (cartao.principal) {
+              <span class="artistas">Artistas: <strong class="principal">{{ cartao.principal }}</strong>{{ cartao.resto }}</span>
+            }
+          </span>
+          <span class="seta" aria-hidden="true">›</span>
+        </a>
+      </li>
+    }
+  </ul>
+}
