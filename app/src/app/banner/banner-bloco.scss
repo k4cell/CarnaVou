@@ -1,0 +1,35 @@
+.data {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  align-items: center;
+  min-width: 56px;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.semana,
+.mes {
+  font-size: 0.875rem;
+}
+
+.dia {
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.nome {
+  font-size: 1.25rem;
+  line-height: 1.2;
+}
+
+.horario {
+  font-weight: 700;
+}

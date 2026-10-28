@@ -1,0 +1,15 @@
+<h2 class="titulo">Em destaque</h2>
+
+<ul class="lista">
+  @for (local of locais; track local.id) {
+    <li>
+      <a class="cartao" [routerLink]="['/local', local.id]">
+        <span class="texto">
+          <strong class="nome">{{ local.nome }}</strong>
+          <span>{{ local.regiao }}</span>
+        </span>
+        <span class="seta" aria-hidden="true">›</span>
+      </a>
+    </li>
+  }
+</ul>

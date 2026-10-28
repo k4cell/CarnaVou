@@ -1,0 +1,15 @@
+<a class="cartao banner" [routerLink]="['/local', bloco().localId, bloco().id]">
+  <time class="data" [attr.datetime]="bloco().data">
+    <span class="semana">{{ data().semana }}</span>
+    <span class="dia">{{ data().dia }}</span>
+    <span class="mes">{{ data().mes }}</span>
+  </time>
+
+  <span class="info">
+    <strong class="nome">{{ bloco().nome }}</strong>
+    <span class="atracoes">{{ atracoes() }}</span>
+    <span class="horario">{{ horario() }}</span>
+  </span>
+
+  <span class="seta" aria-hidden="true">›</span>
+</a>

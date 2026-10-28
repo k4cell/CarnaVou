@@ -1,0 +1,52 @@
+import { TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
+
+import { BLOCOS } from '../dados/blocos';
+import { PaginaLocal } from './pagina-local';
+
+describe('PaginaLocal', () => {
+  async function renderizar(local: string): Promise<HTMLElement> {
+    await TestBed.configureTestingModule({
+      imports: [PaginaLocal],
+      providers: [provideRouter([])],
+    }).compileComponents();
+    const fixture = TestBed.createComponent(PaginaLocal);
+    fixture.componentRef.setInput('local', local);
+    await fixture.whenStable();
+    return fixture.nativeElement as HTMLElement;
+  }
+
+  it('mostra só os blocos do lugar escolhido', async () => {
+    const tela = await renderizar('consolacao');
+    const esperados = BLOCOS.filter((bloco) => bloco.localId === 'consolacao');
+    expect(tela.querySelector('h2')?.textContent).toContain('Rua da Consolação');
+    expect(tela.querySelectorAll('app-banner-bloco').length).toBe(esperados.length);
+  });
+
+  it('põe os blocos em ordem de data', async () => {
+    const tela = await renderizar('ibirapuera');
+    const datas = Array.from(tela.querySelectorAll('time')).map((t) => t.getAttribute('datetime') ?? '');
+    expect(datas.length).toBeGreaterThan(1);
+    expect(datas).toEqual([...datas].sort());
+  });
+
+  it('leva cada banner para a página do bloco', async () => {
+    const tela = await renderizar('consolacao');
+    const hrefs = Array.from(tela.querySelectorAll('app-banner-bloco a')).map((a) => a.getAttribute('href'));
+    expect(hrefs).toContain('/local/consolacao/cordao-da-purpurina');
+  });
+
+  it('mostra a hora que começa e só mostra o fim quando existe', async () => {
+    const tela = await renderizar('ibirapuera');
+    const horarios = Array.from(tela.querySelectorAll('.horario')).map((h) => h.textContent ?? '');
+    expect(horarios.every((h) => h.startsWith('Começa às '))).toBe(true);
+    expect(horarios.some((h) => h.includes('vai até'))).toBe(true);
+    expect(horarios.some((h) => !h.includes('vai até'))).toBe(true);
+  });
+
+  it('avisa quando o lugar não existe', async () => {
+    const tela = await renderizar('lugar-que-nao-existe');
+    expect(tela.textContent).toContain('Não achei esse lugar');
+    expect(tela.querySelectorAll('app-banner-bloco').length).toBe(0);
+  });
+});
