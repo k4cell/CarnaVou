@@ -20,6 +20,8 @@ não é como eu pensei e algumas são boas, mas ainda não separei quais.
 | Site que instala como app (PWA) | Aprovado: o formato é um site que se instala como app |
 | "Começando agora / Daqui a pouco / Mais tarde" na agenda | Fica pra depois. A primeira tela é um catálogo de banners |
 | "Vou", "Tô aqui" e "Como tá?" no beta | Ficam de fora do beta. A raiz é pra onde eu vou e a tendência de hoje |
+| Como organizar as telas | Árvore de opções: Em destaque, depois um lugar, depois um bloco |
+| Quais lugares destacar | Os 10 lugares com mais megablocos no carnaval de 2026 em SP |
 
 ## Funcionalidades sugeridas
 

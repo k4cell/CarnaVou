@@ -1,0 +1,14 @@
+<a class="voltar" routerLink="/">← Em destaque</a>
+
+@if (lugar(); as achado) {
+  <h2 class="titulo">{{ achado.nome }}</h2>
+  <p class="subtitulo">Dias de festa e principais artistas</p>
+
+  <ul class="lista">
+    @for (bloco of blocos(); track bloco.id) {
+      <li><app-banner-bloco [bloco]="bloco" /></li>
+    }
+  </ul>
+} @else {
+  <p>Não achei esse lugar.</p>
+}

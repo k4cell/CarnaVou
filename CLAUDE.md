@@ -23,8 +23,10 @@ calendário e o que eu ainda não pensei.
 
 ## Fase atual: beta
 
-- Já pode programar. O beta é um catálogo de banners dos blocos, com **dados fictícios**.
-  Fica de fora, por enquanto, o "Vou", o "Tô aqui" e o "Como tá?".
+- Já pode programar. O beta é uma **árvore de opções** com três telas: Em destaque (os
+  lugares), um lugar (os dias de festa e os principais artistas) e um bloco (a lista
+  detalhada de atrações). Os blocos e os artistas são **fictícios**. Fica de fora, por
+  enquanto, o "Vou", o "Tô aqui" e o "Como tá?".
 - O visual é só um **esqueleto**: fundo claro, cores simples e sem degradê. Cores, letras
   e estilo eu decido mais pra frente. Não capriche no visual antes de eu pedir.
 - Toda decisão nova vai para a tabela "O que já decidi" do `README.md`, na hora em que eu
@@ -44,8 +46,12 @@ calendário e o que eu ainda não pensei.
 - **Tem que ser leve.** O povo vai usar no celular fraco, com internet ruim no meio da
   multidão. Sem fontes da internet nem bibliotecas pesadas, e o que não for da primeira
   tela (como o mapa) só carrega quando for aberto.
-- Os dados fictícios ficam em `app/src/app/dados/`, e a tela avisa que são de exemplo.
-  Nada fictício pode parecer um evento de verdade.
+- As telas ficam em `destaques/`, `local/` e `bloco/`, e o banner que se repete fica em
+  `banner/`. Os endereços são `/`, `/local/:local` e `/local/:local/:bloco`, e cada um vira
+  uma página pronta no `ng build`.
+- Os dados ficam em `app/src/app/dados/`: `locais.ts` (os lugares, de verdade) e
+  `blocos.ts` (blocos e artistas **fictícios**). A tela avisa que são de exemplo. Nada
+  fictício pode parecer um evento de verdade, então não use nomes de artistas reais.
 
 ## Repositório
 
@@ -59,6 +65,8 @@ calendário e o que eu ainda não pensei.
   commit, pergunte: "Fiz o commit, posso dar o push?". Eu confiro tudo e respondo, por
   exemplo, "pode dar" ou "pode publicar o commit". Só publique depois desse aval, e só o
   que eu autorizei. Só o que está no GitHub fica.
-- Mensagens de commit em português.
+- Mensagens de commit em português, com um **título claro**. Quando falar de um commit
+  comigo, use o título dele, por extenso. Nunca o código curto (hash): aqueles números só
+  uma IA entende.
 - Este projeto não tem relação com o CiBase, outro projeto meu. Não mexa em outros
   repositórios.

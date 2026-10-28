@@ -1,0 +1,21 @@
+@if (achado(); as bloco) {
+  <a class="voltar" [routerLink]="['/local', bloco.localId]">← {{ lugar()?.nome }}</a>
+
+  <h2 class="titulo">{{ bloco.nome }}</h2>
+  <p class="subtitulo">{{ resumo()?.dia }} · {{ lugar()?.nome }}</p>
+  <p class="horario">{{ resumo()?.horario }}</p>
+  <p>Estilo: {{ resumo()?.estilo }}</p>
+
+  <h3 class="secao">Atrações</h3>
+  <ul class="atracoes">
+    @for (atracao of resumo()?.atracoes; track atracao.nome) {
+      <li class="atracao">
+        <span class="hora">{{ atracao.hora }}</span>
+        <span>{{ atracao.nome }}</span>
+      </li>
+    }
+  </ul>
+} @else {
+  <a class="voltar" routerLink="/">← Em destaque</a>
+  <p>Não achei esse bloco.</p>
+}
