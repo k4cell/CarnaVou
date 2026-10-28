@@ -1,4 +1,5 @@
 import { BLOCOS } from './blocos';
+import { artistasDaSemana } from './consultas';
 import { LOCAIS } from './locais';
 
 describe('dados', () => {
@@ -35,5 +36,21 @@ describe('dados', () => {
 
   it('todo bloco tem pelo menos uma atração', () => {
     expect(BLOCOS.every((bloco) => bloco.atracoes.length > 0)).toBe(true);
+  });
+
+  it('todo lugar tem artistas na semana em destaque', () => {
+    expect(LOCAIS.every((local) => artistasDaSemana(local.id).length > 0)).toBe(true);
+  });
+
+  it('não repete artista na lista da semana de um lugar', () => {
+    const artistas = artistasDaSemana('ibirapuera');
+    expect(artistas.length).toBe(7);
+    expect(new Set(artistas).size).toBe(artistas.length);
+  });
+
+  it('só marca o público-alvo em alguns blocos, quando é claro', () => {
+    const comPublico = BLOCOS.filter((bloco) => bloco.publico);
+    expect(comPublico.length).toBeGreaterThan(0);
+    expect(comPublico.length).toBeLessThan(BLOCOS.length);
   });
 });

@@ -3,7 +3,7 @@
 **A central do "point" do carnaval de rua de São Paulo.** Quero responder a pergunta que
 todo grupo faz no carnaval: *"pra onde a gente vai agora?"*
 
-> **Situação (28/10/2026): começando o beta.** Já tem o projeto criado e as três telas do
+> **Situação (28/10/2026): começando o beta, versão 0.3.0.** Já tem o projeto criado e as três telas do
 > esqueleto (lugares em destaque, um lugar e um bloco), mas com blocos fictícios e só a
 > primeira camada de cor. Ainda não tem nenhum bloco de verdade.
 
@@ -39,9 +39,11 @@ Daí veio o CarnaVou, uma central que mostra:
 | **Formato** | Um site que se instala como app (PWA). Sem app de loja por enquanto: o link abre direto e não tem taxa nem aprovação de loja. |
 | **Stack** | Angular, na pasta `app/`. Sem servidor nem banco de dados por enquanto: os dados ficam em arquivos dentro do projeto e as páginas são geradas prontas. |
 | **Beta** | Sem "Vou", "Tô aqui" e "Como tá?". A raiz do negócio é **pra onde eu vou** e qual é a tendência de hoje, não importa se está cheio ou não. |
-| **Telas do beta** | Uma "árvore de opções": a cada clique fica mais específico. **1.** Em destaque: a lista dos lugares. **2.** Um lugar: os dias de festa e os principais artistas dali, em banners (o dia, as atrações e a hora que começa; a hora que termina só aparece se tiver). **3.** Um bloco: a lista detalhada de todos os artistas e atrações. "Começando agora / Daqui a pouco / Mais tarde" fica pra depois. |
+| **Telas do beta** | Uma "árvore de opções": a cada clique fica mais específico. **1.** Em destaque: a lista dos lugares, cada um com os artistas da semana e uma faixa de cor, num padrão de cinco cores. **2.** Um lugar: os dias de festa e os principais artistas dali, em banners (o dia, as atrações e a hora que começa; a hora que termina só aparece se tiver). **3.** Um bloco: a lista detalhada de todos os artistas e atrações e, quando for claro, o público-alvo (como LGBTQIA+, mulheres ou eletrônica). "Começando agora / Daqui a pouco / Mais tarde" fica pra depois. |
 | **Lugares em destaque** | Os 10 lugares que mais tiveram megablocos no carnaval de 2026 em SP: Parque Ibirapuera, Rua da Consolação, Av. Faria Lima, Av. Luís Carlos Berrini, Av. Henrique Schaumann, República, Minhocão, Av. Ipiranga com São João, Av. Paulo VI e Largo da Batata. Não achei um ranking oficial de público por lugar, então a lista veio dos megablocos citados na imprensa. |
-| **Cores** | Fundo claro, pra ler no sol, e texto quase preto (`#121214`). Roxo `#6A0DAD` na marca e nos títulos, amarelo `#FFD100` nos botões e rosa `#FF007A` só como detalhe. Verde `#00E676` e laranja `#FF6B00` ficam guardados pros status ao vivo. Sem degradê. O ícone do app é um "V" roxo num círculo amarelo. As letras eu decido mais pra frente. |
+| **Cores** | Páginas de fundo claro, pra ler no sol, e texto quase preto (`#121214`). O cabeçalho usa o azul bem escuro da logo (`#130A29`). Roxo `#6A0DAD` nos títulos e no dia do banner, amarelo `#FFC200` nos botões. As cinco cores (roxo, amarelo, rosa `#E21D89`, verde `#00E676` e laranja `#FB6F18`) se revezam nas faixas dos cartões. Amarelo, laranja e verde só como fundo, com texto escuro. Sem degradê. As letras eu decido mais pra frente. |
+| **Logo** | A logo oficial é um pin de mapa com uma máscara de carnaval, e o "o" do "Vou" também é um pin. Ela e as imagens de referência ficam na pasta `design/`. O ícone do app é o pin com a máscara. |
+| **Menu de baixo** | Descobrir, Mapa, Amigos e Favoritos. Mapa, Amigos e Favoritos mostram só "Em breve" por enquanto. Ainda vou pensar no que serão os Amigos e os Favoritos. |
 
 ### Sobre compartilhar
 
@@ -111,6 +113,8 @@ vem depois. Vou continuar desenhando o projeto pra definir o visual.
 ## Arquivos do projeto
 
 - [`app/`](app): o site, feito em Angular.
+- [`design/`](design): a logo e as imagens de referência do visual, cada uma com a sua legenda.
+- [`CHANGELOG.md`](CHANGELOG.md): o que mudou em cada versão.
 - [`CLAUDE.md`](CLAUDE.md): minhas regras de trabalho para o Claude Code neste projeto.
 - [`docs/ideias-em-aberto.md`](docs/ideias-em-aberto.md): ideias que surgiram e que eu
   **ainda não aprovei**.

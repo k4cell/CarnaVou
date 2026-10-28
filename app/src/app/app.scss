@@ -9,41 +9,44 @@
 }
 
 .topo {
-  padding: 20px 0 16px;
-  background: var(--roxo);
+  padding: 16px 0;
+  background: var(--noite);
   color: #fff;
 }
 
 .marca {
   margin: 0;
-  font-size: 2rem;
-  font-weight: 800;
-  letter-spacing: -0.02em;
+  line-height: 0;
 
   a {
-    color: var(--amarelo);
-    text-decoration: none;
+    display: inline-flex;
+    gap: 12px;
+    align-items: center;
 
     &:focus-visible {
       outline-color: var(--amarelo);
+      outline-offset: 4px;
+      border-radius: 8px;
     }
   }
 }
 
-.frase {
-  margin: 2px 0 0;
+.emblema {
+  width: auto;
+  height: 56px;
 }
 
+.palavra {
+  width: auto;
+  height: 37px;
+}
+
+.frase {
+  margin: 8px 0 0;
+}
+
+// Espaço embaixo para o menu fixo não cobrir o fim da página.
 .corpo {
   padding-top: 16px;
-  padding-bottom: 32px;
-}
-
-.aviso {
-  margin: 0 0 16px;
-  padding: 8px 12px;
-  border: 1px solid var(--amarelo);
-  border-radius: 8px;
-  background: var(--amarelo-claro);
-  font-size: 0.875rem;
+  padding-bottom: calc(96px + env(safe-area-inset-bottom));
 }

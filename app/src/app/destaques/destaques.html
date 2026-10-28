@@ -1,12 +1,15 @@
 <h2 class="titulo">Em destaque</h2>
 
 <ul class="lista">
-  @for (local of locais; track local.id) {
+  @for (item of itens; track item.id) {
     <li>
-      <a class="cartao" [routerLink]="['/local', local.id]">
+      <a class="cartao" [routerLink]="['/local', item.id]">
         <span class="texto">
-          <strong class="nome">{{ local.nome }}</strong>
-          <span>{{ local.regiao }}</span>
+          <strong class="nome">{{ item.nome }}</strong>
+          <span>{{ item.regiao }}</span>
+          @if (item.artistas) {
+            <span class="artistas">Artistas da semana: {{ item.artistas }}</span>
+          }
         </span>
         <span class="seta" aria-hidden="true">›</span>
       </a>

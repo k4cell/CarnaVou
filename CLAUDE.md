@@ -25,13 +25,16 @@ calendário e o que eu ainda não pensei.
 
 - Já pode programar. O beta é uma **árvore de opções** com três telas: Em destaque (os
   lugares), um lugar (os dias de festa e os principais artistas) e um bloco (a lista
-  detalhada de atrações). Os blocos e os artistas são **fictícios**. Fica de fora, por
-  enquanto, o "Vou", o "Tô aqui" e o "Como tá?".
+  detalhada de atrações). Embaixo fica o menu fixo: Descobrir, Mapa, Amigos e Favoritos, e
+  as três últimas abas mostram só "Em breve" por enquanto. Os blocos e os artistas são
+  **fictícios**. Fica de fora, por enquanto, o "Vou", o "Tô aqui" e o "Como tá?".
 - O visual tem só a **primeira camada de cor**. A paleta fica em variáveis no topo de
   `app/src/styles.scss`: use sempre essas variáveis, nunca uma cor solta. Fundo claro (pra
-  ler no sol), roxo na marca, amarelo nos botões e rosa só como detalhe. Amarelo, verde e
-  laranja só como fundo, com texto escuro. Rosa nunca em texto pequeno. Sem degradê. As
-  letras e o resto do estilo eu decido mais pra frente: não capriche antes de eu pedir.
+  ler no sol); o cabeçalho usa o fundo escuro da logo (`--noite`). Roxo nos títulos e
+  amarelo nos botões. As cinco cores (roxo, amarelo, rosa, verde e laranja) se revezam nas
+  faixas dos cartões. Amarelo, verde e laranja só como fundo, com texto escuro. Rosa nunca
+  em texto pequeno. Sem degradê. As letras e o resto do estilo eu decido mais pra frente:
+  não capriche antes de eu pedir.
 - Toda decisão nova vai para a tabela "O que já decidi" do `README.md`, na hora em que eu
   decidir.
 - O que está em [`docs/ideias-em-aberto.md`](docs/ideias-em-aberto.md) são **sugestões que
@@ -49,12 +52,18 @@ calendário e o que eu ainda não pensei.
 - **Tem que ser leve.** O povo vai usar no celular fraco, com internet ruim no meio da
   multidão. Sem fontes da internet nem bibliotecas pesadas, e o que não for da primeira
   tela (como o mapa) só carrega quando for aberto.
-- As telas ficam em `destaques/`, `local/` e `bloco/`, e o banner que se repete fica em
-  `banner/`. Os endereços são `/`, `/local/:local` e `/local/:local/:bloco`, e cada um vira
-  uma página pronta no `ng build`.
+- As telas ficam em `destaques/`, `local/` e `bloco/`; o banner que se repete fica em
+  `banner/`, o menu de baixo em `menu/` e a tela "Em breve" em `em-breve/`. Os endereços
+  são `/`, `/local/:local`, `/local/:local/:bloco`, `/mapa`, `/amigos` e `/favoritos`, e
+  cada um vira uma página pronta no `ng build`.
+- A logo e as imagens de referência ficam em `design/`, cada uma com legenda no
+  `design/README.md`. O que o site usa fica em `app/public/logo/` e `app/public/icons/`:
+  se a logo mudar, gere de novo a partir de `design/logo/`.
 - Os dados ficam em `app/src/app/dados/`: `locais.ts` (os lugares, de verdade) e
-  `blocos.ts` (blocos e artistas **fictícios**). A tela avisa que são de exemplo. Nada
-  fictício pode parecer um evento de verdade, então não use nomes de artistas reais.
+  `blocos.ts` (blocos e artistas **fictícios**). Eu tirei da tela o aviso de "dados de
+  exemplo". Se for mostrar o site pra outras pessoas ainda com dados fictícios, pergunte
+  antes se eu quero o aviso de volta. Nada fictício pode parecer um evento de verdade, então
+  não use nomes de artistas reais.
 
 ## Repositório
 
@@ -68,6 +77,13 @@ calendário e o que eu ainda não pensei.
   commit, pergunte: "Fiz o commit, posso dar o push?". Eu confiro tudo e respondo, por
   exemplo, "pode dar" ou "pode publicar o commit". Só publique depois desse aval, e só o
   que eu autorizei. Só o que está no GitHub fica.
+- **Versões:** o número da versão fica em `app/package.json` e o histórico no
+  `CHANGELOG.md`. Enquanto o app está em beta uso `0.MEIO.FINAL`: o número do meio sobe
+  quando entra tela ou funcionalidade nova (0.4.0) e o último, numa correção pequena
+  (0.3.1). Eu digo quando é uma versão nova. Aí você sobe o número no `package.json`
+  (`npm version X.Y.Z --no-git-tag-version`, dentro de `app/`), escreve o que mudou no
+  `CHANGELOG.md` e marca o commit com a etiqueta `vX.Y.Z` (git tag). A etiqueta só vai pro
+  GitHub com o meu aval, junto com o push.
 - Mensagens de commit em português, com um **título claro**. Quando falar de um commit
   comigo, use o título dele, por extenso. Nunca o código curto (hash): aqueles números só
   uma IA entende.

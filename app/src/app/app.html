@@ -1,14 +1,17 @@
 <header class="topo">
   <div class="miolo">
-    <h1 class="marca"><a routerLink="/">CarnaVou</a></h1>
+    <h1 class="marca">
+      <a routerLink="/">
+        <img class="emblema" src="logo/emblema.png" alt="" width="48" height="56" />
+        <img class="palavra" src="logo/palavra.png" alt="CarnaVou" width="160" height="37" />
+      </a>
+    </h1>
     <p class="frase">Pra onde a gente vai?</p>
   </div>
 </header>
 
-<div class="miolo corpo">
-  <p class="aviso">Dados de exemplo: os blocos, os artistas e os horários são inventados.</p>
+<main class="miolo corpo">
+  <router-outlet />
+</main>
 
-  <main>
-    <router-outlet />
-  </main>
-</div>
+<app-menu-inferior />

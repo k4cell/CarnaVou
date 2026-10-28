@@ -94,6 +94,7 @@ export const BLOCOS: Bloco[] = [
       { nome: 'Zeca Tamborim', inicio: '19:00' },
     ],
     estilo: 'eletronico',
+    publico: 'Eletrônica',
   },
 
   // Avenida Faria Lima
@@ -195,6 +196,7 @@ export const BLOCOS: Bloco[] = [
       { nome: 'Duo Lantejoula', inicio: '18:00' },
     ],
     estilo: 'pop',
+    publico: 'LGBTQIA+',
   },
 
   // Minhocão
@@ -218,6 +220,7 @@ export const BLOCOS: Bloco[] = [
       { nome: 'Duo Lantejoula', inicio: '17:00' },
     ],
     estilo: 'eletronico',
+    publico: 'LGBTQIA+',
   },
 
   // Avenida Ipiranga com São João
@@ -275,6 +278,7 @@ export const BLOCOS: Bloco[] = [
       { nome: 'Mariana Tamborim', inicio: '14:30' },
     ],
     estilo: 'samba',
+    publico: 'Mulheres',
   },
   {
     id: 'frevo-do-largo',

@@ -22,7 +22,11 @@ não é como eu pensei e algumas são boas, mas ainda não separei quais.
 | "Vou", "Tô aqui" e "Como tá?" no beta | Ficam de fora do beta. A raiz é pra onde eu vou e a tendência de hoje |
 | Como organizar as telas | Árvore de opções: Em destaque, depois um lugar, depois um bloco |
 | Quais lugares destacar | Os 10 lugares com mais megablocos no carnaval de 2026 em SP |
-| Paleta de cores | Aprovada: fundo claro, roxo, amarelo e rosa como detalhe. Verde e laranja guardados pros status ao vivo |
+| Paleta de cores | Aprovada: fundo claro, cabeçalho escuro da logo, roxo e amarelo. As cinco cores se revezam nas faixas |
+| Artistas da semana em cada lugar | Aprovado: aparecem no cartão de cada lugar em "Em destaque" |
+| Uma cor de faixa para cada lugar | Aprovado: num padrão de cinco cores |
+| Público-alvo do bloco | Aprovado: aparece na página do bloco, só quando for claro |
+| Menu de baixo | Aprovado: Descobrir, Mapa, Amigos e Favoritos. Mapa, Amigos e Favoritos mostram "Em breve" |
 
 ## Funcionalidades sugeridas
 
@@ -40,6 +44,7 @@ não é como eu pensei e algumas são boas, mas ainda não separei quais.
 **Página do bloco**
 - Horário, local, percurso, estilo, tamanho estimado, quantas pessoas vão, como está
   agora e o botão de compartilhar.
+- Mais pra frente: "possíveis próximos blocos" ou "blocos próximos a esse".
 
 **Termômetro (as "trends")**
 
@@ -71,8 +76,8 @@ Um desenho de como o app poderia ficar trouxe estas ideias. Nenhuma está aprova
 - Filtros de um toque: "Agora", "Gratuito", "Perto de mim", infantil, pet friendly e estilo
   musical.
 - Abas "Hoje", "Amanhã" e "Esta semana".
-- Favoritos (um coração no banner) e um menu de baixo: Descobrir, Mapa, Favoritos e
-  Info/Ajuda.
+- Favoritos (um coração no banner). O menu de baixo já está decidido, mas ainda não decidi o
+  que serão os Favoritos nem os Amigos.
 - Um mapa da folia com pins, o botão "Como chegar" e um jeito de alternar entre lista e mapa.
 - Etiquetas "Bombando agora", "Ao vivo" e "Muito lotado". Dependem de sinal de quem está no
   lugar, então ficam fora do beta.

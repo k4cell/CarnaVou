@@ -21,6 +21,7 @@ describe('App', () => {
     const fixture = TestBed.createComponent(App);
     await fixture.whenStable();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain('CarnaVou');
+    // O emblema é só enfeite (alt vazio); o nome do app fica na imagem da palavra.
+    expect(compiled.querySelector('h1 img[alt="CarnaVou"]')).not.toBeNull();
   });
 });
