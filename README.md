@@ -3,7 +3,7 @@
 **A central do "point" do carnaval de rua de São Paulo.** Quero responder a pergunta que
 todo grupo faz no carnaval: *"pra onde a gente vai agora?"*
 
-> **Situação (28/10/2026): começando o beta, versão 0.4.0.** Já tem o projeto criado e as três telas do
+> **Situação (28/10/2026): começando o beta, versão 0.4.1.** Já tem o projeto criado e as três telas do
 > esqueleto (lugares em destaque, um lugar e um bloco), mas com blocos fictícios e só a
 > primeira camada de cor. Ainda não tem nenhum bloco de verdade.
 
@@ -107,7 +107,8 @@ já estar acabando, meio morto. O aplicativo seria muito bom se até me avisasse
 Já respondi as perguntas sobre o carnaval de 2026 e já escolhi a stack. Mandei o primeiro
 desenho (a árvore de opções) e o beta já tem as três telas, com blocos fictícios. Mandei também o segundo
 desenho (o filtro Hoje / Amanhã / Geral) e ele já está na tela inicial. A próxima fase é o
-macro: as tendências de verdade e o mapa. Vou continuar desenhando o projeto pra definir o visual.
+macro: as tendências de verdade e o mapa. Antes de programar, fiz uma pausa tática: o
+planejamento está em [`docs/planejamento-do-mapa.md`](docs/planejamento-do-mapa.md). Vou continuar desenhando o projeto pra definir o visual.
 
 ### Ainda não pensei
 
@@ -115,13 +116,15 @@ macro: as tendências de verdade e o mapa. Vou continuar desenhando o projeto pr
 - De onde vêm os dados dos blocos (lista da prefeitura, cadastro manual, organizadores…).
   Por enquanto os blocos e os artistas são fictícios. Só os lugares são de verdade.
 - Como definir a "tendência de hoje" sem os votos dos usuários.
-- De onde vêm as tendências do "Em alta". Penso em usar as APIs do Google Maps, do
-  Instagram e do X, mas ainda não pesquisei o que cada uma deixa fazer, quanto custa e quais
-  são os limites.
+- Como montar o "Em alta" no começo. Pensei em usar as APIs do Google Maps, do Instagram e do
+  X, mas já pesquisei e nenhuma entrega pronto o que está em alta na cidade: o Instagram
+  limita a 30 hashtags por semana e o X cobra por uso (detalhes no planejamento do mapa).
 
 ## Arquivos do projeto
 
 - [`app/`](app): o site, feito em Angular.
+- [`docs/planejamento-do-mapa.md`](docs/planejamento-do-mapa.md): o planejamento do mapa e das
+  próximas fases.
 - [`design/`](design): a logo e as imagens de referência do visual, cada uma com a sua legenda.
 - [`CHANGELOG.md`](CHANGELOG.md): o que mudou em cada versão.
 - [`CLAUDE.md`](CLAUDE.md): minhas regras de trabalho para o Claude Code neste projeto.

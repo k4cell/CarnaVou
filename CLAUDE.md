@@ -39,6 +39,10 @@ calendário e o que eu ainda não pensei.
   não capriche antes de eu pedir.
 - Os **selos** dos cartões ("Já começou", "Hoje às 16h", "Amanhã às 11h", "5 blocos") ficam **sem cor** por
   enquanto: não coloque cor neles até eu pedir.
+- Antes de mexer no mapa ou na forma de guardar os dados, leia
+  [`docs/planejamento-do-mapa.md`](docs/planejamento-do-mapa.md): ali estão as regras pra não
+  travar o futuro (dados atrás da camada de consulta, ids e endereços que não mudam, mapa
+  isolado num componente, tudo que depende de data passando pelo relógio).
 - Toda decisão nova vai para a tabela "O que já decidi" do `README.md`, na hora em que eu
   decidir.
 - O que está em [`docs/ideias-em-aberto.md`](docs/ideias-em-aberto.md) são **sugestões que

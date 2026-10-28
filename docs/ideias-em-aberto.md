@@ -4,6 +4,8 @@ Ideias que surgiram nas primeiras conversas sobre o projeto (27/10/2026). Muita 
 não é como eu pensei e algumas são boas, mas ainda não separei quais.
 
 **Nada aqui é decisão.** O que eu decidir vai para o [`README.md`](../README.md).
+O planejamento do mapa e das próximas fases, que junta todas estas ideias num roteiro, está em
+[`planejamento-do-mapa.md`](planejamento-do-mapa.md).
 
 ---
 
@@ -95,8 +97,9 @@ Um desenho de como o app poderia ficar trouxe estas ideias. Nenhuma está aprova
 ## De onde vêm as tendências do "Em alta"
 
 Ideia, ainda não aprovada: usar as APIs do Google Maps, do Instagram e do X (o antigo
-Twitter) para saber o que está em alta e ordenar a lista. Falta pesquisar o que cada API
-deixa fazer, quanto custa e quais são os limites e as regras de uso.
+Twitter) para saber o que está em alta e ordenar a lista. Já pesquisei: o resumo está na
+seção 7 de [`planejamento-do-mapa.md`](planejamento-do-mapa.md). Nenhuma delas entrega pronto
+o que está em alta na cidade.
 
 ## Pontos difíceis levantados
 

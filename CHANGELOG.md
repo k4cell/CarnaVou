@@ -7,6 +7,18 @@ Enquanto o app está em beta, o número é `0.MEIO.FINAL`. O número do meio sob
 uma tela ou funcionalidade nova (0.3.0, 0.4.0…) e o último, quando é só uma correção pequena
 (0.3.1). Cada versão tem uma etiqueta no GitHub, como `v0.3.0`.
 
+## 0.4.1 (28/10/2026)
+
+### Entrou
+
+- **O planejamento do mapa e das próximas fases**, em `docs/planejamento-do-mapa.md`: o que
+  levantei sobre o Macadam, as opções de mapa, os dados, as APIs de tendências, a privacidade,
+  um roteiro de versões e as perguntas que ainda preciso responder.
+
+### Mudou
+
+- Tirei a frase "Pra onde a gente vai?" do cabeçalho.
+
 ## 0.4.0 (28/10/2026)
 
 ### Entrou
