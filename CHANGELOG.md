@@ -7,6 +7,13 @@ Enquanto o app está em beta, o número é `0.MEIO.FINAL`. O número do meio sob
 uma tela ou funcionalidade nova (0.3.0, 0.4.0…) e o último, quando é só uma correção pequena
 (0.3.1). Cada versão tem uma etiqueta no GitHub, como `v0.3.0`.
 
+## 0.3.1 (28/10/2026)
+
+### Mudou
+
+- A logo, o ícone do app e o favicon foram refeitos a partir da imagem maior da logo
+  (2752 × 1536 pixels), e ficaram mais nítidos. É a mesma logo.
+
 ## 0.3.0 (28/10/2026)
 
 ### Entrou

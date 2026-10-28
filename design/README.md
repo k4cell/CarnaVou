@@ -10,7 +10,7 @@ pin. Cores da logo: fundo `#130A29`, amarelo `#FFC200`, rosa `#E21D89` e laranja
 
 | Imagem | Legenda |
 |---|---|
-| [`logo/logo-oficial.jpg`](logo/logo-oficial.jpg) | A logo oficial do CarnaVou, do jeito que chegou: com o fundo escuro e o confete. Por isso ela não vai direto para o site. |
+| [`logo/logo-oficial.jpg`](logo/logo-oficial.jpg) | A logo oficial do CarnaVou, do jeito que chegou (2752 × 1536 pixels): com o fundo escuro e o confete. Por isso ela não vai direto para o site. |
 | [`logo/logo-emblema.png`](logo/logo-emblema.png) | Só o pin com a máscara, com o fundo transparente. Serve para o cabeçalho e para o ícone do app. |
 | [`logo/logo-palavra.png`](logo/logo-palavra.png) | Só a palavra "CarnaVou", com o fundo transparente. Serve para o cabeçalho. |
 

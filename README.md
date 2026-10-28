@@ -3,7 +3,7 @@
 **A central do "point" do carnaval de rua de São Paulo.** Quero responder a pergunta que
 todo grupo faz no carnaval: *"pra onde a gente vai agora?"*
 
-> **Situação (28/10/2026): começando o beta, versão 0.3.0.** Já tem o projeto criado e as três telas do
+> **Situação (28/10/2026): começando o beta, versão 0.3.1.** Já tem o projeto criado e as três telas do
 > esqueleto (lugares em destaque, um lugar e um bloco), mas com blocos fictícios e só a
 > primeira camada de cor. Ainda não tem nenhum bloco de verdade.
 
