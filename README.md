@@ -3,8 +3,9 @@
 **A central do "point" do carnaval de rua de São Paulo.** Quero responder a pergunta que
 todo grupo faz no carnaval: *"pra onde a gente vai agora?"*
 
-> **Situação (27/10/2026): começando o beta.** Já tem o projeto criado e a primeira tela, um
-> catálogo de banners, mas com dados fictícios. Ainda não tem nenhum bloco de verdade.
+> **Situação (28/10/2026): começando o beta.** Já tem o projeto criado e a primeira tela, um
+> catálogo de banners, mas com dados fictícios e só o esqueleto do visual. Ainda não tem
+> nenhum bloco de verdade.
 
 ---
 
@@ -39,6 +40,7 @@ Daí veio o CarnaVou, uma central que mostra:
 | **Stack** | Angular, na pasta `app/`. Sem servidor nem banco de dados por enquanto: os dados ficam em arquivos dentro do projeto e as páginas são geradas prontas. |
 | **Beta** | Sem "Vou", "Tô aqui" e "Como tá?". A raiz do negócio é **pra onde eu vou** e qual é a tendência de hoje, não importa se está cheio ou não. |
 | **Primeira tela** | Um catálogo de banners dos principais blocos. Cada banner mostra o dia, o local, as atrações e a hora que começa. A hora que termina só aparece se tiver. "Começando agora / Daqui a pouco / Mais tarde" fica pra depois. |
+| **Visual** | Por enquanto é só um esqueleto: fundo claro, cores simples e sem degradê. Cores e letras eu decido mais pra frente. |
 
 ### Sobre compartilhar
 
@@ -96,7 +98,7 @@ já estar acabando, meio morto. O aplicativo seria muito bom se até me avisasse
 
 Já respondi as perguntas sobre o carnaval de 2026 e já escolhi a stack. Agora vou montando
 o beta aos poucos, começando pelo catálogo de banners. O mapa e a página de cada bloco vêm
-depois.
+depois. Vou desenhar o projeto e mandar o desenho, pra definir o visual.
 
 ### Ainda não pensei
 

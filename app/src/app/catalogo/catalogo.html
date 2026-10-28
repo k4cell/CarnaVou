@@ -3,7 +3,7 @@
 <ul class="lista">
   @for (banner of banners; track banner.id) {
     <li>
-      <article class="banner" [class]="'estilo-' + banner.estilo">
+      <article class="banner">
         <time class="data" [attr.datetime]="banner.data">
           <span class="semana">{{ banner.semana }}</span>
           <span class="dia">{{ banner.dia }}</span>

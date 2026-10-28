@@ -25,6 +25,8 @@ calendário e o que eu ainda não pensei.
 
 - Já pode programar. O beta é um catálogo de banners dos blocos, com **dados fictícios**.
   Fica de fora, por enquanto, o "Vou", o "Tô aqui" e o "Como tá?".
+- O visual é só um **esqueleto**: fundo claro, cores simples e sem degradê. Cores, letras
+  e estilo eu decido mais pra frente. Não capriche no visual antes de eu pedir.
 - Toda decisão nova vai para a tabela "O que já decidi" do `README.md`, na hora em que eu
   decidir.
 - O que está em [`docs/ideias-em-aberto.md`](docs/ideias-em-aberto.md) são **sugestões que

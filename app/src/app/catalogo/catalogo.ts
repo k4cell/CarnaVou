@@ -13,7 +13,6 @@ interface Banner {
   local: string;
   atracoes: string;
   horario: string;
-  estilo: string;
 }
 
 const FORMATO_SEMANA = new Intl.DateTimeFormat('pt-BR', { weekday: 'short' });
@@ -45,7 +44,6 @@ function montarBanner(bloco: Bloco): Banner {
     local: `${bloco.local} · ${bloco.bairro}`,
     atracoes: bloco.atracoes.join(', '),
     horario: bloco.fim ? `${inicio} · vai até ${formatarHora(bloco.fim)}` : inicio,
-    estilo: bloco.estilo,
   };
 }
 
