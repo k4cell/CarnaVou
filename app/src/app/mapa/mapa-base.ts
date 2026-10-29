@@ -13,10 +13,12 @@ import {
   viewChild,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import type { Map as MapaDoMapLibre, Marker } from 'maplibre-gl';
+import type { GeoJSONSource, Map as MapaDoMapLibre, Marker } from 'maplibre-gl';
 
 import { Zona } from '../dados/tipos';
-import { BibliotecaDeMapa, CARREGAR_MAPLIBRE } from './maplibre';
+import { contornoDoCirculo } from './circulo';
+import { LIMITES_DA_GRANDE_SP } from './limites';
+import { BibliotecaDeMapa, CARREGAR_MAPLIBRE, enderecoNoSite } from './maplibre';
 
 /** Um ponto do mapa: é só o que o mapa precisa saber, nada do resto do app. */
 export interface PontoNoMapa {
@@ -27,11 +29,14 @@ export interface PontoNoMapa {
   zona: Zona;
 }
 
+/** Onde a pessoa está: um ponto e o erro provável da posição, em metros. */
+export interface PosicaoNoMapa {
+  lat: number;
+  lng: number;
+  precisao: number;
+}
+
 const CENTRO_DE_SAO_PAULO: [number, number] = [-46.655, -23.57];
-const LIMITES_DA_GRANDE_SP: [[number, number], [number, number]] = [
-  [-47.2, -23.95],
-  [-46.2, -23.2],
-];
 /**
  * Espaço livre em volta dos pontos. Em cima ficam as abas e a ponta do pino é que marca o lugar,
  * então o espaço de cima também tem que dar a altura do pino (50 px) para ele não ficar escondido.
@@ -40,13 +45,40 @@ const ESPACO_NAS_BORDAS = { top: 190, bottom: 70, left: 50, right: 50 };
 
 /**
  * Onde ficam, no site, o estilo do mapa e o "worker" do MapLibre (o ajudante que desenha os
- * blocos do mapa sem travar a tela). O worker é copiado de `node_modules` no build (angular.json).
+ * blocos do mapa sem travar a tela). O build copia os dois, e o próprio MapLibre, de
+ * `node_modules` para `mapa/` (angular.json).
  */
 const ESTILO_DO_MAPA = 'mapa/estilo-carnavou.json';
 const WORKER_DO_MAPA = 'mapa/maplibre-gl-worker.mjs';
 
-function enderecoNoSite(caminho: string): string {
-  return new URL(caminho, document.baseURI).href;
+/** O círculo de precisão em volta da pessoa é uma "fonte" de dados com duas camadas no mapa. */
+const FONTE_DA_PRECISAO = 'voce-precisao';
+const ZOOM_AO_ACHAR_A_PESSOA = 15;
+
+type DadosGeoJson = Parameters<GeoJSONSource['setData']>[0];
+
+/** A cor vem das variáveis do app (`styles.scss`), para o mapa e o resto do site combinarem. */
+function corDoTema(variavel: string, padrao: string): string {
+  return getComputedStyle(document.documentElement).getPropertyValue(variavel).trim() || padrao;
+}
+
+function areaDaPrecisao(voce: PosicaoNoMapa | null): DadosGeoJson {
+  if (!voce) {
+    return { type: 'FeatureCollection', features: [] };
+  }
+  return {
+    type: 'Feature',
+    properties: {},
+    geometry: { type: 'Polygon', coordinates: [contornoDoCirculo(voce.lat, voce.lng, voce.precisao)] },
+  };
+}
+
+function criarBolinhaDaPessoa(): HTMLDivElement {
+  const bolinha = document.createElement('div');
+  bolinha.className = 'voce';
+  bolinha.setAttribute('role', 'img');
+  bolinha.setAttribute('aria-label', 'Você está aqui');
+  return bolinha;
 }
 
 const PINO_SVG =
@@ -95,6 +127,8 @@ interface Pino {
 export class MapaBase {
   readonly pontos = input.required<PontoNoMapa[]>();
   readonly selecionado = input<string | null>(null);
+  /** Onde a pessoa está, quando ela pediu. Aparece como uma bolinha com um círculo de precisão. */
+  readonly voce = input<PosicaoNoMapa | null>(null);
   readonly escolher = output<string>();
   /** A pessoa tocou no mapa, fora de qualquer pino. */
   readonly fundoTocado = output<void>();
@@ -104,8 +138,11 @@ export class MapaBase {
   private readonly area = viewChild.required<ElementRef<HTMLElement>>('mapa');
   private readonly carregar = inject(CARREGAR_MAPLIBRE);
   private readonly pronto = signal(false);
+  /** O estilo do mapa só aceita camadas novas (o círculo de precisão) depois de carregar. */
+  private readonly estiloPronto = signal(false);
 
   private biblioteca?: BibliotecaDeMapa;
+  private bolinhaDaPessoa?: Marker;
   private mapa?: MapaDoMapLibre;
   private destruido = false;
   private readonly pinos = new Map<string, Pino>();
@@ -119,6 +156,13 @@ export class MapaBase {
       const selecionado = this.selecionado();
       if (this.pronto()) {
         this.atualizar(pontos, selecionado);
+      }
+    });
+    effect(() => {
+      const voce = this.voce();
+      const estiloPronto = this.estiloPronto();
+      if (this.pronto()) {
+        this.atualizarAPessoa(voce, estiloPronto);
       }
     });
     inject(DestroyRef).onDestroy(() => this.destruir());
@@ -148,6 +192,7 @@ export class MapaBase {
       });
       this.mapa.touchZoomRotate.disableRotation();
       this.mapa.on('click', () => this.fundoTocado.emit());
+      this.mapa.on('load', () => this.estiloPronto.set(true));
       this.pronto.set(true);
     } catch (erro) {
       console.warn('Não consegui abrir o mapa.', erro);
@@ -203,6 +248,68 @@ export class MapaBase {
     }
   }
 
+  /** Leva o mapa até a pessoa, chegando mais perto se ele estiver afastado. */
+  irPara(lat: number, lng: number): void {
+    const mapa = this.mapa;
+    if (!mapa || this.destruido) {
+      return;
+    }
+    mapa.easeTo({ center: [lng, lat], zoom: Math.max(mapa.getZoom(), ZOOM_AO_ACHAR_A_PESSOA), duration: 600 });
+  }
+
+  private atualizarAPessoa(voce: PosicaoNoMapa | null, estiloPronto: boolean): void {
+    const mapa = this.mapa;
+    const biblioteca = this.biblioteca;
+    if (!mapa || !biblioteca || this.destruido) {
+      return;
+    }
+
+    if (!voce) {
+      this.bolinhaDaPessoa?.remove();
+      this.bolinhaDaPessoa = undefined;
+    } else if (this.bolinhaDaPessoa) {
+      this.bolinhaDaPessoa.setLngLat([voce.lng, voce.lat]);
+    } else {
+      this.bolinhaDaPessoa = new biblioteca.Marker({ element: criarBolinhaDaPessoa(), anchor: 'center' })
+        .setLngLat([voce.lng, voce.lat])
+        .addTo(mapa);
+    }
+
+    if (estiloPronto) {
+      this.desenharAPrecisao(voce);
+    }
+  }
+
+  private desenharAPrecisao(voce: PosicaoNoMapa | null): void {
+    const mapa = this.mapa;
+    if (!mapa) {
+      return;
+    }
+    const dados = areaDaPrecisao(voce);
+    const fonte = mapa.getSource(FONTE_DA_PRECISAO) as GeoJSONSource | undefined;
+    if (fonte) {
+      fonte.setData(dados);
+      return;
+    }
+    if (!voce) {
+      return;
+    }
+    const cor = corDoTema('--rosa', '#e21d89');
+    mapa.addSource(FONTE_DA_PRECISAO, { type: 'geojson', data: dados });
+    mapa.addLayer({
+      id: `${FONTE_DA_PRECISAO}-area`,
+      type: 'fill',
+      source: FONTE_DA_PRECISAO,
+      paint: { 'fill-color': cor, 'fill-opacity': 0.15 },
+    });
+    mapa.addLayer({
+      id: `${FONTE_DA_PRECISAO}-borda`,
+      type: 'line',
+      source: FONTE_DA_PRECISAO,
+      paint: { 'line-color': cor, 'line-opacity': 0.5, 'line-width': 1 },
+    });
+  }
+
   /** Mostra todos os pontos de uma vez. Com um só, chega perto dele. */
   private enquadrar(pontos: PontoNoMapa[], duracao: number): void {
     const mapa = this.mapa;
@@ -227,6 +334,8 @@ export class MapaBase {
       pino.marcador.remove();
     }
     this.pinos.clear();
+    this.bolinhaDaPessoa?.remove();
+    this.bolinhaDaPessoa = undefined;
     this.mapa?.remove();
     this.mapa = undefined;
   }

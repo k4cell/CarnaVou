@@ -7,6 +7,42 @@ Enquanto o app está em beta, o número é `0.MEIO.FINAL`. O número do meio sob
 uma tela ou funcionalidade nova (0.3.0, 0.4.0…) e o último, quando é só uma correção pequena
 (0.3.1). Cada versão tem uma etiqueta no GitHub, como `v0.3.0`.
 
+## 0.7.0 (29/10/2026)
+
+### Entrou
+
+- **O botão "onde estou"** no mapa: um botão redondo e branco, no canto de baixo, à direita.
+- **A tela que explica a localização**, antes do aviso do celular: para que serve, que o app
+  não segue o caminho, que a posição não é guardada nem enviada e que dá para não usar. Tem
+  "Continuar" e "Agora não".
+- **A bolinha rosa com o círculo de precisão** no mapa, e o mapa chega perto da pessoa.
+- **A distância no cartão do ponto**, em linha reta: "A 2,6 km de você, em linha reta."
+- **Os avisos:** o celular não deixou, não achou a posição agora, o navegador não tem
+  localização, ou a pessoa está fora da Grande São Paulo. O mapa continua funcionando.
+
+### Como a localização funciona
+
+- Só liga quando eu toco no botão. Uma leitura por toque: não acompanha o caminho e não usa a
+  localização em segundo plano.
+- A posição fica só na memória, enquanto o site está aberto. Não é guardada nem enviada.
+- Quando a pessoa já deixou, o toque procura direto. Quando já negou, só avisa, sem pedir de
+  novo.
+
+### Mudou
+
+- **O MapLibre saiu do código do Angular.** O build copia os arquivos dele para a pasta
+  `mapa/` do site, e eles só são baixados quando eu abro a aba Mapa. Antes, o service
+  worker (o que faz o site funcionar como app) baixava o MapLibre, uns 246 kB, logo na
+  primeira visita, mesmo para quem nunca abria o mapa. Agora ele só guarda o que a pessoa
+  abriu.
+- O limite de tamanho do CSS de um componente voltou para 4 kB (aviso) e 8 kB (erro), porque o
+  CSS do MapLibre não fica mais dentro de um componente.
+
+### Peso
+
+- A primeira tela está com cerca de 87 kB (comprimida). O MapLibre (uns 246 kB) e a tela do
+  mapa (uns 7 kB) só são baixados quando eu abro a aba Mapa.
+
 ## 0.6.0 (28/10/2026)
 
 ### Entrou

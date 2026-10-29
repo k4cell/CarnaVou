@@ -29,7 +29,7 @@
                 "input": "public"
               },
               {
-                "glob": "maplibre-gl-worker.mjs",
+                "glob": "{maplibre-gl.mjs,maplibre-gl-worker.mjs,maplibre-gl.css}",
                 "input": "node_modules/maplibre-gl/dist",
                 "output": "mapa"
               }
@@ -54,8 +54,8 @@
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "80kB",
-                  "maximumError": "100kB"
+                  "maximumWarning": "4kB",
+                  "maximumError": "8kB"
                 }
               ],
               "outputHashing": "all",

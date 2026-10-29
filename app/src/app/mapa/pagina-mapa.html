@@ -1,6 +1,7 @@
 <app-mapa-base
   [pontos]="pontos()"
   [selecionado]="cartao()?.local?.id ?? null"
+  [voce]="voce()"
   (escolher)="escolher($event)"
   (fundoTocado)="fechar()"
 />
@@ -12,24 +13,58 @@
   }
 </div>
 
-@if (cartao(); as achado) {
-  <section class="cartao-do-ponto" aria-label="Lugar escolhido">
-    <button type="button" class="fechar" aria-label="Fechar" (click)="fechar()">×</button>
+<div class="rodape">
+  <button
+    #botaoOndeEstou
+    type="button"
+    class="botao-redondo"
+    aria-label="Mostrar onde eu estou"
+    [attr.aria-busy]="procurando()"
+    (click)="ondeEstou()"
+  >
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <circle cx="12" cy="12" r="6.5" />
+      <circle cx="12" cy="12" r="1.5" class="miolo" />
+      <path d="M12 2v3M12 19v3M2 12h3M19 12h3" />
+    </svg>
+  </button>
 
-    <h2 class="nome">{{ achado.local.nome }}</h2>
-    <div class="linha">
-      <app-zona-tag [zona]="achado.local.zona" />
-      <span class="selo">{{ achado.selo }}</span>
+  @if (aviso(); as texto) {
+    <div class="aviso" role="status">
+      <span>{{ texto }}</span>
+      @if (!procurando()) {
+        <button type="button" class="fechar" aria-label="Fechar o aviso" (click)="fecharOAviso()">×</button>
+      }
     </div>
+  }
 
-    @if (achado.principal) {
-      <p class="artistas">Artistas: <strong class="principal">{{ achado.principal }}</strong>{{ achado.resto }}</p>
-    }
+  @if (cartao(); as achado) {
+    <section class="cartao-do-ponto" aria-label="Lugar escolhido">
+      <button type="button" class="fechar" aria-label="Fechar" (click)="fechar()">×</button>
 
-    <div class="acoes">
-      <a class="botao botao-principal" [href]="links()?.google" target="_blank" rel="noopener">Como chegar</a>
-      <a class="botao" [href]="links()?.waze" target="_blank" rel="noopener">Waze</a>
-      <a class="botao" [routerLink]="['/local', achado.local.id]">Ver o lugar</a>
-    </div>
-  </section>
+      <h2 class="nome">{{ achado.local.nome }}</h2>
+      <div class="linha">
+        <app-zona-tag [zona]="achado.local.zona" />
+        <span class="selo">{{ achado.selo }}</span>
+      </div>
+
+      @if (distancia(); as perto) {
+        <p class="distancia">A {{ perto }} de você, em linha reta.</p>
+      }
+
+      @if (achado.principal) {
+        <p class="artistas">Artistas: <strong class="principal">{{ achado.principal }}</strong>{{ achado.resto }}</p>
+      }
+
+      <div class="acoes">
+        <a class="botao botao-principal" [href]="links()?.google" target="_blank" rel="noopener">Como chegar</a>
+        <a class="botao" [href]="links()?.waze" target="_blank" rel="noopener">Waze</a>
+        <a class="botao" [routerLink]="['/local', achado.local.id]">Ver o lugar</a>
+      </div>
+    </section>
+  }
+</div>
+
+@if (explicando()) {
+  <app-explicacao-da-localizacao (continuar)="continuar()" (agoraNao)="agoraNao()" />
 }

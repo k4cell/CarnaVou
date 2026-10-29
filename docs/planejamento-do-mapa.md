@@ -11,9 +11,10 @@
 |---|---|---|
 | 0.4.1 | Este planejamento e o cabeçalho sem a frase | feito |
 | 0.5.0 | Dados de teste reais: o carnaval de 2026 | feito |
-| **0.6.0** | **Mapa de leitura: um ponto por lugar, com a cor da zona** | **feito** |
-| **0.6.1** | **Copiar o link** | **próximo** |
-| 0.7.0 | "Onde estou" e distância | depois |
+| 0.6.0 | Mapa de leitura: um ponto por lugar, com a cor da zona | feito |
+| 0.6.1 | O service worker só guarda o MapLibre depois de eu abrir o mapa | feito, no mesmo commit da 0.7.0 |
+| **0.7.0** | **"Onde estou" e distância** | **feito** |
+| **0.7.1** | **Copiar o link** | **próximo** |
 | 0.8.0 | Blocos no mapa e percursos | depois |
 | 0.9.0 | Offline e desempenho | depois |
 | depois | Backend, Favoritos, "Em alta" calculado e, **por último**, a parte social | |
@@ -32,18 +33,29 @@
   OpenStreetMap).
 - No Centro, três pinos ficam um em cima do outro quando o mapa está afastado. Dá para
   separar com o zoom; agrupar os pinos fica para depois.
-- O service worker (o que faz o site funcionar como app) baixa o MapLibre em segundo plano
-  logo na primeira visita, mesmo para quem nunca abre o mapa: uns 246 kB a mais. Sugestão:
-  tirar o MapLibre dessa lista e só guardar quando a pessoa abrir o mapa (0.9.0, offline e
-  desempenho, ou antes, se eu pedir).
-- Não testei num celular de verdade nem num celular fraco.
+- Não testei num celular de verdade nem num celular fraco. A localização eu só testei
+  simulando a posição no navegador do computador: falta ver o aviso do celular de verdade, no
+  iPhone e no Android.
 - O Uber ficou fora do "Como chegar" (não confirmei o link dele).
 
-**O que falta decidir:**
+**O que a 0.6.1 trouxe (feito):**
 
-1. Contar a **grande mudança sobre os dias**, que mexe no modelo de dados.
-2. Se o service worker deve guardar o MapLibre já na primeira visita (offline melhor, mais
-   dados gastos) ou só depois de abrir o mapa (primeira visita mais leve).
+- O MapLibre, o estilo e o worker ficam em `mapa/` e só são baixados quando eu abro a aba
+  Mapa. O service worker (o que faz o site funcionar como app) deixou de baixá-los na
+  primeira visita: eram uns 246 kB a mais, mesmo para quem nunca abria o mapa. Agora ele só
+  guarda o que a pessoa abriu. Isso é o código do mapa: os pedaços do mapa em si (ruas e
+  letras) continuam vindo da internet.
+
+**O que a 0.7.0 trouxe (feito):**
+
+- O botão redondo "onde estou" no mapa e a tela que explica a localização antes do aviso do
+  celular ("Continuar" e "Agora não").
+- A bolinha rosa com o círculo de precisão, e o mapa chega perto da pessoa.
+- A distância, em linha reta, no cartão do ponto.
+- Avisos para quem negou, para quando o celular não acha a posição, para navegador sem
+  localização e para quem está fora da Grande São Paulo.
+
+**O que falta decidir:** veja "Ainda aberto", na seção 11.
 
 **Como usar este documento:** a cada passo, o que foi feito, o que falta e os próximos passos
 saem daqui e vão para a conversa.
@@ -188,6 +200,12 @@ para a lista.
 - Sem rastreamento contínuo e sem segundo plano (bateria e privacidade).
 - Quem negar continua usando o app normalmente.
 
+**Como ficou na 0.7.0:** o botão redondo "onde estou" fica no mapa. Se o celular ainda vai
+perguntar, aparece antes uma tela que explica para que serve ("Continuar" e "Agora não"). Se
+a pessoa já deixou, vai direto; se já negou, só avisa. É uma leitura por toque, e a posição
+fica só na memória, sem guardar nem enviar. Quem está fora da Grande São Paulo recebe um aviso,
+porque o mapa não sai de lá.
+
 ### 4.4 "Como chegar"
 
 Links que abrem o app de mapa do celular, sem API paga:
@@ -202,6 +220,8 @@ Links que abrem o app de mapa do celular, sem API paga:
 O site já guarda o que precisa no celular (service worker). Para o mapa:
 
 - os pontos e os dados do dia **sempre** ficam guardados;
+- o MapLibre, o estilo e o worker só ficam guardados **depois de eu abrir o mapa** pela
+  primeira vez (0.6.1), para a primeira visita ficar leve;
 - o fundo do mapa guarda só o que a pessoa já viu, com limite de tamanho e de idade;
 - o OpenStreetMap oficial **não permite** baixar a cidade para uso offline; já o OpenFreeMap e
   o PMTiles permitem, com regras.
@@ -292,8 +312,8 @@ Usar raspagem (copiar telas de redes sociais) **viola os termos** e arrisca bloq
 | **Mapa** com um ponto por lugar e filtro Hoje/Amanhã/Geral | **0.6.0, feito** | conferir as coordenadas à mão |
 | Botão "Como chegar" | **0.6.0, feito** (Google Maps e Waze) | Uber: confirmar o link |
 | Alternar entre lista e mapa | **0.6.0, feito**, pelo menu de baixo (Descobrir e Mapa) | nada |
-| Botão de **copiar o link** (decidido) | 0.6.1 | nada |
-| Tela que explica a localização, "onde estou" e distância | 0.7.0 | permissão do celular |
+| Botão de **copiar o link** (decidido) | 0.7.1 | nada |
+| Tela que explica a localização, "onde estou" e distância | **0.7.0, feito** | testar num celular de verdade |
 | Pontos por bloco e **percurso** | 0.8.0 | coordenadas e percursos dos blocos |
 | "Onde o bloco deve estar às 16h" | depois dos percursos | percursos com horário |
 | **Dados reais de 2027** | quando a programação sair | a mudança sobre os dias; fonte dos dados |
@@ -323,17 +343,18 @@ As versões são **sugestões**. Cada uma é pequena e termina com o site funcio
 2. **0.6.0, mapa de leitura (feito).** A aba Mapa mostra os 10 lugares como pontos (com a cor da
    zona), com o mesmo filtro Hoje/Amanhã/Geral da tela inicial. Tocar abre o cartão curto com
    o botão "Como chegar". Sem localização.
-3. **0.6.1, copiar o link** de um lugar e de um bloco.
-4. **0.7.0, "onde estou"** e a distância, com uma tela que explica a localização antes do
-   aviso do celular.
-5. **0.8.0, blocos no mapa**, com o ponto de concentração e, onde houver, o percurso.
-6. **0.9.0, offline e desempenho** de verdade.
-7. **Depois do beta:** backend (Vou, Favoritos com conta), "Em alta" calculado e
+3. **0.6.1, o service worker só guarda o MapLibre depois de eu abrir o mapa (feito).**
+4. **0.7.0, "onde estou" e a distância (feito),** com uma tela que explica a localização antes
+   do aviso do celular.
+5. **0.7.1, copiar o link** de um lugar e de um bloco.
+6. **0.8.0, blocos no mapa**, com o ponto de concentração e, onde houver, o percurso.
+7. **0.9.0, offline e desempenho** de verdade.
+8. **Depois do beta:** backend (Vou, Favoritos com conta), "Em alta" calculado e
    notificações. **A parte social fica por último.**
 
 ## 11. O que já decidi e o que ainda preciso decidir
 
-**Já decidi (28/10/2026):**
+**Já decidi (28 e 29/10/2026):**
 
 1. O Macadam é o app que eu citei (os prints estão em `design/referencias`).
 2. **Os dados de teste são o carnaval de 2026 de verdade, com nomes reais,** como se hoje fosse
@@ -343,18 +364,28 @@ As versões são **sugestões**. Cada uma é pequena e termina com o site funcio
 5. O **teste entre Leaflet e MapLibre fica para mais tarde**.
 6. **A parte social (Amigos) fica por último**, porque não é o foco.
 7. **Aprovei o MapLibre com OpenFreeMap** para o mapa (seção 4.1).
+8. **A "grande mudança sobre os dias" era usar os dias do carnaval de 2026** nos dados de
+   teste. Já está feito, na 0.5.0.
+9. **O service worker só guarda o MapLibre depois de eu abrir o mapa** (0.6.1).
+10. **A localização só liga quando eu toco em "onde estou"**, depois de uma tela que explica.
+    É uma leitura por toque: sem acompanhar o caminho, sem segundo plano e sem guardar nem
+    enviar a posição (0.7.0).
 
 **Ainda aberto:**
 
-1. **A grande mudança sobre os dias.** Preciso contar antes de fechar o modelo de dados.
-2. **O service worker e o MapLibre:** guardar já na primeira visita ou só depois de abrir o
-   mapa (ver "O que falta", no Andamento).
-3. **Fonte dos dados reais de 2027** e quem cadastra.
-4. **O que serão os Favoritos.** Posso começar só no aparelho?
-5. **Quanto eu aceito pagar por mês** (mapas e APIs) no começo?
-6. **Onde publicar o site e que endereço usar.** Hoje ele só existe no meu computador.
-7. **Como vou ganhar dinheiro.** Isso decide o que preciso medir desde já.
-8. **Termos de uso e privacidade**, e a conferência da logo.
+1. **Fonte dos dados reais de 2027** e quem cadastra.
+2. **O que serão os Favoritos.** Posso começar só no aparelho?
+3. **Quanto eu aceito pagar por mês** (mapas e APIs) no começo?
+4. **Onde publicar o site e que endereço usar.** Hoje ele só existe no meu computador.
+5. **Como vou ganhar dinheiro.** Isso decide o que preciso medir desde já.
+6. **Termos de uso e privacidade**, e a conferência da logo.
+7. **A bolinha deve acompanhar a pessoa andando?** Hoje é uma leitura por toque, que gasta
+   menos bateria e é mais privado.
+8. **Onde mostrar a distância?** Hoje só no cartão do ponto, no mapa. Dá para mostrar também
+   na lista Descobrir e em etiquetas ao lado dos pinos, como no Macadam.
+9. **Quando a pessoa já deixou, o mapa abre já mostrando onde ela está?** Hoje só depois do
+   toque no botão.
+10. **A cor da bolinha** (hoje o rosa da logo) e **o texto da tela que explica**.
 
 ## Fontes que li
 

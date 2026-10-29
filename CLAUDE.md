@@ -29,7 +29,7 @@ calendário e o que eu ainda não pensei.
 - Já pode programar. O beta é uma **árvore de opções** com três telas: Em alta (os lugares,
   com o filtro Hoje / Amanhã / Geral), um lugar (os dias de festa e os principais artistas) e um bloco (a lista
   detalhada de atrações). Embaixo fica o menu fixo: Descobrir, Mapa, Amigos e Favoritos, e
-  as três últimas abas mostram só "Em breve" por enquanto. Os dados de teste são o carnaval
+  Amigos e Favoritos mostram só "Em breve" por enquanto (o Mapa já funciona). Os dados de teste são o carnaval
   de rua de 2026 **de verdade, com nomes reais** (ver `docs/dados-carnaval-2026.md`). Fica de fora, por enquanto, o "Vou", o "Tô aqui" e o "Como tá?".
 - O visual tem só a **primeira camada de cor**. A paleta fica em variáveis no topo de
   `app/src/styles.scss`: use sempre essas variáveis, nunca uma cor solta. Fundo claro (pra
@@ -75,12 +75,20 @@ calendário e o que eu ainda não pensei.
   parado nessa data e a tela avisa que é uma data de teste.
 - **O mapa** (`mapa/`) usa o MapLibre com o mapa da OpenFreeMap. Só o `MapaBase`
   (`mapa-base.ts`) conhece o MapLibre; o resto do app entrega uma lista de pontos e escuta
-  qual foi tocado. O MapLibre só é baixado quando abro a aba Mapa (`import()` em
-  `maplibre.ts`). O estilo do mapa é o `app/public/mapa/estilo-carnavou.json`, gerado por
-  `design/mapa/gerar-estilo-do-mapa.py` (rode de novo para mudar as cores). O "worker" do
-  MapLibre é copiado de `node_modules` para `mapa/` pelo `angular.json`. Nos testes o
+  qual foi tocado. O MapLibre não faz parte do código do Angular: o
+  `angular.json` copia `maplibre-gl.mjs`, `maplibre-gl-worker.mjs` e `maplibre-gl.css` de
+  `node_modules` para `mapa/`, e o `maplibre.ts` só baixa esses arquivos quando abro a aba
+  Mapa. O service worker (`ngsw-config.json`, grupo `mapa`) só guarda o que eu abri. O estilo do mapa é o `app/public/mapa/estilo-carnavou.json`, gerado por
+  `design/mapa/gerar-estilo-do-mapa.py` (rode de novo para mudar as cores). Nos testes o
   MapLibre é trocado por um falso (`maplibre-falso.ts`), sem WebGL nem internet. Os
   créditos "OpenFreeMap © OpenMapTiles Data from OpenStreetMap" têm que continuar à vista.
+- **A localização** (`localizacao/`): o serviço `Localizacao` só procura a posição quando eu
+  toco em "onde estou" (uma leitura por toque), e a tela `ExplicacaoDaLocalizacao` vem antes do
+  aviso do celular. **Nunca** acompanhe o caminho, use a localização em segundo plano, guarde a
+  posição (nem no `localStorage`) ou envie a posição para algum lugar. Quem negar continua
+  usando o mapa. O navegador do computador não tem GPS: para ver a tela funcionando, troque
+  `navigator.geolocation.getCurrentPosition` e `navigator.permissions.query` pelo console.
+  Nos testes, `geolocalizacao-falsa.ts` faz o papel do celular.
 - A logo e as imagens de referência ficam em `design/`, cada uma com legenda no
   `design/README.md`. O que o site usa fica em `app/public/logo/` e `app/public/icons/`:
   se a logo mudar, gere de novo a partir de `design/logo/`.
@@ -104,10 +112,14 @@ calendário e o que eu ainda não pensei.
   commit, pergunte: "Fiz o commit, posso dar o push?". Eu confiro tudo e respondo, por
   exemplo, "pode dar" ou "pode publicar o commit". Só publique depois desse aval, e só o
   que eu autorizei. Só o que está no GitHub fica.
+- Quando eu disser **"pode fazer o commit"**, isso quer dizer **o commit e o push**, de uma vez:
+  faça o commit e, em seguida, envie ao GitHub, com a etiqueta da versão. Vale para o trabalho
+  de que eu estava falando naquela hora. Sem essa frase (ou um "pode dar"), continue pedindo o
+  aval antes do push.
 - **Versões:** **todo push leva um número de versão**, não esqueça. O número fica em `app/package.json` e o histórico no
   `CHANGELOG.md`. Enquanto o app está em beta uso `0.MEIO.FINAL`: o número do meio sobe
   quando entra tela ou funcionalidade nova (0.6.0) e o último, numa correção pequena
-  (0.5.1). Antes de pedir o aval do push, escolha o número, diga qual é e por quê, e suba
+  (0.6.1). Antes de pedir o aval do push, escolha o número, diga qual é e por quê, e suba
   no `package.json` (`npm version X.Y.Z --no-git-tag-version`, dentro de `app/`), troque o título "Próxima versão" do
   `CHANGELOG.md` pelo número e a data, ponha o número na linha da Situação do README e
   marque o commit com a etiqueta `vX.Y.Z` (git tag). A etiqueta vai pro GitHub junto com o

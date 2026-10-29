@@ -4,6 +4,9 @@ import { provideRouter } from '@angular/router';
 import { cartoesDaAba } from '../dados/agenda';
 import { LOCAIS } from '../dados/locais';
 import { MENSAGENS_DA_ABA_VAZIA } from '../filtro/filtro-de-dia';
+import { distanciaEmMetros, textoDaDistancia } from '../localizacao/distancia';
+import { criarGeolocalizacaoFalsa, Resposta } from '../localizacao/geolocalizacao-falsa';
+import { CONSULTAR_PERMISSAO, GEOLOCALIZACAO, PermissaoDoCelular } from '../localizacao/localizacao';
 import { Relogio } from '../relogio/relogio';
 import { CARREGAR_MAPLIBRE } from './maplibre';
 import { criarMapLibreFalso, esperarOMapa } from './maplibre-falso';
@@ -14,14 +17,37 @@ const SABADO_14H = new Date(2026, 1, 14, 14, 0);
 // Sexta, antes do pré-carnaval: não tem bloco hoje nem amanhã.
 const SEXTA_ANTES = new Date(2026, 0, 30, 12, 0);
 
+// Uma pessoa na Avenida Paulista, e outra no Rio de Janeiro.
+const NA_PAULISTA: Resposta = { ok: { lat: -23.5614, lng: -46.6559, precisao: 40 } };
+const NO_RIO: Resposta = { ok: { lat: -22.9068, lng: -43.1729, precisao: 40 } };
+
+interface Celular {
+  /** O que o celular responde quando a posição é pedida. */
+  resposta?: Resposta;
+  /** O que o navegador diz sobre a permissão, sem abrir o aviso do celular. */
+  permissao?: PermissaoDoCelular | null;
+  /** O navegador não tem localização. */
+  semLocalizacao?: boolean;
+}
+
 describe('PaginaMapa', () => {
-  async function renderizar(agora?: Date) {
+  async function renderizar(agora?: Date, celular: Celular = {}) {
     const falso = criarMapLibreFalso();
+    const geo = criarGeolocalizacaoFalsa(celular.resposta ?? NA_PAULISTA);
+    let consultas = 0;
     await TestBed.configureTestingModule({
       imports: [PaginaMapa],
       providers: [
         provideRouter([]),
         { provide: CARREGAR_MAPLIBRE, useValue: () => Promise.resolve(falso.biblioteca) },
+        { provide: GEOLOCALIZACAO, useValue: celular.semLocalizacao ? null : geo.api },
+        {
+          provide: CONSULTAR_PERMISSAO,
+          useValue: async () => {
+            consultas++;
+            return celular.permissao === undefined ? 'prompt' : celular.permissao;
+          },
+        },
       ],
     }).compileComponents();
     if (agora) {
@@ -43,7 +69,33 @@ describe('PaginaMapa', () => {
         ?.click();
       await esperarOMapa(fixture);
     };
-    return { fixture, tela, falso, nomesDosPinos, cartao, tocarNoPino, tocarNaAba };
+    const botaoOndeEstou = () => tela.querySelector<HTMLButtonElement>('.botao-redondo')!;
+    const tocarEmOndeEstou = async () => {
+      botaoOndeEstou().click();
+      await esperarOMapa(fixture);
+    };
+    const botaoDaExplicacao = (nome: string) =>
+      Array.from(tela.querySelectorAll<HTMLButtonElement>('app-explicacao-da-localizacao button')).find(
+        (botao) => botao.textContent?.trim() === nome,
+      );
+    const explicacao = () => tela.querySelector('app-explicacao-da-localizacao');
+    const aviso = () => tela.querySelector('.aviso')?.textContent?.trim() ?? null;
+    return {
+      fixture,
+      tela,
+      falso,
+      geo,
+      consultas: () => consultas,
+      nomesDosPinos,
+      cartao,
+      tocarNoPino,
+      tocarNaAba,
+      botaoOndeEstou,
+      tocarEmOndeEstou,
+      botaoDaExplicacao,
+      explicacao,
+      aviso,
+    };
   }
 
   describe('num dia de carnaval', () => {
@@ -152,6 +204,162 @@ describe('PaginaMapa', () => {
       expect(cartao()).not.toBeNull();
       await tocarNaAba('Amanhã');
       expect(cartao()).toBeNull();
+    });
+  });
+
+  describe('"onde estou"', () => {
+    it('tem um botão redondo com nome para o leitor de tela', async () => {
+      const { botaoOndeEstou } = await renderizar(SABADO_14H);
+      expect(botaoOndeEstou().getAttribute('aria-label')).toBe('Mostrar onde eu estou');
+    });
+
+    it('não pede a localização de cara, nem pergunta nada ao celular, ao abrir o mapa', async () => {
+      const { geo, consultas, falso, aviso } = await renderizar(SABADO_14H);
+      expect(geo.chamadas.length).toBe(0);
+      expect(consultas()).toBe(0);
+      expect(falso.bolinha()).toBeUndefined();
+      expect(aviso()).toBeNull();
+    });
+
+    it('explica para que serve antes de pedir, quando o celular ainda vai perguntar', async () => {
+      const { tocarEmOndeEstou, explicacao, geo } = await renderizar(SABADO_14H, { permissao: 'prompt' });
+      await tocarEmOndeEstou();
+      expect(explicacao()).not.toBeNull();
+      expect(geo.chamadas.length).toBe(0);
+    });
+
+    it('"Agora não" fecha a explicação sem pedir nada e devolve o foco ao botão', async () => {
+      const { fixture, tocarEmOndeEstou, botaoDaExplicacao, explicacao, geo, botaoOndeEstou } = await renderizar(
+        SABADO_14H,
+      );
+      await tocarEmOndeEstou();
+      botaoDaExplicacao('Agora não')!.click();
+      await esperarOMapa(fixture);
+      expect(explicacao()).toBeNull();
+      expect(geo.chamadas.length).toBe(0);
+      expect(document.activeElement).toBe(botaoOndeEstou());
+    });
+
+    it('"Continuar" pede a posição, põe a bolinha no mapa e leva o mapa até a pessoa', async () => {
+      const { fixture, tocarEmOndeEstou, botaoDaExplicacao, explicacao, geo, falso } = await renderizar(SABADO_14H);
+      await tocarEmOndeEstou();
+      botaoDaExplicacao('Continuar')!.click();
+      await esperarOMapa(fixture);
+      expect(explicacao()).toBeNull();
+      expect(geo.chamadas.length).toBe(1);
+      expect(falso.bolinha()?.posicao).toEqual([-46.6559, -23.5614]);
+      const movimento = falso.mapas[0].movimentos.at(-1);
+      expect(movimento?.['center']).toEqual([-46.6559, -23.5614]);
+      expect(movimento?.['zoom']).toBe(15);
+    });
+
+    it('vai direto procurar, sem explicar, quando a pessoa já deixou', async () => {
+      const { tocarEmOndeEstou, explicacao, geo, falso } = await renderizar(SABADO_14H, { permissao: 'granted' });
+      await tocarEmOndeEstou();
+      expect(explicacao()).toBeNull();
+      expect(geo.chamadas.length).toBe(1);
+      expect(falso.bolinha()).toBeDefined();
+    });
+
+    it('depois de achar a pessoa, um novo toque procura de novo sem explicar outra vez', async () => {
+      const { tocarEmOndeEstou, explicacao, geo, falso } = await renderizar(SABADO_14H, { permissao: 'granted' });
+      await tocarEmOndeEstou();
+      geo.responder({ ok: { lat: -23.57, lng: -46.66, precisao: 15 } });
+      await tocarEmOndeEstou();
+      expect(explicacao()).toBeNull();
+      expect(geo.chamadas.length).toBe(2);
+      expect(falso.bolinha()?.posicao).toEqual([-46.66, -23.57]);
+    });
+
+    it('avisa, sem pedir de novo, quando a pessoa já tinha dito não', async () => {
+      const { tocarEmOndeEstou, aviso, geo, explicacao } = await renderizar(SABADO_14H, { permissao: 'denied' });
+      await tocarEmOndeEstou();
+      expect(aviso()).toContain('não deixou o CarnaVou ver onde você está');
+      expect(aviso()).toContain('O mapa continua funcionando');
+      expect(geo.chamadas.length).toBe(0);
+      expect(explicacao()).toBeNull();
+    });
+
+    it('avisa quando a pessoa diz não ao aviso do celular', async () => {
+      const { fixture, tocarEmOndeEstou, botaoDaExplicacao, aviso, falso } = await renderizar(SABADO_14H, {
+        resposta: { erro: 1 },
+      });
+      await tocarEmOndeEstou();
+      botaoDaExplicacao('Continuar')!.click();
+      await esperarOMapa(fixture);
+      expect(aviso()).toContain('não deixou o CarnaVou ver onde você está');
+      expect(falso.bolinha()).toBeUndefined();
+    });
+
+    it('avisa para tentar de novo em lugar aberto quando o celular não acha a pessoa', async () => {
+      const { tocarEmOndeEstou, aviso, falso } = await renderizar(SABADO_14H, {
+        permissao: 'granted',
+        resposta: { erro: 2 },
+      });
+      await tocarEmOndeEstou();
+      expect(aviso()).toContain('Tente de novo em um lugar aberto');
+      expect(falso.bolinha()).toBeUndefined();
+    });
+
+    it('avisa quando o navegador não tem localização', async () => {
+      const { tocarEmOndeEstou, aviso } = await renderizar(SABADO_14H, { semLocalizacao: true });
+      await tocarEmOndeEstou();
+      expect(aviso()).toContain('Este navegador não consegue dizer onde você está');
+    });
+
+    it('avisa e não leva o mapa quando a pessoa está fora da Grande São Paulo', async () => {
+      const { tocarEmOndeEstou, aviso, falso } = await renderizar(SABADO_14H, {
+        permissao: 'granted',
+        resposta: NO_RIO,
+      });
+      await tocarEmOndeEstou();
+      expect(aviso()).toContain('fora da Grande São Paulo');
+      expect(falso.mapas[0].movimentos.some((movimento) => movimento['zoom'] === 15)).toBe(false);
+    });
+
+    it('fecha o aviso no ×, e o aviso volta se a pessoa tentar de novo', async () => {
+      const { fixture, tela, tocarEmOndeEstou, aviso } = await renderizar(SABADO_14H, {
+        permissao: 'granted',
+        resposta: { erro: 2 },
+      });
+      await tocarEmOndeEstou();
+      tela.querySelector<HTMLButtonElement>('.aviso .fechar')!.click();
+      await esperarOMapa(fixture);
+      expect(aviso()).toBeNull();
+      await tocarEmOndeEstou();
+      expect(aviso()).not.toBeNull();
+    });
+
+    describe('a distância no cartão do ponto', () => {
+      it('não aparece enquanto a pessoa não mostrou onde está', async () => {
+        const { cartao, tocarNoPino } = await renderizar(SABADO_14H);
+        await tocarNoPino(cartoesDaAba('hoje', SABADO_14H)[0].local.nome);
+        expect(cartao()?.querySelector('.distancia')).toBeNull();
+      });
+
+      it('aparece, em linha reta, depois que a pessoa mostrou onde está', async () => {
+        const { cartao, tocarNoPino, tocarEmOndeEstou } = await renderizar(SABADO_14H, { permissao: 'granted' });
+        await tocarEmOndeEstou();
+        const { local } = cartoesDaAba('hoje', SABADO_14H)[0];
+        await tocarNoPino(local.nome);
+        const metros = distanciaEmMetros({ lat: -23.5614, lng: -46.6559 }, local);
+        expect(cartao()?.querySelector('.distancia')?.textContent).toBe(
+          `A ${textoDaDistancia(metros)} de você, em linha reta.`,
+        );
+      });
+
+      it('troca junto com o lugar escolhido', async () => {
+        const { cartao, tocarNoPino, tocarEmOndeEstou } = await renderizar(SABADO_14H, { permissao: 'granted' });
+        await tocarEmOndeEstou();
+        const [primeiro, segundo] = cartoesDaAba('hoje', SABADO_14H);
+        await tocarNoPino(primeiro.local.nome);
+        const textoDoPrimeiro = cartao()?.querySelector('.distancia')?.textContent;
+        await tocarNoPino(segundo.local.nome);
+        const textoDoSegundo = cartao()?.querySelector('.distancia')?.textContent;
+        expect(textoDoPrimeiro).toBeTruthy();
+        expect(textoDoSegundo).toBeTruthy();
+        expect(textoDoSegundo).not.toBe(textoDoPrimeiro);
+      });
     });
   });
 

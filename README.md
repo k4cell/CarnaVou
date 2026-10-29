@@ -3,10 +3,10 @@
 **A central do "point" do carnaval de rua de São Paulo.** Quero responder a pergunta que
 todo grupo faz no carnaval: *"pra onde a gente vai agora?"*
 
-> **Situação (28/10/2026): começando o beta, versão 0.6.0.** Já tem o projeto criado, as três telas do
-> esqueleto (lugares em destaque, um lugar e um bloco) e o mapa de leitura, com dados de teste: o
-> carnaval de rua de 2026, com nomes reais, como se hoje fosse 07/02/2026. O mapa ainda não sabe
-> onde a pessoa está.
+> **Situação (29/10/2026): começando o beta, versão 0.7.0.** Já tem o projeto criado, as três telas do
+> esqueleto (lugares em destaque, um lugar e um bloco) e o mapa, com dados de teste: o
+> carnaval de rua de 2026, com nomes reais, como se hoje fosse 07/02/2026. O mapa mostra onde eu
+> estou e a distância até cada lugar, quando eu toco no botão.
 
 ---
 
@@ -36,7 +36,7 @@ Daí veio o CarnaVou, uma central que mostra:
 | **Horizonte** | Só o carnaval de 2027. O foco é o agora. |
 | **Compartilhar** | Um botão que copia o link. Sem integração nem API do WhatsApp. |
 | **Ideia central** | Uma central: eu abro e já está tudo lá. Clico num dos pontos principais (ex.: Ibirapuera) e vejo quem toca hoje. |
-| **Distância** | Não é o ponto principal. Todo mundo vai, perto ou longe. Pode ter a informação, mas sem ênfase. |
+| **Distância** | Não é o ponto principal. Todo mundo vai, perto ou longe. Pode ter a informação, mas sem ênfase. No mapa, ela aparece no cartão do ponto, em linha reta, depois que eu toco em "onde estou". |
 | **Formato** | Um site que se instala como app (PWA). Sem app de loja por enquanto: o link abre direto e não tem taxa nem aprovação de loja. |
 | **Stack** | Angular, na pasta `app/`. Sem servidor nem banco de dados por enquanto: os dados ficam em arquivos dentro do projeto e as páginas são geradas prontas. |
 | **Beta** | Sem "Vou", "Tô aqui" e "Como tá?". A raiz do negócio é **pra onde eu vou** e qual é a tendência de hoje, não importa se está cheio ou não. |
@@ -51,7 +51,8 @@ Daí veio o CarnaVou, uma central que mostra:
 | **Data de teste** | Pra testar, eu abro o site com uma data no endereço, como `?hoje=2027-02-06T14:00`. Aí "hoje" fica parado nesse dia e hora, e a tela avisa que é uma data de teste. |
 | **Em alta** | A ordem não vai ser a que eu escolho: vai vir das tendências (top trends). Por enquanto a ordem é a da lista de lugares. |
 | **Dados de teste** | O carnaval de rua de 2026 de São Paulo, com nomes reais de blocos e artistas (50 blocos nos 10 lugares), como se hoje fosse 07/02/2026, sábado, o primeiro dia do pré-carnaval (assim as abas Hoje e Amanhã já têm blocos). O app começa nessa data e avisa que é data de teste. É uma reconstituição de notícias e guias, não a lista oficial. Detalhes em `docs/dados-carnaval-2026.md`. |
-| **Mapa** | **MapLibre com o mapa livre da OpenFreeMap** (aprovado), num estilo nosso, lilás, no jeito do Macadam: simples, intuitivo, preciso e com vários pontos. Um ponto (pino) por lugar, com a cor da zona (pode mudar). Tocar no pino abre um cartão curto com o selo, os artistas e os botões "Como chegar" (Google Maps e Waze) e "Ver o lugar". Só leitura, sem "onde estou" por enquanto. O mapa só carrega quando eu abro a aba Mapa e fica isolado num componente, para eu poder trocar de biblioteca sem mexer no resto. O plano está em `docs/planejamento-do-mapa.md`. |
+| **Mapa** | **MapLibre com o mapa livre da OpenFreeMap** (aprovado), num estilo nosso, lilás, no jeito do Macadam: simples, intuitivo, preciso e com vários pontos. Um ponto (pino) por lugar, com a cor da zona (pode mudar). Tocar no pino abre um cartão curto com o selo, os artistas e os botões "Como chegar" (Google Maps e Waze) e "Ver o lugar". Só leitura, com o botão "onde estou" (veja Localização). O mapa só é baixado quando eu abro a aba Mapa (nem o service worker o guarda antes) e fica isolado num componente, para eu poder trocar de biblioteca sem mexer no resto. O plano está em `docs/planejamento-do-mapa.md`. |
+| **Localização** | Só liga quando eu toco no botão redondo "onde estou", no mapa. Antes de o celular fazer a pergunta dele, o app mostra uma tela que explica para que serve. Uma leitura por toque: não sigo o meu caminho, não uso a localização em segundo plano e não guardo nem mando a posição pra lugar nenhum. Aparece uma bolinha rosa com um círculo de precisão e, no cartão do ponto, a distância em linha reta. Quem diz não continua usando o mapa do mesmo jeito. |
 | **Social** | A parte social (Amigos) fica por último, porque não é o foco. |
 
 ### Sobre compartilhar
@@ -111,8 +112,8 @@ já estar acabando, meio morto. O aplicativo seria muito bom se até me avisasse
 Já respondi as perguntas sobre o carnaval de 2026 e já escolhi a stack. Mandei o primeiro
 desenho (a árvore de opções) e o beta já tem as três telas, com dados de teste do carnaval de 2026. Mandei também o segundo
 desenho (o filtro Hoje / Amanhã / Geral) e ele já está na tela inicial e no mapa. O mapa de
-leitura já está na aba Mapa. O próximo passo é copiar o link (0.6.1) e depois o "onde estou"
-e a distância (0.7.0), seguindo o planejamento em
+leitura já está na aba Mapa. O mapa também mostra onde eu estou (0.7.0). O próximo passo é copiar o link
+(0.7.1), seguindo o planejamento em
 [`docs/planejamento-do-mapa.md`](docs/planejamento-do-mapa.md), com o Macadam como referência.
 A parte social fica por último. Vou continuar desenhando o
 projeto pra definir o visual.

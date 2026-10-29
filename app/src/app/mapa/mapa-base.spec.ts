@@ -1,7 +1,8 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 
-import { MapaBase, PontoNoMapa } from './mapa-base';
+import { distanciaEmMetros } from '../localizacao/distancia';
+import { MapaBase, PontoNoMapa, PosicaoNoMapa } from './mapa-base';
 import { BibliotecaDeMapa, CARREGAR_MAPLIBRE } from './maplibre';
 import { criarMapLibreFalso, esperarOMapa } from './maplibre-falso';
 
@@ -28,7 +29,11 @@ describe('MapaBase', () => {
     fixture.componentInstance.escolher.subscribe((id) => escolhidos.push(id));
     await esperarOMapa(fixture);
 
-    const mudar = async (entradas: { pontos?: PontoNoMapa[]; selecionado?: string | null }) => {
+    const mudar = async (entradas: {
+      pontos?: PontoNoMapa[];
+      selecionado?: string | null;
+      voce?: PosicaoNoMapa | null;
+    }) => {
       for (const [nome, valor] of Object.entries(entradas)) {
         fixture.componentRef.setInput(nome, valor);
       }
@@ -132,6 +137,109 @@ describe('MapaBase', () => {
     const { falso, mudar } = await renderizar([SE, SANTO_AMARO]);
     await mudar({ pontos: [SE, SANTO_AMARO], selecionado: 'se' });
     expect(falso.mapas[0].enquadramentos.length).toBe(1);
+  });
+
+  describe('a pessoa no mapa', () => {
+    const VOCE: PosicaoNoMapa = { lat: -23.56, lng: -46.65, precisao: 120 };
+
+    it('não desenha ninguém enquanto a pessoa não pediu para ver onde está', async () => {
+      const { falso } = await renderizar([SE]);
+      falso.mapas[0].carregar();
+      expect(falso.bolinha()).toBeUndefined();
+      expect(falso.mapas[0].fontes.size).toBe(0);
+    });
+
+    it('põe uma bolinha, avisada para o leitor de tela, na posição da pessoa', async () => {
+      const { falso, mudar } = await renderizar([SE]);
+      await mudar({ voce: VOCE });
+      const bolinha = falso.bolinha();
+      expect(bolinha?.posicao).toEqual([VOCE.lng, VOCE.lat]);
+      expect(bolinha?.elemento.getAttribute('aria-label')).toBe('Você está aqui');
+      expect(bolinha?.opcoes.anchor).toBe('center');
+    });
+
+    it('não confunde a bolinha com um pino de lugar', async () => {
+      const { falso, mudar } = await renderizar([SE, SANTO_AMARO]);
+      await mudar({ voce: VOCE });
+      expect(falso.pinos().length).toBe(2);
+    });
+
+    it('move a mesma bolinha quando a posição muda', async () => {
+      const { falso, mudar } = await renderizar([SE]);
+      await mudar({ voce: VOCE });
+      await mudar({ voce: { lat: -23.57, lng: -46.66, precisao: 30 } });
+      expect(falso.marcadores.filter((m) => m.elemento.classList.contains('voce')).length).toBe(1);
+      expect(falso.bolinha()?.posicao).toEqual([-46.66, -23.57]);
+    });
+
+    it('tira a bolinha quando a posição some', async () => {
+      const { falso, mudar } = await renderizar([SE]);
+      await mudar({ voce: VOCE });
+      await mudar({ voce: null });
+      expect(falso.bolinha()).toBeUndefined();
+    });
+
+    it('só desenha o círculo de precisão depois de o mapa carregar', async () => {
+      const { falso, fixture, mudar } = await renderizar([SE]);
+      await mudar({ voce: VOCE });
+      expect(falso.mapas[0].fontes.size).toBe(0);
+      falso.mapas[0].carregar();
+      await esperarOMapa(fixture);
+      expect([...falso.mapas[0].fontes.keys()]).toEqual(['voce-precisao']);
+      expect(falso.mapas[0].camadas.map((camada) => camada['type'])).toEqual(['fill', 'line']);
+    });
+
+    it('desenha o círculo com o raio da precisão e na cor rosa do app', async () => {
+      const { falso, mudar } = await renderizar([SE]);
+      falso.mapas[0].carregar();
+      await mudar({ voce: VOCE });
+      const contorno = (
+        falso.mapas[0].fontes.get('voce-precisao')?.dados as { geometry: { coordinates: [number, number][][] } }
+      ).geometry.coordinates[0];
+      for (const [lng, lat] of contorno) {
+        const metros = distanciaEmMetros(VOCE, { lat, lng });
+        expect(metros).toBeGreaterThan(VOCE.precisao * 0.99);
+        expect(metros).toBeLessThan(VOCE.precisao * 1.01);
+      }
+      const area = falso.mapas[0].camadas[0]['paint'] as Record<string, unknown>;
+      expect(String(area['fill-color']).toLowerCase()).toBe('#e21d89');
+    });
+
+    it('atualiza o círculo, sem criar outro, quando a posição muda ou some', async () => {
+      const { falso, mudar } = await renderizar([SE]);
+      falso.mapas[0].carregar();
+      await mudar({ voce: VOCE });
+      await mudar({ voce: { lat: -23.57, lng: -46.66, precisao: 30 } });
+      const fonte = falso.mapas[0].fontes.get('voce-precisao');
+      expect(falso.mapas[0].fontes.size).toBe(1);
+      expect(falso.mapas[0].camadas.length).toBe(2);
+      expect(fonte?.atualizacoes).toBe(1);
+      await mudar({ voce: null });
+      expect(fonte?.dados).toEqual({ type: 'FeatureCollection', features: [] });
+    });
+
+    it('leva o mapa até a pessoa e chega mais perto', async () => {
+      const { falso, fixture } = await renderizar([SE]);
+      fixture.componentInstance.irPara(VOCE.lat, VOCE.lng);
+      const movimento = falso.mapas[0].movimentos.at(-1);
+      expect(movimento?.['center']).toEqual([VOCE.lng, VOCE.lat]);
+      expect(movimento?.['zoom']).toBe(15);
+    });
+
+    it('não se afasta se o mapa já estiver bem perto', async () => {
+      const { falso, fixture } = await renderizar([SE]);
+      falso.mapas[0].zoom = 17;
+      fixture.componentInstance.irPara(VOCE.lat, VOCE.lng);
+      expect(falso.mapas[0].movimentos.at(-1)?.['zoom']).toBe(17);
+    });
+
+    it('tira a bolinha quando a tela é destruída', async () => {
+      const { falso, fixture, mudar } = await renderizar([SE]);
+      await mudar({ voce: VOCE });
+      const bolinha = falso.bolinha();
+      fixture.destroy();
+      expect(bolinha?.removido).toBe(true);
+    });
   });
 
   it('fecha o mapa e tira os pinos quando a tela é destruída', async () => {

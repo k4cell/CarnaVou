@@ -38,6 +38,7 @@ O planejamento do mapa e das próximas fases, que junta todas estas ideias num r
 | Primeiro mapa | Aprovado: um ponto por lugar, com a cor da zona (pode mudar) |
 | MapLibre com OpenFreeMap | Aprovado em 28/10/2026. O teste com o Leaflet só vale se o MapLibre pesar demais num celular fraco |
 | Botão "Como chegar" no cartão do ponto | Aprovado: Google Maps e Waze. O Uber ficou de fora, porque ainda não confirmei como o link dele funciona |
+| "Onde estou" e distância | Aprovado: só liga quando eu toco no botão, depois de uma tela que explica; uma leitura por toque, sem acompanhar o caminho |
 | Parte social (Amigos) | Fica por último, porque não é o foco |
 
 ## Funcionalidades sugeridas
