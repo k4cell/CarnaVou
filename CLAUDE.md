@@ -14,6 +14,9 @@ calendário e o que eu ainda não pensei.
   "concordo / não concordo" depois que eu decidi.
 - Às vezes eu dito por voz e saem palavras trocadas. Entenda pelo sentido e, se ficar
   ambíguo, pergunte.
+- Use o [`docs/planejamento-do-mapa.md`](docs/planejamento-do-mapa.md) para me dizer, a cada
+  passo, **o que foi feito, o que falta e quais são os próximos passos**. Mantenha a seção
+  "Andamento" dele em dia.
 
 ## Como escrever os documentos
 
@@ -26,8 +29,8 @@ calendário e o que eu ainda não pensei.
 - Já pode programar. O beta é uma **árvore de opções** com três telas: Em alta (os lugares,
   com o filtro Hoje / Amanhã / Geral), um lugar (os dias de festa e os principais artistas) e um bloco (a lista
   detalhada de atrações). Embaixo fica o menu fixo: Descobrir, Mapa, Amigos e Favoritos, e
-  as três últimas abas mostram só "Em breve" por enquanto. Os blocos e os artistas são
-  **fictícios**. Fica de fora, por enquanto, o "Vou", o "Tô aqui" e o "Como tá?".
+  as três últimas abas mostram só "Em breve" por enquanto. Os dados de teste são o carnaval
+  de rua de 2026 **de verdade, com nomes reais** (ver `docs/dados-carnaval-2026.md`). Fica de fora, por enquanto, o "Vou", o "Tô aqui" e o "Como tá?".
 - O visual tem só a **primeira camada de cor**. A paleta fica em variáveis no topo de
   `app/src/styles.scss`: use sempre essas variáveis, nunca uma cor solta. Fundo claro (pra
   ler no sol); o cabeçalho usa o fundo escuro da logo (`--noite`). Roxo nos títulos e
@@ -71,11 +74,13 @@ calendário e o que eu ainda não pensei.
 - A logo e as imagens de referência ficam em `design/`, cada uma com legenda no
   `design/README.md`. O que o site usa fica em `app/public/logo/` e `app/public/icons/`:
   se a logo mudar, gere de novo a partir de `design/logo/`.
-- Os dados ficam em `app/src/app/dados/`: `locais.ts` (os lugares, de verdade) e
-  `blocos.ts` (blocos e artistas **fictícios**). Eu tirei da tela o aviso de "dados de
-  exemplo". Se for mostrar o site pra outras pessoas ainda com dados fictícios, pergunte
-  antes se eu quero o aviso de volta. Nada fictício pode parecer um evento de verdade, então
-  não use nomes de artistas reais.
+- Os dados ficam em `app/src/app/dados/`: `locais.ts` (os 10 lugares) e `blocos.ts` (o
+  carnaval de rua de 2026, reconstituído de notícias, com nomes reais). **Não invente
+  dado**: só vale o que uma fonte diz e, na dúvida, deixe em branco. As fontes e a confiança
+  de cada bloco estão em `docs/dados-carnaval-2026.md`; se achar uma divergência nova,
+  anote lá. O "hoje" do app é 30/01/2026 (`DATA_DE_DEMONSTRACAO`, em `relogio/`) e a tela
+  avisa que é data de teste. Antes de mostrar o site pra outras pessoas, pergunte se eu
+  quero trocar pelos dados de 2027 ou avisar que é a simulação de 2026.
 
 ## Repositório
 

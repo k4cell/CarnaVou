@@ -1,4 +1,15 @@
-export type Estilo = 'samba' | 'marchinha' | 'axe' | 'funk' | 'pop' | 'frevo' | 'eletronico';
+export type Estilo =
+  | 'samba'
+  | 'marchinha'
+  | 'axe'
+  | 'funk'
+  | 'pop'
+  | 'frevo'
+  | 'eletronico'
+  | 'sertanejo'
+  | 'rock'
+  | 'forro'
+  | 'mpb';
 
 /** As zonas de São Paulo. Cada uma tem a sua cor (ver zona-tag). */
 export type Zona = 'centro' | 'sul' | 'leste' | 'oeste' | 'norte';
@@ -20,13 +31,15 @@ export interface Bloco {
   nome: string;
   /** Dia do bloco, no formato AAAA-MM-DD. */
   data: string;
-  /** Hora que o bloco começa, no formato HH:mm. */
+  /** Hora da concentração (quando o bloco começa), no formato HH:mm. */
   inicio: string;
-  /** Hora que o bloco termina, no formato HH:mm. Só quando a gente souber. */
+  /** Hora da dispersão (quando termina), no formato HH:mm. Só quando a gente souber. */
   fim?: string;
   localId: string;
+  /** Os artistas que as fontes citam. Pode ficar vazio. */
   atracoes: Atracao[];
-  estilo: Estilo;
-  /** Público-alvo, só quando for claro (ex.: "LGBTQIA+", "Mulheres", "Eletrônica"). */
+  /** Só quando alguma fonte diz o estilo. */
+  estilo?: Estilo;
+  /** Público-alvo, só quando for claro (ex.: "LGBTQIA+", "Mulheres"). */
   publico?: string;
 }

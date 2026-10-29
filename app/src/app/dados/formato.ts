@@ -16,6 +16,10 @@ export const NOMES_DOS_ESTILOS: Record<Estilo, string> = {
   pop: 'Pop',
   frevo: 'Frevo',
   eletronico: 'Eletrônico',
+  sertanejo: 'Sertanejo',
+  rock: 'Rock',
+  forro: 'Forró',
+  mpb: 'MPB',
 };
 
 export const NOMES_DAS_ZONAS: Record<Zona, string> = {

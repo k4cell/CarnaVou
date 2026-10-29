@@ -7,7 +7,9 @@
 
   <span class="info">
     <strong class="nome">{{ bloco().nome }}</strong>
-    <span class="atracoes">{{ atracoes() }}</span>
+    @if (atracoes()) {
+      <span class="atracoes">{{ atracoes() }}</span>
+    }
     <span class="horario">{{ horario() }}</span>
   </span>
 

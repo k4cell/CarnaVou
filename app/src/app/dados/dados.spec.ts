@@ -1,5 +1,5 @@
 import { BLOCOS } from './blocos';
-import { artistasDaSemana } from './consultas';
+import { artistasDoLugar } from './consultas';
 import { LOCAIS } from './locais';
 
 describe('dados', () => {
@@ -24,8 +24,8 @@ describe('dados', () => {
     expect(LOCAIS.every((local) => comBloco.has(local.id))).toBe(true);
   });
 
-  it('põe os blocos entre o pré-carnaval e o pós-carnaval de 2027', () => {
-    expect(BLOCOS.every((bloco) => bloco.data >= '2027-01-30' && bloco.data <= '2027-02-14')).toBe(true);
+  it('põe os blocos entre o pré-carnaval e o pós-carnaval de 2026', () => {
+    expect(BLOCOS.every((bloco) => bloco.data >= '2026-02-07' && bloco.data <= '2026-02-22')).toBe(true);
   });
 
   it('só tem hora de fim depois da hora de início', () => {
@@ -34,23 +34,43 @@ describe('dados', () => {
     expect(comFim.every((bloco) => (bloco.fim ?? '') > bloco.inicio)).toBe(true);
   });
 
-  it('todo bloco tem pelo menos uma atração', () => {
-    expect(BLOCOS.every((bloco) => bloco.atracoes.length > 0)).toBe(true);
+  it('escreve toda hora no formato HH:mm', () => {
+    const formato = /^\d{2}:\d{2}$/;
+    const horas = BLOCOS.flatMap((bloco) => [
+      bloco.inicio,
+      ...(bloco.fim ? [bloco.fim] : []),
+      ...bloco.atracoes.flatMap((atracao) => (atracao.inicio ? [atracao.inicio] : [])),
+    ]);
+    expect(horas.every((hora) => formato.test(hora))).toBe(true);
   });
 
-  it('todo lugar tem artistas na semana em destaque', () => {
-    expect(LOCAIS.every((local) => artistasDaSemana(local.id).length > 0)).toBe(true);
+  it('só marca o público-alvo e o estilo em alguns blocos, quando a fonte diz', () => {
+    expect(BLOCOS.some((bloco) => bloco.publico)).toBe(true);
+    expect(BLOCOS.some((bloco) => !bloco.publico)).toBe(true);
+    expect(BLOCOS.some((bloco) => bloco.estilo)).toBe(true);
+    expect(BLOCOS.some((bloco) => !bloco.estilo)).toBe(true);
   });
 
-  it('não repete artista na lista da semana de um lugar', () => {
-    const artistas = artistasDaSemana('ibirapuera');
-    expect(artistas.length).toBe(7);
-    expect(new Set(artistas).size).toBe(artistas.length);
-  });
+  describe('artistasDoLugar', () => {
+    it('junta os artistas do lugar sem repetir, na ordem dos blocos', () => {
+      const artistas = artistasDoLugar('ibirapuera');
+      expect(artistas.length).toBe(16);
+      expect(new Set(artistas).size).toBe(16);
+      expect(artistas.slice(0, 3)).toEqual(['Ivete Sangalo', 'Mariana Aydar', 'Alceu Valença']);
+    });
 
-  it('só marca o público-alvo em alguns blocos, quando é claro', () => {
-    const comPublico = BLOCOS.filter((bloco) => bloco.publico);
-    expect(comPublico.length).toBeGreaterThan(0);
-    expect(comPublico.length).toBeLessThan(BLOCOS.length);
+    it('pega só os dos blocos de um dia em diante', () => {
+      const artistas = artistasDoLugar('ibirapuera', '2026-02-14');
+      expect(artistas.length).toBe(10);
+      expect(artistas[0]).toBe('Gloria Groove');
+    });
+
+    it('volta a valer a lista toda quando nenhum bloco dali em diante tem artista', () => {
+      expect(artistasDoLugar('santo-amaro', '2026-03-01').length).toBe(9);
+    });
+
+    it('fica vazio quando o lugar não tem artista divulgado', () => {
+      expect(artistasDoLugar('paulo-vi')).toEqual([]);
+    });
   });
 });

@@ -33,7 +33,11 @@ O planejamento do mapa e das próximas fases, que junta todas estas ideias num r
 | Menu de baixo | Aprovado: Descobrir, Mapa, Amigos e Favoritos. Mapa, Amigos e Favoritos mostram "Em breve" |
 | Filtro Hoje / Amanhã / Geral | Aprovado: no topo da tela inicial |
 | Selos nos cartões ("Já começou", "Hoje às 14h", "Amanhã às 11h", "5 blocos") | Aprovados, sem cor por enquanto |
-| Data de teste no endereço | Aprovada: `?hoje=2027-02-06T14:00` |
+| Data de teste no endereço | Aprovada: `?hoje=2026-02-14T14:00` |
+| Dados de teste | Aprovado: o carnaval de rua de 2026, com nomes reais, como se hoje fosse 30/01/2026 |
+| Primeiro mapa | Aprovado: um ponto por lugar, com a cor da zona (pode mudar) |
+| Teste entre Leaflet e MapLibre | Fica para mais tarde |
+| Parte social (Amigos) | Fica por último, porque não é o foco |
 
 ## Funcionalidades sugeridas
 

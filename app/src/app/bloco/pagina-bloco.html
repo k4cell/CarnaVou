@@ -4,21 +4,27 @@
   <h2 class="titulo">{{ bloco.nome }}</h2>
   <p class="subtitulo">{{ resumo()?.dia }} · {{ lugar()?.nome }}</p>
   <p class="horario">{{ resumo()?.horario }}</p>
-  <p>Estilo: {{ resumo()?.estilo }}</p>
+  @if (resumo()?.estilo) {
+    <p>Estilo: {{ resumo()?.estilo }}</p>
+  }
   @if (bloco.publico) {
     <p>Público: {{ bloco.publico }}</p>
   }
 
   <h3 class="secao">Atrações</h3>
-  <ul class="atracoes">
-    @for (atracao of resumo()?.atracoes; track atracao.nome) {
-      <li class="atracao">
-        <span class="hora">{{ atracao.hora }}</span>
-        <span>{{ atracao.nome }}</span>
-      </li>
-    }
-  </ul>
+  @if (resumo()?.atracoes?.length) {
+    <ul class="atracoes">
+      @for (atracao of resumo()?.atracoes; track atracao.nome) {
+        <li class="atracao">
+          <span class="hora">{{ atracao.hora }}</span>
+          <span>{{ atracao.nome }}</span>
+        </li>
+      }
+    </ul>
+  } @else {
+    <p class="sem-atracoes">Ainda não tem atrações divulgadas.</p>
+  }
 } @else {
-  <a class="voltar" routerLink="/">← Em destaque</a>
+  <a class="voltar" routerLink="/">← Em alta</a>
   <p>Não achei esse bloco.</p>
 }

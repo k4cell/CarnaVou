@@ -1,9 +1,30 @@
 # Planejamento do mapa e das próximas fases
 
-> **Pausa tática (28/10/2026).** Escrevi isto antes de programar o mapa, para escolher o
-> caminho com calma e não criar um problema difícil de arrumar depois.
-> **Nada aqui é decisão até eu aprovar.** O que eu aprovar vai para o
+> **Pausa tática (28/10/2026), atualizada depois dos prints do Macadam e das minhas
+> respostas.** Escrevi isto antes de programar o mapa, para escolher o caminho com calma e não
+> criar um problema difícil de arrumar depois. **O que eu aprovar vai para o**
 > [`README.md`](../README.md).
+
+## Andamento
+
+| Versão | O que é | Estado |
+|---|---|---|
+| 0.4.1 | Este planejamento e o cabeçalho sem a frase | feito |
+| **0.5.0** | **Dados de teste reais: o carnaval de 2026, como se hoje fosse 30/01/2026** | **feito** |
+| **0.6.0** | **Mapa de leitura: um ponto por lugar, com a cor da zona** | **próximo** |
+| 0.6.1 | Copiar o link | depois |
+| 0.7.0 | "Onde estou" e distância | depois |
+| 0.8.0 | Blocos no mapa e percursos | depois |
+| 0.9.0 | Offline e desempenho | depois |
+| depois | Backend, Favoritos, "Em alta" calculado e, **por último**, a parte social | |
+
+**O que falta decidir para o mapa começar:**
+
+1. Aprovar a nova sugestão de mapa (MapLibre com OpenFreeMap, seção 4.1).
+2. Contar a **grande mudança sobre os dias**, que mexe no modelo de dados.
+
+**Como usar este documento:** a cada passo, o que foi feito, o que falta e os próximos passos
+saem daqui e vão para a conversa.
 
 ## 1. O que eu quero do mapa
 
@@ -32,15 +53,37 @@ pessoa vai até o ponto e confirma que está lá. Os usuários elogiam o design 
 sacar, moedas do mapa que não são coletadas sozinhas e um "limite de velocidade" que
 impede coletar andando de carro. Nada disso é do mapa em si.
 
-**O que eu não consegui ver.** Só achei texto (loja, termos de uso e blogs). **Não consegui ver
-as telas**, então não sei descrever a interface com precisão: cores dos pinos, zoom, o que
-abre ao tocar num ponto. Para copiar o que eu gosto, preciso de 2 ou 3 prints da tela de mapa.
+**O que os prints mostram** (os cinco estão em [`design/referencias/`](../design/referencias),
+com legenda):
+
+- O mapa é um **mapa vetorial do Mapbox, pintado nas cores da marca**: um lilás suave com as
+  ruas mais claras. É isso que dá identidade a ele. A marca "mapbox" e o botão de créditos
+  aparecem no canto de baixo.
+- Os pontos são **pinos em gota, todos do mesmo formato**, com um desenho dentro. Quando o mapa
+  está longe, os pontos próximos ficam **agrupados**; de perto, se separam.
+- A pessoa aparece com a **própria foto** num balão, com um círculo de precisão em volta. Os
+  botões são **redondos e brancos**, à direita: configurações, uma ação extra e "onde estou".
+- Os pontos próximos ganham **etiquetas de distância** ("140m", "420m"), e o mapa mostra os
+  **nomes dos lugares** (praças, escolas) com um ícone, o que ajuda a se localizar.
+- A tela não fica poluída: um **cartão branco** em cima, um cartão de destaque embaixo e a
+  barra do menu, com cantos redondos e texto grande.
+- O **pedido de localização** tem uma tela cheia que explica para que serve ("ativa tua
+  localização para descobrir…") **antes** do aviso do celular, com um dedo apontando a opção
+  "Enquanto usa o aplicativo".
+- A **tela social** usa botões de período (Dia, Semana, Mês, Ano), parecidos com o nosso Hoje /
+  Amanhã / Geral. Eu deixei a parte social por último, porque não é o foco.
+
+**A lição técnica:** esse visual, com o mapa na cor da marca, **só dá para fazer com mapa
+vetorial**. Com imagens prontas de mapa (como no Leaflet) não dá para trocar as cores.
 
 **O que aproveitar:**
 
 - o mapa como uma tela de exploração, com a posição da pessoa e muitos pontos bem visíveis;
 - um cartão curto ao tocar no ponto, com poucos toques até a informação;
-- a sensação de "mapa vivo", que faz a pessoa abrir o app toda hora.
+- a sensação de "mapa vivo", que faz a pessoa abrir o app toda hora;
+- pinos do mesmo formato, com a cor da zona, e etiqueta de distância nos pontos próximos;
+- explicar para que serve a localização antes de pedir;
+- botões redondos à direita (incluindo "onde estou") e um cartão em destaque embaixo.
 
 **O que não copiar:**
 
@@ -96,11 +139,13 @@ Os tamanhos vêm de fontes secundárias; falta conferir na página de cada proje
   uns US$ 630. **Um app que viraliza no carnaval pode gerar custo alto.** Fica fora do mapa
   principal.
 
-**Minha sugestão:** Leaflet (opção A) para a primeira versão do mapa, porque é a mais leve e a
-que roda em qualquer celular. Com **poucos pontos**, ela é rápida. O mapa fica **isolado num
-componente com interface própria**, para trocar para MapLibre depois sem mexer no resto do
-app. Antes de decidir, vale um teste de meio dia com os dois, medindo num celular fraco de
-verdade.
+**Minha sugestão mudou depois dos prints:** **MapLibre com OpenFreeMap (opção B)**, com um
+estilo nosso (fundo claro ou escuro da marca, ruas suaves e os pontos nas cores das zonas),
+**carregado só quando a pessoa abre a aba Mapa**. O custo é uns 200 kB a mais, só para quem
+abre o mapa, e o mapa precisa de WebGL, que quase todo celular tem. O mapa fica **isolado num
+componente com interface própria**, para trocar de biblioteca sem mexer no resto. O teste com
+o Leaflet, que eu quis deixar para mais tarde, só vale se o MapLibre pesar demais num celular
+fraco.
 
 ### 4.2 Os pontos
 
@@ -141,8 +186,10 @@ O site já guarda o que precisa no celular (service worker). Para o mapa:
 
 ## 5. Os dados: o ponto mais delicado
 
-**Hoje:** 10 lugares reais e 23 blocos fictícios. Dá para montar o mapa já, com as
-coordenadas reais dos 10 lugares.
+**Hoje:** 10 lugares e 50 blocos reais do carnaval de 2026, usados como teste, como se hoje
+fosse 30/01/2026. É uma reconstituição de notícias e guias, com a fonte e a confiança de cada
+bloco em [`dados-carnaval-2026.md`](dados-carnaval-2026.md). Dá para montar o mapa já, com as
+coordenadas dos 10 lugares.
 
 **Para os dados reais de 2027:**
 
@@ -214,21 +261,21 @@ Usar raspagem (copiar telas de redes sociais) **viola os termos** e arrisca bloq
 
 | Ideia | Quando entra | Depende de |
 |---|---|---|
-| **Mapa** com pins e filtro Hoje/Amanhã/Geral | **0.5.0** | coordenadas dos lugares |
-| Botão "Como chegar" | 0.5.0 | confirmar Waze e Uber |
-| Alternar entre lista e mapa | 0.5.0 | desenho da tela |
-| Botão de **copiar o link** (decidido) | 0.5.1 | nada |
-| "Onde estou" e distância | 0.6.0 | permissão do celular |
-| Pins por bloco e **percurso** | 0.7.0 | dados de concentração e percurso |
+| **Dados de teste reais** (carnaval de 2026) | **0.5.0, feito** | nada |
+| **Mapa** com um ponto por lugar e filtro Hoje/Amanhã/Geral | **0.6.0** | coordenadas dos lugares; aprovar o MapLibre |
+| Botão "Como chegar" | 0.6.0 | confirmar Waze e Uber |
+| Alternar entre lista e mapa | 0.6.0 | desenho da tela |
+| Botão de **copiar o link** (decidido) | 0.6.1 | nada |
+| Tela que explica a localização, "onde estou" e distância | 0.7.0 | permissão do celular |
+| Pontos por bloco e **percurso** | 0.8.0 | coordenadas e percursos dos blocos |
 | "Onde o bloco deve estar às 16h" | depois dos percursos | percursos com horário |
-| **Dados reais** de 2027 | 0.8.0 | a mudança sobre os dias; fonte dos dados |
-| Agenda "Começando agora / Daqui a pouco / Mais tarde" | junto ou depois dos dados reais | dados reais |
-| Filtros por bairro, estilo e tamanho; **busca** | junto dos dados reais | dados reais |
+| **Dados reais de 2027** | quando a programação sair | a mudança sobre os dias; fonte dos dados |
+| Agenda "Começando agora / Daqui a pouco / Mais tarde" | depois dos dados de 2027 | dados reais |
+| Filtros por bairro, estilo e tamanho; **busca** | depois | dados reais |
 | Página do bloco: tamanho estimado, "como está agora" | depois | dados reais e sinais ao vivo |
 | "Possíveis próximos blocos" | depois | dados reais |
 | **Offline** completo | 0.9.0 | escolha dos mapas |
-| **Favoritos** | após eu decidir o que são | decisão (só no aparelho?) |
-| **Amigos** e "bonde" | após eu decidir o que são | backend e privacidade |
+| **Favoritos** | depois que eu decidir o que são | decisão (só no aparelho?) |
 | "Vou", "Tô aqui" e "Como tá?" | depois do beta | **backend**, regras contra informação falsa |
 | "Em alta" calculado | depois do beta | sinais e, talvez, APIs pagas |
 | Notificações | depois do beta | backend; no iPhone só funcionam com o site instalado na tela inicial |
@@ -238,41 +285,48 @@ Usar raspagem (copiar telas de redes sociais) **viola os termos** e arrisca bloq
 | Atalhos (postos médicos, táxi e carro de aplicativo) | depois | dados desses lugares |
 | Fonte própria | depois | peso (uma só, embutida) |
 | Etiquetas "Bombando agora" e "Muito lotado" | depois do beta | sinais ao vivo |
+| **Amigos**, "bonde" e o resto da parte social | **por último** (não é o foco) | backend e privacidade |
 
 As versões são **sugestões**. Cada uma é pequena e termina com o site funcionando.
 
 ## 10. Roteiro proposto
 
-1. **0.5.0, mapa de leitura.** A aba Mapa mostra os 10 lugares como pontos, com o mesmo
-   filtro Hoje/Amanhã/Geral da tela inicial. Tocar abre o cartão curto com o botão "Como
-   chegar". Sem localização.
-2. **0.5.1, copiar o link** de um lugar e de um bloco.
-3. **0.6.0, "onde estou"** e a distância.
-4. **0.7.0, blocos no mapa**, com o ponto de concentração e, onde houver, o percurso.
-5. **0.8.0, dados reais** de 2027, em arquivos fáceis de editar.
+1. **0.5.0, dados de teste reais (feito).** O carnaval de 2026 com nomes reais, como se hoje
+   fosse 30/01/2026.
+2. **0.6.0, mapa de leitura.** A aba Mapa mostra os 10 lugares como pontos (com a cor da
+   zona), com o mesmo filtro Hoje/Amanhã/Geral da tela inicial. Tocar abre o cartão curto com
+   o botão "Como chegar". Sem localização.
+3. **0.6.1, copiar o link** de um lugar e de um bloco.
+4. **0.7.0, "onde estou"** e a distância, com uma tela que explica a localização antes do
+   aviso do celular.
+5. **0.8.0, blocos no mapa**, com o ponto de concentração e, onde houver, o percurso.
 6. **0.9.0, offline e desempenho** de verdade.
-7. **Depois do beta:** backend (Vou, Favoritos com conta, Amigos), "Em alta" calculado e
-   notificações.
+7. **Depois do beta:** backend (Vou, Favoritos com conta), "Em alta" calculado e
+   notificações. **A parte social fica por último.**
 
-## 11. O que ainda preciso decidir
+## 11. O que já decidi e o que ainda preciso decidir
 
-**Para começar o mapa (0.5.0):**
+**Já decidi (28/10/2026):**
 
-1. **O Macadam é esse mesmo?** Mandar 2 ou 3 prints da tela de mapa de que eu mais gosto.
-2. **Mapa já, com os dados fictícios** (só os 10 lugares)? Minha sugestão é sim.
-3. **Um ponto por lugar ou por bloco** neste primeiro passo? Sugestão: por lugar.
-4. **Cor dos pontos:** a cor da zona ou a do selo (rolando, hoje, amanhã)?
-5. **Leaflet leve ou MapLibre bonito.** Topo um teste de meio dia com os dois?
-6. **A grande mudança sobre os dias.** Preciso contar antes de fechar os dados.
+1. O Macadam é o app que eu citei (os prints estão em `design/referencias`).
+2. **Os dados de teste são o carnaval de 2026 de verdade, com nomes reais,** como se hoje fosse
+   30/01/2026.
+3. **Um ponto por lugar** no primeiro mapa.
+4. **A cor dos pontos é a da zona** (pode mudar mais pra frente).
+5. O **teste entre Leaflet e MapLibre fica para mais tarde**.
+6. **A parte social (Amigos) fica por último**, porque não é o foco.
 
-**Para as fases seguintes:**
+**Ainda aberto:**
 
-7. **Fonte dos dados reais de 2027** e quem cadastra.
-8. **O que serão Favoritos e Amigos.** Posso começar só no aparelho?
-9. **Quanto eu aceito pagar por mês** (mapas e APIs) no começo?
-10. **Onde publicar o site e que endereço usar.** Hoje ele só existe no meu computador.
-11. **Como vou ganhar dinheiro.** Isso decide o que preciso medir desde já.
-12. **Termos de uso e privacidade**, e a conferência da logo.
+1. **Aprovar o MapLibre com OpenFreeMap** para o mapa (seção 4.1), já que o visual que eu
+   gosto exige mapa vetorial.
+2. **A grande mudança sobre os dias.** Preciso contar antes de fechar o modelo de dados.
+3. **Fonte dos dados reais de 2027** e quem cadastra.
+4. **O que serão os Favoritos.** Posso começar só no aparelho?
+5. **Quanto eu aceito pagar por mês** (mapas e APIs) no começo?
+6. **Onde publicar o site e que endereço usar.** Hoje ele só existe no meu computador.
+7. **Como vou ganhar dinheiro.** Isso decide o que preciso medir desde já.
+8. **Termos de uso e privacidade**, e a conferência da logo.
 
 ## Fontes que li
 

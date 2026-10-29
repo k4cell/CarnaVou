@@ -7,6 +7,35 @@ Enquanto o app está em beta, o número é `0.MEIO.FINAL`. O número do meio sob
 uma tela ou funcionalidade nova (0.3.0, 0.4.0…) e o último, quando é só uma correção pequena
 (0.3.1). Cada versão tem uma etiqueta no GitHub, como `v0.3.0`.
 
+## 0.5.0 (28/10/2026)
+
+### Entrou
+
+- **Dados de teste reais:** o carnaval de rua de 2026 de São Paulo, com nomes reais de blocos
+  e artistas (50 blocos nos 10 lugares). É uma reconstituição de notícias e guias, não a lista
+  oficial; as fontes e a confiança de cada bloco estão em `docs/dados-carnaval-2026.md`.
+- **O "hoje" de demonstração:** o app começa em 30/01/2026 e avisa que é data de teste. A
+  data no endereço (`?hoje=2026-02-14T14:00`) continua valendo.
+- **Os prints do Macadam**, com legenda, na pasta `design/`, e a análise deles no
+  planejamento do mapa.
+- **O andamento** no planejamento do mapa: o que foi feito, o que falta e o que ainda
+  preciso decidir.
+
+### Mudou
+
+- **Os 10 lugares:** saíram Berrini, Minhocão e Largo da Batata (sem blocos confirmados em
+  2026) e entraram Santo Amaro, Pinheiros e Vila Madalena e Centro Histórico (Sé e Liberdade).
+- O estilo e as atrações de um bloco agora são opcionais, porque as fontes nem sempre dizem.
+  Quem não tem atração divulgada mostra um aviso.
+- Na aba Geral, os artistas de cada lugar são os dos blocos de hoje em diante.
+- A lista de atrações de um bloco vem em ordem de hora, quando as horas existem.
+- No planejamento, a sugestão de mapa passou a ser MapLibre com OpenFreeMap, porque o visual
+  do Macadam exige mapa vetorial.
+
+### Saiu
+
+- Os blocos e artistas inventados.
+
 ## 0.4.1 (28/10/2026)
 
 ### Entrou

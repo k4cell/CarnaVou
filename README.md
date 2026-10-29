@@ -3,9 +3,9 @@
 **A central do "point" do carnaval de rua de São Paulo.** Quero responder a pergunta que
 todo grupo faz no carnaval: *"pra onde a gente vai agora?"*
 
-> **Situação (28/10/2026): começando o beta, versão 0.4.1.** Já tem o projeto criado e as três telas do
-> esqueleto (lugares em destaque, um lugar e um bloco), mas com blocos fictícios e só a
-> primeira camada de cor. Ainda não tem nenhum bloco de verdade.
+> **Situação (28/10/2026): começando o beta, versão 0.5.0.** Já tem o projeto criado e as três telas do
+> esqueleto (lugares em destaque, um lugar e um bloco), mas com dados de teste: o carnaval de rua de 2026, com nomes reais, como se hoje fosse
+> 30/01/2026. Ainda não tem o mapa.
 
 ---
 
@@ -40,7 +40,7 @@ Daí veio o CarnaVou, uma central que mostra:
 | **Stack** | Angular, na pasta `app/`. Sem servidor nem banco de dados por enquanto: os dados ficam em arquivos dentro do projeto e as páginas são geradas prontas. |
 | **Beta** | Sem "Vou", "Tô aqui" e "Como tá?". A raiz do negócio é **pra onde eu vou** e qual é a tendência de hoje, não importa se está cheio ou não. |
 | **Telas do beta** | Uma "árvore de opções": a cada clique fica mais específico. **1.** Em alta: a lista dos lugares, com o filtro Hoje / Amanhã / Geral no topo. Cada lugar mostra um selo, a zona numa etiqueta colorida, os artistas (o primeiro em destaque) e uma faixa de cor, num padrão de sete cores. **2.** Um lugar: os dias de festa e os principais artistas dali, em banners (o dia, as atrações e a hora que começa; a hora que termina só aparece se tiver). **3.** Um bloco: a lista detalhada de todos os artistas e atrações e, quando for claro, o público-alvo (como LGBTQIA+, mulheres ou eletrônica). "Começando agora / Daqui a pouco / Mais tarde" fica pra depois. |
-| **Lugares em destaque** | Os 10 lugares que mais tiveram megablocos no carnaval de 2026 em SP: Parque Ibirapuera, Rua da Consolação, Av. Faria Lima, Av. Luís Carlos Berrini, Av. Henrique Schaumann, República, Minhocão, Av. Ipiranga com São João, Av. Paulo VI e Largo da Batata. Não achei um ranking oficial de público por lugar, então a lista veio dos megablocos citados na imprensa. |
+| **Lugares em destaque** | Os 10 lugares com os maiores blocos do carnaval de 2026 em SP: Parque Ibirapuera, Rua da Consolação e Baixo Augusta, Av. Faria Lima, República, Av. Ipiranga com São João, Santo Amaro, Pinheiros e Vila Madalena, Av. Henrique Schaumann, Av. Paulo VI e Centro Histórico (Sé e Liberdade). Não existe ranking oficial de público por lugar, então a lista veio dos blocos confirmados nas notícias. Berrini, Minhocão e Largo da Batata saíram porque não achei blocos confirmados lá em 2026. |
 | **Cores** | Páginas de fundo claro, pra ler no sol, e texto quase preto (`#121214`). O cabeçalho usa o azul bem escuro da logo (`#130A29`). Roxo `#6A0DAD` nos títulos e no dia do banner, amarelo `#FFC200` nos botões. As sete cores (rosa `#E21D89`, amarelo, verde `#00E676`, laranja `#FB6F18`, roxo, vermelho `#D62828` e azul `#2563EB`) se revezam nas faixas dos cartões, do rosa ao azul. A borda de fora da página tem a cor escura do cabeçalho, nunca branca. Amarelo, laranja e verde só como fundo, com texto escuro. Sem degradê. As letras eu decido mais pra frente. |
 | **Zonas** | Cada zona da cidade tem a sua cor, numa etiqueta no lugar: Centro roxo, Zona Sul verde, Zona Leste amarelo, Zona Oeste vermelho e Zona Norte azul. |
 | **Logo** | A logo oficial é um pin de mapa com uma máscara de carnaval, e o "o" do "Vou" também é um pin. Ela e as imagens de referência ficam na pasta `design/`. O ícone do app é o pin com a máscara. |
@@ -49,6 +49,9 @@ Daí veio o CarnaVou, uma central que mostra:
 | **Selos** | Cada lugar tem um selo no canto do cartão: "Já começou" (ou "Hoje às 16h", se ainda não começou) para hoje, "Amanhã às 11h" (a hora do primeiro bloco) para amanhã e "5 blocos" (quantos ainda vão passar ali) para quem não tem bloco nem hoje nem amanhã. Sem cor por enquanto. |
 | **Data de teste** | Pra testar, eu abro o site com uma data no endereço, como `?hoje=2027-02-06T14:00`. Aí "hoje" fica parado nesse dia e hora, e a tela avisa que é uma data de teste. |
 | **Em alta** | A ordem não vai ser a que eu escolho: vai vir das tendências (top trends). Por enquanto a ordem é a da lista de lugares. |
+| **Dados de teste** | O carnaval de rua de 2026 de São Paulo, com nomes reais de blocos e artistas (50 blocos nos 10 lugares), como se hoje fosse 30/01/2026. O app começa nessa data e avisa que é data de teste. É uma reconstituição de notícias e guias, não a lista oficial. Detalhes em `docs/dados-carnaval-2026.md`. |
+| **Mapa** | Um ponto por lugar na primeira versão, com a cor da zona (pode mudar). Quero o jeito do Macadam: mapa simples, intuitivo, preciso e com vários pontos. O plano está em `docs/planejamento-do-mapa.md`. |
+| **Social** | A parte social (Amigos) fica por último, porque não é o foco. |
 
 ### Sobre compartilhar
 
@@ -105,16 +108,17 @@ já estar acabando, meio morto. O aplicativo seria muito bom se até me avisasse
 ## Próximo passo
 
 Já respondi as perguntas sobre o carnaval de 2026 e já escolhi a stack. Mandei o primeiro
-desenho (a árvore de opções) e o beta já tem as três telas, com blocos fictícios. Mandei também o segundo
-desenho (o filtro Hoje / Amanhã / Geral) e ele já está na tela inicial. A próxima fase é o
-macro: as tendências de verdade e o mapa. Antes de programar, fiz uma pausa tática: o
-planejamento está em [`docs/planejamento-do-mapa.md`](docs/planejamento-do-mapa.md). Vou continuar desenhando o projeto pra definir o visual.
+desenho (a árvore de opções) e o beta já tem as três telas, com dados de teste do carnaval de 2026. Mandei também o segundo
+desenho (o filtro Hoje / Amanhã / Geral) e ele já está na tela inicial. O próximo passo é o
+mapa, seguindo o planejamento em [`docs/planejamento-do-mapa.md`](docs/planejamento-do-mapa.md),
+com o Macadam como referência. A parte social fica por último. Vou continuar desenhando o
+projeto pra definir o visual.
 
 ### Ainda não pensei
 
 - Como o CarnaVou vai ganhar dinheiro.
-- De onde vêm os dados dos blocos (lista da prefeitura, cadastro manual, organizadores…).
-  Por enquanto os blocos e os artistas são fictícios. Só os lugares são de verdade.
+- De onde vêm os dados dos blocos de 2027 (lista da prefeitura, cadastro manual,
+  organizadores…). Por enquanto uso o carnaval de 2026, reconstituído de notícias e guias.
 - Como definir a "tendência de hoje" sem os votos dos usuários.
 - Como montar o "Em alta" no começo. Pensei em usar as APIs do Google Maps, do Instagram e do
   X, mas já pesquisei e nenhuma entrega pronto o que está em alta na cidade: o Instagram
@@ -124,7 +128,9 @@ planejamento está em [`docs/planejamento-do-mapa.md`](docs/planejamento-do-mapa
 
 - [`app/`](app): o site, feito em Angular.
 - [`docs/planejamento-do-mapa.md`](docs/planejamento-do-mapa.md): o planejamento do mapa e das
-  próximas fases.
+  próximas fases, com o andamento.
+- [`docs/dados-carnaval-2026.md`](docs/dados-carnaval-2026.md): de onde vieram os dados de teste
+  e o quanto confiar em cada um.
 - [`design/`](design): a logo e as imagens de referência do visual, cada uma com a sua legenda.
 - [`CHANGELOG.md`](CHANGELOG.md): o que mudou em cada versão.
 - [`CLAUDE.md`](CLAUDE.md): minhas regras de trabalho para o Claude Code neste projeto.
