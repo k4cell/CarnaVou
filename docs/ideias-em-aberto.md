@@ -40,6 +40,7 @@ O planejamento do mapa e das próximas fases, que junta todas estas ideias num r
 | Botão "Como chegar" no cartão do ponto | Aprovado: Google Maps e Waze. O Uber ficou de fora, porque ainda não confirmei como o link dele funciona |
 | "Onde estou" e distância | Aprovado: só liga quando eu toco no botão, depois de uma tela que explica; uma leitura por toque, sem acompanhar o caminho |
 | Blocos no mapa | Aprovado (0.8.0): o trajeto dos megablocos de cada lugar, quando a fonte deu começo e fim |
+| Offline e desempenho | Aprovado (0.9.0): funciona sem internet com o que já foi aberto, sem baixar a cidade inteira; logo mais leve |
 | Parte social (Amigos) | Fica por último, porque não é o foco |
 
 ## Funcionalidades sugeridas

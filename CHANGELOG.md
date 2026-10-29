@@ -7,6 +7,33 @@ Enquanto o app está em beta, o número é `0.MEIO.FINAL`. O número do meio sob
 uma tela ou funcionalidade nova (0.3.0, 0.4.0…) e o último, quando é só uma correção pequena
 (0.3.1). Cada versão tem uma etiqueta no GitHub, como `v0.3.0`.
 
+## 0.9.0 (29/10/2026)
+
+### Entrou
+
+- **O aviso "Sem internet"**, no canto do cabeçalho, quando a internet cai. Ele some quando ela
+  volta, e o cabeçalho não muda de altura.
+- **O mapa sem internet:** depois de aberto uma vez com internet, o mapa abre sem ela. O
+  service worker guarda o MapLibre, o estilo, o índice do mapa, as letras e os ícones (até 300
+  arquivos, por 30 dias). Os pedaços do mapa já vistos ficam no cache do navegador, que a
+  OpenFreeMap manda guardar por 10 anos.
+- **A mensagem certa no mapa sem internet:** quando o mapa ainda não foi guardado, ele explica
+  que precisa ser aberto uma vez com internet, em vez de dizer que não abre neste celular.
+
+### Mudou
+
+- **A logo em WebP:** caiu de 51 kB para 16,5 kB, sem diferença a olho nu, com o PNG de
+  reserva para navegador antigo. Ela também fica guardada, para o cabeçalho funcionar sem
+  internet.
+- **O service worker entrega uma casca vazia** (`index.csr.html`) para qualquer endereço, em
+  vez da tela inicial pronta. Antes, quem voltava ao site por um link de lugar ou de bloco
+  podia ver a tela inicial por um instante antes da página certa.
+
+### Peso
+
+- A primeira visita ficou com cerca de 110 kB (código, logo, HTML e CSS, comprimidos). Antes
+  eram uns 144 kB: quase um quarto a menos, quase tudo por causa da logo.
+
 ## 0.8.0 (29/10/2026)
 
 ### Entrou

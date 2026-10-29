@@ -15,9 +15,10 @@
 | 0.6.1 | O service worker só guarda o MapLibre depois de eu abrir o mapa | feito, no mesmo commit da 0.7.0 |
 | 0.7.0 | "Onde estou" e distância | feito |
 | 0.7.1 | Copiar o link, a cor do lugar até o bloco e o menu sem Amigos e Favoritos | feito, no mesmo commit da 0.8.0 |
-| **0.8.0** | **Blocos no mapa: os trajetos dos megablocos** | **feito** |
-| **0.9.0** | **Offline e desempenho** | **próximo** |
+| 0.8.0 | Blocos no mapa: os trajetos dos megablocos | feito |
+| **0.9.0** | **Offline e desempenho** | **feito** |
 | depois | Backend, Favoritos, "Em alta" calculado e, **por último**, a parte social | |
+| fim do projeto | Decidir o que dá para cortar para o site ficar ainda mais leve | depois |
 
 **O que a 0.6.0 trouxe (feito):**
 
@@ -79,10 +80,74 @@
 - O mapa não marca onde cada trajeto começa e termina (concentração e dispersão), só a linha.
 - "Onde o bloco deve estar às 16h" continua para depois: precisa do horário em cada trecho.
 
+**O que a 0.9.0 trouxe (feito):**
+
+- O site funciona sem internet com o que já foi aberto: as páginas, os blocos e o mapa das
+  áreas já vistas. O mapa fica guardado depois de aberto uma vez com internet.
+- O aviso "Sem internet" no cabeçalho, e a mensagem certa no mapa quando ele ainda não foi
+  guardado.
+- A logo em WebP (de 51 kB para 16,5 kB): a primeira visita caiu de uns 144 kB para uns 110 kB.
+- O service worker entrega uma casca vazia para qualquer endereço, sem mostrar a tela inicial
+  por um instante antes da página certa.
+
+**O que falta (limites da 0.9.0):**
+
+- **Não testei num celular de verdade, nem com a internet caindo de verdade.** Testei o build
+  com o servidor do site desligado. Os pedaços do mapa no cache do navegador eu conferi pelas
+  regras da OpenFreeMap (guardar por 10 anos), não desligando a internet.
+- Os pedaços do mapa ficam no cache do navegador, que pode apagá-los se o celular ficar sem
+  espaço. Sem internet, as áreas que a pessoa não viu ficam em branco.
+- **Para publicar:** o servidor tem que mandar os arquivos `.mjs` como JavaScript, senão o mapa
+  não abre. E o servidor Node do Angular recusa qualquer endereço que não esteja na lista dele
+  (uma proteção contra ataques), então é preciso dizer qual é o endereço do site.
+
 **O que falta decidir:** veja "Ainda aberto", na seção 11.
 
 **Como usar este documento:** a cada passo, o que foi feito, o que falta e os próximos passos
 saem daqui e vão para a conversa.
+
+## O que ficou de fora
+
+Tudo o que ficou para depois, num lugar só. Quando eu resolver um item, ele sai daqui.
+
+**Mapa e dados:**
+
+1. **Os pedaços do mapa ficam no cache normal do navegador**, não no service worker, porque
+   quem pede os pedaços é o worker do MapLibre, que não passa pelo service worker. A OpenFreeMap
+   manda guardar cada pedaço por 10 anos, mas o celular pode apagar esse cache se faltar
+   espaço. Sem internet, as áreas que a pessoa não viu ficam em branco.
+2. O trajeto é do lugar, não de cada bloco: um bloco pode ter feito um caminho um pouco
+   diferente.
+3. Quatro lugares ficam sem trajeto, porque as fontes não dão começo e fim: Santo Amaro,
+   República, Pinheiros e Vila Madalena e Centro Histórico.
+4. O mapa não marca onde cada trajeto começa e termina (concentração e dispersão), só a linha.
+5. Conferir à mão se cada pino cai no ponto de encontro certo (as coordenadas vieram do
+   OpenStreetMap).
+6. No Centro, três pinos ficam um em cima do outro quando o mapa está afastado.
+7. O Uber ficou fora do "Como chegar", porque não confirmei como o link dele funciona.
+8. "Onde o bloco deve estar às 16h" precisa do horário em cada trecho do trajeto.
+
+**Testes:**
+
+9. Não testei num celular de verdade, nem num celular fraco.
+10. A localização só foi testada simulando a posição no computador: falta ver o aviso do
+    celular de verdade, no iPhone e no Android.
+11. O "sem internet" foi testado com o servidor do site desligado, e não com a internet do
+    celular caindo de verdade.
+
+## Cuidados para publicar
+
+1. **O servidor tem que mandar os arquivos `.mjs` como JavaScript** (o tipo `text/javascript`).
+   Se mandar como texto, o mapa não abre. Foi o que aconteceu no primeiro teste da 0.9.0, com o
+   servidor do Python no Windows. As hospedagens comuns já mandam certo, mas vale conferir
+   abrindo o mapa logo depois de publicar.
+2. **O servidor Node do Angular só aceita os endereços que estão na lista dele**
+   (`allowedHosts`), uma proteção contra um tipo de ataque. Hoje a lista está vazia no
+   `angular.json`, então ele recusa as páginas. É preciso pôr ali o endereço do site, ou passar o
+   endereço na variável `NG_ALLOWED_HOSTS` ao ligar o servidor. Como todas as páginas do
+   CarnaVou são geradas prontas, também dá para publicar só os arquivos de
+   `app/dist/app/browser` numa hospedagem de arquivos, sem o servidor Node. Aí este cuidado não
+   vale, mas o primeiro continua valendo.
 
 ## 1. O que eu quero do mapa
 
@@ -252,6 +317,11 @@ O site já guarda o que precisa no celular (service worker). Para o mapa:
 - o OpenStreetMap oficial **não permite** baixar a cidade para uso offline; já o OpenFreeMap e
   o PMTiles permitem, com regras.
 
+**Como ficou na 0.9.0:** o service worker guarda o MapLibre, o estilo, o índice do mapa, as
+letras e os ícones (até 300 arquivos, por 30 dias). Os pedaços do mapa ficam no cache do
+navegador, porque quem pede os pedaços é o worker do MapLibre, que não passa pelo service
+worker, e a OpenFreeMap manda guardar cada pedaço por 10 anos. Não baixo a cidade inteira.
+
 ### 4.6 Peso e acesso
 
 - O mapa só carrega quando a pessoa abre a aba Mapa (a primeira tela continua leve).
@@ -347,7 +417,7 @@ Usar raspagem (copiar telas de redes sociais) **viola os termos** e arrisca bloq
 | Filtros por bairro, estilo e tamanho; **busca** | depois | dados reais |
 | Página do bloco: tamanho estimado, "como está agora" | depois | dados reais e sinais ao vivo |
 | "Possíveis próximos blocos" | depois | dados reais |
-| **Offline** completo | 0.9.0 | escolha dos mapas |
+| **Offline** | **0.9.0, feito** (com o que já foi aberto) | testar num celular de verdade |
 | **Favoritos** | depois que eu decidir o que são | decisão (só no aparelho?) |
 | "Vou", "Tô aqui" e "Como tá?" | depois do beta | **backend**, regras contra informação falsa |
 | "Em alta" calculado | depois do beta | sinais e, talvez, APIs pagas |
@@ -375,7 +445,7 @@ As versões são **sugestões**. Cada uma é pequena e termina com o site funcio
 5. **0.7.1, copiar o link (feito)** de um lugar e de um bloco.
 6. **0.8.0, blocos no mapa (feito):** o trajeto dos megablocos de cada lugar, onde a CET deu o
    trajeto.
-7. **0.9.0, offline e desempenho** de verdade.
+7. **0.9.0, offline e desempenho (feito).**
 8. **Depois do beta:** backend (Vou, Favoritos com conta), "Em alta" calculado e
    notificações. **A parte social fica por último.**
 
@@ -401,6 +471,9 @@ As versões são **sugestões**. Cada uma é pequena e termina com o site funcio
     (0.7.1).
 12. **Trajeto só com fonte:** só entra no mapa o trajeto que tem começo e fim numa fonte; sem
     isso, o lugar fica só com o pino (0.8.0).
+13. **Sem internet, vale o que já foi aberto:** o mapa guarda só as áreas já vistas, sem baixar
+    a cidade inteira (0.9.0).
+14. **No fim do projeto, decido o que dá para cortar** para o site ficar ainda mais leve.
 
 **Ainda aberto:**
 

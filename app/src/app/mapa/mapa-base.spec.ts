@@ -362,6 +362,23 @@ describe('MapaBase', () => {
     expect(falso.mapas.length).toBe(0);
   });
 
+  describe('quando o MapLibre não carrega sem internet', () => {
+    afterEach(() => {
+      Reflect.deleteProperty(navigator, 'onLine');
+    });
+
+    it('explica que o mapa só fica guardado depois de aberto uma vez com internet', async () => {
+      Object.defineProperty(navigator, 'onLine', { value: false, configurable: true });
+      const aviso = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+      const { tela } = await renderizar([SE], () => Promise.reject(new Error('sem rede')));
+      const mensagem = tela.querySelector('.mapa-erro')?.textContent ?? '';
+      expect(mensagem).toContain('Sem internet');
+      expect(mensagem).toContain('abre o mapa uma vez com internet');
+      expect(mensagem).not.toContain('Não consegui abrir');
+      aviso.mockRestore();
+    });
+  });
+
   describe('quando o MapLibre não carrega', () => {
     it('avisa com uma mensagem e manda para a lista', async () => {
       const aviso = vi.spyOn(console, 'warn').mockImplementation(() => undefined);

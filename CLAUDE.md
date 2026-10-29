@@ -88,6 +88,13 @@ calendário e o que eu ainda não pensei.
   só com o pino. A consulta `circuitoDoLocal` fica em `dados/trajetos.ts`, separada das outras,
   para os trajetos só serem baixados junto com o mapa. O endereço da concentração de um bloco
   (`concentracao`) também só entra com fonte, anotada em `docs/dados-carnaval-2026.md`.
+- **Sem internet:** o service worker (`ngsw-config.json`) entrega a casca vazia
+  `index.csr.html` para qualquer endereço (nunca a tela inicial pronta) e guarda o mapa: o grupo
+  `mapa` (MapLibre, worker, estilo) e os `dataGroups` da OpenFreeMap (índice, letras, ícones).
+  Os pedaços do mapa ficam no cache do navegador. O aviso "Sem internet" vem do serviço
+  `Conexao` (`conexao/`). Para testar o build como no ar, use um servidor de arquivos que mande
+  `.mjs` como JavaScript (o `http.server` do Python no Windows manda como texto, e o mapa não
+  abre).
 - **A cor de cada lugar** vem de `faixaDoLocal`, em `dados/consultas.ts`, e é uma só para a
   lista, os banners da página do lugar e as atrações do bloco. Quem tem `data-faixa` passa a
   cor (`--cor-da-faixa`, em `styles.scss`) para tudo o que está dentro dele: numa tela nova de
@@ -112,6 +119,9 @@ calendário e o que eu ainda não pensei.
   anote lá. O "hoje" do app é 07/02/2026 (`DATA_DE_DEMONSTRACAO`, em `relogio/`) e a tela
   avisa que é data de teste. Antes de mostrar o site pra outras pessoas, pergunte se eu
   quero trocar pelos dados de 2027 ou avisar que é a simulação de 2026.
+- Antes de publicar o site, siga os **Cuidados para publicar** do
+  [`docs/planejamento-do-mapa.md`](docs/planejamento-do-mapa.md). E mantenha a lista **O que
+  ficou de fora**, de lá, em dia: o que ficar para depois entra nela, e o que for resolvido sai.
 
 ## Repositório
 

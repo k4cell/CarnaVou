@@ -12,6 +12,34 @@
   padding: 16px 0;
   background: var(--noite);
   color: #fff;
+
+  .miolo {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+// O aviso de "Sem internet" fica no canto do cabeçalho, sem mudar a altura dele.
+.sem-internet {
+  flex: none;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: var(--amarelo);
+  color: var(--texto);
+  font-size: 0.875rem;
+  font-weight: 700;
+
+  // Com internet, fica escondido só para os olhos: o leitor de tela continua acompanhando.
+  &:not(.visivel) {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
 }
 
 .marca {

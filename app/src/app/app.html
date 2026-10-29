@@ -2,10 +2,21 @@
   <div class="miolo">
     <h1 class="marca">
       <a routerLink="/">
-        <img class="emblema" src="logo/emblema.png" alt="" width="48" height="56" />
-        <img class="palavra" src="logo/palavra.png" alt="CarnaVou" width="160" height="37" />
+        <!-- WebP é bem mais leve; o PNG fica para navegador antigo. -->
+        <picture>
+          <source srcset="logo/emblema.webp" type="image/webp" />
+          <img class="emblema" src="logo/emblema.png" alt="" width="48" height="56" />
+        </picture>
+        <picture>
+          <source srcset="logo/palavra.webp" type="image/webp" />
+          <img class="palavra" src="logo/palavra.png" alt="CarnaVou" width="160" height="37" />
+        </picture>
       </a>
     </h1>
+    <!-- Sempre na página, para o leitor de tela avisar quando o texto aparece. -->
+    <span class="sem-internet" role="status" [class.visivel]="!conexao.online()">{{
+      conexao.online() ? '' : 'Sem internet'
+    }}</span>
   </div>
 </header>
 

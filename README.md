@@ -3,10 +3,11 @@
 **A central do "point" do carnaval de rua de São Paulo.** Quero responder a pergunta que
 todo grupo faz no carnaval: *"pra onde a gente vai agora?"*
 
-> **Situação (29/10/2026): começando o beta, versão 0.8.0.** Já tem o projeto criado, as três telas do
+> **Situação (29/10/2026): começando o beta, versão 0.9.0.** Já tem o projeto criado, as três telas do
 > esqueleto (lugares em destaque, um lugar e um bloco) e o mapa, com dados de teste: o
 > carnaval de rua de 2026, com nomes reais, como se hoje fosse 07/02/2026. O mapa mostra os trajetos
-> dos megablocos e, quando eu toco no botão, onde eu estou e a distância até cada lugar.
+> dos megablocos e, quando eu toco no botão, onde eu estou e a distância até cada lugar. Sem internet, o
+> site continua funcionando com o que já foi aberto.
 
 ---
 
@@ -54,6 +55,7 @@ Daí veio o CarnaVou, uma central que mostra:
 | **Mapa** | **MapLibre com o mapa livre da OpenFreeMap** (aprovado), num estilo nosso, lilás, no jeito do Macadam: simples, intuitivo, preciso e com vários pontos. Um ponto (pino) por lugar, com a cor da zona (pode mudar). Tocar no pino abre um cartão curto com o selo, os artistas e os botões "Como chegar" (Google Maps e Waze) e "Ver o lugar". Só leitura, com o botão "onde estou" (veja Localização). O mapa só é baixado quando eu abro a aba Mapa (nem o service worker o guarda antes) e fica isolado num componente, para eu poder trocar de biblioteca sem mexer no resto. O plano está em `docs/planejamento-do-mapa.md`. |
 | **Localização** | Só liga quando eu toco no botão redondo "onde estou", no mapa. Antes de o celular fazer a pergunta dele, o app mostra uma tela que explica para que serve. Uma leitura por toque: não sigo o meu caminho, não uso a localização em segundo plano e não guardo nem mando a posição pra lugar nenhum. Aparece uma bolinha rosa com um círculo de precisão e, no cartão do ponto, a distância em linha reta. Quem diz não continua usando o mapa do mesmo jeito. |
 | **Trajetos** | No mapa, o trajeto dos megablocos de cada lugar aparece como uma linha na cor da zona, e o do lugar escolhido fica mais grosso. Só desenho trajeto com começo e fim numa fonte: a CET publicou seis (Ibirapuera, Consolação, Faria Lima, Ipiranga com São João, Paulo VI e Henrique Schaumann). Os outros lugares ficam só com o pino. O cartão do ponto mostra o trajeto em palavras e os blocos do dia, e as páginas do lugar e do bloco têm o botão "Ver no mapa". |
+| **Sem internet** | O site continua funcionando com o que já foi aberto: as páginas, os blocos e o mapa das áreas já vistas. O mapa só fica guardado depois de aberto uma vez com internet, e não baixo a cidade inteira. Quando a internet cai, o cabeçalho mostra "Sem internet". |
 | **Social** | A parte social (Amigos) fica por último, porque não é o foco. |
 
 ### Sobre compartilhar
@@ -114,8 +116,10 @@ Já respondi as perguntas sobre o carnaval de 2026 e já escolhi a stack. Mandei
 desenho (a árvore de opções) e o beta já tem as três telas, com dados de teste do carnaval de 2026. Mandei também o segundo
 desenho (o filtro Hoje / Amanhã / Geral) e ele já está na tela inicial e no mapa. O mapa de
 leitura já está na aba Mapa. O mapa também mostra onde eu estou (0.7.0), dá pra copiar o link (0.7.1) e o mapa mostra
-os trajetos dos megablocos (0.8.0). O próximo passo é o offline e o desempenho (0.9.0),
-seguindo o planejamento em
+os trajetos dos megablocos (0.8.0), e o site funciona sem internet com o que já foi aberto
+(0.9.0). Com isso, o roteiro do beta está completo. Os próximos passos são testar num celular
+de verdade, decidir onde publicar e o que vem depois do beta. O que ficou de fora e os cuidados
+para publicar estão anotados no planejamento, em
 [`docs/planejamento-do-mapa.md`](docs/planejamento-do-mapa.md), com o Macadam como referência.
 A parte social fica por último. Vou continuar desenhando o
 projeto pra definir o visual.

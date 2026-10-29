@@ -14,6 +14,11 @@ pin. Cores da logo: fundo `#130A29`, amarelo `#FFC200`, rosa `#E21D89` e laranja
 | [`logo/logo-emblema.png`](logo/logo-emblema.png) | Só o pin com a máscara, com o fundo transparente. Serve para o cabeçalho e para o ícone do app. |
 | [`logo/logo-palavra.png`](logo/logo-palavra.png) | Só a palavra "CarnaVou", com o fundo transparente. Serve para o cabeçalho. |
 
+O site usa a logo do cabeçalho em WebP (`app/public/logo/*.webp`), que pesa um terço do PNG, e
+guarda o PNG de reserva para navegador antigo. Se a logo mudar, gero os dois de novo; o WebP sai
+do PNG com `magick emblema.png -quality 92 -define webp:alpha-quality=100 -define webp:method=6
+emblema.webp` (o mesmo para a palavra).
+
 As versões leves que o site usa ficam em `app/public/logo/` e os ícones do app em
 `app/public/icons/`. Se a logo mudar, eu gero tudo de novo a partir desta pasta.
 
