@@ -51,6 +51,17 @@ describe('dados', () => {
     expect(BLOCOS.some((bloco) => !bloco.estilo)).toBe(true);
   });
 
+  it('põe cada lugar na Grande São Paulo, com latitude e longitude', () => {
+    expect(
+      LOCAIS.every((l) => l.lat > -24.1 && l.lat < -23.2 && l.lng > -47.2 && l.lng < -46.2),
+    ).toBe(true);
+  });
+
+  it('não repete o mesmo ponto para dois lugares', () => {
+    const pontos = LOCAIS.map((l) => `${l.lat},${l.lng}`);
+    expect(new Set(pontos).size).toBe(pontos.length);
+  });
+
   describe('artistasDoLugar', () => {
     it('junta os artistas do lugar sem repetir, na ordem dos blocos', () => {
       const artistas = artistasDoLugar('ibirapuera');

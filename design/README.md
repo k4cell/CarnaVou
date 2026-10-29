@@ -32,3 +32,9 @@ As versões leves que o site usa ficam em `app/public/logo/` e os ícones do app
 | [`referencias/macadam-inicio.jpg`](referencias/macadam-inicio.jpg) | A tela inicial do Macadam: números e botão grande bem à mostra, cartões com cantos redondos, uma fonte de título bem pesada e uma barra de progresso com recompensas. |
 | [`referencias/macadam-social.jpg`](referencias/macadam-social.jpg) | A tela social do Macadam: filtros de período em botões (Dia, Semana, Mês, Ano) e cartões com foto, nome e número. Eu pensei em deixar a parte social por último, porque não é o foco. |
 | [`referencias/macadam-pedido-de-localizacao.jpg`](referencias/macadam-pedido-de-localizacao.jpg) | Como o Macadam pede a localização: uma tela explica para que serve antes de aparecer o aviso do celular, e o botão "Próximo" leva ao aviso. Eu quero fazer parecido. |
+
+## Mapa
+
+| Arquivo | Legenda |
+|---|---|
+| [`mapa/gerar-estilo-do-mapa.py`](mapa/gerar-estilo-do-mapa.py) | O script que gera o estilo do mapa, nas cores lilás do CarnaVou. Ele pega o estilo "positron" da OpenFreeMap, pinta com as nossas cores e grava em `app/public/mapa/estilo-carnavou.json`. Para mudar o visual do mapa, eu mudo as cores nele e rodo de novo. |

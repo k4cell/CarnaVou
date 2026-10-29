@@ -10,18 +10,40 @@
 | Versão | O que é | Estado |
 |---|---|---|
 | 0.4.1 | Este planejamento e o cabeçalho sem a frase | feito |
-| **0.5.0** | **Dados de teste reais: o carnaval de 2026, como se hoje fosse 30/01/2026** | **feito** |
-| **0.6.0** | **Mapa de leitura: um ponto por lugar, com a cor da zona** | **próximo** |
-| 0.6.1 | Copiar o link | depois |
+| 0.5.0 | Dados de teste reais: o carnaval de 2026 | feito |
+| **0.6.0** | **Mapa de leitura: um ponto por lugar, com a cor da zona** | **feito** |
+| **0.6.1** | **Copiar o link** | **próximo** |
 | 0.7.0 | "Onde estou" e distância | depois |
 | 0.8.0 | Blocos no mapa e percursos | depois |
 | 0.9.0 | Offline e desempenho | depois |
 | depois | Backend, Favoritos, "Em alta" calculado e, **por último**, a parte social | |
 
-**O que falta decidir para o mapa começar:**
+**O que a 0.6.0 trouxe (feito):**
 
-1. Aprovar a nova sugestão de mapa (MapLibre com OpenFreeMap, seção 4.1).
-2. Contar a **grande mudança sobre os dias**, que mexe no modelo de dados.
+- A aba Mapa, com o MapLibre e o mapa da OpenFreeMap num estilo lilás nosso, que só carrega
+  quando eu abro a aba.
+- Um pino por lugar, na cor da zona, e o cartão curto com "Como chegar" (Google Maps e Waze).
+- O filtro Hoje / Amanhã / Geral no mapa, o mesmo da tela inicial.
+- As coordenadas dos 10 lugares e o "hoje" de teste em 07/02/2026.
+
+**O que falta (limites da 0.6.0):**
+
+- **Conferir à mão** se cada pino cai no ponto de encontro certo (as coordenadas vieram do
+  OpenStreetMap).
+- No Centro, três pinos ficam um em cima do outro quando o mapa está afastado. Dá para
+  separar com o zoom; agrupar os pinos fica para depois.
+- O service worker (o que faz o site funcionar como app) baixa o MapLibre em segundo plano
+  logo na primeira visita, mesmo para quem nunca abre o mapa: uns 246 kB a mais. Sugestão:
+  tirar o MapLibre dessa lista e só guardar quando a pessoa abrir o mapa (0.9.0, offline e
+  desempenho, ou antes, se eu pedir).
+- Não testei num celular de verdade nem num celular fraco.
+- O Uber ficou fora do "Como chegar" (não confirmei o link dele).
+
+**O que falta decidir:**
+
+1. Contar a **grande mudança sobre os dias**, que mexe no modelo de dados.
+2. Se o service worker deve guardar o MapLibre já na primeira visita (offline melhor, mais
+   dados gastos) ou só depois de abrir o mapa (primeira visita mais leve).
 
 **Como usar este documento:** a cada passo, o que foi feito, o que falta e os próximos passos
 saem daqui e vão para a conversa.
@@ -32,7 +54,7 @@ Um mapa **simples, intuitivo, preciso e com vários pontos sinalizados**, pareci
 Macadam. Para o CarnaVou isso vira estas regras:
 
 - **Leve.** Celular fraco e internet ruim no meio da multidão. Hoje a primeira tela pesa
-  cerca de 82 kB (comprimida); o mapa não pode estragar isso.
+  cerca de 87 kB (comprimida); o mapa não pode estragar isso.
 - **Legível no sol**, com poucos toques e botões grandes.
 - **Útil sem cadastro** e sem a pessoa precisar entender nada.
 - **Barato de manter.** O objetivo é ganhar dinheiro, então nada de custo fixo alto no começo.
@@ -139,13 +161,18 @@ Os tamanhos vêm de fontes secundárias; falta conferir na página de cada proje
   uns US$ 630. **Um app que viraliza no carnaval pode gerar custo alto.** Fica fora do mapa
   principal.
 
-**Minha sugestão mudou depois dos prints:** **MapLibre com OpenFreeMap (opção B)**, com um
-estilo nosso (fundo claro ou escuro da marca, ruas suaves e os pontos nas cores das zonas),
-**carregado só quando a pessoa abre a aba Mapa**. O custo é uns 200 kB a mais, só para quem
-abre o mapa, e o mapa precisa de WebGL, que quase todo celular tem. O mapa fica **isolado num
-componente com interface própria**, para trocar de biblioteca sem mexer no resto. O teste com
-o Leaflet, que eu quis deixar para mais tarde, só vale se o MapLibre pesar demais num celular
-fraco.
+**Decidi (28/10/2026): MapLibre com OpenFreeMap (opção B)**, com um estilo nosso (fundo
+lilás, ruas suaves e os pontos nas cores das zonas), **carregado só quando a pessoa abre a
+aba Mapa**. O custo é uns 246 kB a mais (comprimidos), só para quem abre o mapa, e o mapa
+precisa de WebGL, que quase todo celular tem. O mapa fica **isolado num componente com
+interface própria**, para trocar de biblioteca sem mexer no resto. O teste com o Leaflet, que
+eu quis deixar para mais tarde, só vale se o MapLibre pesar demais num celular fraco.
+
+**Como ficou na 0.6.0:** o estilo vem do "positron" da OpenFreeMap, recolorido por um script
+(`design/mapa/gerar-estilo-do-mapa.py`). As letras, os ícones e os mapas em si continuam
+vindo do servidor da OpenFreeMap, que pede o crédito à vista. Ela não tem chave nem limite
+declarado, mas também não promete disponibilidade: se cair, o mapa mostra um aviso e manda
+para a lista.
 
 ### 4.2 Os pontos
 
@@ -187,9 +214,9 @@ O site já guarda o que precisa no celular (service worker). Para o mapa:
 ## 5. Os dados: o ponto mais delicado
 
 **Hoje:** 10 lugares e 50 blocos reais do carnaval de 2026, usados como teste, como se hoje
-fosse 30/01/2026. É uma reconstituição de notícias e guias, com a fonte e a confiança de cada
-bloco em [`dados-carnaval-2026.md`](dados-carnaval-2026.md). Dá para montar o mapa já, com as
-coordenadas dos 10 lugares.
+fosse 07/02/2026 (o primeiro dia do pré-carnaval). É uma reconstituição de notícias e guias, com a fonte e a confiança de cada
+bloco em [`dados-carnaval-2026.md`](dados-carnaval-2026.md). As coordenadas dos 10 lugares
+estão em `locais.ts` e ainda preciso conferi-las à mão.
 
 **Para os dados reais de 2027:**
 
@@ -262,9 +289,9 @@ Usar raspagem (copiar telas de redes sociais) **viola os termos** e arrisca bloq
 | Ideia | Quando entra | Depende de |
 |---|---|---|
 | **Dados de teste reais** (carnaval de 2026) | **0.5.0, feito** | nada |
-| **Mapa** com um ponto por lugar e filtro Hoje/Amanhã/Geral | **0.6.0** | coordenadas dos lugares; aprovar o MapLibre |
-| Botão "Como chegar" | 0.6.0 | confirmar Waze e Uber |
-| Alternar entre lista e mapa | 0.6.0 | desenho da tela |
+| **Mapa** com um ponto por lugar e filtro Hoje/Amanhã/Geral | **0.6.0, feito** | conferir as coordenadas à mão |
+| Botão "Como chegar" | **0.6.0, feito** (Google Maps e Waze) | Uber: confirmar o link |
+| Alternar entre lista e mapa | **0.6.0, feito**, pelo menu de baixo (Descobrir e Mapa) | nada |
 | Botão de **copiar o link** (decidido) | 0.6.1 | nada |
 | Tela que explica a localização, "onde estou" e distância | 0.7.0 | permissão do celular |
 | Pontos por bloco e **percurso** | 0.8.0 | coordenadas e percursos dos blocos |
@@ -292,8 +319,8 @@ As versões são **sugestões**. Cada uma é pequena e termina com o site funcio
 ## 10. Roteiro proposto
 
 1. **0.5.0, dados de teste reais (feito).** O carnaval de 2026 com nomes reais, como se hoje
-   fosse 30/01/2026.
-2. **0.6.0, mapa de leitura.** A aba Mapa mostra os 10 lugares como pontos (com a cor da
+   fosse 07/02/2026.
+2. **0.6.0, mapa de leitura (feito).** A aba Mapa mostra os 10 lugares como pontos (com a cor da
    zona), com o mesmo filtro Hoje/Amanhã/Geral da tela inicial. Tocar abre o cartão curto com
    o botão "Como chegar". Sem localização.
 3. **0.6.1, copiar o link** de um lugar e de um bloco.
@@ -310,17 +337,18 @@ As versões são **sugestões**. Cada uma é pequena e termina com o site funcio
 
 1. O Macadam é o app que eu citei (os prints estão em `design/referencias`).
 2. **Os dados de teste são o carnaval de 2026 de verdade, com nomes reais,** como se hoje fosse
-   30/01/2026.
+   07/02/2026 (eu tinha começado com 30/01 e mudei, para as abas Hoje e Amanhã terem blocos).
 3. **Um ponto por lugar** no primeiro mapa.
 4. **A cor dos pontos é a da zona** (pode mudar mais pra frente).
 5. O **teste entre Leaflet e MapLibre fica para mais tarde**.
 6. **A parte social (Amigos) fica por último**, porque não é o foco.
+7. **Aprovei o MapLibre com OpenFreeMap** para o mapa (seção 4.1).
 
 **Ainda aberto:**
 
-1. **Aprovar o MapLibre com OpenFreeMap** para o mapa (seção 4.1), já que o visual que eu
-   gosto exige mapa vetorial.
-2. **A grande mudança sobre os dias.** Preciso contar antes de fechar o modelo de dados.
+1. **A grande mudança sobre os dias.** Preciso contar antes de fechar o modelo de dados.
+2. **O service worker e o MapLibre:** guardar já na primeira visita ou só depois de abrir o
+   mapa (ver "O que falta", no Andamento).
 3. **Fonte dos dados reais de 2027** e quem cadastra.
 4. **O que serão os Favoritos.** Posso começar só no aparelho?
 5. **Quanto eu aceito pagar por mês** (mapas e APIs) no começo?

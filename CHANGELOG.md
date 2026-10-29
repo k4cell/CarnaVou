@@ -7,6 +7,36 @@ Enquanto o app está em beta, o número é `0.MEIO.FINAL`. O número do meio sob
 uma tela ou funcionalidade nova (0.3.0, 0.4.0…) e o último, quando é só uma correção pequena
 (0.3.1). Cada versão tem uma etiqueta no GitHub, como `v0.3.0`.
 
+## 0.6.0 (28/10/2026)
+
+### Entrou
+
+- **O mapa**, na aba Mapa: um mapa de São Paulo nas cores do app (lilás), com um pino para
+  cada lugar na cor da zona. É feito com o MapLibre e o mapa livre da OpenFreeMap, e só
+  carrega quando eu abro a aba.
+- **O cartão do ponto:** tocar num pino mostra o nome, a zona, o selo e os artistas, com os
+  botões "Como chegar" (Google Maps), "Waze" e "Ver o lugar". Tocar no × ou no mapa vazio
+  fecha o cartão.
+- **O filtro Hoje / Amanhã / Geral no mapa:** é o mesmo da tela inicial, e a aba que eu
+  escolho numa tela vale na outra. Aba sem bloco mostra o aviso e fica sem pinos.
+- **As coordenadas dos 10 lugares**, tiradas do OpenStreetMap.
+- **O estilo do mapa**, gerado por um script em `design/mapa/` a partir do estilo "positron"
+  da OpenFreeMap, recolorido com a paleta do app.
+
+### Mudou
+
+- **O "hoje" de teste agora é 07/02/2026** (sábado, primeiro dia do pré-carnaval), e não mais
+  30/01. Assim as abas Hoje e Amanhã já abrem com blocos.
+- O filtro e as abas viraram peças que a tela inicial e o mapa dividem. A tela inicial
+  continua igual.
+- O limite de tamanho do estilo de um componente subiu para 80 kB (aviso) e 100 kB (erro),
+  só por causa do CSS do MapLibre, que vem junto com o mapa.
+
+### Peso
+
+- A primeira tela está com cerca de 87 kB (comprimida). O MapLibre (cerca de 246 kB
+  comprimido) e a tela do mapa só são baixados na aba Mapa.
+
 ## 0.5.0 (28/10/2026)
 
 ### Entrou

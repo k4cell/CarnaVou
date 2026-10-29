@@ -1,14 +1,4 @@
-<div class="abas" role="group" aria-label="Filtrar por dia">
-  @for (aba of abas; track aba.id) {
-    <button type="button" class="aba" [attr.aria-pressed]="ativa() === aba.id" (click)="escolher(aba.id)">
-      {{ aba.nome }}
-    </button>
-  }
-</div>
-
-@if (simulado()) {
-  <p class="teste">Data de teste: {{ dataDeTeste() }}</p>
-}
+<app-abas-do-dia />
 
 <h2 class="titulo">
   Em alta

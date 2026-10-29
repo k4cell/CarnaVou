@@ -3,9 +3,10 @@
 **A central do "point" do carnaval de rua de São Paulo.** Quero responder a pergunta que
 todo grupo faz no carnaval: *"pra onde a gente vai agora?"*
 
-> **Situação (28/10/2026): começando o beta, versão 0.5.0.** Já tem o projeto criado e as três telas do
-> esqueleto (lugares em destaque, um lugar e um bloco), mas com dados de teste: o carnaval de rua de 2026, com nomes reais, como se hoje fosse
-> 30/01/2026. Ainda não tem o mapa.
+> **Situação (28/10/2026): começando o beta, versão 0.6.0.** Já tem o projeto criado, as três telas do
+> esqueleto (lugares em destaque, um lugar e um bloco) e o mapa de leitura, com dados de teste: o
+> carnaval de rua de 2026, com nomes reais, como se hoje fosse 07/02/2026. O mapa ainda não sabe
+> onde a pessoa está.
 
 ---
 
@@ -44,13 +45,13 @@ Daí veio o CarnaVou, uma central que mostra:
 | **Cores** | Páginas de fundo claro, pra ler no sol, e texto quase preto (`#121214`). O cabeçalho usa o azul bem escuro da logo (`#130A29`). Roxo `#6A0DAD` nos títulos e no dia do banner, amarelo `#FFC200` nos botões. As sete cores (rosa `#E21D89`, amarelo, verde `#00E676`, laranja `#FB6F18`, roxo, vermelho `#D62828` e azul `#2563EB`) se revezam nas faixas dos cartões, do rosa ao azul. A borda de fora da página tem a cor escura do cabeçalho, nunca branca. Amarelo, laranja e verde só como fundo, com texto escuro. Sem degradê. As letras eu decido mais pra frente. |
 | **Zonas** | Cada zona da cidade tem a sua cor, numa etiqueta no lugar: Centro roxo, Zona Sul verde, Zona Leste amarelo, Zona Oeste vermelho e Zona Norte azul. |
 | **Logo** | A logo oficial é um pin de mapa com uma máscara de carnaval, e o "o" do "Vou" também é um pin. Ela e as imagens de referência ficam na pasta `design/`. O ícone do app é o pin com a máscara. |
-| **Menu de baixo** | Descobrir, Mapa, Amigos e Favoritos. Mapa, Amigos e Favoritos mostram só "Em breve" por enquanto. Ainda vou pensar no que serão os Amigos e os Favoritos. |
-| **Filtro por dia** | No topo da tela inicial. Hoje mostra só os lugares com bloco hoje, Amanhã só os com bloco amanhã e Geral mostra todos. A tela abre em Hoje quando tem bloco hoje e, quando não tem, abre em Geral. |
+| **Menu de baixo** | Descobrir, Mapa, Amigos e Favoritos. O Mapa já funciona. Amigos e Favoritos mostram só "Em breve" por enquanto. Ainda vou pensar no que serão os Amigos e os Favoritos. |
+| **Filtro por dia** | No topo da tela inicial. Hoje mostra só os lugares com bloco hoje, Amanhã só os com bloco amanhã e Geral mostra todos. A tela abre em Hoje quando tem bloco hoje e, quando não tem, abre em Geral. O mesmo filtro vale no mapa, e a aba que eu escolho numa tela vale na outra. |
 | **Selos** | Cada lugar tem um selo no canto do cartão: "Já começou" (ou "Hoje às 16h", se ainda não começou) para hoje, "Amanhã às 11h" (a hora do primeiro bloco) para amanhã e "5 blocos" (quantos ainda vão passar ali) para quem não tem bloco nem hoje nem amanhã. Sem cor por enquanto. |
 | **Data de teste** | Pra testar, eu abro o site com uma data no endereço, como `?hoje=2027-02-06T14:00`. Aí "hoje" fica parado nesse dia e hora, e a tela avisa que é uma data de teste. |
 | **Em alta** | A ordem não vai ser a que eu escolho: vai vir das tendências (top trends). Por enquanto a ordem é a da lista de lugares. |
-| **Dados de teste** | O carnaval de rua de 2026 de São Paulo, com nomes reais de blocos e artistas (50 blocos nos 10 lugares), como se hoje fosse 30/01/2026. O app começa nessa data e avisa que é data de teste. É uma reconstituição de notícias e guias, não a lista oficial. Detalhes em `docs/dados-carnaval-2026.md`. |
-| **Mapa** | Um ponto por lugar na primeira versão, com a cor da zona (pode mudar). Quero o jeito do Macadam: mapa simples, intuitivo, preciso e com vários pontos. O plano está em `docs/planejamento-do-mapa.md`. |
+| **Dados de teste** | O carnaval de rua de 2026 de São Paulo, com nomes reais de blocos e artistas (50 blocos nos 10 lugares), como se hoje fosse 07/02/2026, sábado, o primeiro dia do pré-carnaval (assim as abas Hoje e Amanhã já têm blocos). O app começa nessa data e avisa que é data de teste. É uma reconstituição de notícias e guias, não a lista oficial. Detalhes em `docs/dados-carnaval-2026.md`. |
+| **Mapa** | **MapLibre com o mapa livre da OpenFreeMap** (aprovado), num estilo nosso, lilás, no jeito do Macadam: simples, intuitivo, preciso e com vários pontos. Um ponto (pino) por lugar, com a cor da zona (pode mudar). Tocar no pino abre um cartão curto com o selo, os artistas e os botões "Como chegar" (Google Maps e Waze) e "Ver o lugar". Só leitura, sem "onde estou" por enquanto. O mapa só carrega quando eu abro a aba Mapa e fica isolado num componente, para eu poder trocar de biblioteca sem mexer no resto. O plano está em `docs/planejamento-do-mapa.md`. |
 | **Social** | A parte social (Amigos) fica por último, porque não é o foco. |
 
 ### Sobre compartilhar
@@ -109,9 +110,11 @@ já estar acabando, meio morto. O aplicativo seria muito bom se até me avisasse
 
 Já respondi as perguntas sobre o carnaval de 2026 e já escolhi a stack. Mandei o primeiro
 desenho (a árvore de opções) e o beta já tem as três telas, com dados de teste do carnaval de 2026. Mandei também o segundo
-desenho (o filtro Hoje / Amanhã / Geral) e ele já está na tela inicial. O próximo passo é o
-mapa, seguindo o planejamento em [`docs/planejamento-do-mapa.md`](docs/planejamento-do-mapa.md),
-com o Macadam como referência. A parte social fica por último. Vou continuar desenhando o
+desenho (o filtro Hoje / Amanhã / Geral) e ele já está na tela inicial e no mapa. O mapa de
+leitura já está na aba Mapa. O próximo passo é copiar o link (0.6.1) e depois o "onde estou"
+e a distância (0.7.0), seguindo o planejamento em
+[`docs/planejamento-do-mapa.md`](docs/planejamento-do-mapa.md), com o Macadam como referência.
+A parte social fica por último. Vou continuar desenhando o
 projeto pra definir o visual.
 
 ### Ainda não pensei

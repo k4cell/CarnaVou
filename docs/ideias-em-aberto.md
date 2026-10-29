@@ -34,9 +34,10 @@ O planejamento do mapa e das próximas fases, que junta todas estas ideias num r
 | Filtro Hoje / Amanhã / Geral | Aprovado: no topo da tela inicial |
 | Selos nos cartões ("Já começou", "Hoje às 14h", "Amanhã às 11h", "5 blocos") | Aprovados, sem cor por enquanto |
 | Data de teste no endereço | Aprovada: `?hoje=2026-02-14T14:00` |
-| Dados de teste | Aprovado: o carnaval de rua de 2026, com nomes reais, como se hoje fosse 30/01/2026 |
+| Dados de teste | Aprovado: o carnaval de rua de 2026, com nomes reais, como se hoje fosse 07/02/2026 (primeiro dia do pré-carnaval) |
 | Primeiro mapa | Aprovado: um ponto por lugar, com a cor da zona (pode mudar) |
-| Teste entre Leaflet e MapLibre | Fica para mais tarde |
+| MapLibre com OpenFreeMap | Aprovado em 28/10/2026. O teste com o Leaflet só vale se o MapLibre pesar demais num celular fraco |
+| Botão "Como chegar" no cartão do ponto | Aprovado: Google Maps e Waze. O Uber ficou de fora, porque ainda não confirmei como o link dele funciona |
 | Parte social (Amigos) | Fica por último, porque não é o foco |
 
 ## Funcionalidades sugeridas

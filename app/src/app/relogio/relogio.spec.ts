@@ -43,17 +43,17 @@ describe('Relogio', () => {
     expect(relogio.simulado()).toBe(true);
   });
 
-  it('usa o "hoje" de demonstração (30/01/2026) quando o endereço não tem data', () => {
+  it('usa o "hoje" de demonstração (07/02/2026) quando o endereço não tem data', () => {
     const relogio = TestBed.inject(Relogio);
     relogio.iniciar('');
-    expect(relogio.agora()).toEqual(new Date(2026, 0, 30, 12, 0));
+    expect(relogio.agora()).toEqual(new Date(2026, 1, 7, 12, 0));
     expect(relogio.simulado()).toBe(true);
   });
 
   it('ignora uma data de teste que não existe e usa a de demonstração', () => {
     const relogio = TestBed.inject(Relogio);
     relogio.iniciar('?hoje=2026-02-31');
-    expect(relogio.agora()).toEqual(new Date(2026, 0, 30, 12, 0));
+    expect(relogio.agora()).toEqual(new Date(2026, 1, 7, 12, 0));
   });
 
   it('só começa uma vez: voltar para a tela inicial não perde a data de teste', () => {

@@ -1,0 +1,89 @@
+// O estilo do próprio MapLibre (controles, créditos). Só entra no site quando o mapa é aberto.
+@use 'maplibre-gl/dist/maplibre-gl';
+
+app-mapa-base {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+
+  .mapa {
+    position: absolute;
+    inset: 0;
+  }
+}
+
+// O pino: uma gota com a cor da zona. As cores vêm das mesmas variáveis do resto do app.
+.pino {
+  --cor-do-pino: var(--roxo);
+
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+
+  svg {
+    display: block;
+    width: 36px;
+    height: 50px;
+    filter: drop-shadow(0 2px 3px rgb(0 0 0 / 30%));
+    transition: transform 0.15s;
+    transform-origin: 50% 100%;
+  }
+
+  path {
+    fill: var(--cor-do-pino);
+    stroke: #fff;
+    stroke-width: 2.5;
+  }
+
+  circle {
+    fill: #fff;
+  }
+
+  // A escala fica no desenho e não no botão, porque o MapLibre move o botão com transform.
+  &.selecionado svg {
+    transform: scale(1.3);
+  }
+
+  &:focus-visible svg {
+    border-radius: 8px;
+    outline: 3px solid var(--texto);
+    outline-offset: 2px;
+  }
+}
+
+.pino-centro {
+  --cor-do-pino: var(--roxo);
+}
+
+.pino-sul {
+  --cor-do-pino: var(--verde);
+}
+
+.pino-leste {
+  --cor-do-pino: var(--amarelo);
+}
+
+.pino-oeste {
+  --cor-do-pino: var(--vermelho);
+}
+
+.pino-norte {
+  --cor-do-pino: var(--azul);
+}
+
+.mapa-erro {
+  position: absolute;
+  top: 50%;
+  right: 16px;
+  left: 16px;
+  margin: 0 auto;
+  padding: 16px;
+  max-width: 420px;
+  border: 1px solid var(--borda);
+  border-radius: 8px;
+  background: var(--cartao);
+  text-align: center;
+  transform: translateY(-50%);
+}

@@ -1,0 +1,40 @@
+:host {
+  display: block;
+}
+
+.abas {
+  display: flex;
+  border-bottom: 1px solid var(--borda);
+}
+
+.aba {
+  flex: 1;
+  min-height: 48px;
+  padding: 0 8px;
+  border: 0;
+  border-bottom: 3px solid transparent;
+  background: none;
+  color: var(--texto-suave);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+
+  &[aria-pressed='true'] {
+    border-bottom-color: var(--amarelo);
+    color: var(--roxo);
+    font-weight: 800;
+  }
+
+  &:focus-visible {
+    outline: 3px solid var(--texto);
+    outline-offset: -3px;
+  }
+}
+
+.teste {
+  margin: 12px 0 0;
+  padding: 8px 12px;
+  border: 1px dashed var(--texto-suave);
+  border-radius: 8px;
+  font-size: 0.875rem;
+}

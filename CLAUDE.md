@@ -63,14 +63,24 @@ calendário e o que eu ainda não pensei.
 - **Tem que ser leve.** O povo vai usar no celular fraco, com internet ruim no meio da
   multidão. Sem fontes da internet nem bibliotecas pesadas, e o que não for da primeira
   tela (como o mapa) só carrega quando for aberto.
-- As telas ficam em `destaques/`, `local/` e `bloco/`; o banner que se repete fica em
-  `banner/`, o menu de baixo em `menu/` e a tela "Em breve" em `em-breve/`. Os endereços
+- As telas ficam em `destaques/`, `local/`, `bloco/` e `mapa/`; o banner que se repete fica
+  em `banner/`, o menu de baixo em `menu/` e a tela "Em breve" em `em-breve/`. O filtro
+  Hoje / Amanhã / Geral é um só para a tela inicial e para o mapa: o estado fica em `filtro/` e
+  os botões em `abas/`. Os endereços
   são `/`, `/local/:local`, `/local/:local/:bloco`, `/mapa`, `/amigos` e `/favoritos`, e
   cada um vira uma página pronta no `ng build`.
 - As páginas prontas não sabem o dia de hoje. O que depende da data (as abas Hoje e Amanhã
   e os selos) é calculado no navegador, depois da primeira pintura, pelo serviço em
   `relogio/`. Pra testar, abra o site com `?hoje=2027-02-06T14:00` no endereço: aí "hoje" fica
   parado nessa data e a tela avisa que é uma data de teste.
+- **O mapa** (`mapa/`) usa o MapLibre com o mapa da OpenFreeMap. Só o `MapaBase`
+  (`mapa-base.ts`) conhece o MapLibre; o resto do app entrega uma lista de pontos e escuta
+  qual foi tocado. O MapLibre só é baixado quando abro a aba Mapa (`import()` em
+  `maplibre.ts`). O estilo do mapa é o `app/public/mapa/estilo-carnavou.json`, gerado por
+  `design/mapa/gerar-estilo-do-mapa.py` (rode de novo para mudar as cores). O "worker" do
+  MapLibre é copiado de `node_modules` para `mapa/` pelo `angular.json`. Nos testes o
+  MapLibre é trocado por um falso (`maplibre-falso.ts`), sem WebGL nem internet. Os
+  créditos "OpenFreeMap © OpenMapTiles Data from OpenStreetMap" têm que continuar à vista.
 - A logo e as imagens de referência ficam em `design/`, cada uma com legenda no
   `design/README.md`. O que o site usa fica em `app/public/logo/` e `app/public/icons/`:
   se a logo mudar, gere de novo a partir de `design/logo/`.
@@ -78,7 +88,7 @@ calendário e o que eu ainda não pensei.
   carnaval de rua de 2026, reconstituído de notícias, com nomes reais). **Não invente
   dado**: só vale o que uma fonte diz e, na dúvida, deixe em branco. As fontes e a confiança
   de cada bloco estão em `docs/dados-carnaval-2026.md`; se achar uma divergência nova,
-  anote lá. O "hoje" do app é 30/01/2026 (`DATA_DE_DEMONSTRACAO`, em `relogio/`) e a tela
+  anote lá. O "hoje" do app é 07/02/2026 (`DATA_DE_DEMONSTRACAO`, em `relogio/`) e a tela
   avisa que é data de teste. Antes de mostrar o site pra outras pessoas, pergunte se eu
   quero trocar pelos dados de 2027 ou avisar que é a simulação de 2026.
 
@@ -96,8 +106,8 @@ calendário e o que eu ainda não pensei.
   que eu autorizei. Só o que está no GitHub fica.
 - **Versões:** **todo push leva um número de versão**, não esqueça. O número fica em `app/package.json` e o histórico no
   `CHANGELOG.md`. Enquanto o app está em beta uso `0.MEIO.FINAL`: o número do meio sobe
-  quando entra tela ou funcionalidade nova (0.5.0) e o último, numa correção pequena
-  (0.4.1). Antes de pedir o aval do push, escolha o número, diga qual é e por quê, e suba
+  quando entra tela ou funcionalidade nova (0.6.0) e o último, numa correção pequena
+  (0.5.1). Antes de pedir o aval do push, escolha o número, diga qual é e por quê, e suba
   no `package.json` (`npm version X.Y.Z --no-git-tag-version`, dentro de `app/`), troque o título "Próxima versão" do
   `CHANGELOG.md` pelo número e a data, ponha o número na linha da Situação do README e
   marque o commit com a etiqueta `vX.Y.Z` (git tag). A etiqueta vai pro GitHub junto com o

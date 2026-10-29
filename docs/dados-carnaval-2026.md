@@ -1,7 +1,7 @@
 # Os dados de teste: o carnaval de rua de São Paulo em 2026
 
 Para testar o app, eu uso o **carnaval de rua de 2026 de verdade**, como se hoje fosse
-**30/01/2026**. Os nomes são reais. Este documento diz de onde vieram os dados, como escolhi
+**07/02/2026** (sábado, primeiro dia do pré-carnaval). Os nomes são reais. Este documento diz de onde vieram os dados, como escolhi
 quando as fontes discordam e o que ainda precisa de conferência.
 
 > **Aviso importante.** Isto é uma **reconstituição** feita de notícias e guias, **não é a
@@ -16,9 +16,10 @@ quando as fontes discordam e o que ainda precisa de conferência.
 - **Carnaval:** de sábado 14 a terça 17 de fevereiro.
 - **Pós-carnaval:** sábado 21 e domingo 22 de fevereiro.
 - Foram cerca de 630 blocos. A programação oficial saiu no Diário Oficial em 23/01/2026.
-- **Em 30/01 ainda não tinha nenhum megabloco.** Por isso, nesse dia, as abas Hoje e Amanhã
-  ficam vazias e o app abre em Geral. Para ver os selos funcionando, abra o site com uma data
-  do carnaval, por exemplo `?hoje=2026-02-14T14:00`.
+- **O app começa em 07/02/2026**, o primeiro dia do pré-carnaval, para as abas Hoje e Amanhã
+  já terem blocos. Em 30/01, que foi a primeira data que usei, ainda não tinha nenhum
+  megabloco e as duas abas ficavam vazias. Para ver outro dia, abra o site com a data no
+  endereço, por exemplo `?hoje=2026-02-14T14:00`.
 
 ## Como eu escolhi os dados
 

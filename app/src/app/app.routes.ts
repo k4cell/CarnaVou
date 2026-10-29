@@ -22,8 +22,13 @@ export const routes: Routes = [
   { path: '', component: Destaques, title: NOME_DO_SITE },
   { path: 'local/:local', component: PaginaLocal, title: tituloDoLocal },
   { path: 'local/:local/:bloco', component: PaginaBloco, title: tituloDoBloco },
+  {
+    path: 'mapa',
+    // O mapa (e o MapLibre, que pesa) só é baixado quando a pessoa abre esta aba.
+    loadComponent: () => import('./mapa/pagina-mapa').then((modulo) => modulo.PaginaMapa),
+    title: `Mapa · ${NOME_DO_SITE}`,
+  },
   // Abas do menu que ainda não existem: só mostram "Em breve".
-  { path: 'mapa', component: PaginaEmBreve, data: { titulo: 'Mapa' }, title: `Mapa · ${NOME_DO_SITE}` },
   { path: 'amigos', component: PaginaEmBreve, data: { titulo: 'Amigos' }, title: `Amigos · ${NOME_DO_SITE}` },
   {
     path: 'favoritos',

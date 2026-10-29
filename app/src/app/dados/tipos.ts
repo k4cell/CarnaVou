@@ -18,6 +18,9 @@ export interface Local {
   id: string;
   nome: string;
   zona: Zona;
+  /** O ponto do lugar no mapa (um por lugar). */
+  lat: number;
+  lng: number;
 }
 
 export interface Atracao {
