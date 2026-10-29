@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 
 import { distanciaEmMetros } from '../localizacao/distancia';
-import { MapaBase, PontoNoMapa, PosicaoNoMapa } from './mapa-base';
+import { MapaBase, PontoNoMapa, PosicaoNoMapa, TrajetoNoMapa } from './mapa-base';
 import { BibliotecaDeMapa, CARREGAR_MAPLIBRE } from './maplibre';
 import { criarMapLibreFalso, esperarOMapa } from './maplibre-falso';
 
@@ -33,6 +33,7 @@ describe('MapaBase', () => {
       pontos?: PontoNoMapa[];
       selecionado?: string | null;
       voce?: PosicaoNoMapa | null;
+      trajetos?: TrajetoNoMapa[];
     }) => {
       for (const [nome, valor] of Object.entries(entradas)) {
         fixture.componentRef.setInput(nome, valor);
@@ -137,6 +138,98 @@ describe('MapaBase', () => {
     const { falso, mudar } = await renderizar([SE, SANTO_AMARO]);
     await mudar({ pontos: [SE, SANTO_AMARO], selecionado: 'se' });
     expect(falso.mapas[0].enquadramentos.length).toBe(1);
+  });
+
+  describe('os trajetos', () => {
+    const NA_SE: TrajetoNoMapa = { id: 'se', zona: 'centro', linha: [[-46.63, -23.55], [-46.632, -23.552]] };
+    const EM_SANTO_AMARO: TrajetoNoMapa = {
+      id: 'santo-amaro',
+      zona: 'sul',
+      linha: [[-46.71, -23.64], [-46.712, -23.642]],
+    };
+    type Linhas = { features: { properties: Record<string, unknown>; geometry: { coordinates: unknown } }[] };
+    const linhas = (falso: ReturnType<typeof criarMapLibreFalso>) =>
+      falso.mapas[0].fontes.get('trajetos')?.dados as Linhas | undefined;
+
+    it('só desenha as linhas depois de o mapa carregar', async () => {
+      const { falso, fixture, mudar } = await renderizar([SE]);
+      await mudar({ trajetos: [NA_SE] });
+      expect(linhas(falso)).toBeUndefined();
+      falso.mapas[0].carregar();
+      await esperarOMapa(fixture);
+      expect(linhas(falso)?.features.length).toBe(1);
+    });
+
+    it('desenha uma linha por trajeto, seguindo os pontos, na cor da zona', async () => {
+      const { falso, mudar } = await renderizar([SE, SANTO_AMARO]);
+      falso.mapas[0].carregar();
+      await mudar({ trajetos: [NA_SE, EM_SANTO_AMARO] });
+      const [doCentro, doSul] = linhas(falso)!.features;
+      expect(doCentro.geometry.coordinates).toEqual(NA_SE.linha);
+      expect(doCentro.properties['cor']).toBe('#6a0dad');
+      expect(doSul.properties['cor']).toBe('#00e676');
+    });
+
+    it('põe uma borda branca embaixo da linha colorida', async () => {
+      const { falso, mudar } = await renderizar([SE]);
+      falso.mapas[0].carregar();
+      await mudar({ trajetos: [NA_SE] });
+      expect(falso.mapas[0].camadas.map((camada) => camada['id'])).toEqual(['trajetos-borda', 'trajetos-linha']);
+    });
+
+    it('marca o trajeto do lugar selecionado, para ele ficar mais grosso', async () => {
+      const { falso, mudar } = await renderizar([SE, SANTO_AMARO]);
+      falso.mapas[0].carregar();
+      await mudar({ trajetos: [NA_SE, EM_SANTO_AMARO], selecionado: 'santo-amaro' });
+      expect(linhas(falso)!.features.map((linha) => linha.properties['selecionado'])).toEqual([false, true]);
+    });
+
+    it('troca as linhas sem criar outra fonte quando a lista muda', async () => {
+      const { falso, mudar } = await renderizar([SE, SANTO_AMARO]);
+      falso.mapas[0].carregar();
+      await mudar({ trajetos: [NA_SE, EM_SANTO_AMARO] });
+      await mudar({ trajetos: [EM_SANTO_AMARO] });
+      expect(falso.mapas[0].camadas.length).toBe(2);
+      expect(linhas(falso)!.features.map((linha) => linha.properties['id'])).toEqual(['santo-amaro']);
+      await mudar({ trajetos: [] });
+      expect(linhas(falso)!.features).toEqual([]);
+    });
+
+    it('não cria nada no mapa enquanto não há trajeto', async () => {
+      const { falso, fixture } = await renderizar([SE]);
+      falso.mapas[0].carregar();
+      await esperarOMapa(fixture);
+      expect(falso.mapas[0].fontes.has('trajetos')).toBe(false);
+    });
+
+    it('ao escolher um lugar com trajeto, enquadra o trajeto inteiro e o pino', async () => {
+      const { falso, mudar } = await renderizar([SE, SANTO_AMARO]);
+      await mudar({ trajetos: [NA_SE] });
+      const antes = falso.mapas[0].enquadramentos.length;
+      await mudar({ selecionado: 'se' });
+      expect(falso.mapas[0].enquadramentos.length).toBe(antes + 1);
+      const ultimo = falso.mapas[0].enquadramentos.at(-1)!;
+      expect(ultimo.limites.pontos).toEqual([[SE.lng, SE.lat], ...NA_SE.linha]);
+    });
+
+    it('ao escolher um lugar sem trajeto, só puxa o mapa para o pino', async () => {
+      const { falso, mudar } = await renderizar([SE, SANTO_AMARO]);
+      await mudar({ trajetos: [NA_SE] });
+      const antes = falso.mapas[0].enquadramentos.length;
+      await mudar({ selecionado: 'santo-amaro' });
+      expect(falso.mapas[0].enquadramentos.length).toBe(antes);
+      expect(falso.mapas[0].movimentos.at(-1)?.['center']).toEqual([SANTO_AMARO.lng, SANTO_AMARO.lat]);
+    });
+
+    it('fica embaixo do círculo de precisão da pessoa', async () => {
+      const { falso, fixture, mudar } = await renderizar([SE]);
+      await mudar({ voce: { lat: -23.56, lng: -46.65, precisao: 50 } });
+      falso.mapas[0].carregar();
+      await esperarOMapa(fixture);
+      await mudar({ trajetos: [NA_SE] });
+      const borda = falso.mapas[0].camadas.find((camada) => camada['id'] === 'trajetos-borda');
+      expect(borda?.['embaixoDe']).toBe('voce-precisao-area');
+    });
   });
 
   describe('a pessoa no mapa', () => {

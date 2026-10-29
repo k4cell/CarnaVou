@@ -45,4 +45,17 @@ export interface Bloco {
   estilo?: Estilo;
   /** Público-alvo, só quando for claro (ex.: "LGBTQIA+", "Mulheres"). */
   publico?: string;
+  /** O endereço da concentração, só quando uma fonte diz (ex.: "Av. Ipiranga, 818"). */
+  concentracao?: string;
+}
+
+/** Por onde os megablocos de um lugar desfilam: o circuito que a CET fecha para eles. */
+export interface Circuito {
+  localId: string;
+  /** O trajeto em palavras, como as fontes descrevem. */
+  descricao: string;
+  /** De onde veio o trajeto. */
+  fonte: string;
+  /** A linha do trajeto no mapa, como [longitude, latitude], seguindo as ruas. */
+  trajeto: [number, number][];
 }

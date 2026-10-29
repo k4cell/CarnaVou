@@ -75,9 +75,14 @@ export class MapaFalso {
       : undefined;
   }
 
-  addLayer(camada: Record<string, unknown>): this {
-    this.camadas.push(camada);
+  /** Anota a camada e, quando vem, o id da camada que ficou por cima dela (`embaixoDe`). */
+  addLayer(camada: Record<string, unknown>, embaixoDe?: string): this {
+    this.camadas.push({ ...camada, embaixoDe });
     return this;
+  }
+
+  getLayer(id: string): Record<string, unknown> | undefined {
+    return this.camadas.find((camada) => camada['id'] === id);
   }
 
   fitBounds(limites: LimitesFalsos, opcoes: Record<string, unknown>): this {

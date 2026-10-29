@@ -2,12 +2,13 @@ import { ChangeDetectionStrategy, Component, computed, input } from '@angular/co
 import { RouterLink } from '@angular/router';
 
 import { BannerBloco } from '../banner/banner-bloco';
+import { CopiarLink } from '../copiar-link/copiar-link';
 import { acharLocal, blocosDoLocal } from '../dados/consultas';
 import { ZonaTag } from '../zona/zona-tag';
 
 @Component({
   selector: 'app-pagina-local',
-  imports: [RouterLink, BannerBloco, ZonaTag],
+  imports: [RouterLink, BannerBloco, CopiarLink, ZonaTag],
   templateUrl: './pagina-local.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

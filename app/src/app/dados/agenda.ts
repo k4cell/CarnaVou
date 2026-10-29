@@ -1,4 +1,4 @@
-import { artistasDoLugar, blocosDoLocal } from './consultas';
+import { artistasDoLugar, blocosDoLocal, faixaDoLocal } from './consultas';
 import { formatarHora } from './formato';
 import { LOCAIS } from './locais';
 import { Bloco, Local } from './tipos';
@@ -17,8 +17,6 @@ export interface CartaoDoLugar {
   resto: string;
 }
 
-// Mesma ordem das cores em destaques.scss: do rosa ao azul.
-const FAIXAS = ['rosa', 'amarelo', 'verde', 'laranja', 'roxo', 'vermelho', 'azul'];
 const MAXIMO_DE_ARTISTAS = 3;
 const JA_ACABOU = 'Já acabou';
 
@@ -112,7 +110,7 @@ function montar(local: Local, selo: string, artistas: string[]): CartaoDoLugar {
   return {
     local,
     selo,
-    faixa: FAIXAS[LOCAIS.indexOf(local) % FAIXAS.length],
+    faixa: faixaDoLocal(local.id),
     ...resumirArtistas(artistas),
   };
 }
@@ -151,4 +149,24 @@ export function cartoesDaAba(aba: Aba, agora: Date | null): CartaoDoLugar[] {
     }
   }
   return cartoes;
+}
+
+/**
+ * Os blocos de um lugar que contam na aba, em ordem de data e hora: os de hoje, os de amanhã ou,
+ * na Geral, os que ainda vão passar. Sem saber o dia de hoje, a Geral mostra todos.
+ */
+export function blocosDaAba(aba: Aba, localId: string, agora: Date | null): Bloco[] {
+  const blocos = blocosDoLocal(localId);
+  if (agora === null) {
+    return aba === 'geral' ? blocos : [];
+  }
+  const dia = diaIso(agora);
+  if (aba === 'hoje') {
+    return blocos.filter((bloco) => bloco.data === dia);
+  }
+  if (aba === 'amanha') {
+    const amanha = diaIso(diaSeguinte(agora));
+    return blocos.filter((bloco) => bloco.data === amanha);
+  }
+  return blocos.filter((bloco) => bloco.data >= dia);
 }

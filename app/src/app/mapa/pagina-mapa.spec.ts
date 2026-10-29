@@ -1,7 +1,8 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 
-import { cartoesDaAba } from '../dados/agenda';
+import { blocosDaAba, cartoesDaAba } from '../dados/agenda';
+import { circuitoDoLocal } from '../dados/trajetos';
 import { LOCAIS } from '../dados/locais';
 import { MENSAGENS_DA_ABA_VAZIA } from '../filtro/filtro-de-dia';
 import { distanciaEmMetros, textoDaDistancia } from '../localizacao/distancia';
@@ -31,7 +32,7 @@ interface Celular {
 }
 
 describe('PaginaMapa', () => {
-  async function renderizar(agora?: Date, celular: Celular = {}) {
+  async function renderizar(agora?: Date, celular: Celular = {}, lugar?: string) {
     const falso = criarMapLibreFalso();
     const geo = criarGeolocalizacaoFalsa(celular.resposta ?? NA_PAULISTA);
     let consultas = 0;
@@ -54,6 +55,9 @@ describe('PaginaMapa', () => {
       TestBed.inject(Relogio).definir(agora);
     }
     const fixture = TestBed.createComponent(PaginaMapa);
+    if (lugar) {
+      fixture.componentRef.setInput('lugar', lugar);
+    }
     await esperarOMapa(fixture);
     const tela = fixture.nativeElement as HTMLElement;
 
@@ -204,6 +208,85 @@ describe('PaginaMapa', () => {
       expect(cartao()).not.toBeNull();
       await tocarNaAba('Amanhã');
       expect(cartao()).toBeNull();
+    });
+  });
+
+  describe('os trajetos dos megablocos', () => {
+    const daAbaHoje = () => cartoesDaAba('hoje', SABADO_14H).map((cartao) => cartao.local);
+
+    it('manda para o mapa o trajeto dos lugares da aba que têm circuito', async () => {
+      const { fixture, falso } = await renderizar(SABADO_14H);
+      falso.mapas[0].carregar();
+      await esperarOMapa(fixture);
+      const dados = falso.mapas[0].fontes.get('trajetos')?.dados as { features: { properties: { id: string } }[] };
+      const esperados = daAbaHoje()
+        .filter((local) => circuitoDoLocal(local.id))
+        .map((local) => local.id);
+      expect(esperados.length).toBeGreaterThan(0);
+      expect(dados.features.map((linha) => linha.properties.id)).toEqual(esperados);
+    });
+
+    it('mostra o trajeto em palavras no cartão de um lugar que tem circuito', async () => {
+      const { cartao, tocarNoPino } = await renderizar(SABADO_14H);
+      const comCircuito = daAbaHoje().find((local) => circuitoDoLocal(local.id))!;
+      await tocarNoPino(comCircuito.nome);
+      expect(cartao()?.querySelector('.trajeto')?.textContent).toBe(
+        `Trajeto: ${circuitoDoLocal(comCircuito.id)!.descricao}`,
+      );
+    });
+
+    it('não inventa trajeto para um lugar sem circuito nas fontes', async () => {
+      const { cartao, tocarNoPino } = await renderizar(SABADO_14H);
+      const semCircuito = daAbaHoje().find((local) => !circuitoDoLocal(local.id));
+      expect(semCircuito).toBeDefined();
+      await tocarNoPino(semCircuito!.nome);
+      expect(cartao()?.querySelector('.trajeto')).toBeNull();
+    });
+  });
+
+  describe('os blocos no cartão do ponto', () => {
+    const linhasDosBlocos = (cartao: HTMLElement | null) =>
+      Array.from(cartao?.querySelectorAll<HTMLAnchorElement>('.blocos a') ?? []);
+
+    it('lista os blocos de hoje do lugar, com a hora, levando para a página do bloco', async () => {
+      const { cartao, tocarNoPino } = await renderizar(SABADO_14H);
+      await tocarNoPino('Parque Ibirapuera');
+      const deHoje = blocosDaAba('hoje', 'ibirapuera', SABADO_14H);
+      const links = linhasDosBlocos(cartao());
+      expect(links.length).toBe(deHoje.length);
+      expect(links[0].textContent?.trim()).toBe('13h · Agrada Gregos');
+      expect(links[0].getAttribute('href')).toBe('/local/ibirapuera/agrada-gregos');
+    });
+
+    it('na Geral, põe o dia na frente, mostra só três e diz quantos ficaram de fora', async () => {
+      const { cartao, tocarNoPino, tocarNaAba } = await renderizar(SABADO_14H);
+      await tocarNaAba('Geral');
+      await tocarNoPino('Parque Ibirapuera');
+      const daGeral = blocosDaAba('geral', 'ibirapuera', SABADO_14H);
+      const links = linhasDosBlocos(cartao());
+      expect(daGeral.length).toBeGreaterThan(3);
+      expect(links.length).toBe(3);
+      expect(links[0].textContent?.trim()).toBe('sáb 14 fev · 13h · Agrada Gregos');
+      expect(cartao()?.querySelector('.mais')?.textContent).toBe(`E mais ${daGeral.length - 3} na página do lugar.`);
+    });
+  });
+
+  describe('"Ver no mapa" (o lugar vem no endereço)', () => {
+    it('abre o mapa já com o cartão do lugar', async () => {
+      const { cartao } = await renderizar(SABADO_14H, {}, 'ibirapuera');
+      expect(cartao()?.querySelector('.nome')?.textContent).toContain('Parque Ibirapuera');
+    });
+
+    it('continua na aba Hoje quando o lugar tem bloco hoje', async () => {
+      const { tela } = await renderizar(SABADO_14H, {}, 'ibirapuera');
+      expect(tela.querySelector('.aba[aria-pressed="true"]')?.textContent?.trim()).toBe('Hoje');
+    });
+
+    it('passa para a Geral quando o lugar não tem bloco hoje', async () => {
+      const { tela, cartao } = await renderizar(SABADO_14H, {}, 'consolacao');
+      expect(cartoesDaAba('hoje', SABADO_14H).some((c) => c.local.id === 'consolacao')).toBe(false);
+      expect(tela.querySelector('.aba[aria-pressed="true"]')?.textContent?.trim()).toBe('Geral');
+      expect(cartao()?.querySelector('.nome')?.textContent).toContain('Rua da Consolação');
     });
   });
 

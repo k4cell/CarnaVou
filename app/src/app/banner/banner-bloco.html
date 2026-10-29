@@ -1,4 +1,4 @@
-<a class="cartao banner" [routerLink]="['/local', bloco().localId, bloco().id]">
+<a class="cartao banner" [attr.data-faixa]="faixa()" [routerLink]="['/local', bloco().localId, bloco().id]">
   <time class="data" [attr.datetime]="bloco().data">
     <span class="semana">{{ data().semana }}</span>
     <span class="dia">{{ data().dia }}</span>

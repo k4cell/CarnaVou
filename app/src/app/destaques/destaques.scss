@@ -1,10 +1,3 @@
-// Uma cor de faixa para cada lugar, do rosa ao azul. A ordem é a mesma de FAIXAS em agenda.ts.
-@each $cor in (rosa, amarelo, verde, laranja, roxo, vermelho, azul) {
-  .cartao[data-faixa='#{$cor}'] {
-    border-left-color: var(--#{$cor});
-  }
-}
-
 .titulo {
   margin-top: 20px;
 }

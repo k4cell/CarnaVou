@@ -3,7 +3,6 @@ import { ResolveFn, Routes } from '@angular/router';
 import { PaginaBloco } from './bloco/pagina-bloco';
 import { acharBloco, acharLocal } from './dados/consultas';
 import { Destaques } from './destaques/destaques';
-import { PaginaEmBreve } from './em-breve/pagina-em-breve';
 import { PaginaLocal } from './local/pagina-local';
 
 const NOME_DO_SITE = 'CarnaVou';
@@ -28,13 +27,6 @@ export const routes: Routes = [
     loadComponent: () => import('./mapa/pagina-mapa').then((modulo) => modulo.PaginaMapa),
     title: `Mapa · ${NOME_DO_SITE}`,
   },
-  // Abas do menu que ainda não existem: só mostram "Em breve".
-  { path: 'amigos', component: PaginaEmBreve, data: { titulo: 'Amigos' }, title: `Amigos · ${NOME_DO_SITE}` },
-  {
-    path: 'favoritos',
-    component: PaginaEmBreve,
-    data: { titulo: 'Favoritos' },
-    title: `Favoritos · ${NOME_DO_SITE}`,
-  },
+  // Endereços que não existem (inclusive os antigos /amigos e /favoritos) voltam para o início.
   { path: '**', redirectTo: '' },
 ];

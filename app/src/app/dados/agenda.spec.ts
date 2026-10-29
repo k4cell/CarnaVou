@@ -1,4 +1,4 @@
-import { CartaoDoLugar, cartoesDaAba, diaIso, diaSeguinte, horaIso } from './agenda';
+import { CartaoDoLugar, blocosDaAba, cartoesDaAba, diaIso, diaSeguinte, horaIso } from './agenda';
 import { BLOCOS } from './blocos';
 import { LOCAIS } from './locais';
 
@@ -191,6 +191,43 @@ describe('agenda', () => {
       const faixas = cartoesDaAba('geral', null).map((cartao) => cartao.faixa);
       expect(faixas.slice(0, 7)).toEqual(['rosa', 'amarelo', 'verde', 'laranja', 'roxo', 'vermelho', 'azul']);
       expect(faixas[7]).toBe('rosa');
+    });
+  });
+
+  describe('blocosDaAba', () => {
+    const doIbirapuera = BLOCOS.filter((bloco) => bloco.localId === 'ibirapuera');
+
+    it('na aba Hoje, traz só os blocos do lugar de hoje', () => {
+      const blocos = blocosDaAba('hoje', 'ibirapuera', SABADO_14H);
+      expect(blocos.map((bloco) => bloco.id)).toEqual(
+        doIbirapuera.filter((bloco) => bloco.data === '2026-02-14').map((bloco) => bloco.id),
+      );
+      expect(blocos.length).toBeGreaterThan(0);
+    });
+
+    it('na aba Amanhã, traz só os de amanhã, em ordem de hora', () => {
+      const blocos = blocosDaAba('amanha', 'ibirapuera', SABADO_14H);
+      expect(blocos.length).toBeGreaterThan(1);
+      expect(blocos.every((bloco) => bloco.data === '2026-02-15')).toBe(true);
+      const horas = blocos.map((bloco) => bloco.inicio);
+      expect(horas).toEqual([...horas].sort());
+    });
+
+    it('na aba Geral, traz os que ainda vão passar, a partir de hoje', () => {
+      const blocos = blocosDaAba('geral', 'ibirapuera', SABADO_14H);
+      expect(blocos.every((bloco) => bloco.data >= '2026-02-14')).toBe(true);
+      expect(blocos.length).toBe(doIbirapuera.filter((bloco) => bloco.data >= '2026-02-14').length);
+    });
+
+    it('sem saber o dia de hoje, a Geral traz todos e as outras abas ficam vazias', () => {
+      expect(blocosDaAba('geral', 'ibirapuera', null).length).toBe(doIbirapuera.length);
+      expect(blocosDaAba('hoje', 'ibirapuera', null)).toEqual([]);
+      expect(blocosDaAba('amanha', 'ibirapuera', null)).toEqual([]);
+    });
+
+    it('fica vazia num dia em que o lugar não tem bloco', () => {
+      expect(blocosDaAba('hoje', 'paulo-vi', SABADO_14H).length).toBe(1);
+      expect(blocosDaAba('amanha', 'paulo-vi', SABADO_14H)).toEqual([]);
     });
   });
 });
