@@ -1,4 +1,4 @@
-import { artistasDaSemana, blocosDoLocal } from './consultas';
+import { artistasDoLugar, blocosDoLocal } from './consultas';
 import { formatarHora } from './formato';
 import { LOCAIS } from './locais';
 import { Bloco, Local } from './tipos';
@@ -128,7 +128,7 @@ export function cartoesDaAba(aba: Aba, agora: Date | null): CartaoDoLugar[] {
       return [];
     }
     return LOCAIS.map((local) =>
-      montar(local, seloDeContagem(blocosDoLocal(local.id).length), artistasDaSemana(local.id)),
+      montar(local, seloDeContagem(blocosDoLocal(local.id).length), artistasDoLugar(local.id)),
     );
   }
 
@@ -147,7 +147,7 @@ export function cartoesDaAba(aba: Aba, agora: Date | null): CartaoDoLugar[] {
     } else if (aba === 'amanha' && deAmanha.length > 0) {
       cartoes.push(montar(local, seloDeAmanha(deAmanha), artistasDosBlocos(deAmanha)));
     } else if (aba === 'geral') {
-      cartoes.push(montar(local, seloGeral(blocos, dia, amanha, hora), artistasDaSemana(local.id)));
+      cartoes.push(montar(local, seloGeral(blocos, dia, amanha, hora), artistasDoLugar(local.id, dia)));
     }
   }
   return cartoes;

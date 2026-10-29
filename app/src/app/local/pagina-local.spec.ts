@@ -19,7 +19,7 @@ describe('PaginaLocal', () => {
   it('mostra só os blocos do lugar escolhido', async () => {
     const tela = await renderizar('consolacao');
     const esperados = BLOCOS.filter((bloco) => bloco.localId === 'consolacao');
-    expect(tela.querySelector('h2')?.textContent).toContain('Rua da Consolação');
+    expect(tela.querySelector('h2')?.textContent).toContain('Rua da Consolação e Baixo Augusta');
     expect(tela.querySelectorAll('app-banner-bloco').length).toBe(esperados.length);
   });
 
@@ -33,7 +33,7 @@ describe('PaginaLocal', () => {
   it('leva cada banner para a página do bloco', async () => {
     const tela = await renderizar('consolacao');
     const hrefs = Array.from(tela.querySelectorAll('app-banner-bloco a')).map((a) => a.getAttribute('href'));
-    expect(hrefs).toContain('/local/consolacao/cordao-da-purpurina');
+    expect(hrefs).toContain('/local/consolacao/bloco-skol-calvin-harris');
   });
 
   it('mostra a hora que começa e só mostra o fim quando existe', async () => {
@@ -42,6 +42,14 @@ describe('PaginaLocal', () => {
     expect(horarios.every((h) => h.startsWith('Começa às '))).toBe(true);
     expect(horarios.some((h) => h.includes('vai até'))).toBe(true);
     expect(horarios.some((h) => !h.includes('vai até'))).toBe(true);
+  });
+
+  it('só mostra a linha de artistas nos blocos que têm artista', async () => {
+    const tela = await renderizar('consolacao');
+    const comArtista = tela.querySelector('a[href="/local/consolacao/pipoca-da-rainha"] .atracoes');
+    const semArtista = tela.querySelector('a[href="/local/consolacao/eu-sou-do-axe"] .atracoes');
+    expect(comArtista?.textContent).toBe('Daniela Mercury');
+    expect(semArtista).toBeNull();
   });
 
   it('mostra a zona do lugar na etiqueta de cor', async () => {
