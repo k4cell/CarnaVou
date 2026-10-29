@@ -16,7 +16,8 @@
 | 0.7.0 | "Onde estou" e distância | feito |
 | 0.7.1 | Copiar o link, a cor do lugar até o bloco e o menu sem Amigos e Favoritos | feito, no mesmo commit da 0.8.0 |
 | 0.8.0 | Blocos no mapa: os trajetos dos megablocos | feito |
-| **0.9.0** | **Offline e desempenho** | **feito** |
+| 0.9.0 | Offline e desempenho | feito |
+| **0.10.0** | **O beta no ar para teste, no GitHub Pages** | **feito** |
 | depois | Backend, Favoritos, "Em alta" calculado e, **por último**, a parte social | |
 | fim do projeto | Decidir o que dá para cortar para o site ficar ainda mais leve | depois |
 
@@ -101,6 +102,12 @@
   não abre. E o servidor Node do Angular recusa qualquer endereço que não esteja na lista dele
   (uma proteção contra ataques), então é preciso dizer qual é o endereço do site.
 
+**O que a 0.10.0 trouxe (feito):**
+
+- O beta no ar para teste em https://k4cell.github.io/CarnaVou/, publicado sozinho a cada push na main, depois
+  dos testes.
+- O aviso de versão de teste no alto de todas as páginas, e o ano na data de teste das abas.
+
 **O que falta decidir:** veja "Ainda aberto", na seção 11.
 
 **Como usar este documento:** a cada passo, o que foi feito, o que falta e os próximos passos
@@ -148,6 +155,10 @@ Tudo o que ficou para depois, num lugar só. Quando eu resolver um item, ele sai
    CarnaVou são geradas prontas, também dá para publicar só os arquivos de
    `app/dist/app/browser` numa hospedagem de arquivos, sem o servidor Node. Aí este cuidado não
    vale, mas o primeiro continua valendo.
+
+**Na 0.10.0** o beta foi para o GitHub Pages, que é uma hospedagem de arquivos: o segundo
+cuidado não vale lá. O primeiro eu confiro abrindo o mapa no ar, logo depois da primeira
+publicação.
 
 ## 1. O que eu quero do mapa
 
@@ -446,7 +457,8 @@ As versões são **sugestões**. Cada uma é pequena e termina com o site funcio
 6. **0.8.0, blocos no mapa (feito):** o trajeto dos megablocos de cada lugar, onde a CET deu o
    trajeto.
 7. **0.9.0, offline e desempenho (feito).**
-8. **Depois do beta:** backend (Vou, Favoritos com conta), "Em alta" calculado e
+8. **0.10.0, o beta no ar para teste (feito)**, no GitHub Pages.
+9. **Depois do beta:** backend (Vou, Favoritos com conta), "Em alta" calculado e
    notificações. **A parte social fica por último.**
 
 ## 11. O que já decidi e o que ainda preciso decidir
@@ -474,13 +486,16 @@ As versões são **sugestões**. Cada uma é pequena e termina com o site funcio
 13. **Sem internet, vale o que já foi aberto:** o mapa guarda só as áreas já vistas, sem baixar
     a cidade inteira (0.9.0).
 14. **No fim do projeto, decido o que dá para cortar** para o site ficar ainda mais leve.
+15. **O beta vai para o ar no GitHub Pages**, com os dados de 2026, o aviso de versão de teste
+    e podendo aparecer no Google (0.10.0).
 
 **Ainda aberto:**
 
 1. **Fonte dos dados reais de 2027** e quem cadastra.
 2. **O que serão os Favoritos.** Posso começar só no aparelho?
 3. **Quanto eu aceito pagar por mês** (mapas e APIs) no começo?
-4. **Onde publicar o site e que endereço usar.** Hoje ele só existe no meu computador.
+4. **O endereço definitivo do site.** O beta está no GitHub Pages (https://k4cell.github.io/CarnaVou/); falta
+   decidir o endereço de verdade (um domínio próprio, por exemplo).
 5. **Como vou ganhar dinheiro.** Isso decide o que preciso medir desde já.
 6. **Termos de uso e privacidade**, e a conferência da logo.
 7. **A bolinha deve acompanhar a pessoa andando?** Hoje é uma leitura por toque, que gasta

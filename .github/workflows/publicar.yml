@@ -1,0 +1,66 @@
+# Publica o CarnaVou no GitHub Pages (https://k4cell.github.io/CarnaVou/) a cada push na main.
+# Roda os testes antes: se algum falhar, o site no ar continua o anterior.
+name: Publicar no GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  # Também dá para publicar na mão, pela aba Actions do GitHub.
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Um push novo cancela a publicação que ainda estiver no meio.
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  montar:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: app
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: app/package-lock.json
+
+      - run: npm ci
+
+      - name: Testes
+        run: npx ng test --no-watch
+
+      # O site mora em /CarnaVou/ (veja a configuração github-pages no angular.json).
+      - name: Montar o site
+        run: npx ng build --configuration production,github-pages
+
+      # 404.html: endereço que não existe abre o site, que manda para o início.
+      # .nojekyll: o GitHub Pages entrega os arquivos como estão, sem processar.
+      - name: Ajustes do GitHub Pages
+        run: |
+          cp dist/app/browser/index.csr.html dist/app/browser/404.html
+          touch dist/app/browser/.nojekyll
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: app/dist/app/browser
+
+  publicar:
+    needs: montar
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.publicacao.outputs.page_url }}
+    steps:
+      - id: publicacao
+        uses: actions/deploy-pages@v4

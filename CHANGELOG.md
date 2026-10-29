@@ -7,6 +7,24 @@ Enquanto o app está em beta, o número é `0.MEIO.FINAL`. O número do meio sob
 uma tela ou funcionalidade nova (0.3.0, 0.4.0…) e o último, quando é só uma correção pequena
 (0.3.1). Cada versão tem uma etiqueta no GitHub, como `v0.3.0`.
 
+## 0.10.0 (29/10/2026)
+
+### Entrou
+
+- **O beta no ar para teste**, no GitHub Pages: https://k4cell.github.io/CarnaVou/. A cada push na main, o GitHub
+  roda os testes e publica o site sozinho. Se um teste falhar, fica no ar a versão anterior.
+- **O aviso de versão de teste** no alto de todas as páginas: "os blocos e os horários são do
+  carnaval de rua de 2026". Quem chega por um link cai direto na página do lugar ou do bloco,
+  e já vê o aviso.
+- **A configuração de build `github-pages`**, com o endereço `/CarnaVou/`.
+
+### Mudou
+
+- A data de teste das abas mostra o ano, em números, numa linha só: "Data de teste: Sábado,
+  7/2/2026, 12h".
+- A descrição do site, a que aparece no Google, diz que é a versão de teste com os blocos de
+  2026.
+
 ## 0.9.0 (29/10/2026)
 
 ### Entrou

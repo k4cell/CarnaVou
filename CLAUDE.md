@@ -117,8 +117,9 @@ calendário e o que eu ainda não pensei.
   dado**: só vale o que uma fonte diz e, na dúvida, deixe em branco. As fontes e a confiança
   de cada bloco estão em `docs/dados-carnaval-2026.md`; se achar uma divergência nova,
   anote lá. O "hoje" do app é 07/02/2026 (`DATA_DE_DEMONSTRACAO`, em `relogio/`) e a tela
-  avisa que é data de teste. Antes de mostrar o site pra outras pessoas, pergunte se eu
-  quero trocar pelos dados de 2027 ou avisar que é a simulação de 2026.
+  avisa que é data de teste. O site no ar usa a simulação de 2026, com o aviso de versão de
+  teste no alto de toda página (`aviso-de-teste/`): decidi assim. Quando os dados de 2027
+  saírem, pergunte se eu quero trocar.
 - Antes de publicar o site, siga os **Cuidados para publicar** do
   [`docs/planejamento-do-mapa.md`](docs/planejamento-do-mapa.md). E mantenha a lista **O que
   ficou de fora**, de lá, em dia: o que ficar para depois entra nela, e o que for resolvido sai.
@@ -135,6 +136,10 @@ calendário e o que eu ainda não pensei.
   commit, pergunte: "Fiz o commit, posso dar o push?". Eu confiro tudo e respondo, por
   exemplo, "pode dar" ou "pode publicar o commit". Só publique depois desse aval, e só o
   que eu autorizei. Só o que está no GitHub fica.
+- **Todo push na `main` publica o site** no GitHub Pages (https://k4cell.github.io/CarnaVou/),
+  pelo `.github/workflows/publicar.yml`: ele roda os testes e monta com
+  `ng build --configuration production,github-pages`. O site mora em `/CarnaVou/`, então nunca
+  use caminho de arquivo do site começando com "/": use caminho relativo ou `enderecoNoSite`.
 - Quando eu disser **"pode fazer o commit"**, isso quer dizer **o commit e o push**, de uma vez:
   faça o commit e, em seguida, envie ao GitHub, com a etiqueta da versão. Vale para o trabalho
   de que eu estava falando naquela hora. Sem essa frase (ou um "pode dar"), continue pedindo o

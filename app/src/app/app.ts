@@ -1,13 +1,14 @@
 import { Component, afterNextRender, inject } from '@angular/core';
 import { RouterLink, RouterOutlet } from '@angular/router';
 
+import { AvisoDeTeste } from './aviso-de-teste/aviso-de-teste';
 import { Conexao } from './conexao/conexao';
 import { MenuInferior } from './menu/menu-inferior';
 import { Relogio } from './relogio/relogio';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, RouterLink, MenuInferior],
+  imports: [RouterOutlet, RouterLink, MenuInferior, AvisoDeTeste],
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })

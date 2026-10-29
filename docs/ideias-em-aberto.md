@@ -41,6 +41,7 @@ O planejamento do mapa e das próximas fases, que junta todas estas ideias num r
 | "Onde estou" e distância | Aprovado: só liga quando eu toco no botão, depois de uma tela que explica; uma leitura por toque, sem acompanhar o caminho |
 | Blocos no mapa | Aprovado (0.8.0): o trajeto dos megablocos de cada lugar, quando a fonte deu começo e fim |
 | Offline e desempenho | Aprovado (0.9.0): funciona sem internet com o que já foi aberto, sem baixar a cidade inteira; logo mais leve |
+| Publicar o beta para teste | Aprovado (0.10.0): no GitHub Pages, com os dados de 2026, o aviso de versão de teste e podendo aparecer no Google |
 | Parte social (Amigos) | Fica por último, porque não é o foco |
 
 ## Funcionalidades sugeridas

@@ -7,8 +7,9 @@ quando as fontes discordam e o que ainda precisa de conferência.
 > **Aviso importante.** Isto é uma **reconstituição** feita de notícias e guias, **não é a
 > lista oficial**. Eu não consegui abrir o site da Prefeitura ([carnavalsp.com](https://www.carnavalsp.com)),
 > que só carrega com JavaScript. As fontes **discordam** em muitos horários, e às vezes até no
-> dia e no local. Serve para testar o app, **não para ninguém sair de casa**. Antes de
-> mostrar para outras pessoas, trocar pelos dados de 2027.
+> dia e no local. Serve para testar o app, **não para ninguém sair de casa**. O beta está
+> no ar com estes dados e um aviso de versão de teste em toda página. Quando os dados de 2027
+> saírem, troco.
 
 ## Como o carnaval de 2026 aconteceu em São Paulo
 

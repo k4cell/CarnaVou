@@ -26,10 +26,18 @@ export class AbasDoDia {
   protected readonly ativa = this.filtro.ativa;
   protected readonly simulado = this.relogio.simulado;
 
-  /** "Sábado, 7 de fevereiro, 12h": só aparece quando a data não vem do relógio do celular. */
+  /**
+   * "Sábado, 7/2/2026, 12h": só aparece quando a data não vem do relógio do celular. O ano fica à
+   * vista, para ninguém achar que é o carnaval que vem, e a data em números cabe numa linha só.
+   */
   protected readonly dataDeTeste = computed(() => {
     const agora = this.relogio.agora();
-    return agora ? `${dataPorExtenso(diaIso(agora))}, ${formatarHora(horaIso(agora))}` : '';
+    if (!agora) {
+      return '';
+    }
+    const semana = dataPorExtenso(diaIso(agora)).split(',')[0];
+    const data = `${agora.getDate()}/${agora.getMonth() + 1}/${agora.getFullYear()}`;
+    return `${semana}, ${data}, ${formatarHora(horaIso(agora))}`;
   });
 
   protected escolher(aba: Aba): void {
