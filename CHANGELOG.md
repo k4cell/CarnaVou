@@ -7,6 +7,49 @@ Enquanto o app está em beta, o número é `0.MEIO.FINAL`. O número do meio sob
 uma tela ou funcionalidade nova (0.3.0, 0.4.0…) e o último, quando é só uma correção pequena
 (0.3.1). Cada versão tem uma etiqueta no GitHub, como `v0.3.0`.
 
+## 0.8.0 (29/10/2026)
+
+### Entrou
+
+- **Os trajetos dos megablocos no mapa:** uma linha na cor da zona, pelas ruas, nos seis
+  lugares que a CET publicou com começo e fim: Ibirapuera (Av. Pedro Álvares Cabral),
+  Consolação, Faria Lima, Ipiranga com São João, Paulo VI e Henrique Schaumann. O trajeto do
+  lugar escolhido fica mais grosso, e o mapa chega perto para mostrar o trajeto inteiro.
+- **No cartão do ponto:** o trajeto em palavras e os blocos do lugar na aba (até três), cada
+  um levando para a página do bloco. Na Geral, com o dia na frente.
+- **"Ver no mapa"** nas páginas do lugar e do bloco: abre o mapa já com o lugar escolhido, e
+  passa para a aba Geral quando o lugar não tem bloco hoje.
+- **O endereço da concentração** na página do bloco, quando a fonte deu (cinco blocos, por
+  enquanto).
+- **O script dos trajetos** (`design/mapa/gerar-circuitos.py`): acha os pontos no
+  OpenStreetMap e traça o caminho pelas ruas.
+- **O botão "Copiar link"** nas páginas do lugar e do bloco. Ele copia o endereço limpo da
+  página (sem a data de teste `?hoje=`) e avisa "Link copiado!". Quando o navegador não deixa
+  copiar, pede para eu copiar o endereço na mão.
+
+### Mudou
+
+- O cartão do ponto não passa de uns 45% da tela (o resto rola dentro dele), e os botões vêm
+  antes da lista de blocos, para "Como chegar" ficar à vista.
+
+### Arrumei
+
+- **A cor do lugar acompanha o lugar até o fim.** Os banners da página do lugar e as atrações
+  da página do bloco tinham sempre a faixa rosa. Agora têm a mesma cor do cartão do lugar na
+  lista (a Consolação é amarela, o Ibirapuera é rosa…). A cor sai de um lugar só e passa para
+  tudo o que está dentro da página.
+
+### Saiu
+
+- **As abas Amigos e Favoritos** do menu de baixo. Elas só mostravam "Em breve" e pesavam o
+  site (eram duas páginas prontas a mais). Os endereços antigos voltam para o início. Elas
+  voltam quando eu decidir o que serão.
+
+### Peso
+
+- A primeira tela está com cerca de 87,6 kB (comprimida). Os trajetos só são baixados com o
+  mapa, e a tela do mapa ficou com uns 8,6 kB.
+
 ## 0.7.0 (29/10/2026)
 
 ### Entrou

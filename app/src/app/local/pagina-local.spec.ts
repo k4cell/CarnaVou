@@ -1,6 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 
+import { cartoesDaAba } from '../dados/agenda';
 import { BLOCOS } from '../dados/blocos';
 import { PaginaLocal } from './pagina-local';
 
@@ -57,6 +58,39 @@ describe('PaginaLocal', () => {
     const etiqueta = tela.querySelector('.zona');
     expect(etiqueta?.textContent).toBe('Zona Sul');
     expect(etiqueta?.classList.contains('sul')).toBe(true);
+  });
+
+  describe('a cor da faixa dos banners', () => {
+    const faixasDosBanners = (tela: HTMLElement) =>
+      Array.from(tela.querySelectorAll('.banner')).map((banner) => banner.getAttribute('data-faixa'));
+
+    it('é a cor do lugar: amarelo para a Consolação, rosa para o Ibirapuera', async () => {
+      const consolacao = await renderizar('consolacao');
+      expect(new Set(faixasDosBanners(consolacao))).toEqual(new Set(['amarelo']));
+      TestBed.resetTestingModule();
+      const ibirapuera = await renderizar('ibirapuera');
+      expect(new Set(faixasDosBanners(ibirapuera))).toEqual(new Set(['rosa']));
+    });
+
+    it('é a mesma do cartão do lugar na lista, em todos os lugares', async () => {
+      for (const cartao of cartoesDaAba('geral', null)) {
+        TestBed.resetTestingModule();
+        const tela = await renderizar(cartao.local.id);
+        const faixas = faixasDosBanners(tela);
+        expect(faixas.length, cartao.local.nome).toBeGreaterThan(0);
+        expect(new Set(faixas), cartao.local.nome).toEqual(new Set([cartao.faixa]));
+      }
+    });
+  });
+
+  it('leva para o mapa já com o lugar escolhido', async () => {
+    const tela = await renderizar('consolacao');
+    expect(tela.querySelector('a.ver-no-mapa')?.getAttribute('href')).toBe('/mapa?lugar=consolacao');
+  });
+
+  it('tem o botão de copiar o link do lugar', async () => {
+    const tela = await renderizar('consolacao');
+    expect(tela.querySelector('app-copiar-link button')?.textContent).toContain('Copiar link');
   });
 
   it('avisa quando o lugar não existe', async () => {

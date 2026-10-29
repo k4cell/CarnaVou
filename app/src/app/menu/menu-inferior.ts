@@ -3,8 +3,8 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterLink } from '@angular/router';
 import { filter, map } from 'rxjs';
 
-/** Abas que ainda estão em construção. Tudo que não for delas é o "Descobrir". */
-const ABAS_EM_BREVE = ['/mapa', '/amigos', '/favoritos'];
+/** As abas que têm endereço próprio. Tudo que não for delas é o "Descobrir". */
+const OUTRAS_ABAS = ['/mapa'];
 
 @Component({
   selector: 'app-menu-inferior',
@@ -25,7 +25,7 @@ export class MenuInferior {
   );
 
   protected readonly descobrirAtivo = computed(
-    () => !ABAS_EM_BREVE.some((aba) => this.endereco().startsWith(aba)),
+    () => !OUTRAS_ABAS.some((aba) => this.endereco().startsWith(aba)),
   );
 
   protected ativo(aba: string): boolean {

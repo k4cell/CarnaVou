@@ -165,6 +165,45 @@ Também de um guia só, com confiança **baixa**.
 | Bloco Otaku | 14/02 (13h às 18h) e 17/02 (11h) | |
 | Tecnomacumba | 14/02 (14h às 18h) e 15/02 (14h) | |
 
+## Os trajetos dos megablocos
+
+Os megablocos de um lugar desfilam no mesmo circuito, que a CET fecha para eles. Só desenhei no
+mapa os circuitos que têm **começo e fim numa fonte**. A linha segue as ruas do OpenStreetMap,
+traçada pelo script `design/mapa/gerar-circuitos.py`.
+
+| Lugar | Trajeto | Fonte |
+|---|---|---|
+| Parque Ibirapuera | Av. Pedro Álvares Cabral, do Obelisco ao Monumento às Bandeiras | CET (14/02, Agrada Gregos: entre a Pça. Esc. Aldo Chioratto e a Pça. Armando de Salles Oliveira) e DCI (22/02) |
+| Rua da Consolação e Baixo Augusta | Rua da Consolação, da Av. Paulista até a Praça Roosevelt | CET, citada pelo InfoMoney (08/02) |
+| Avenida Faria Lima | Av. Brigadeiro Faria Lima, do número 4100 ao 4500 | CET (14/02) |
+| Avenida Ipiranga com São João | Av. Ipiranga, Av. São Luís e Rua Xavier de Toledo, até o Theatro Municipal | CET (14/02), trajeto do Tarado Ni Você |
+| Avenida Paulo VI | Da Praça Márcia Aliberti Mammana até a Av. Sumaré | CET (14/02) |
+| Avenida Henrique Schaumann | Entre a Av. Rebouças e a Rua Teodoro Sampaio | CET, citada pelo InfoMoney (08/02) |
+
+**Ficaram sem trajeto:** Santo Amaro (a CET cita a Rua Laguna e a Av. Arquiteto Carlos Bratke,
+sem dizer onde começa e onde termina), República, Pinheiros e Vila Madalena e Centro Histórico
+(blocos menores, sem trajeto nas fontes).
+
+**Cuidados:**
+
+- O trajeto é do lugar, não de cada bloco. Um bloco pode ter feito um caminho um pouco
+  diferente: no Centro, por exemplo, o MinhoQueens passou também pela Rua da Consolação até o
+  Shopping Light.
+- Os pontos de começo e fim são lugares ou cruzamentos do OpenStreetMap que batem com o texto
+  da CET. Na Consolação, o fim é o cruzamento com a Rua Amaral Gurgel, na beira da Praça
+  Roosevelt (ela está nos bloqueios da CET). Na Paulo VI, é o cruzamento com a Av. Sumaré,
+  porque o número 1529 não está no mapa.
+
+**Endereço da concentração de cada bloco** (aparece na página do bloco):
+
+| Bloco | Concentração | Fonte |
+|---|---|---|
+| Tarado Ni Você (14/02) | Av. Ipiranga, 818 | CET (14/02) |
+| MinhoQueens (14/02) | Av. Ipiranga, 916 | CET (14/02) |
+| Megabloco Emo (14/02) | Av. Paulo VI, junto à Praça Márcia Aliberti Mammana | CET (14/02) |
+| Pipoca da Rainha (22/02) | Rua da Consolação, 2101 | Rio Times (resumo de 22/02) |
+| Vem com o Gigante (22/02) | Obelisco do Ibirapuera | Rio Times (22/02) e DCI |
+
 ## O que deixei de fora, e por quê
 
 - **Bloco do Sargento Pimenta.** A Veja São Paulo (28/01/2026) noticiou que ele **não
@@ -194,5 +233,7 @@ Também de um guia só, com confiança **baixa**.
 [Encontrar Rua Augusta](https://www.encontraruaaugusta.com.br/2026/01/29/carnaval-sp-2026-todos-os-blocos-de-rua-datas-horarios-e-onde-curtir-em-sao-paulo/),
 [Tô Pensando em Viajar](https://www.topensandoemviajar.com/blocos-carnaval-rua-sp/),
 resumos diários do Rio Times (por exemplo, [14/02](https://www.riotimesonline.com/sao-paulo-daily-brief-for-saturday-february-14-2026/)),
+[Jovem Pan, com a lista da CET de 14/02](https://jovempan.com.br/?p=4815),
+[InfoMoney, com a lista da CET de 08/02](https://www.infomoney.com.br/?p=3204711),
 Band, Billboard Brasil, Metrópoles, Catraca Livre, DCI, Correio da Manhã, IstoÉ e a página
 da [Subprefeitura de Pinheiros](https://prefeitura.sp.gov.br/web/pinheiros/w/programa%C3%A7%C3%A3o-blocos-carnaval).

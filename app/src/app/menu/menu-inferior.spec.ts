@@ -19,18 +19,29 @@ describe('MenuInferior', () => {
     return tela.querySelector('[aria-current="page"]')?.textContent?.trim();
   }
 
-  it('tem as quatro abas, na ordem', async () => {
+  it('tem só as abas Descobrir e Mapa, na ordem', async () => {
     const fixture = await montar();
     const tela = fixture.nativeElement as HTMLElement;
     const nomes = Array.from(tela.querySelectorAll('a')).map((a) => a.textContent?.trim());
-    expect(nomes).toEqual(['Descobrir', 'Mapa', 'Amigos', 'Favoritos']);
+    expect(nomes).toEqual(['Descobrir', 'Mapa']);
   });
 
   it('leva cada aba para o seu endereço', async () => {
     const fixture = await montar();
     const tela = fixture.nativeElement as HTMLElement;
     const enderecos = Array.from(tela.querySelectorAll('a')).map((a) => a.getAttribute('href'));
-    expect(enderecos).toEqual(['/', '/mapa', '/amigos', '/favoritos']);
+    expect(enderecos).toEqual(['/', '/mapa']);
+  });
+
+  it('manda os endereços antigos /amigos e /favoritos para o Descobrir', async () => {
+    const fixture = await montar();
+    const router = TestBed.inject(Router);
+    for (const antigo of ['/amigos', '/favoritos']) {
+      await router.navigateByUrl(antigo);
+      await fixture.whenStable();
+      expect(router.url, antigo).toBe('/');
+      expect(abaAtual(fixture.nativeElement)).toBe('Descobrir');
+    }
   });
 
   it('começa marcando o Descobrir', async () => {

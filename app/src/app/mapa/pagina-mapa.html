@@ -2,6 +2,7 @@
   [pontos]="pontos()"
   [selecionado]="cartao()?.local?.id ?? null"
   [voce]="voce()"
+  [trajetos]="trajetos()"
   (escolher)="escolher($event)"
   (fundoTocado)="fechar()"
 />
@@ -52,15 +53,33 @@
         <p class="distancia">A {{ perto }} de você, em linha reta.</p>
       }
 
+      @if (circuito(); as trajeto) {
+        <p class="trajeto">Trajeto: {{ trajeto.descricao }}</p>
+      }
+
       @if (achado.principal) {
         <p class="artistas">Artistas: <strong class="principal">{{ achado.principal }}</strong>{{ achado.resto }}</p>
       }
 
+      <!-- Os botões vêm antes da lista de blocos, para "Como chegar" ficar à vista sem rolar. -->
       <div class="acoes">
         <a class="botao botao-principal" [href]="links()?.google" target="_blank" rel="noopener">Como chegar</a>
         <a class="botao" [href]="links()?.waze" target="_blank" rel="noopener">Waze</a>
         <a class="botao" [routerLink]="['/local', achado.local.id]">Ver o lugar</a>
       </div>
+
+      @if (blocos().lista.length > 0) {
+        <ul class="blocos" aria-label="Blocos">
+          @for (bloco of blocos().lista; track bloco.id) {
+            <li>
+              <a [routerLink]="bloco.caminho"><span class="quando">{{ bloco.quando }}</span> · {{ bloco.nome }}</a>
+            </li>
+          }
+        </ul>
+        @if (blocos().mais > 0) {
+          <p class="mais">E mais {{ blocos().mais }} na página do lugar.</p>
+        }
+      }
     </section>
   }
 </div>

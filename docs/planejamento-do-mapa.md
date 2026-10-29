@@ -13,10 +13,10 @@
 | 0.5.0 | Dados de teste reais: o carnaval de 2026 | feito |
 | 0.6.0 | Mapa de leitura: um ponto por lugar, com a cor da zona | feito |
 | 0.6.1 | O service worker só guarda o MapLibre depois de eu abrir o mapa | feito, no mesmo commit da 0.7.0 |
-| **0.7.0** | **"Onde estou" e distância** | **feito** |
-| **0.7.1** | **Copiar o link** | **próximo** |
-| 0.8.0 | Blocos no mapa e percursos | depois |
-| 0.9.0 | Offline e desempenho | depois |
+| 0.7.0 | "Onde estou" e distância | feito |
+| 0.7.1 | Copiar o link, a cor do lugar até o bloco e o menu sem Amigos e Favoritos | feito, no mesmo commit da 0.8.0 |
+| **0.8.0** | **Blocos no mapa: os trajetos dos megablocos** | **feito** |
+| **0.9.0** | **Offline e desempenho** | **próximo** |
 | depois | Backend, Favoritos, "Em alta" calculado e, **por último**, a parte social | |
 
 **O que a 0.6.0 trouxe (feito):**
@@ -54,6 +54,30 @@
 - A distância, em linha reta, no cartão do ponto.
 - Avisos para quem negou, para quando o celular não acha a posição, para navegador sem
   localização e para quem está fora da Grande São Paulo.
+
+**O que a 0.7.1 trouxe (feito):**
+
+- O botão "Copiar link" nas páginas do lugar e do bloco, com o endereço limpo.
+- A cor de cada lugar acompanha o lugar até o fim: os banners da página dele e as atrações
+  dos blocos têm a mesma faixa do cartão da lista.
+- Tirei as abas Amigos e Favoritos do menu, que só mostravam "Em breve".
+
+**O que a 0.8.0 trouxe (feito):**
+
+- Os trajetos dos megablocos no mapa, como linhas na cor da zona, nos seis lugares com trajeto
+  nas fontes. O do lugar escolhido fica mais grosso, e o mapa enquadra o trajeto inteiro.
+- O cartão do ponto com o trajeto em palavras e os blocos do lugar na aba.
+- "Ver no mapa" nas páginas do lugar e do bloco, e o endereço da concentração na página do
+  bloco, quando a fonte deu.
+
+**O que falta (limites da 0.8.0):**
+
+- O trajeto é do lugar, não de cada bloco: um bloco pode ter feito um caminho um pouco
+  diferente.
+- Quatro lugares ficam sem trajeto: Santo Amaro, República, Pinheiros e Vila Madalena e Centro
+  Histórico.
+- O mapa não marca onde cada trajeto começa e termina (concentração e dispersão), só a linha.
+- "Onde o bloco deve estar às 16h" continua para depois: precisa do horário em cada trecho.
 
 **O que falta decidir:** veja "Ainda aberto", na seção 11.
 
@@ -191,6 +215,8 @@ para a lista.
 - **Hoje:** um ponto por lugar (os 10 lugares em destaque), com a cor da zona ou do selo.
 - **Depois:** um ponto por bloco (onde ele se concentra) e uma linha para o percurso, quando
   houver.
+- **Como ficou na 0.8.0:** em vez de um ponto por bloco, uma linha por lugar, o circuito que a
+  CET fecha para os megablocos dali. Os blocos do dia aparecem no cartão do ponto.
 - Com centenas de pontos, agrupar os que estão perto (cluster).
 - Tocar no ponto abre um **cartão curto**: nome, selo, artistas e o botão "Como chegar".
 
@@ -312,9 +338,9 @@ Usar raspagem (copiar telas de redes sociais) **viola os termos** e arrisca bloq
 | **Mapa** com um ponto por lugar e filtro Hoje/Amanhã/Geral | **0.6.0, feito** | conferir as coordenadas à mão |
 | Botão "Como chegar" | **0.6.0, feito** (Google Maps e Waze) | Uber: confirmar o link |
 | Alternar entre lista e mapa | **0.6.0, feito**, pelo menu de baixo (Descobrir e Mapa) | nada |
-| Botão de **copiar o link** (decidido) | 0.7.1 | nada |
+| Botão de **copiar o link** (decidido) | **0.7.1, feito** | nada |
 | Tela que explica a localização, "onde estou" e distância | **0.7.0, feito** | testar num celular de verdade |
-| Pontos por bloco e **percurso** | 0.8.0 | coordenadas e percursos dos blocos |
+| Pontos por bloco e **percurso** | **0.8.0, feito** (uma linha por lugar, onde a CET deu o trajeto) | trajeto de cada bloco e dos lugares que faltam |
 | "Onde o bloco deve estar às 16h" | depois dos percursos | percursos com horário |
 | **Dados reais de 2027** | quando a programação sair | a mudança sobre os dias; fonte dos dados |
 | Agenda "Começando agora / Daqui a pouco / Mais tarde" | depois dos dados de 2027 | dados reais |
@@ -346,8 +372,9 @@ As versões são **sugestões**. Cada uma é pequena e termina com o site funcio
 3. **0.6.1, o service worker só guarda o MapLibre depois de eu abrir o mapa (feito).**
 4. **0.7.0, "onde estou" e a distância (feito),** com uma tela que explica a localização antes
    do aviso do celular.
-5. **0.7.1, copiar o link** de um lugar e de um bloco.
-6. **0.8.0, blocos no mapa**, com o ponto de concentração e, onde houver, o percurso.
+5. **0.7.1, copiar o link (feito)** de um lugar e de um bloco.
+6. **0.8.0, blocos no mapa (feito):** o trajeto dos megablocos de cada lugar, onde a CET deu o
+   trajeto.
 7. **0.9.0, offline e desempenho** de verdade.
 8. **Depois do beta:** backend (Vou, Favoritos com conta), "Em alta" calculado e
    notificações. **A parte social fica por último.**
@@ -370,6 +397,10 @@ As versões são **sugestões**. Cada uma é pequena e termina com o site funcio
 10. **A localização só liga quando eu toco em "onde estou"**, depois de uma tela que explica.
     É uma leitura por toque: sem acompanhar o caminho, sem segundo plano e sem guardar nem
     enviar a posição (0.7.0).
+11. **Tirei as abas Amigos e Favoritos** do menu de baixo, até eu decidir o que serão
+    (0.7.1).
+12. **Trajeto só com fonte:** só entra no mapa o trajeto que tem começo e fim numa fonte; sem
+    isso, o lugar fica só com o pino (0.8.0).
 
 **Ainda aberto:**
 

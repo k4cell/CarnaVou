@@ -10,10 +10,11 @@ import {
   input,
   output,
   signal,
+  untracked,
   viewChild,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import type { GeoJSONSource, Map as MapaDoMapLibre, Marker } from 'maplibre-gl';
+import type { AddLayerObject, GeoJSONSource, Map as MapaDoMapLibre, Marker } from 'maplibre-gl';
 
 import { Zona } from '../dados/tipos';
 import { contornoDoCirculo } from './circulo';
@@ -29,6 +30,15 @@ export interface PontoNoMapa {
   zona: Zona;
 }
 
+/** O trajeto de um lugar: a linha por onde os blocos dele desfilam, na cor da zona. */
+export interface TrajetoNoMapa {
+  /** O mesmo id do ponto do lugar: o trajeto do lugar selecionado fica em destaque. */
+  id: string;
+  zona: Zona;
+  /** A linha, como [longitude, latitude]. */
+  linha: [number, number][];
+}
+
 /** Onde a pessoa está: um ponto e o erro provável da posição, em metros. */
 export interface PosicaoNoMapa {
   lat: number;
@@ -42,6 +52,21 @@ const CENTRO_DE_SAO_PAULO: [number, number] = [-46.655, -23.57];
  * então o espaço de cima também tem que dar a altura do pino (50 px) para ele não ficar escondido.
  */
 const ESPACO_NAS_BORDAS = { top: 190, bottom: 70, left: 50, right: 50 };
+/**
+ * Ao escolher um lugar com trajeto, o trajeto inteiro aparece entre as abas (em cima) e o cartão do
+ * ponto (embaixo). O cartão ocupa mais ou menos 60% da altura do mapa no celular, então o espaço de
+ * baixo acompanha a altura, sem nunca deixar menos de 80 px para o trajeto.
+ */
+const ESPACO_EM_CIMA_DO_TRAJETO = 170;
+const ESPACO_MINIMO_EMBAIXO_DO_TRAJETO = 330;
+const PARTE_DO_MAPA_EMBAIXO_DO_CARTAO = 0.6;
+
+function espacoParaOTrajeto(alturaDoMapa: number) {
+  const desejado = Math.max(ESPACO_MINIMO_EMBAIXO_DO_TRAJETO, alturaDoMapa * PARTE_DO_MAPA_EMBAIXO_DO_CARTAO);
+  // Sem saber a altura do mapa (nos testes, por exemplo), fica o desejado.
+  const cabe = alturaDoMapa > 0 ? alturaDoMapa - ESPACO_EM_CIMA_DO_TRAJETO - 80 : desejado;
+  return { top: ESPACO_EM_CIMA_DO_TRAJETO, bottom: Math.max(0, Math.min(desejado, cabe)), left: 40, right: 40 };
+}
 
 /**
  * Onde ficam, no site, o estilo do mapa e o "worker" do MapLibre (o ajudante que desenha os
@@ -53,6 +78,17 @@ const WORKER_DO_MAPA = 'mapa/maplibre-gl-worker.mjs';
 
 /** O círculo de precisão em volta da pessoa é uma "fonte" de dados com duas camadas no mapa. */
 const FONTE_DA_PRECISAO = 'voce-precisao';
+/** Os trajetos também: uma borda branca, para a linha aparecer no lilás, e a linha na cor da zona. */
+const FONTE_DOS_TRAJETOS = 'trajetos';
+
+/** A cor de cada zona: a mesma dos pinos e das etiquetas (variáveis de `styles.scss`). */
+const CORES_DAS_ZONAS: Record<Zona, [string, string]> = {
+  centro: ['--roxo', '#6a0dad'],
+  sul: ['--verde', '#00e676'],
+  leste: ['--amarelo', '#ffc200'],
+  oeste: ['--vermelho', '#d62828'],
+  norte: ['--azul', '#2563eb'],
+};
 const ZOOM_AO_ACHAR_A_PESSOA = 15;
 
 type DadosGeoJson = Parameters<GeoJSONSource['setData']>[0];
@@ -70,6 +106,20 @@ function areaDaPrecisao(voce: PosicaoNoMapa | null): DadosGeoJson {
     type: 'Feature',
     properties: {},
     geometry: { type: 'Polygon', coordinates: [contornoDoCirculo(voce.lat, voce.lng, voce.precisao)] },
+  };
+}
+
+function linhasDosTrajetos(trajetos: TrajetoNoMapa[], selecionado: string | null): DadosGeoJson {
+  return {
+    type: 'FeatureCollection',
+    features: trajetos.map((trajeto) => {
+      const [variavel, padrao] = CORES_DAS_ZONAS[trajeto.zona];
+      return {
+        type: 'Feature',
+        properties: { id: trajeto.id, cor: corDoTema(variavel, padrao), selecionado: trajeto.id === selecionado },
+        geometry: { type: 'LineString', coordinates: trajeto.linha },
+      };
+    }),
   };
 }
 
@@ -129,6 +179,8 @@ export class MapaBase {
   readonly selecionado = input<string | null>(null);
   /** Onde a pessoa está, quando ela pediu. Aparece como uma bolinha com um círculo de precisão. */
   readonly voce = input<PosicaoNoMapa | null>(null);
+  /** Os trajetos dos lugares, como linhas. O do lugar selecionado fica mais grosso. */
+  readonly trajetos = input<TrajetoNoMapa[]>([]);
   readonly escolher = output<string>();
   /** A pessoa tocou no mapa, fora de qualquer pino. */
   readonly fundoTocado = output<void>();
@@ -163,6 +215,13 @@ export class MapaBase {
       const estiloPronto = this.estiloPronto();
       if (this.pronto()) {
         this.atualizarAPessoa(voce, estiloPronto);
+      }
+    });
+    effect(() => {
+      const trajetos = this.trajetos();
+      const selecionado = this.selecionado();
+      if (this.pronto() && this.estiloPronto()) {
+        this.desenharOsTrajetos(trajetos, selecionado);
       }
     });
     inject(DestroyRef).onDestroy(() => this.destruir());
@@ -241,7 +300,17 @@ export class MapaBase {
     if (selecionado !== this.ultimoSelecionado) {
       this.ultimoSelecionado = selecionado;
       const ponto = pontos.find((candidato) => candidato.id === selecionado);
-      if (ponto) {
+      const trajeto = untracked(() => this.trajetos()).find((candidato) => candidato.id === selecionado);
+      if (ponto && trajeto) {
+        // Chega perto o bastante para ver o trajeto inteiro, com o pino, acima do cartão.
+        const limites = new biblioteca.LngLatBounds();
+        limites.extend([ponto.lng, ponto.lat]);
+        for (const passo of trajeto.linha) {
+          limites.extend(passo);
+        }
+        const padding = espacoParaOTrajeto(this.area().nativeElement.clientHeight);
+        mapa.fitBounds(limites, { padding, maxZoom: 16, duration: 500 });
+      } else if (ponto) {
         // Puxa o ponto um pouco para cima, para o cartão de baixo não cobrir o pino.
         mapa.easeTo({ center: [ponto.lng, ponto.lat], offset: [0, -70], duration: 400 });
       }
@@ -308,6 +377,45 @@ export class MapaBase {
       source: FONTE_DA_PRECISAO,
       paint: { 'line-color': cor, 'line-opacity': 0.5, 'line-width': 1 },
     });
+  }
+
+  private desenharOsTrajetos(trajetos: TrajetoNoMapa[], selecionado: string | null): void {
+    const mapa = this.mapa;
+    if (!mapa || this.destruido) {
+      return;
+    }
+    const dados = linhasDosTrajetos(trajetos, selecionado);
+    const fonte = mapa.getSource(FONTE_DOS_TRAJETOS) as GeoJSONSource | undefined;
+    if (fonte) {
+      fonte.setData(dados);
+      return;
+    }
+    if (trajetos.length === 0) {
+      return;
+    }
+    mapa.addSource(FONTE_DOS_TRAJETOS, { type: 'geojson', data: dados });
+    // Os trajetos ficam embaixo do círculo de precisão da pessoa, se ele já estiver no mapa.
+    const embaixoDe = mapa.getLayer(`${FONTE_DA_PRECISAO}-area`) ? `${FONTE_DA_PRECISAO}-area` : undefined;
+    const borda: AddLayerObject = {
+      id: `${FONTE_DOS_TRAJETOS}-borda`,
+      type: 'line',
+      source: FONTE_DOS_TRAJETOS,
+      layout: { 'line-cap': 'round', 'line-join': 'round' },
+      paint: {
+        'line-color': corDoTema('--cartao', '#fff'),
+        'line-width': ['case', ['get', 'selecionado'], 12, 8],
+        'line-opacity': 0.9,
+      },
+    };
+    const linha: AddLayerObject = {
+      id: `${FONTE_DOS_TRAJETOS}-linha`,
+      type: 'line',
+      source: FONTE_DOS_TRAJETOS,
+      layout: { 'line-cap': 'round', 'line-join': 'round' },
+      paint: { 'line-color': ['get', 'cor'], 'line-width': ['case', ['get', 'selecionado'], 7, 4] },
+    };
+    mapa.addLayer(borda, embaixoDe);
+    mapa.addLayer(linha, embaixoDe);
   }
 
   /** Mostra todos os pontos de uma vez. Com um só, chega perto dele. */

@@ -38,3 +38,4 @@ As versões leves que o site usa ficam em `app/public/logo/` e os ícones do app
 | Arquivo | Legenda |
 |---|---|
 | [`mapa/gerar-estilo-do-mapa.py`](mapa/gerar-estilo-do-mapa.py) | O script que gera o estilo do mapa, nas cores lilás do CarnaVou. Ele pega o estilo "positron" da OpenFreeMap, pinta com as nossas cores e grava em `app/public/mapa/estilo-carnavou.json`. Para mudar o visual do mapa, eu mudo as cores nele e rodo de novo. |
+| [`mapa/gerar-circuitos.py`](mapa/gerar-circuitos.py) | O script que gera os trajetos dos megablocos (os circuitos que a CET publicou). Ele acha os pontos no OpenStreetMap, traça o caminho pelas ruas e grava em `app/src/app/dados/circuitos.ts`. Para mudar um trajeto, eu mudo a lista no começo dele e rodo de novo. |

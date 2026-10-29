@@ -1,6 +1,10 @@
+import { distanciaEmMetros } from '../localizacao/distancia';
+import { estaNaGrandeSP } from '../mapa/limites';
 import { BLOCOS } from './blocos';
-import { artistasDoLugar } from './consultas';
+import { CIRCUITOS } from './circuitos';
+import { acharLocal, artistasDoLugar, faixaDoLocal } from './consultas';
 import { LOCAIS } from './locais';
+import { circuitoDoLocal } from './trajetos';
 
 describe('dados', () => {
   it('tem 10 lugares em destaque, sem repetir', () => {
@@ -22,6 +26,64 @@ describe('dados', () => {
   it('todo lugar tem pelo menos um bloco', () => {
     const comBloco = new Set(BLOCOS.map((bloco) => bloco.localId));
     expect(LOCAIS.every((local) => comBloco.has(local.id))).toBe(true);
+  });
+
+  describe('circuitos dos megablocos', () => {
+    it('tem os seis circuitos que a CET publicou com começo e fim, um por lugar', () => {
+      expect(CIRCUITOS.map((circuito) => circuito.localId).sort()).toEqual(
+        ['consolacao', 'faria-lima', 'henrique-schaumann', 'ibirapuera', 'ipiranga-sao-joao', 'paulo-vi'],
+      );
+    });
+
+    it('não tem circuito nos lugares sem trajeto nas fontes', () => {
+      for (const id of ['santo-amaro', 'republica', 'pinheiros', 'centro-historico']) {
+        expect(circuitoDoLocal(id), id).toBeUndefined();
+      }
+    });
+
+    it('cada circuito tem descrição, fonte e uma linha de verdade, dentro da Grande SP', () => {
+      for (const circuito of CIRCUITOS) {
+        expect(acharLocal(circuito.localId), circuito.localId).toBeDefined();
+        expect(circuito.descricao.length, circuito.localId).toBeGreaterThan(10);
+        expect(circuito.fonte, circuito.localId).toContain('CET');
+        expect(circuito.trajeto.length, circuito.localId).toBeGreaterThanOrEqual(2);
+        for (const [lng, lat] of circuito.trajeto) {
+          expect(estaNaGrandeSP(lat, lng), circuito.localId).toBe(true);
+        }
+      }
+    });
+
+    it('cada circuito passa perto do pino do lugar (a menos de 1,5 km)', () => {
+      for (const circuito of CIRCUITOS) {
+        const local = acharLocal(circuito.localId)!;
+        const maisPerto = Math.min(...circuito.trajeto.map(([lng, lat]) => distanciaEmMetros(local, { lat, lng })));
+        expect(maisPerto, circuito.localId).toBeLessThan(1500);
+      }
+    });
+  });
+
+  it('só guarda o endereço de concentração em texto, quando a fonte deu', () => {
+    const comEndereco = BLOCOS.filter((bloco) => bloco.concentracao).map((bloco) => bloco.id);
+    expect(comEndereco.sort()).toEqual(
+      ['megabloco-emo', 'minhoqueens', 'pipoca-da-rainha', 'tarado-ni-voce', 'vem-com-o-gigante'],
+    );
+  });
+
+  describe('faixaDoLocal', () => {
+    it('reveza as sete cores, do rosa ao azul, na ordem dos lugares', () => {
+      const faixas = LOCAIS.map((local) => faixaDoLocal(local.id));
+      expect(faixas.slice(0, 7)).toEqual(['rosa', 'amarelo', 'verde', 'laranja', 'roxo', 'vermelho', 'azul']);
+      expect(faixas[7]).toBe('rosa');
+    });
+
+    it('dá a mesma cor para o mesmo lugar, sempre', () => {
+      expect(faixaDoLocal('consolacao')).toBe('amarelo');
+      expect(faixaDoLocal('consolacao')).toBe(faixaDoLocal('consolacao'));
+    });
+
+    it('cai na primeira cor para um lugar que não existe', () => {
+      expect(faixaDoLocal('lugar-que-nao-existe')).toBe('rosa');
+    });
   });
 
   it('põe os blocos entre o pré-carnaval e o pós-carnaval de 2026', () => {

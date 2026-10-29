@@ -4,6 +4,16 @@
   <h2 class="titulo">{{ achado.nome }}</h2>
   <app-zona-tag [zona]="achado.zona" />
   <p class="subtitulo">Dias de festa e principais artistas</p>
+  <div class="acoes-da-pagina">
+    <a class="botao-claro ver-no-mapa" routerLink="/mapa" [queryParams]="{ lugar: achado.id }">
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <path d="M12 21s-6-5.6-6-10a6 6 0 1112 0c0 4.4-6 10-6 10z" />
+        <circle cx="12" cy="11" r="2" />
+      </svg>
+      Ver no mapa
+    </a>
+    <app-copiar-link />
+  </div>
 
   <ul class="lista">
     @for (bloco of blocos(); track bloco.id) {

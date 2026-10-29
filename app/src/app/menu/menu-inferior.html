@@ -28,34 +28,5 @@
         <span>Mapa</span>
       </a>
     </li>
-    <li>
-      <a
-        class="item"
-        routerLink="/amigos"
-        [class.ativo]="ativo('/amigos')"
-        [attr.aria-current]="ativo('/amigos') ? 'page' : null"
-      >
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <circle cx="9" cy="8" r="3" />
-          <path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6" />
-          <circle cx="17" cy="9" r="2.5" />
-          <path d="M17 14c2.5 0 4.5 2 4.5 5" />
-        </svg>
-        <span>Amigos</span>
-      </a>
-    </li>
-    <li>
-      <a
-        class="item"
-        routerLink="/favoritos"
-        [class.ativo]="ativo('/favoritos')"
-        [attr.aria-current]="ativo('/favoritos') ? 'page' : null"
-      >
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M12 20s-7-4.6-7-10a4 4 0 017-2.6A4 4 0 0119 10c0 5.4-7 10-7 10z" />
-        </svg>
-        <span>Favoritos</span>
-      </a>
-    </li>
   </ul>
 </nav>

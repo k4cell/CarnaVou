@@ -28,8 +28,8 @@ calendário e o que eu ainda não pensei.
 
 - Já pode programar. O beta é uma **árvore de opções** com três telas: Em alta (os lugares,
   com o filtro Hoje / Amanhã / Geral), um lugar (os dias de festa e os principais artistas) e um bloco (a lista
-  detalhada de atrações). Embaixo fica o menu fixo: Descobrir, Mapa, Amigos e Favoritos, e
-  Amigos e Favoritos mostram só "Em breve" por enquanto (o Mapa já funciona). Os dados de teste são o carnaval
+  detalhada de atrações). Embaixo fica o menu fixo: Descobrir e Mapa. As abas Amigos e
+  Favoritos saíram até eu decidir o que serão: não crie páginas vazias. Os dados de teste são o carnaval
   de rua de 2026 **de verdade, com nomes reais** (ver `docs/dados-carnaval-2026.md`). Fica de fora, por enquanto, o "Vou", o "Tô aqui" e o "Como tá?".
 - O visual tem só a **primeira camada de cor**. A paleta fica em variáveis no topo de
   `app/src/styles.scss`: use sempre essas variáveis, nunca uma cor solta. Fundo claro (pra
@@ -64,10 +64,10 @@ calendário e o que eu ainda não pensei.
   multidão. Sem fontes da internet nem bibliotecas pesadas, e o que não for da primeira
   tela (como o mapa) só carrega quando for aberto.
 - As telas ficam em `destaques/`, `local/`, `bloco/` e `mapa/`; o banner que se repete fica
-  em `banner/`, o menu de baixo em `menu/` e a tela "Em breve" em `em-breve/`. O filtro
+  em `banner/` e o menu de baixo em `menu/`. O filtro
   Hoje / Amanhã / Geral é um só para a tela inicial e para o mapa: o estado fica em `filtro/` e
   os botões em `abas/`. Os endereços
-  são `/`, `/local/:local`, `/local/:local/:bloco`, `/mapa`, `/amigos` e `/favoritos`, e
+  são `/`, `/local/:local`, `/local/:local/:bloco` e `/mapa`, e
   cada um vira uma página pronta no `ng build`.
 - As páginas prontas não sabem o dia de hoje. O que depende da data (as abas Hoje e Amanhã
   e os selos) é calculado no navegador, depois da primeira pintura, pelo serviço em
@@ -82,6 +82,19 @@ calendário e o que eu ainda não pensei.
   `design/mapa/gerar-estilo-do-mapa.py` (rode de novo para mudar as cores). Nos testes o
   MapLibre é trocado por um falso (`maplibre-falso.ts`), sem WebGL nem internet. Os
   créditos "OpenFreeMap © OpenMapTiles Data from OpenStreetMap" têm que continuar à vista.
+- **Os trajetos** dos megablocos ficam em `dados/circuitos.ts`, gerado por
+  `design/mapa/gerar-circuitos.py` (OpenStreetMap e o roteador da FOSSGIS): não edite à mão.
+  Só entra trajeto com começo e fim numa fonte (a CET, de preferência); sem isso, o lugar fica
+  só com o pino. A consulta `circuitoDoLocal` fica em `dados/trajetos.ts`, separada das outras,
+  para os trajetos só serem baixados junto com o mapa. O endereço da concentração de um bloco
+  (`concentracao`) também só entra com fonte, anotada em `docs/dados-carnaval-2026.md`.
+- **A cor de cada lugar** vem de `faixaDoLocal`, em `dados/consultas.ts`, e é uma só para a
+  lista, os banners da página do lugar e as atrações do bloco. Quem tem `data-faixa` passa a
+  cor (`--cor-da-faixa`, em `styles.scss`) para tudo o que está dentro dele: numa tela nova de
+  lugar ou de bloco, ponha `data-faixa` e use `var(--cor-da-faixa)`, nunca um rosa fixo. A cor
+  tem que acompanhar o lugar até o fim.
+- **O botão de copiar o link** (`copiar-link/`) copia o endereço limpo da página, sem a data de
+  teste (`?hoje=`). Nos testes, o `COPIAR_TEXTO` é trocado por um falso.
 - **A localização** (`localizacao/`): o serviço `Localizacao` só procura a posição quando eu
   toco em "onde estou" (uma leitura por toque), e a tela `ExplicacaoDaLocalizacao` vem antes do
   aviso do celular. **Nunca** acompanhe o caminho, use a localização em segundo plano, guarde a

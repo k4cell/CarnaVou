@@ -143,6 +143,7 @@ export const BLOCOS: Bloco[] = [
     localId: 'ibirapuera',
     atracoes: [{ nome: 'Léo Santana' }],
     estilo: 'axe',
+    concentracao: 'Obelisco do Ibirapuera',
   },
   {
     id: 'bloco-beats',
@@ -218,6 +219,7 @@ export const BLOCOS: Bloco[] = [
     localId: 'consolacao',
     atracoes: [{ nome: 'Daniela Mercury' }],
     estilo: 'axe',
+    concentracao: 'Rua da Consolação, 2101',
   },
 
   // Avenida Faria Lima
@@ -322,6 +324,7 @@ export const BLOCOS: Bloco[] = [
     localId: 'ipiranga-sao-joao',
     atracoes: [],
     estilo: 'mpb',
+    concentracao: 'Av. Ipiranga, 818',
   },
   {
     id: 'minhoqueens',
@@ -333,6 +336,7 @@ export const BLOCOS: Bloco[] = [
     atracoes: [{ nome: 'Lia Clark' }, { nome: 'MC Xuxu' }],
     estilo: 'pop',
     publico: 'LGBTQIA+',
+    concentracao: 'Av. Ipiranga, 916',
   },
   {
     id: 'bloco-pagu',
@@ -464,6 +468,7 @@ export const BLOCOS: Bloco[] = [
     localId: 'paulo-vi',
     atracoes: [],
     estilo: 'rock',
+    concentracao: 'Av. Paulo VI, junto à Praça Márcia Aliberti Mammana',
   },
 
   // Centro Histórico (Sé e Liberdade)

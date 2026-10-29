@@ -30,7 +30,7 @@ O planejamento do mapa e das próximas fases, que junta todas estas ideias num r
 | Uma cor para cada zona | Aprovado: Centro roxo, Sul verde, Leste amarelo, Oeste vermelho e Norte azul |
 | Artistas mais evidentes nos cartões | Aprovado: o primeiro nome em negrito e maior, e sem o "da semana" |
 | Público-alvo do bloco | Aprovado: aparece na página do bloco, só quando for claro |
-| Menu de baixo | Aprovado: Descobrir, Mapa, Amigos e Favoritos. Mapa, Amigos e Favoritos mostram "Em breve" |
+| Menu de baixo | Aprovado: Descobrir e Mapa. Amigos e Favoritos saíram em 29/10/2026, até eu decidir o que serão |
 | Filtro Hoje / Amanhã / Geral | Aprovado: no topo da tela inicial |
 | Selos nos cartões ("Já começou", "Hoje às 14h", "Amanhã às 11h", "5 blocos") | Aprovados, sem cor por enquanto |
 | Data de teste no endereço | Aprovada: `?hoje=2026-02-14T14:00` |
@@ -39,6 +39,7 @@ O planejamento do mapa e das próximas fases, que junta todas estas ideias num r
 | MapLibre com OpenFreeMap | Aprovado em 28/10/2026. O teste com o Leaflet só vale se o MapLibre pesar demais num celular fraco |
 | Botão "Como chegar" no cartão do ponto | Aprovado: Google Maps e Waze. O Uber ficou de fora, porque ainda não confirmei como o link dele funciona |
 | "Onde estou" e distância | Aprovado: só liga quando eu toco no botão, depois de uma tela que explica; uma leitura por toque, sem acompanhar o caminho |
+| Blocos no mapa | Aprovado (0.8.0): o trajeto dos megablocos de cada lugar, quando a fonte deu começo e fim |
 | Parte social (Amigos) | Fica por último, porque não é o foco |
 
 ## Funcionalidades sugeridas
@@ -89,8 +90,8 @@ Um desenho de como o app poderia ficar trouxe estas ideias. Nenhuma está aprova
 - Filtros de um toque: "Agora", "Gratuito", "Perto de mim", infantil, pet friendly e estilo
   musical.
 - Abas "Hoje", "Amanhã" e "Esta semana".
-- Favoritos (um coração no banner). O menu de baixo já está decidido, mas ainda não decidi o
-  que serão os Favoritos nem os Amigos.
+- Favoritos (um coração no banner). Tirei as abas Amigos e Favoritos do menu, e ainda não
+  decidi o que eles serão.
 - Um mapa da folia com pins, o botão "Como chegar" e um jeito de alternar entre lista e mapa.
 - Etiquetas "Bombando agora", "Ao vivo" e "Muito lotado". Dependem de sinal de quem está no
   lugar, então ficam fora do beta.
