@@ -17,7 +17,9 @@
 | 0.7.1 | Copiar o link, a cor do lugar até o bloco e o menu sem Amigos e Favoritos | feito, no mesmo commit da 0.8.0 |
 | 0.8.0 | Blocos no mapa: os trajetos dos megablocos | feito |
 | 0.9.0 | Offline e desempenho | feito |
-| **0.10.0** | **O beta no ar para teste, no GitHub Pages** | **feito** |
+| 0.10.0 | O beta no ar para teste, no GitHub Pages | feito |
+| **0.10.1** | **Os blocos do mesmo dia num cartão só** | **feito** |
+| **0.11.0** | **Os dados do Diário Oficial: mais blocos, zonas Leste e Norte, o pino na concentração e a linha de cada bloco** | **próximo** |
 | depois | Backend, Favoritos, "Em alta" calculado e, **por último**, a parte social | |
 | fim do projeto | Decidir o que dá para cortar para o site ficar ainda mais leve | depois |
 
@@ -141,6 +143,18 @@ Tudo o que ficou para depois, num lugar só. Quando eu resolver um item, ele sai
     celular de verdade, no iPhone e no Android.
 11. O "sem internet" foi testado com o servidor do site desligado, e não com a internet do
     celular caindo de verdade.
+
+**O que achei testando no celular (29/10/2026):**
+
+12. **O pino do lugar não fica na concentração.** Na Henrique Schaumann ele fica no meio da
+    linha (a 201 m do começo); na Consolação, a 353 m. Ele veio do "centro" da avenida no mapa.
+    Resolve na 0.11.0, com o ponto da concentração de cada bloco.
+13. **Poucos blocos** (50, nos 10 lugares) e **nenhum na Zona Leste ou na Zona Norte**. Resolve
+    na 0.11.0, com a lista do Diário Oficial.
+14. Blocos do mesmo lugar no mesmo horário **não são erro**: é como as fontes dão. Ou são ruas
+    diferentes dentro do mesmo lugar (Pinheiros e Vila Madalena, por exemplo), ou um bloco está
+    dispersando enquanto o próximo se concentra no mesmo circuito (como no Ibirapuera). Vale
+    deixar isso mais claro na tela.
 
 ## Cuidados para publicar
 
@@ -458,7 +472,10 @@ As versões são **sugestões**. Cada uma é pequena e termina com o site funcio
    trajeto.
 7. **0.9.0, offline e desempenho (feito).**
 8. **0.10.0, o beta no ar para teste (feito)**, no GitHub Pages.
-9. **Depois do beta:** backend (Vou, Favoritos com conta), "Em alta" calculado e
+9. **0.10.1, os blocos do mesmo dia num cartão só (feito).**
+10. **0.11.0, os dados do Diário Oficial:** mais blocos, as zonas Leste e Norte, o pino na
+    concentração e a linha de cada bloco, com começo e fim.
+11. **Depois do beta:** backend (Vou, Favoritos com conta), "Em alta" calculado e
    notificações. **A parte social fica por último.**
 
 ## 11. O que já decidi e o que ainda preciso decidir
@@ -488,10 +505,14 @@ As versões são **sugestões**. Cada uma é pequena e termina com o site funcio
 14. **No fim do projeto, decido o que dá para cortar** para o site ficar ainda mais leve.
 15. **O beta vai para o ar no GitHub Pages**, com os dados de 2026, o aviso de versão de teste
     e podendo aparecer no Google (0.10.0).
+16. **A fonte dos dados é o Diário Oficial**, de uso livre. O site Carnaval SP não, porque os
+    termos dele proíbem copiar e comercializar.
+17. **No futuro, pedir autorização** ao máximo de sites e à Prefeitura para usar os dados deles.
 
 **Ainda aberto:**
 
-1. **Fonte dos dados reais de 2027** e quem cadastra.
+1. **Quem cadastra os dados de 2027.** A fonte já decidi (o Diário Oficial); falta ver se vale
+   ter cadastro pelos organizadores.
 2. **O que serão os Favoritos.** Posso começar só no aparelho?
 3. **Quanto eu aceito pagar por mês** (mapas e APIs) no começo?
 4. **O endereço definitivo do site.** O beta está no GitHub Pages (https://k4cell.github.io/CarnaVou/); falta

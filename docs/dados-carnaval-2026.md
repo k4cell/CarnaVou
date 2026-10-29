@@ -225,6 +225,21 @@ sem dizer onde começa e onde termina), República, Pinheiros e Vila Madalena e 
 2. Se vale trocar algum dos 10 lugares quando a programação de 2027 sair.
 3. Se eu quero uma lista de blocos mais completa para os testes (hoje são cerca de 50).
 
+## A fonte dos próximos dados
+
+Decidi usar o **Diário Oficial** da Prefeitura, que publica a lista oficial dos blocos e é de
+uso livre: a lei de direito autoral (Lei 9.610/98, art. 8º) não protege os atos oficiais. As
+páginas das subprefeituras mostram o formato oficial de cada bloco: data, início da
+concentração, endereço da concentração, endereço da dispersão e o trajeto em texto. O Diário
+Oficial também oferece as edições em dados abertos (JSON, XML, CSV), mas a de 23/01/2026 ainda
+não estava disponível para baixar.
+
+O site [Carnaval SP](https://www.carnavalsp.com) tem 553 blocos de 2026, com o ponto da
+concentração e a linha do trajeto, mas os termos dele proíbem "reproduzir, republicar, duplicar
+ou copiar qualquer conteúdo" e comercializar. Por isso não uso. A página dele também expõe um
+usuário e uma senha de cada bloco (parece ser do acompanhamento em tempo real): vale avisar a
+Prefeitura. No futuro, quero pedir autorização ao máximo de sites e à Prefeitura.
+
 ## Principais fontes
 
 [CNN Brasil](https://www.cnnbrasil.com.br/entretenimento/carnaval/confira-a-programacao-completa-do-carnaval-de-rua-2026-de-sao-paulo/),

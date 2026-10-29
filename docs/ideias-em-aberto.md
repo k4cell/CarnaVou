@@ -42,6 +42,8 @@ O planejamento do mapa e das próximas fases, que junta todas estas ideias num r
 | Blocos no mapa | Aprovado (0.8.0): o trajeto dos megablocos de cada lugar, quando a fonte deu começo e fim |
 | Offline e desempenho | Aprovado (0.9.0): funciona sem internet com o que já foi aberto, sem baixar a cidade inteira; logo mais leve |
 | Publicar o beta para teste | Aprovado (0.10.0): no GitHub Pages, com os dados de 2026, o aviso de versão de teste e podendo aparecer no Google |
+| Blocos do mesmo dia num cartão só | Aprovado (0.10.1) |
+| Fonte dos dados | Aprovado: o Diário Oficial; no futuro, pedir autorização ao máximo de sites e à Prefeitura |
 | Parte social (Amigos) | Fica por último, porque não é o foco |
 
 ## Funcionalidades sugeridas

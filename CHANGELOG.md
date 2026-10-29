@@ -7,6 +7,18 @@ Enquanto o app está em beta, o número é `0.MEIO.FINAL`. O número do meio sob
 uma tela ou funcionalidade nova (0.3.0, 0.4.0…) e o último, quando é só uma correção pequena
 (0.3.1). Cada versão tem uma etiqueta no GitHub, como `v0.3.0`.
 
+## 0.10.1 (29/10/2026)
+
+### Mudou
+
+- **Os blocos do mesmo dia num cartão só**, na página do lugar: um embaixo do outro, sem o
+  espaço branco entre eles, cada um com o dia, o nome, o artista e o horário.
+
+### Anotei
+
+- A fonte dos dados passa a ser o Diário Oficial. O que achei testando no celular (o pino fora
+  da concentração, poucos blocos e nenhum na Zona Leste ou Norte) fica para a 0.11.0.
+
 ## 0.10.0 (29/10/2026)
 
 ### Entrou

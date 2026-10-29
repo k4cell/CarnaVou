@@ -130,6 +130,32 @@ a:focus-visible {
   list-style: none;
 }
 
+// Os blocos do mesmo dia, um embaixo do outro, viram um cartão só: sem o espaço entre eles, com
+// uma linha fina separando, e os cantos redondos só no começo e no fim do dia.
+.dia {
+  app-banner-bloco {
+    display: block;
+  }
+
+  .cartao {
+    border-radius: 0;
+  }
+
+  app-banner-bloco:not(:first-child) .cartao {
+    border-top: 0;
+  }
+
+  app-banner-bloco:first-child .cartao {
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+  }
+
+  app-banner-bloco:last-child .cartao {
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+  }
+}
+
 .cartao {
   display: flex;
   gap: 16px;

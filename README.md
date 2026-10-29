@@ -3,7 +3,7 @@
 **A central do "point" do carnaval de rua de São Paulo.** Quero responder a pergunta que
 todo grupo faz no carnaval: *"pra onde a gente vai agora?"*
 
-> **Situação (29/10/2026): começando o beta, versão 0.10.0.** Já tem o projeto criado, as três telas do
+> **Situação (29/10/2026): começando o beta, versão 0.10.1.** Já tem o projeto criado, as três telas do
 > esqueleto (lugares em destaque, um lugar e um bloco) e o mapa, com dados de teste: o
 > carnaval de rua de 2026, com nomes reais, como se hoje fosse 07/02/2026. O mapa mostra os trajetos
 > dos megablocos e, quando eu toco no botão, onde eu estou e a distância até cada lugar. Sem internet, o
@@ -59,6 +59,8 @@ Daí veio o CarnaVou, uma central que mostra:
 | **Sem internet** | O site continua funcionando com o que já foi aberto: as páginas, os blocos e o mapa das áreas já vistas. O mapa só fica guardado depois de aberto uma vez com internet, e não baixo a cidade inteira. Quando a internet cai, o cabeçalho mostra "Sem internet". |
 | **Onde publicar (beta)** | No GitHub Pages, de graça, com a minha conta do GitHub: https://k4cell.github.io/CarnaVou/. O site é publicado sozinho a cada push na main, depois dos testes. O endereço definitivo eu ainda decido. |
 | **Versão de teste no ar** | Com os dados do carnaval de 2026, um aviso no alto de toda página ("Versão de teste: os blocos e os horários são do carnaval de rua de 2026") e o ano na data de teste. O site pode aparecer no Google. |
+| **Blocos do mesmo dia** | Na página do lugar, os blocos do mesmo dia ficam juntos num cartão só, um embaixo do outro, cada um com o dia, o nome, o artista e o horário. |
+| **Fonte dos dados** | O Diário Oficial da Prefeitura, que publica a lista oficial dos blocos e é de uso livre (a lei de direito autoral não protege os atos oficiais). Os pontos e as linhas eu marco a partir dela. O site Carnaval SP tem a lista completa, mas os termos dele proíbem copiar e comercializar, então não uso. No futuro, quero pedir autorização ao máximo de sites e à Prefeitura. |
 | **Social** | A parte social (Amigos) fica por último, porque não é o foco. |
 
 ### Sobre compartilhar

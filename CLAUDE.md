@@ -114,7 +114,9 @@ calendário e o que eu ainda não pensei.
   se a logo mudar, gere de novo a partir de `design/logo/`.
 - Os dados ficam em `app/src/app/dados/`: `locais.ts` (os 10 lugares) e `blocos.ts` (o
   carnaval de rua de 2026, reconstituído de notícias, com nomes reais). **Não invente
-  dado**: só vale o que uma fonte diz e, na dúvida, deixe em branco. As fontes e a confiança
+  dado**: só vale o que uma fonte diz e, na dúvida, deixe em branco. A fonte oficial é o
+  Diário Oficial (dados abertos da Prefeitura); **não copie dados do site Carnaval SP**, porque os
+  termos dele proíbem copiar e comercializar. As fontes e a confiança
   de cada bloco estão em `docs/dados-carnaval-2026.md`; se achar uma divergência nova,
   anote lá. O "hoje" do app é 07/02/2026 (`DATA_DE_DEMONSTRACAO`, em `relogio/`) e a tela
   avisa que é data de teste. O site no ar usa a simulação de 2026, com o aviso de versão de

@@ -15,9 +15,14 @@
     <app-copiar-link />
   </div>
 
+  <!-- Os blocos do mesmo dia ficam juntos num cartão só, um embaixo do outro. -->
   <ul class="lista">
-    @for (bloco of blocos(); track bloco.id) {
-      <li><app-banner-bloco [bloco]="bloco" /></li>
+    @for (dia of dias(); track dia.data) {
+      <li class="dia" [attr.aria-label]="dia.nome">
+        @for (bloco of dia.blocos; track bloco.id) {
+          <app-banner-bloco [bloco]="bloco" />
+        }
+      </li>
     }
   </ul>
 } @else {
