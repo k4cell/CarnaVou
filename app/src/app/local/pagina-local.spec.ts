@@ -83,6 +83,38 @@ describe('PaginaLocal', () => {
     });
   });
 
+  describe('os blocos do mesmo dia', () => {
+    it('ficam juntos num cartão só, um por dia, na ordem das datas', async () => {
+      const tela = await renderizar('ibirapuera');
+      const datas = BLOCOS.filter((bloco) => bloco.localId === 'ibirapuera').map((bloco) => bloco.data);
+      const dias = Array.from(tela.querySelectorAll('li.dia'));
+      expect(dias.length).toBe(new Set(datas).size);
+      const datasDosDias = dias.map((dia) => dia.querySelector('time')?.getAttribute('datetime'));
+      expect(datasDosDias).toEqual([...datasDosDias].sort());
+    });
+
+    it('juntam os três blocos do sábado, 7 de fevereiro, no Ibirapuera, sem perder nenhum', async () => {
+      const tela = await renderizar('ibirapuera');
+      const sabado = Array.from(tela.querySelectorAll('li.dia')).find(
+        (dia) => dia.getAttribute('aria-label') === 'Sábado, 7 de fevereiro',
+      );
+      const nomes = Array.from(sabado?.querySelectorAll('.nome') ?? []).map((nome) => nome.textContent);
+      expect(nomes).toEqual(['Quem Pede, Pede', 'Bloco Forrozin', 'Bicho Maluco Beleza']);
+    });
+
+    it('cada bloco do cartão continua com o dia, o horário e o link dele', async () => {
+      const tela = await renderizar('ibirapuera');
+      const primeiroDia = tela.querySelector('li.dia')!;
+      const banners = Array.from(primeiroDia.querySelectorAll('app-banner-bloco'));
+      expect(banners.length).toBeGreaterThan(1);
+      for (const banner of banners) {
+        expect(banner.querySelector('time')).not.toBeNull();
+        expect(banner.querySelector('.horario')?.textContent).toContain('Começa às');
+        expect(banner.querySelector('a')?.getAttribute('href')).toMatch(/^\/local\/ibirapuera\//);
+      }
+    });
+  });
+
   it('leva para o mapa já com o lugar escolhido', async () => {
     const tela = await renderizar('consolacao');
     expect(tela.querySelector('a.ver-no-mapa')?.getAttribute('href')).toBe('/mapa?lugar=consolacao');
