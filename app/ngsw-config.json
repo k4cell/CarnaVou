@@ -1,6 +1,6 @@
 {
   "$schema": "./node_modules/@angular/service-worker/config/schema.json",
-  "index": "/index.html",
+  "index": "/index.csr.html",
   "assetGroups": [
     {
       "name": "app",
@@ -11,6 +11,7 @@
           "/index.csr.html",
           "/index.html",
           "/manifest.webmanifest",
+          "/logo/*.webp",
           "/*.css",
           "/*.js"
         ]
@@ -30,6 +31,31 @@
       "updateMode": "prefetch",
       "resources": {
         "files": ["/**/*.(svg|cur|jpg|jpeg|png|apng|webp|avif|gif|otf|ttf|woff|woff2)"]
+      }
+    }
+  ],
+  "dataGroups": [
+    {
+      "name": "mapa-indice",
+      "urls": ["https://tiles.openfreemap.org/planet"],
+      "cacheConfig": {
+        "strategy": "freshness",
+        "timeout": "4s",
+        "maxSize": 1,
+        "maxAge": "30d"
+      }
+    },
+    {
+      "name": "mapa-pedacos",
+      "urls": [
+        "https://tiles.openfreemap.org/planet/**",
+        "https://tiles.openfreemap.org/fonts/**",
+        "https://tiles.openfreemap.org/sprites/**"
+      ],
+      "cacheConfig": {
+        "strategy": "performance",
+        "maxSize": 300,
+        "maxAge": "30d"
       }
     }
   ]

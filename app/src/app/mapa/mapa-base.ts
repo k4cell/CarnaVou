@@ -163,7 +163,12 @@ interface Pino {
   imports: [RouterLink],
   template: `
     <div #mapa class="mapa" role="region" aria-label="Mapa dos lugares"></div>
-    @if (erro()) {
+    @if (erro() === 'sem-internet') {
+      <p class="mapa-erro" role="alert">
+        Sem internet, e o mapa ainda não está guardado neste celular. Ele fica guardado depois que você
+        abre o mapa uma vez com internet. Enquanto isso, veja a lista em <a routerLink="/">Descobrir</a>.
+      </p>
+    } @else if (erro() === 'falhou') {
       <p class="mapa-erro" role="alert">
         Não consegui abrir o mapa neste celular. Veja a lista em <a routerLink="/">Descobrir</a>.
       </p>
@@ -185,7 +190,8 @@ export class MapaBase {
   /** A pessoa tocou no mapa, fora de qualquer pino. */
   readonly fundoTocado = output<void>();
 
-  protected readonly erro = signal(false);
+  /** Por que o mapa não abriu: sem internet (e sem o MapLibre guardado) ou outro problema. */
+  protected readonly erro = signal<'nenhum' | 'sem-internet' | 'falhou'>('nenhum');
 
   private readonly area = viewChild.required<ElementRef<HTMLElement>>('mapa');
   private readonly carregar = inject(CARREGAR_MAPLIBRE);
@@ -255,7 +261,7 @@ export class MapaBase {
       this.pronto.set(true);
     } catch (erro) {
       console.warn('Não consegui abrir o mapa.', erro);
-      this.erro.set(true);
+      this.erro.set(navigator.onLine === false ? 'sem-internet' : 'falhou');
     }
   }
 
