@@ -130,7 +130,7 @@ describe('Destaques', () => {
 
     it('mostra a data de teste quando ela não vem do relógio do celular', async () => {
       const { tela } = await renderizar(SABADO_14H, true);
-      expect(tela.querySelector('.teste')?.textContent).toBe('Data de teste: Sábado, 14 de fevereiro, 14h');
+      expect(tela.querySelector('.teste')?.textContent).toBe('Data de teste: Sábado, 14/2/2026, 14h');
     });
   });
 

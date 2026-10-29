@@ -25,6 +25,15 @@ describe('App', () => {
     expect(compiled.querySelector('h1 img[alt="CarnaVou"]')).not.toBeNull();
   });
 
+  it('avisa no alto de toda página que é uma versão de teste, com o ano dos dados', async () => {
+    const fixture = TestBed.createComponent(App);
+    await fixture.whenStable();
+    const compiled = fixture.nativeElement as HTMLElement;
+    const aviso = compiled.querySelector('main app-aviso-de-teste');
+    expect(aviso?.textContent?.trim()).toBe('Versão de teste: os blocos e os horários são do carnaval de rua de 2026.');
+    expect(compiled.querySelector('main')?.firstElementChild?.tagName.toLowerCase()).toBe('app-aviso-de-teste');
+  });
+
   it('oferece a logo em WebP, que é mais leve, com o PNG de reserva', async () => {
     const fixture = TestBed.createComponent(App);
     await fixture.whenStable();
