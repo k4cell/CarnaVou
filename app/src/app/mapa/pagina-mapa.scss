@@ -32,16 +32,79 @@ app-mapa-base {
   margin: 12px 0 0;
 }
 
-// Fica um pouco acima do fundo para o crédito do mapa (canto de baixo) continuar à vista.
-.cartao-do-ponto {
+// Embaixo ficam, de cima para baixo: o botão "onde estou", o aviso e o cartão do ponto. Ficam um
+// pouco acima do fundo para o crédito do mapa (canto de baixo) continuar à vista. O espaço vazio
+// deixa o toque passar para o mapa; só o que está dentro recebe toques.
+.rodape {
   position: absolute;
   right: 12px;
   bottom: 40px;
   left: 12px;
   z-index: 5;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
   margin: 0 auto;
-  padding: 16px;
   max-width: 480px;
+  pointer-events: none;
+
+  > * {
+    pointer-events: auto;
+  }
+}
+
+.botao-redondo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-self: flex-end;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  border: 1px solid var(--borda);
+  border-radius: 50%;
+  background: var(--cartao);
+  box-shadow: 0 2px 8px rgb(0 0 0 / 25%);
+  color: var(--texto);
+  cursor: pointer;
+
+  svg {
+    width: 26px;
+    height: 26px;
+    fill: none;
+    stroke: currentcolor;
+    stroke-width: 2;
+    stroke-linecap: round;
+  }
+
+  .miolo {
+    fill: currentcolor;
+  }
+
+  &[aria-busy='true'] {
+    color: var(--rosa);
+  }
+
+  &:focus-visible {
+    outline: 3px solid var(--texto);
+    outline-offset: 2px;
+  }
+}
+
+.aviso {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 8px 12px 16px;
+  border-radius: 12px;
+  background: var(--cartao);
+  box-shadow: 0 2px 10px rgb(0 0 0 / 20%);
+}
+
+.cartao-do-ponto {
+  position: relative;
+  padding: 16px;
   border-radius: 16px;
   background: var(--cartao);
   box-shadow: 0 2px 12px rgb(0 0 0 / 25%);
@@ -53,9 +116,7 @@ app-mapa-base {
 }
 
 .fechar {
-  position: absolute;
-  top: 4px;
-  right: 4px;
+  flex: none;
   width: 44px;
   height: 44px;
   border: 0;
@@ -71,11 +132,24 @@ app-mapa-base {
   }
 }
 
+// O "×" do cartão fica no canto de cima, à direita.
+.cartao-do-ponto > .fechar {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+}
+
 .linha {
   display: flex;
   gap: 8px;
   align-items: center;
   margin: 4px 0;
+}
+
+.distancia {
+  margin: 4px 0;
+  color: var(--texto-suave);
+  font-size: 0.95rem;
 }
 
 .acoes {

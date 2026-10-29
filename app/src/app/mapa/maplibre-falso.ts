@@ -21,6 +21,9 @@ export class MapaFalso {
   rotacaoDesligada = false;
   readonly enquadramentos: { limites: LimitesFalsos; opcoes: Record<string, unknown> }[] = [];
   readonly movimentos: Record<string, unknown>[] = [];
+  readonly camadas: Record<string, unknown>[] = [];
+  readonly fontes = new Map<string, { definicao: Record<string, unknown>; dados: unknown; atualizacoes: number }>();
+  zoom = 11;
   readonly touchZoomRotate = {
     disableRotation: () => {
       this.rotacaoDesligada = true;
@@ -36,9 +39,45 @@ export class MapaFalso {
     return this;
   }
 
+  /** Dispara um evento do mapa, como o MapLibre faria. */
+  disparar(evento: string): void {
+    this.ouvintes.get(evento)?.();
+  }
+
   /** Faz de conta que a pessoa tocou no mapa (num lugar sem pino). */
   tocar(): void {
-    this.ouvintes.get('click')?.();
+    this.disparar('click');
+  }
+
+  /** Faz de conta que o estilo do mapa terminou de carregar. */
+  carregar(): void {
+    this.disparar('load');
+  }
+
+  getZoom(): number {
+    return this.zoom;
+  }
+
+  addSource(id: string, definicao: Record<string, unknown>): this {
+    this.fontes.set(id, { definicao, dados: definicao['data'], atualizacoes: 0 });
+    return this;
+  }
+
+  getSource(id: string): { setData: (dados: unknown) => void } | undefined {
+    const fonte = this.fontes.get(id);
+    return fonte
+      ? {
+          setData: (dados) => {
+            fonte.dados = dados;
+            fonte.atualizacoes++;
+          },
+        }
+      : undefined;
+  }
+
+  addLayer(camada: Record<string, unknown>): this {
+    this.camadas.push(camada);
+    return this;
   }
 
   fitBounds(limites: LimitesFalsos, opcoes: Record<string, unknown>): this {
@@ -118,8 +157,10 @@ export function criarMapLibreFalso() {
     marcadores,
     /** O endereço do worker que o app passou para o MapLibre. */
     worker: () => estado.worker,
-    /** Os pinos que estão no mapa agora (os que saíram não contam). */
-    pinos: () => marcadores.filter((marcador) => !marcador.removido),
+    /** Os pinos dos lugares que estão no mapa agora (os que saíram não contam, nem a bolinha da pessoa). */
+    pinos: () => marcadores.filter((marcador) => !marcador.removido && !marcador.elemento.classList.contains('voce')),
+    /** A bolinha de quem está vendo o mapa, se estiver no mapa. */
+    bolinha: () => marcadores.find((marcador) => !marcador.removido && marcador.elemento.classList.contains('voce')),
   };
 }
 

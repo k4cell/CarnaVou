@@ -1,0 +1,19 @@
+<div class="folha">
+  <h2 id="titulo-da-explicacao">Mostrar onde você está</h2>
+
+  <ul class="motivos">
+    <li>Aparece uma bolinha no mapa e a distância até cada lugar.</li>
+    <li>Só procuro você quando você toca no botão. Não sigo o seu caminho.</li>
+    <li>A sua posição fica só neste celular. Não é guardada nem enviada a ninguém.</li>
+    <li>
+      Em seguida o celular vai perguntar se pode. É só permitir, de preferência só enquanto você usa o
+      site.
+    </li>
+    <li>Se você não quiser, o mapa funciona do mesmo jeito.</li>
+  </ul>
+
+  <div class="acoes">
+    <button #continuarBotao type="button" class="botao botao-principal" (click)="continuar.emit()">Continuar</button>
+    <button #agoraNaoBotao type="button" class="botao" (click)="agoraNao.emit()">Agora não</button>
+  </div>
+</div>

@@ -17,6 +17,14 @@
       }
     },
     {
+      "name": "mapa",
+      "installMode": "lazy",
+      "updateMode": "prefetch",
+      "resources": {
+        "files": ["/mapa/*.mjs", "/mapa/*.css", "/mapa/*.json"]
+      }
+    },
+    {
       "name": "assets",
       "installMode": "lazy",
       "updateMode": "prefetch",

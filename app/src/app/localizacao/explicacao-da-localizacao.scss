@@ -1,0 +1,63 @@
+// Cobre o mapa inteiro (entre o cabeçalho e o menu de baixo) e escurece o fundo.
+:host {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: color-mix(in srgb, var(--noite) 60%, transparent);
+}
+
+.folha {
+  width: 100%;
+  max-width: 420px;
+  padding: 24px 20px 20px;
+  border-radius: 16px;
+  background: var(--cartao);
+  box-shadow: 0 2px 16px rgb(0 0 0 / 30%);
+
+  h2 {
+    margin: 0 0 12px;
+    color: var(--roxo);
+  }
+}
+
+.motivos {
+  margin: 0;
+  padding-left: 20px;
+
+  li + li {
+    margin-top: 8px;
+  }
+}
+
+.acoes {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 20px;
+}
+
+.botao {
+  min-height: 48px;
+  padding: 0 16px;
+  border: 1px solid var(--borda);
+  border-radius: 999px;
+  background: var(--cartao);
+  color: var(--texto);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+
+  &:focus-visible {
+    outline: 3px solid var(--texto);
+    outline-offset: 2px;
+  }
+}
+
+.botao-principal {
+  border-color: var(--amarelo);
+  background: var(--amarelo);
+}

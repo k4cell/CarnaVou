@@ -1,5 +1,5 @@
-// O estilo do próprio MapLibre (controles, créditos). Só entra no site quando o mapa é aberto.
-@use 'maplibre-gl/dist/maplibre-gl';
+// O estilo do próprio MapLibre (controles, créditos) não fica aqui: o `maplibre.ts` carrega o
+// `mapa/maplibre-gl.css` quando o mapa abre.
 
 app-mapa-base {
   position: relative;
@@ -71,6 +71,18 @@ app-mapa-base {
 
 .pino-norte {
   --cor-do-pino: var(--azul);
+}
+
+// A bolinha de quem está vendo o mapa: rosa com borda branca, para não se confundir com os pinos.
+.voce {
+  width: 22px;
+  height: 22px;
+  border: 3px solid #fff;
+  border-radius: 50%;
+  background: var(--rosa);
+  box-shadow:
+    0 0 0 1px rgb(0 0 0 / 15%),
+    0 2px 4px rgb(0 0 0 / 30%);
 }
 
 .mapa-erro {
