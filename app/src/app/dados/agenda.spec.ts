@@ -34,7 +34,7 @@ describe('agenda', () => {
     });
   });
 
-  describe('na data de demonstração (sexta, 30/01/2026, antes do pré-carnaval)', () => {
+  describe('num dia sem bloco (sexta, 30/01/2026, antes do pré-carnaval)', () => {
     const sexta = new Date(2026, 0, 30, 12, 0);
 
     it('não tem bloco hoje nem amanhã', () => {
@@ -48,6 +48,28 @@ describe('agenda', () => {
         const total = BLOCOS.filter((bloco) => bloco.localId === local.id).length;
         expect(geral[local.id]).toBe(total === 1 ? '1 bloco' : `${total} blocos`);
       }
+    });
+  });
+
+  describe('na data de demonstração (sábado, 07/02/2026, primeiro dia do pré-carnaval)', () => {
+    const sabado = new Date(2026, 1, 7, 12, 0);
+
+    it('mostra em Hoje os lugares com bloco naquele dia', () => {
+      expect(selos(cartoesDaAba('hoje', sabado))).toEqual({
+        ibirapuera: 'Já começou',
+        'faria-lima': 'Já começou',
+        'henrique-schaumann': 'Já começou',
+      });
+    });
+
+    it('mostra em Amanhã a hora do primeiro bloco de cada lugar', () => {
+      expect(selos(cartoesDaAba('amanha', sabado))).toEqual({
+        ibirapuera: 'Amanhã às 11h',
+        consolacao: 'Amanhã às 11h',
+        'faria-lima': 'Amanhã às 14h',
+        'santo-amaro': 'Amanhã às 13h',
+        'centro-historico': 'Amanhã às 14h',
+      });
     });
   });
 

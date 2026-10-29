@@ -4,12 +4,12 @@ const FORMATO_DA_DATA = /^(\d{4})-(\d{2})-(\d{2})(?:[T ](\d{2}):(\d{2}))?$/;
 
 /**
  * O "hoje" de mentira usado enquanto o app só tem os dados de teste do carnaval de 2026:
- * sexta-feira, 30/01/2026, meio-dia. Para usar o relógio de verdade, troque por nulo
+ * sábado, 07/02/2026 (o primeiro dia do pré-carnaval), meio-dia. Para usar o relógio de verdade, troque por nulo
  * (provedor `{ provide: DATA_DE_DEMONSTRACAO, useValue: null }`).
  */
 export const DATA_DE_DEMONSTRACAO = new InjectionToken<Date | null>('DATA_DE_DEMONSTRACAO', {
   providedIn: 'root',
-  factory: () => new Date(2026, 0, 30, 12, 0),
+  factory: () => new Date(2026, 1, 7, 12, 0),
 });
 
 /**
@@ -36,7 +36,7 @@ export function lerDataDeTeste(texto: string | null): Date | undefined {
 /**
  * Sabe que dia e hora são "agora".
  * Ordem: 1) a data do endereço, como `?hoje=2026-02-14T14:00`; 2) o "hoje" de demonstração
- * (30/01/2026), enquanto os dados forem os de teste; 3) o relógio do celular.
+ * (07/02/2026), enquanto os dados forem os de teste; 3) o relógio do celular.
  * Nos dois primeiros casos "agora" fica parado e a tela avisa que é uma data de teste.
  */
 @Injectable({ providedIn: 'root' })

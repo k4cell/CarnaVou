@@ -22,7 +22,6 @@ describe('PaginaEmBreve', () => {
   });
 
   for (const [endereco, titulo] of [
-    ['/mapa', 'Mapa'],
     ['/amigos', 'Amigos'],
     ['/favoritos', 'Favoritos'],
   ]) {

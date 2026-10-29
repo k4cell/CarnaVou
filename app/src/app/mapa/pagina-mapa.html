@@ -1,0 +1,35 @@
+<app-mapa-base
+  [pontos]="pontos()"
+  [selecionado]="cartao()?.local?.id ?? null"
+  (escolher)="escolher($event)"
+  (fundoTocado)="fechar()"
+/>
+
+<div class="topo-do-mapa">
+  <app-abas-do-dia />
+  @if (vazio()) {
+    <p class="vazio">{{ mensagemVazia() }}</p>
+  }
+</div>
+
+@if (cartao(); as achado) {
+  <section class="cartao-do-ponto" aria-label="Lugar escolhido">
+    <button type="button" class="fechar" aria-label="Fechar" (click)="fechar()">×</button>
+
+    <h2 class="nome">{{ achado.local.nome }}</h2>
+    <div class="linha">
+      <app-zona-tag [zona]="achado.local.zona" />
+      <span class="selo">{{ achado.selo }}</span>
+    </div>
+
+    @if (achado.principal) {
+      <p class="artistas">Artistas: <strong class="principal">{{ achado.principal }}</strong>{{ achado.resto }}</p>
+    }
+
+    <div class="acoes">
+      <a class="botao botao-principal" [href]="links()?.google" target="_blank" rel="noopener">Como chegar</a>
+      <a class="botao" [href]="links()?.waze" target="_blank" rel="noopener">Waze</a>
+      <a class="botao" [routerLink]="['/local', achado.local.id]">Ver o lugar</a>
+    </div>
+  </section>
+}
