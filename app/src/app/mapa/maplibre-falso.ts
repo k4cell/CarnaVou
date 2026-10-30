@@ -30,23 +30,50 @@ export class MapaFalso {
     },
   };
 
-  private readonly ouvintes = new Map<string, () => void>();
+  /** O que está embaixo do dedo no próximo toque (o que o `queryRenderedFeatures` devolve). */
+  private tocados: { properties: Record<string, unknown> }[] = [];
+  readonly consultas: { caixa: unknown; opcoes: unknown }[] = [];
+  private readonly ouvintes = new Map<string, (evento: unknown) => void>();
 
   constructor(readonly opcoes: Record<string, unknown>) {}
 
-  on(evento: string, ouvinte: () => void): this {
+  on(evento: string, ouvinte: (evento: unknown) => void): this {
     this.ouvintes.set(evento, ouvinte);
     return this;
   }
 
   /** Dispara um evento do mapa, como o MapLibre faria. */
-  disparar(evento: string): void {
-    this.ouvintes.get(evento)?.();
+  disparar(evento: string, dados?: unknown): void {
+    this.ouvintes.get(evento)?.(dados);
   }
 
-  /** Faz de conta que a pessoa tocou no mapa (num lugar sem pino). */
+  /** Faz de conta que a pessoa tocou no mapa (num lugar sem ponto). */
   tocar(): void {
-    this.disparar('click');
+    this.tocados = [];
+    this.disparar('click', { point: { x: 100, y: 200 } });
+  }
+
+  /** Faz de conta que a pessoa tocou na bolinha de um ponto. */
+  tocarNoPonto(id: string): void {
+    this.tocados = [{ properties: { id } }];
+    this.disparar('click', { point: { x: 100, y: 200 } });
+  }
+
+  queryRenderedFeatures(caixa: unknown, opcoes: unknown): { properties: Record<string, unknown> }[] {
+    this.consultas.push({ caixa, opcoes });
+    return this.tocados;
+  }
+
+  /** Os pontos (as bolinhas) que estão no mapa agora, com o id e a cor de cada um. */
+  pontos(): { id: string; cor: string; posicao: [number, number] }[] {
+    const dados = this.fontes.get('pontos')?.dados as
+      | { features: { properties: { id: string; cor: string }; geometry: { coordinates: [number, number] } }[] }
+      | undefined;
+    return (dados?.features ?? []).map((ponto) => ({
+      id: ponto.properties.id,
+      cor: ponto.properties.cor,
+      posicao: ponto.geometry.coordinates,
+    }));
   }
 
   /** Faz de conta que o estilo do mapa terminou de carregar. */
@@ -162,7 +189,7 @@ export function criarMapLibreFalso() {
     marcadores,
     /** O endereço do worker que o app passou para o MapLibre. */
     worker: () => estado.worker,
-    /** Os pinos dos lugares que estão no mapa agora (os que saíram não contam, nem a bolinha da pessoa). */
+    /** O pino do ponto escolhido, se tiver (os que saíram não contam, nem a bolinha da pessoa). */
     pinos: () => marcadores.filter((marcador) => !marcador.removido && !marcador.elemento.classList.contains('voce')),
     /** A bolinha de quem está vendo o mapa, se estiver no mapa. */
     bolinha: () => marcadores.find((marcador) => !marcador.removido && marcador.elemento.classList.contains('voce')),

@@ -29,25 +29,42 @@ export function blocosDoLocal(localId: string): Bloco[] {
   return BLOCOS.filter((bloco) => bloco.localId === localId).sort(porDataEHora);
 }
 
+/** A fama do bloco: a soma dos seguidores dos artistas dele. Bloco sem artista conhecido fica com 0. */
+export function famaDoBloco(bloco: Bloco): number {
+  return bloco.atracoes.reduce((soma, atracao) => soma + (atracao.seguidores ?? 0), 0);
+}
+
+/** Os nomes dos artistas dos blocos, sem repetir, do mais famoso para o menos. */
+export function artistasPorFama(blocos: Bloco[]): string[] {
+  const seguidores = new Map<string, number>();
+  for (const bloco of blocos) {
+    for (const atracao of bloco.atracoes) {
+      if (!seguidores.has(atracao.nome)) {
+        seguidores.set(atracao.nome, atracao.seguidores ?? 0);
+      }
+    }
+  }
+  return [...seguidores].sort(([, a], [, b]) => b - a).map(([nome]) => nome);
+}
+
+/** Os blocos mais famosos do lugar (os que têm artista conhecido), do mais para o menos. */
+export function destaquesDoLocal(localId: string, quantos: number): Bloco[] {
+  return blocosDoLocal(localId)
+    .filter((bloco) => famaDoBloco(bloco) > 0)
+    .sort((a, b) => famaDoBloco(b) - famaDoBloco(a))
+    .slice(0, quantos);
+}
+
 export function acharBloco(localId: string, blocoId: string): Bloco | undefined {
   return BLOCOS.find((bloco) => bloco.localId === localId && bloco.id === blocoId);
 }
 /**
- * Os artistas de um lugar, sem repetir, na ordem dos blocos. Com "aPartirDe" (AAAA-MM-DD),
+ * Os artistas de um lugar, sem repetir, do mais famoso para o menos. Com "aPartirDe" (AAAA-MM-DD),
  * só os dos blocos desse dia em diante; se não sobrar nenhum, volta a valer a lista toda.
  */
 export function artistasDoLugar(localId: string, aPartirDe?: string): string[] {
   const todos = blocosDoLocal(localId);
   const dosProximos = aPartirDe ? todos.filter((bloco) => bloco.data >= aPartirDe) : todos;
   const blocos = dosProximos.some((bloco) => bloco.atracoes.length > 0) ? dosProximos : todos;
-
-  const nomes: string[] = [];
-  for (const bloco of blocos) {
-    for (const atracao of bloco.atracoes) {
-      if (!nomes.includes(atracao.nome)) {
-        nomes.push(atracao.nome);
-      }
-    }
-  }
-  return nomes;
+  return artistasPorFama(blocos);
 }

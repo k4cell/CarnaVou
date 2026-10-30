@@ -1,6 +1,5 @@
 import { ResolveFn, Routes } from '@angular/router';
 
-import { PaginaBloco } from './bloco/pagina-bloco';
 import { acharBloco, acharLocal } from './dados/consultas';
 import { Destaques } from './destaques/destaques';
 import { PaginaLocal } from './local/pagina-local';
@@ -20,7 +19,12 @@ const tituloDoBloco: ResolveFn<string> = (rota) => {
 export const routes: Routes = [
   { path: '', component: Destaques, title: NOME_DO_SITE },
   { path: 'local/:local', component: PaginaLocal, title: tituloDoLocal },
-  { path: 'local/:local/:bloco', component: PaginaBloco, title: tituloDoBloco },
+  {
+    path: 'local/:local/:bloco',
+    // A página do bloco traz o itinerário em texto, que pesa: só é baixada quando alguém abre um bloco.
+    loadComponent: () => import('./bloco/pagina-bloco').then((modulo) => modulo.PaginaBloco),
+    title: tituloDoBloco,
+  },
   {
     path: 'mapa',
     // O mapa (e o MapLibre, que pesa) só é baixado quando a pessoa abre esta aba.

@@ -57,30 +57,32 @@ describe('Destaques', () => {
 
     it('mostra em cada cartão o selo com a conta dos blocos', async () => {
       const { selos } = await renderizar();
-      expect(selos()[0]).toBe('15 blocos');
+      expect(selos()[0]).toBe('18 blocos');
     });
 
     it('mostra a zona de cada lugar na sua etiqueta de cor', async () => {
       const { tela } = await renderizar();
       const etiquetas = Array.from(tela.querySelectorAll('.zona')).map((z) => z.textContent);
-      expect(etiquetas.slice(0, 3)).toEqual(['Zona Sul', 'Centro', 'Zona Oeste']);
+      expect(etiquetas.slice(0, 4)).toEqual(['Zona Sul', 'Centro', 'Zona Sul', 'Zona Oeste']);
     });
 
-    it('mostra os artistas, o primeiro em destaque, só nos lugares que têm artista', async () => {
-      const { tela, cartoes } = await renderizar();
-      const artistas = Array.from(tela.querySelectorAll('.artistas')).map((a) => a.textContent ?? '');
-      expect(artistas[0]).toBe('Artistas: Ivete Sangalo, Mariana Aydar, Alceu Valença e mais 13');
-      expect(tela.querySelector('.artistas .principal')?.textContent).toBe('Ivete Sangalo');
-      // A Avenida Paulo VI não tem artista divulgado: o cartão não mostra a linha de artistas.
-      const pauloVi = cartoes().find((c) => c.getAttribute('href') === '/local/paulo-vi');
-      expect(pauloVi?.querySelector('.artistas')).toBeNull();
-      expect(artistas.length).toBeLessThan(LOCAIS.length);
+    it('mostra os artistas, o primeiro em destaque, nos lugares que têm artista', async () => {
+      const { cartoes } = await renderizar();
+      const vilaMariana = cartoes().find((c) => c.getAttribute('href') === '/local/vila-mariana');
+      expect(vilaMariana?.querySelector('.artistas')?.textContent).toMatch(/^Artistas: Ivete Sangalo, /);
+      expect(vilaMariana?.querySelector('.artistas .principal')?.textContent).toBe('Ivete Sangalo');
+    });
+
+    it('mostra os nomes dos blocos nos lugares sem artista divulgado', async () => {
+      const { cartoes } = await renderizar();
+      const lapa = cartoes().find((c) => c.getAttribute('href') === '/local/lapa');
+      expect(lapa?.querySelector('.artistas')?.textContent).toMatch(/^Blocos: /);
     });
 
     it('dá a cada lugar a sua faixa de cor, do rosa ao azul', async () => {
       const { cartoes } = await renderizar();
       const faixas = cartoes().map((c) => c.getAttribute('data-faixa'));
-      expect(faixas.slice(0, 7)).toEqual(['rosa', 'amarelo', 'verde', 'laranja', 'roxo', 'vermelho', 'azul']);
+      expect(faixas).toEqual(['rosa', 'amarelo', 'verde', 'laranja', 'roxo', 'vermelho', 'azul'].slice(0, faixas.length));
     });
 
     it('não mostra aviso de data de teste', async () => {
@@ -93,7 +95,7 @@ describe('Destaques', () => {
     it('abre na aba Hoje, só com os lugares que têm bloco hoje', async () => {
       const { abaAtiva, cartoes, selos } = await renderizar(SABADO_14H);
       expect(abaAtiva()).toBe('Hoje');
-      expect(cartoes().length).toBe(6);
+      expect(cartoes().length).toBe(4);
       expect(selos()).toContain('Já começou');
     });
 
@@ -101,8 +103,7 @@ describe('Destaques', () => {
       const { abaAtiva, cartoes, selos, tocar } = await renderizar(SABADO_14H);
       await tocar('Amanhã');
       expect(abaAtiva()).toBe('Amanhã');
-      expect(cartoes().length).toBe(5);
-      expect(selos()[0]).toBe('Amanhã às 11h');
+      expect(cartoes().length).toBe(3);
       expect(selos().every((selo) => selo?.startsWith('Amanhã às '))).toBe(true);
     });
 
@@ -116,10 +117,10 @@ describe('Destaques', () => {
     it('mantém a cor da faixa do lugar quando troca de aba', async () => {
       const { tela, tocar } = await renderizar(SABADO_14H);
       await tocar('Amanhã');
-      const faixaEm = () => tela.querySelector('a[href="/local/faria-lima"]')?.getAttribute('data-faixa');
+      const faixaEm = () => tela.querySelector('a[href="/local/se"]')?.getAttribute('data-faixa');
       const emAmanha = faixaEm();
       await tocar('Geral');
-      expect(emAmanha).toBe('verde');
+      expect(emAmanha).toBe('amarelo');
       expect(faixaEm()).toBe(emAmanha);
     });
 
@@ -140,7 +141,7 @@ describe('Destaques', () => {
     it('abre na aba Geral, para não abrir numa lista vazia', async () => {
       const { abaAtiva, selos } = await renderizar(SEM_BLOCOS);
       expect(abaAtiva()).toBe('Geral');
-      expect(selos()[0]).toBe('15 blocos');
+      expect(selos()[0]).toBe('18 blocos');
     });
 
     it('avisa que não tem bloco hoje, ao tocar em Hoje', async () => {

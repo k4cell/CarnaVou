@@ -14,19 +14,19 @@ export type Estilo =
 /** As zonas de São Paulo. Cada uma tem a sua cor (ver zona-tag). */
 export type Zona = 'centro' | 'sul' | 'leste' | 'oeste' | 'norte';
 
+/** Um lugar é uma subprefeitura de São Paulo. */
 export interface Local {
   id: string;
   nome: string;
   zona: Zona;
-  /** O ponto do lugar no mapa (um por lugar). */
-  lat: number;
-  lng: number;
 }
 
 export interface Atracao {
   nome: string;
   /** Hora que a atração começa, no formato HH:mm. Só quando a gente souber. */
   inicio?: string;
+  /** Seguidores no Instagram, para saber quem é mais famoso. Só quando a gente souber. */
+  seguidores?: number;
 }
 
 export interface Bloco {
@@ -36,7 +36,9 @@ export interface Bloco {
   data: string;
   /** Hora da concentração (quando o bloco começa), no formato HH:mm. */
   inicio: string;
-  /** Hora da dispersão (quando termina), no formato HH:mm. Só quando a gente souber. */
+  /** Hora em que o desfile sai, no formato HH:mm. Só quando a gente souber. */
+  desfile?: string;
+  /** Hora do término, no formato HH:mm. Só quando a gente souber. */
   fim?: string;
   localId: string;
   /** Os artistas que as fontes citam. Pode ficar vazio. */
@@ -45,17 +47,14 @@ export interface Bloco {
   estilo?: Estilo;
   /** Público-alvo, só quando for claro (ex.: "LGBTQIA+", "Mulheres"). */
   publico?: string;
-  /** O endereço da concentração, só quando uma fonte diz (ex.: "Av. Ipiranga, 818"). */
-  concentracao?: string;
 }
 
-/** Por onde os megablocos de um lugar desfilam: o circuito que a CET fecha para eles. */
-export interface Circuito {
-  localId: string;
-  /** O trajeto em palavras, como as fontes descrevem. */
-  descricao: string;
-  /** De onde veio o trajeto. */
-  fonte: string;
-  /** A linha do trajeto no mapa, como [longitude, latitude], seguindo as ruas. */
-  trajeto: [number, number][];
+/** Onde um bloco se concentra e por onde ele passa. */
+export interface Trajeto {
+  /** O ponto da concentração, como [longitude, latitude]. */
+  inicio: [number, number];
+  /** A linha, como [longitude, latitude], da concentração até o fim. Bloco parado não tem. */
+  linha?: [number, number][];
+  /** O ponto ou a linha não são exatos (o itinerário não diz o bastante para ter certeza). */
+  aproximado: boolean;
 }

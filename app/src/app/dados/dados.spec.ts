@@ -1,84 +1,147 @@
-import { distanciaEmMetros } from '../localizacao/distancia';
 import { estaNaGrandeSP } from '../mapa/limites';
 import { BLOCOS } from './blocos';
-import { CIRCUITOS } from './circuitos';
-import { acharLocal, artistasDoLugar, faixaDoLocal } from './consultas';
+import { artistasDoLugar, blocosDoLocal, faixaDoLocal, famaDoBloco } from './consultas';
+import { itinerarioDoBloco } from './itinerario';
 import { LOCAIS } from './locais';
-import { circuitoDoLocal } from './trajetos';
+import { lerLinha, trajetoDoBloco } from './trajetos';
 
 describe('dados', () => {
-  it('tem 10 lugares em destaque, sem repetir', () => {
-    const ids = LOCAIS.map((local) => local.id);
-    expect(ids.length).toBe(10);
-    expect(new Set(ids).size).toBe(10);
-  });
-
-  it('não repete o id de nenhum bloco', () => {
-    const ids = BLOCOS.map((bloco) => bloco.id);
-    expect(new Set(ids).size).toBe(ids.length);
-  });
-
-  it('todo bloco aponta para um lugar que existe', () => {
-    const ids = new Set(LOCAIS.map((local) => local.id));
-    expect(BLOCOS.every((bloco) => ids.has(bloco.localId))).toBe(true);
-  });
-
-  it('todo lugar tem pelo menos um bloco', () => {
-    const comBloco = new Set(BLOCOS.map((bloco) => bloco.localId));
-    expect(LOCAIS.every((local) => comBloco.has(local.id))).toBe(true);
-  });
-
-  describe('circuitos dos megablocos', () => {
-    it('tem os seis circuitos que a CET publicou com começo e fim, um por lugar', () => {
-      expect(CIRCUITOS.map((circuito) => circuito.localId).sort()).toEqual(
-        ['consolacao', 'faria-lima', 'henrique-schaumann', 'ibirapuera', 'ipiranga-sao-joao', 'paulo-vi'],
-      );
+  describe('os lugares', () => {
+    it('são subprefeituras, sem repetir', () => {
+      const ids = LOCAIS.map((local) => local.id);
+      expect(ids.length).toBeGreaterThan(3);
+      expect(new Set(ids).size).toBe(ids.length);
     });
 
-    it('não tem circuito nos lugares sem trajeto nas fontes', () => {
-      for (const id of ['santo-amaro', 'republica', 'pinheiros', 'centro-historico']) {
-        expect(circuitoDoLocal(id), id).toBeUndefined();
+    it('ficam só no Centro, na Zona Sul e na Zona Oeste, com a Sé no Centro', () => {
+      expect(new Set(LOCAIS.map((local) => local.zona))).toEqual(new Set(['centro', 'sul', 'oeste']));
+      expect(LOCAIS.filter((local) => local.zona === 'centro').map((local) => local.nome)).toEqual(['Sé']);
+    });
+
+    it('vêm em ordem, dos que têm os artistas mais famosos para os menos', () => {
+      const fama = LOCAIS.map((local) => blocosDoLocal(local.id).reduce((soma, bloco) => soma + famaDoBloco(bloco), 0));
+      expect(fama).toEqual([...fama].sort((a, b) => b - a));
+      expect(LOCAIS[0].id).toBe('vila-mariana');
+    });
+
+    it('todo lugar tem pelo menos um bloco', () => {
+      const comBloco = new Set(BLOCOS.map((bloco) => bloco.localId));
+      expect(LOCAIS.every((local) => comBloco.has(local.id))).toBe(true);
+    });
+  });
+
+  describe('os blocos', () => {
+    it('vêm da lista oficial, sem repetir o id', () => {
+      const ids = BLOCOS.map((bloco) => bloco.id);
+      expect(ids.length).toBeGreaterThan(50);
+      expect(new Set(ids).size).toBe(ids.length);
+    });
+
+    it('só ficam os que têm atração ou desfilam num circuito de megabloco', () => {
+      const circuito = /Pedro [ÁA]lvares Cabral|Consola[çc][ãa]o, 2101|Faria Lima, 4100|^Av\.? Ipiranga|Pça\.? ?da Rep[úu]blica|Av\. S[ãa]o Jo[ãa]o|Paulo VI|Henrique Schaumann/i;
+      for (const bloco of BLOCOS) {
+        expect(bloco.atracoes.length > 0 || circuito.test(itinerarioDoBloco(bloco.id) ?? ''), bloco.id).toBe(true);
       }
     });
 
-    it('cada circuito tem descrição, fonte e uma linha de verdade, dentro da Grande SP', () => {
-      for (const circuito of CIRCUITOS) {
-        expect(acharLocal(circuito.localId), circuito.localId).toBeDefined();
-        expect(circuito.descricao.length, circuito.localId).toBeGreaterThan(10);
-        expect(circuito.fonte, circuito.localId).toContain('CET');
-        expect(circuito.trajeto.length, circuito.localId).toBeGreaterThanOrEqual(2);
-        for (const [lng, lat] of circuito.trajeto) {
-          expect(estaNaGrandeSP(lat, lng), circuito.localId).toBe(true);
+    it('todo bloco aponta para um lugar que existe', () => {
+      const ids = new Set(LOCAIS.map((local) => local.id));
+      expect(BLOCOS.every((bloco) => ids.has(bloco.localId))).toBe(true);
+    });
+
+    it('ficam entre o pré-carnaval e o pós-carnaval de 2026', () => {
+      expect(BLOCOS.every((bloco) => bloco.data >= '2026-02-06' && bloco.data <= '2026-02-22')).toBe(true);
+    });
+
+    it('escreve toda hora no formato HH:mm', () => {
+      const formato = /^\d{2}:\d{2}$/;
+      const horas = BLOCOS.flatMap((bloco) => [
+        bloco.inicio,
+        ...(bloco.desfile ? [bloco.desfile] : []),
+        ...(bloco.fim ? [bloco.fim] : []),
+        ...bloco.atracoes.flatMap((atracao) => (atracao.inicio ? [atracao.inicio] : [])),
+      ]);
+      expect(horas.every((hora) => formato.test(hora))).toBe(true);
+    });
+
+    it('concentra, desfila e termina nessa ordem (ou termina à meia-noite)', () => {
+      for (const bloco of BLOCOS) {
+        expect(bloco.desfile! >= bloco.inicio, bloco.id).toBe(true);
+        expect(bloco.fim! > bloco.desfile! || bloco.fim === '00:00', bloco.id).toBe(true);
+      }
+    });
+
+    it('todo bloco tem o itinerário oficial em texto', () => {
+      expect(BLOCOS.every((bloco) => (itinerarioDoBloco(bloco.id) ?? '').length > 2)).toBe(true);
+    });
+
+    it('só marca artistas, público-alvo e estilo em alguns blocos, quando as notícias dizem', () => {
+      const comArtista = BLOCOS.filter((bloco) => bloco.atracoes.length > 0);
+      expect(comArtista.length).toBeGreaterThan(10);
+      expect(comArtista.length).toBeLessThan(BLOCOS.length);
+      expect(BLOCOS.some((bloco) => bloco.publico)).toBe(true);
+      expect(BLOCOS.some((bloco) => bloco.estilo)).toBe(true);
+    });
+  });
+
+  describe('os pontos e as linhas', () => {
+    const comPonto = BLOCOS.filter((bloco) => trajetoDoBloco(bloco.id));
+
+    it('põem a grande maioria dos blocos no mapa', () => {
+      expect(comPonto.length / BLOCOS.length).toBeGreaterThan(0.8);
+    });
+
+    it('ficam todos na Grande São Paulo', () => {
+      for (const bloco of comPonto) {
+        const trajeto = trajetoDoBloco(bloco.id)!;
+        for (const [lng, lat] of [trajeto.inicio, ...(trajeto.linha ?? [])]) {
+          expect(estaNaGrandeSP(lat, lng), bloco.id).toBe(true);
         }
       }
     });
 
-    it('cada circuito passa perto do pino do lugar (a menos de 1,5 km)', () => {
-      for (const circuito of CIRCUITOS) {
-        const local = acharLocal(circuito.localId)!;
-        const maisPerto = Math.min(...circuito.trajeto.map(([lng, lat]) => distanciaEmMetros(local, { lat, lng })));
-        expect(maisPerto, circuito.localId).toBeLessThan(1500);
+    it('começam a linha no ponto da concentração', () => {
+      for (const bloco of comPonto) {
+        const { inicio, linha } = trajetoDoBloco(bloco.id)!;
+        if (linha) {
+          expect(linha[0], bloco.id).toEqual(inicio);
+          expect(linha.length, bloco.id).toBeGreaterThanOrEqual(2);
+        }
       }
     });
-  });
 
-  it('só guarda o endereço de concentração em texto, quando a fonte deu', () => {
-    const comEndereco = BLOCOS.filter((bloco) => bloco.concentracao).map((bloco) => bloco.id);
-    expect(comEndereco.sort()).toEqual(
-      ['megabloco-emo', 'minhoqueens', 'pipoca-da-rainha', 'tarado-ni-voce', 'vem-com-o-gigante'],
-    );
+    it('têm blocos que andam (com linha) e blocos parados (só o ponto)', () => {
+      expect(comPonto.some((bloco) => trajetoDoBloco(bloco.id)!.linha)).toBe(true);
+      expect(comPonto.some((bloco) => !trajetoDoBloco(bloco.id)!.linha)).toBe(true);
+    });
+
+    it('marcam quando o ponto é aproximado', () => {
+      expect(comPonto.some((bloco) => trajetoDoBloco(bloco.id)!.aproximado)).toBe(true);
+      expect(comPonto.some((bloco) => !trajetoDoBloco(bloco.id)!.aproximado)).toBe(true);
+    });
+
+    it('lê a linha comprimida (o exemplo do Google)', () => {
+      expect(lerLinha('_p~iF~ps|U_ulLnnqC_mqNvxq`@')).toEqual([
+        [-120.2, 38.5],
+        [-120.95, 40.7],
+        [-126.453, 43.252],
+      ]);
+    });
+
+    it('não tem ponto para um bloco que não existe', () => {
+      expect(trajetoDoBloco('bloco-que-nao-existe')).toBeUndefined();
+    });
   });
 
   describe('faixaDoLocal', () => {
-    it('reveza as sete cores, do rosa ao azul, na ordem dos lugares', () => {
+    it('reveza as cores, do rosa ao azul, na ordem dos lugares', () => {
       const faixas = LOCAIS.map((local) => faixaDoLocal(local.id));
-      expect(faixas.slice(0, 7)).toEqual(['rosa', 'amarelo', 'verde', 'laranja', 'roxo', 'vermelho', 'azul']);
-      expect(faixas[7]).toBe('rosa');
+      expect(faixas).toEqual(['rosa', 'amarelo', 'verde', 'laranja', 'roxo', 'vermelho', 'azul'].slice(0, faixas.length));
     });
 
     it('dá a mesma cor para o mesmo lugar, sempre', () => {
-      expect(faixaDoLocal('consolacao')).toBe('amarelo');
-      expect(faixaDoLocal('consolacao')).toBe(faixaDoLocal('consolacao'));
+      expect(faixaDoLocal('vila-mariana')).toBe('rosa');
+      expect(faixaDoLocal('se')).toBe('amarelo');
     });
 
     it('cai na primeira cor para um lugar que não existe', () => {
@@ -86,64 +149,26 @@ describe('dados', () => {
     });
   });
 
-  it('põe os blocos entre o pré-carnaval e o pós-carnaval de 2026', () => {
-    expect(BLOCOS.every((bloco) => bloco.data >= '2026-02-07' && bloco.data <= '2026-02-22')).toBe(true);
-  });
-
-  it('só tem hora de fim depois da hora de início', () => {
-    const comFim = BLOCOS.filter((bloco) => bloco.fim);
-    expect(comFim.length).toBeGreaterThan(0);
-    expect(comFim.every((bloco) => (bloco.fim ?? '') > bloco.inicio)).toBe(true);
-  });
-
-  it('escreve toda hora no formato HH:mm', () => {
-    const formato = /^\d{2}:\d{2}$/;
-    const horas = BLOCOS.flatMap((bloco) => [
-      bloco.inicio,
-      ...(bloco.fim ? [bloco.fim] : []),
-      ...bloco.atracoes.flatMap((atracao) => (atracao.inicio ? [atracao.inicio] : [])),
-    ]);
-    expect(horas.every((hora) => formato.test(hora))).toBe(true);
-  });
-
-  it('só marca o público-alvo e o estilo em alguns blocos, quando a fonte diz', () => {
-    expect(BLOCOS.some((bloco) => bloco.publico)).toBe(true);
-    expect(BLOCOS.some((bloco) => !bloco.publico)).toBe(true);
-    expect(BLOCOS.some((bloco) => bloco.estilo)).toBe(true);
-    expect(BLOCOS.some((bloco) => !bloco.estilo)).toBe(true);
-  });
-
-  it('põe cada lugar na Grande São Paulo, com latitude e longitude', () => {
-    expect(
-      LOCAIS.every((l) => l.lat > -24.1 && l.lat < -23.2 && l.lng > -47.2 && l.lng < -46.2),
-    ).toBe(true);
-  });
-
-  it('não repete o mesmo ponto para dois lugares', () => {
-    const pontos = LOCAIS.map((l) => `${l.lat},${l.lng}`);
-    expect(new Set(pontos).size).toBe(pontos.length);
-  });
-
   describe('artistasDoLugar', () => {
-    it('junta os artistas do lugar sem repetir, na ordem dos blocos', () => {
-      const artistas = artistasDoLugar('ibirapuera');
-      expect(artistas.length).toBe(16);
-      expect(new Set(artistas).size).toBe(16);
-      expect(artistas.slice(0, 3)).toEqual(['Ivete Sangalo', 'Mariana Aydar', 'Alceu Valença']);
+    it('junta os artistas do lugar sem repetir, do mais famoso para o menos', () => {
+      const artistas = artistasDoLugar('vila-mariana');
+      expect(artistas.length).toBeGreaterThan(5);
+      expect(new Set(artistas).size).toBe(artistas.length);
+      expect(artistas[0]).toBe('Ivete Sangalo');
     });
 
     it('pega só os dos blocos de um dia em diante', () => {
-      const artistas = artistasDoLugar('ibirapuera', '2026-02-14');
-      expect(artistas.length).toBe(10);
-      expect(artistas[0]).toBe('Gloria Groove');
+      const artistas = artistasDoLugar('vila-mariana', '2026-02-14');
+      expect(artistas[0]).toBe('Léo Santana');
+      expect(artistas).not.toContain('Ivete Sangalo');
     });
 
     it('volta a valer a lista toda quando nenhum bloco dali em diante tem artista', () => {
-      expect(artistasDoLugar('santo-amaro', '2026-03-01').length).toBe(9);
+      expect(artistasDoLugar('vila-mariana', '2026-03-01')).toEqual(artistasDoLugar('vila-mariana'));
     });
 
     it('fica vazio quando o lugar não tem artista divulgado', () => {
-      expect(artistasDoLugar('paulo-vi')).toEqual([]);
+      expect(artistasDoLugar('lapa')).toEqual([]);
     });
   });
 });

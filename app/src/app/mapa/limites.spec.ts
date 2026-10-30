@@ -1,10 +1,14 @@
-import { LOCAIS } from '../dados/locais';
+import { BLOCOS } from '../dados/blocos';
+import { trajetoDoBloco } from '../dados/trajetos';
 import { estaNaGrandeSP } from './limites';
 
 describe('estaNaGrandeSP', () => {
-  it('aceita todos os lugares do app', () => {
-    for (const local of LOCAIS) {
-      expect(estaNaGrandeSP(local.lat, local.lng), local.nome).toBe(true);
+  it('aceita o ponto de todos os blocos do app', () => {
+    for (const bloco of BLOCOS) {
+      const ponto = trajetoDoBloco(bloco.id)?.inicio;
+      if (ponto) {
+        expect(estaNaGrandeSP(ponto[1], ponto[0]), bloco.nome).toBe(true);
+      }
     }
   });
 

@@ -1,4 +1,4 @@
-import { artistasDoLugar, blocosDoLocal, faixaDoLocal } from './consultas';
+import { artistasDoLugar, artistasPorFama, blocosDoLocal, faixaDoLocal, famaDoBloco } from './consultas';
 import { formatarHora } from './formato';
 import { LOCAIS } from './locais';
 import { Bloco, Local } from './tipos';
@@ -12,6 +12,8 @@ export interface CartaoDoLugar {
   selo: string;
   /** Nome da cor da faixa (rosa, amarelo…): é sempre a mesma para o mesmo lugar. */
   faixa: string;
+  /** O que a linha de baixo lista: os artistas, quando as notícias citam algum, ou os blocos. */
+  rotulo: 'Artistas' | 'Blocos';
   principal: string;
   /** O resto dos artistas, já com a vírgula na frente: ", B, C e mais 4". */
   resto: string;
@@ -38,16 +40,14 @@ export function diaSeguinte(data: Date): Date {
   return seguinte;
 }
 
-function artistasDosBlocos(blocos: Bloco[]): string[] {
-  const nomes: string[] = [];
-  for (const bloco of blocos) {
-    for (const atracao of bloco.atracoes) {
-      if (!nomes.includes(atracao.nome)) {
-        nomes.push(atracao.nome);
-      }
-    }
-  }
-  return nomes;
+/** O que põe um lugar na frente do outro em Hoje e Amanhã: a fama dos blocos do dia e quantos são. */
+interface Peso {
+  fama: number;
+  quantos: number;
+}
+
+function pesoDoDia(blocos: Bloco[]): Peso {
+  return { fama: blocos.reduce((soma, bloco) => soma + famaDoBloco(bloco), 0), quantos: blocos.length };
 }
 
 /** O primeiro artista aparece em destaque; dos outros, só os primeiros e a conta do resto. */
@@ -68,8 +68,9 @@ function resumirArtistas(nomes: string[]): { principal: string; resto: string } 
  * existe: sem ela, o bloco conta como rolando até o fim do dia.
  */
 function seloDeHoje(blocosDeHoje: Bloco[], hora: string): string {
+  // Um fim antes do começo ("00:00") é depois da meia-noite: o bloco vai até o fim do dia.
   const rolando = blocosDeHoje.some(
-    (bloco) => bloco.inicio <= hora && (bloco.fim === undefined || hora < bloco.fim),
+    (bloco) => bloco.inicio <= hora && (bloco.fim === undefined || bloco.fim <= bloco.inicio || hora < bloco.fim),
   );
   if (rolando) {
     return 'Já começou';
@@ -106,12 +107,16 @@ function seloGeral(blocos: Bloco[], dia: string, amanha: string, hora: string): 
   return statusDeHoje ?? 'Sem mais blocos';
 }
 
-function montar(local: Local, selo: string, artistas: string[]): CartaoDoLugar {
+/** Sem artista conhecido, o cartão lista os nomes dos blocos, na ordem em que acontecem. */
+function montar(local: Local, selo: string, artistas: string[], blocos: Bloco[]): CartaoDoLugar {
+  const comArtistas = artistas.length > 0;
+  const nomes = comArtistas ? artistas : [...new Set(blocos.map((bloco) => bloco.nome))];
   return {
     local,
     selo,
     faixa: faixaDoLocal(local.id),
-    ...resumirArtistas(artistas),
+    rotulo: comArtistas ? 'Artistas' : 'Blocos',
+    ...resumirArtistas(nomes),
   };
 }
 
@@ -125,15 +130,16 @@ export function cartoesDaAba(aba: Aba, agora: Date | null): CartaoDoLugar[] {
     if (aba !== 'geral') {
       return [];
     }
-    return LOCAIS.map((local) =>
-      montar(local, seloDeContagem(blocosDoLocal(local.id).length), artistasDoLugar(local.id)),
-    );
+    return LOCAIS.map((local) => {
+      const blocos = blocosDoLocal(local.id);
+      return montar(local, seloDeContagem(blocos.length), artistasDoLugar(local.id), blocos);
+    });
   }
 
   const dia = diaIso(agora);
   const amanha = diaIso(diaSeguinte(agora));
   const hora = horaIso(agora);
-  const cartoes: CartaoDoLugar[] = [];
+  const cartoes: { cartao: CartaoDoLugar; peso: Peso }[] = [];
 
   for (const local of LOCAIS) {
     const blocos = blocosDoLocal(local.id);
@@ -141,14 +147,23 @@ export function cartoesDaAba(aba: Aba, agora: Date | null): CartaoDoLugar[] {
     const deAmanha = blocos.filter((bloco) => bloco.data === amanha);
 
     if (aba === 'hoje' && deHoje.length > 0) {
-      cartoes.push(montar(local, seloDeHoje(deHoje, hora), artistasDosBlocos(deHoje)));
+      const cartao = montar(local, seloDeHoje(deHoje, hora), artistasPorFama(deHoje), deHoje);
+      cartoes.push({ cartao, peso: pesoDoDia(deHoje) });
     } else if (aba === 'amanha' && deAmanha.length > 0) {
-      cartoes.push(montar(local, seloDeAmanha(deAmanha), artistasDosBlocos(deAmanha)));
+      const cartao = montar(local, seloDeAmanha(deAmanha), artistasPorFama(deAmanha), deAmanha);
+      cartoes.push({ cartao, peso: pesoDoDia(deAmanha) });
     } else if (aba === 'geral') {
-      cartoes.push(montar(local, seloGeral(blocos, dia, amanha, hora), artistasDoLugar(local.id, dia)));
+      const proximos = blocos.filter((bloco) => bloco.data >= dia);
+      const selo = seloGeral(blocos, dia, amanha, hora);
+      const cartao = montar(local, selo, artistasDoLugar(local.id, dia), proximos.length > 0 ? proximos : blocos);
+      cartoes.push({ cartao, peso: { fama: 0, quantos: 0 } });
     }
   }
-  return cartoes;
+  // Em Hoje e Amanhã, vêm primeiro os lugares com os artistas mais famosos do dia e, depois, os
+  // com mais blocos (na Geral, a ordem é a dos lugares, que já começa pelos mais famosos).
+  return cartoes
+    .sort((a, b) => b.peso.fama - a.peso.fama || b.peso.quantos - a.peso.quantos)
+    .map(({ cartao }) => cartao);
 }
 
 /**

@@ -4,8 +4,8 @@
   <h2 class="titulo">{{ bloco.nome }}</h2>
   <p class="subtitulo">{{ resumo()?.dia }} · {{ lugar()?.nome }}</p>
   <p class="horario">{{ resumo()?.horario }}</p>
-  @if (bloco.concentracao) {
-    <p class="concentracao">Concentração: {{ bloco.concentracao }}</p>
+  @if (resumo()?.itinerario; as itinerario) {
+    <p class="itinerario">Itinerário: {{ itinerario }}</p>
   }
   @if (resumo()?.estilo) {
     <p>Estilo: {{ resumo()?.estilo }}</p>
@@ -15,7 +15,7 @@
   }
 
   <div class="acoes-da-pagina">
-    <a class="botao-claro ver-no-mapa" routerLink="/mapa" [queryParams]="{ lugar: bloco.localId }">
+    <a class="botao-claro ver-no-mapa" routerLink="/mapa" [queryParams]="{ bloco: bloco.id }">
       <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
         <path d="M12 21s-6-5.6-6-10a6 6 0 1112 0c0 4.4-6 10-6 10z" />
         <circle cx="12" cy="11" r="2" />

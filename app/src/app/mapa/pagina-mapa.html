@@ -1,6 +1,6 @@
 <app-mapa-base
   [pontos]="pontos()"
-  [selecionado]="cartao()?.local?.id ?? null"
+  [selecionado]="cartao()?.id ?? null"
   [voce]="voce()"
   [trajetos]="trajetos()"
   (escolher)="escolher($event)"
@@ -40,25 +40,28 @@
   }
 
   @if (cartao(); as achado) {
-    <section class="cartao-do-ponto" aria-label="Lugar escolhido">
+    <section class="cartao-do-ponto" aria-label="Ponto escolhido">
       <button type="button" class="fechar" aria-label="Fechar" (click)="fechar()">×</button>
 
-      <h2 class="nome">{{ achado.local.nome }}</h2>
+      <h2 class="nome">{{ achado.titulo }}</h2>
       <div class="linha">
         <app-zona-tag [zona]="achado.local.zona" />
-        <span class="selo">{{ achado.selo }}</span>
+        <span class="lugar">{{ achado.local.nome }}</span>
       </div>
 
       @if (distancia(); as perto) {
         <p class="distancia">A {{ perto }} de você, em linha reta.</p>
       }
 
-      @if (circuito(); as trajeto) {
-        <p class="trajeto">Trajeto: {{ trajeto.descricao }}</p>
+      @if (achado.itinerario) {
+        <p class="trajeto">Itinerário: {{ achado.itinerario }}</p>
+      }
+      @if (achado.aproximado) {
+        <p class="aproximado">O ponto e a linha são aproximados: o itinerário oficial não diz o bastante.</p>
       }
 
-      @if (achado.principal) {
-        <p class="artistas">Artistas: <strong class="principal">{{ achado.principal }}</strong>{{ achado.resto }}</p>
+      @if (achado.artistas) {
+        <p class="artistas">Artistas: {{ achado.artistas }}</p>
       }
 
       <!-- Os botões vêm antes da lista de blocos, para "Como chegar" ficar à vista sem rolar. -->

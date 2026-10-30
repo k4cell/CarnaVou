@@ -82,12 +82,13 @@ calendário e o que eu ainda não pensei.
   `design/mapa/gerar-estilo-do-mapa.py` (rode de novo para mudar as cores). Nos testes o
   MapLibre é trocado por um falso (`maplibre-falso.ts`), sem WebGL nem internet. Os
   créditos "OpenFreeMap © OpenMapTiles Data from OpenStreetMap" têm que continuar à vista.
-- **Os trajetos** dos megablocos ficam em `dados/circuitos.ts`, gerado por
-  `design/mapa/gerar-circuitos.py` (OpenStreetMap e o roteador da FOSSGIS): não edite à mão.
-  Só entra trajeto com começo e fim numa fonte (a CET, de preferência); sem isso, o lugar fica
-  só com o pino. A consulta `circuitoDoLocal` fica em `dados/trajetos.ts`, separada das outras,
-  para os trajetos só serem baixados junto com o mapa. O endereço da concentração de um bloco
-  (`concentracao`) também só entra com fonte, anotada em `docs/dados-carnaval-2026.md`.
+- **Os dados** (`locais.ts`, `blocos.ts`, `itinerarios.ts` e `pontos-dos-blocos.ts`) são
+  gerados pelos scripts de `design/dados/` a partir da lista oficial do Diário Oficial: não
+  edite à mão. O ponto da concentração e a linha de cada bloco vêm do itinerário oficial casado
+  com as ruas do OpenStreetMap; quando não dá certeza, o ponto fica marcado como aproximado ou o
+  bloco fica sem ponto. `trajetoDoBloco` (`dados/trajetos.ts`) e `itinerarioDoBloco`
+  (`dados/itinerario.ts`) ficam separados das outras consultas, para só serem baixados com o
+  mapa e a página do bloco.
 - **Sem internet:** o service worker (`ngsw-config.json`) entrega a casca vazia
   `index.csr.html` para qualquer endereço (nunca a tela inicial pronta) e guarda o mapa: o grupo
   `mapa` (MapLibre, worker, estilo) e os `dataGroups` da OpenFreeMap (índice, letras, ícones).
@@ -112,8 +113,10 @@ calendário e o que eu ainda não pensei.
 - A logo e as imagens de referência ficam em `design/`, cada uma com legenda no
   `design/README.md`. O que o site usa fica em `app/public/logo/` e `app/public/icons/`:
   se a logo mudar, gere de novo a partir de `design/logo/`.
-- Os dados ficam em `app/src/app/dados/`: `locais.ts` (os 10 lugares) e `blocos.ts` (o
-  carnaval de rua de 2026, reconstituído de notícias, com nomes reais). **Não invente
+- Os dados ficam em `app/src/app/dados/`: `locais.ts` (as subprefeituras) e `blocos.ts` (os
+  blocos aprovados do carnaval de rua de 2026). Por decisão minha, só entram o Centro, a Zona Sul
+  e a Zona Oeste, e só os blocos com atração divulgada ou num circuito de megabloco. A ordem é
+  por fama: a soma dos seguidores no Instagram dos artistas (`design/dados/seguidores.json`). **Não invente
   dado**: só vale o que uma fonte diz e, na dúvida, deixe em branco. A fonte oficial é o
   Diário Oficial (dados abertos da Prefeitura); **não copie dados do site Carnaval SP**, porque os
   termos dele proíbem copiar e comercializar. As fontes e a confiança

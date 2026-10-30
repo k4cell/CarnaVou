@@ -7,6 +7,13 @@ Enquanto o app está em beta, o número é `0.MEIO.FINAL`. O número do meio sob
 uma tela ou funcionalidade nova (0.3.0, 0.4.0…) e o último, quando é só uma correção pequena
 (0.3.1). Cada versão tem uma etiqueta no GitHub, como `v0.3.0`.
 
+## 0.11.0 (30/10/2026)
+
+- Os dados passam a vir da lista oficial do Diário Oficial: só Centro, Zona Sul e Zona Oeste, e
+  só os blocos com atração ou num circuito de megabloco, em ordem de fama (seguidores dos
+  artistas). Cada lugar é uma subprefeitura e tem os 4 blocos mais famosos em destaque. No mapa,
+  cada bloco tem o ponto da concentração e a linha do trajeto, com começo e fim.
+
 ## 0.10.1 (29/10/2026)
 
 ### Mudou

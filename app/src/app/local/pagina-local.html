@@ -15,6 +15,18 @@
     <app-copiar-link />
   </div>
 
+  @if (destaques().length > 0) {
+    <h3 class="secao">Destaques</h3>
+    <ul class="lista destaques">
+      @for (bloco of destaques(); track bloco.id) {
+        <li><app-banner-bloco [bloco]="bloco" /></li>
+      }
+    </ul>
+    @if (dias().length > 0) {
+      <h3 class="secao">Mais blocos</h3>
+    }
+  }
+
   <!-- Os blocos do mesmo dia ficam juntos num cartão só, um embaixo do outro. -->
   <ul class="lista">
     @for (dia of dias(); track dia.data) {

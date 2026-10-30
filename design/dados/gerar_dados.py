@@ -1,0 +1,288 @@
+"""Gera os dados do app (locais.ts, blocos.ts, itinerarios.ts e pontos-dos-blocos.ts).
+
+Uso: python -I gerar_dados.py pasta_de_design_dados tracados.json pasta_dos_dados_do_app
+
+Da pasta design/dados vêm:
+- blocos-oficiais-2026.json: a lista oficial lida do Diário Oficial (ler_tabela.py).
+- atracoes-das-noticias.json: os artistas, o estilo e o público que as notícias dão para alguns
+  blocos; valem quando o bloco é o mesmo (mesmo nome e mesmo dia).
+- seguidores.json: os seguidores no Instagram de cada artista, para ordenar por fama.
+E tracados.json é o ponto e a linha de cada itinerário (tracar.py).
+
+Entram só os blocos do Centro, da Zona Sul e da Zona Oeste que têm atração divulgada ou que
+desfilam num circuito de megabloco (os trajetos que a CET fecha). Os outros ficam de fora.
+"""
+
+import json
+import re
+import sys
+import unicodedata
+
+ZONAS = {
+    "Sé": "centro",
+    "Butantã": "oeste", "Lapa": "oeste", "Pinheiros": "oeste",
+    "Casa Verde": "norte", "Freguesia/Brasilândia": "norte", "Jaçanã/Tremembé": "norte",
+    "Perus": "norte", "Pirituba/Jaraguá": "norte", "Santana/Tucuruvi": "norte",
+    "Vila Maria/Vila Guilherme": "norte",
+    "Campo Limpo": "sul", "Capela do Socorro": "sul", "Cidade Ademar": "sul", "Ipiranga": "sul",
+    "Jabaquara": "sul", "M'Boi Mirim": "sul", "Parelheiros": "sul", "Santo Amaro": "sul",
+    "Vila Mariana": "sul",
+    "Aricanduva/Vila Formosa": "leste", "Cidade Tiradentes": "leste", "Ermelino Matarazzo": "leste",
+    "Guaianases": "leste", "Itaim Paulista": "leste", "Itaquera": "leste", "Mooca": "leste",
+    "Penha": "leste", "São Mateus": "leste", "São Miguel Paulista": "leste", "Sapopemba": "leste",
+    "Vila Prudente": "leste",
+}
+# Por enquanto, só estas zonas (decisão de 30/10/2026).
+ZONAS_QUE_ENTRAM = {"centro", "sul", "oeste"}
+# Os circuitos dos megablocos: quem desfila neles entra mesmo sem atração divulgada.
+CIRCUITOS = [
+    r"Pedro [ÁA]lvares Cabral",  # Ibirapuera
+    r"Consola[çc][ãa]o, 2101",
+    r"Faria Lima, 4100",
+    r"^Av\.? Ipiranga|Pça\.? ?da Rep[úu]blica|Av\. S[ãa]o Jo[ãa]o",
+    r"Paulo VI",
+    r"Henrique Schaumann",
+]
+# Nomes que as notícias escrevem diferente da lista oficial (mesmo bloco, mesmo dia).
+OUTROS_NOMES = {"Quintal dos Prettos": "Quintal dos Pretos"}
+
+
+def sem_acento(texto):
+    return unicodedata.normalize("NFKD", texto).encode("ascii", "ignore").decode().lower()
+
+
+def slug(texto):
+    return re.sub(r"[^a-z0-9]+", "-", sem_acento(texto)).strip("-")
+
+
+def chave_do_nome(nome):
+    nome = re.sub(r"\b(bloco|carnafacul|megabloco|o|a|do|da|de|dos|das|com)\b", " ", sem_acento(nome))
+    return re.sub(r"[^a-z0-9]+", "", nome)
+
+
+def ts(texto):
+    """Uma string do TypeScript entre aspas simples."""
+    return "'" + texto.replace("\\", "\\\\").replace("'", "\\'") + "'"
+
+
+def codificar(linha):
+    """A linha no formato "encoded polyline" do Google (precisão de 5 casas)."""
+    saida, anterior = [], (0, 0)
+    for lng, lat in linha:
+        atual = (round(lat * 1e5), round(lng * 1e5))
+        for valor, antes in zip(atual, anterior):
+            v = valor - antes
+            v = ~(v << 1) if v < 0 else v << 1
+            while v >= 0x20:
+                saida.append(chr((0x20 | (v & 0x1F)) + 63))
+                v >>= 5
+            saida.append(chr(v + 63))
+        anterior = atual
+    return "".join(saida)
+
+
+design, arquivo_dos_tracados, pasta = sys.argv[1], sys.argv[2], sys.argv[3]
+todos_os_oficiais = json.load(open(f"{design}/blocos-oficiais-2026.json", encoding="utf-8"))
+tracados = json.load(open(arquivo_dos_tracados, encoding="utf-8"))
+antigos = json.load(open(f"{design}/atracoes-das-noticias.json", encoding="utf-8"))
+for antigo in antigos:
+    antigo["nome"] = OUTROS_NOMES.get(antigo["nome"], antigo["nome"])
+seguidores = {nome: dados["seguidores"] for nome, dados in json.load(open(f"{design}/seguidores.json", encoding="utf-8")).items() if not nome.startswith("_")}
+
+
+def antigo_do(bloco):
+    k = chave_do_nome(bloco["nome"])
+    mesmo_dia = [a for a in antigos if a["data"] == bloco["data"]]
+    iguais = [a for a in mesmo_dia if chave_do_nome(a["nome"]) == k]
+    if iguais:
+        return iguais[0]
+    # Nome parecido (um dentro do outro) só vale para quem não achou o nome igual na lista
+    # oficial: senão o "Quintal dos Pretos" emprestaria os artistas para o "Bloco do Preto".
+    parecidos = [
+        a for a in mesmo_dia
+        if id(a) not in casados_pelo_nome
+        and min(len(k), len(chave_do_nome(a["nome"]))) >= 4
+        and (chave_do_nome(a["nome"]) in k or k in chave_do_nome(a["nome"]))
+    ]
+    return parecidos[0] if len(parecidos) == 1 else None
+
+
+casados_pelo_nome = {
+    id(a) for a in antigos
+    if any(o["data"] == a["data"] and chave_do_nome(o["nome"]) == chave_do_nome(a["nome"]) for o in todos_os_oficiais)
+}
+
+
+def atracoes_do(bloco):
+    antigo = antigo_do(bloco)
+    return antigo["atracoes"] if antigo else []
+
+
+def fama(bloco):
+    return sum(seguidores.get(a["nome"], 0) for a in atracoes_do(bloco))
+
+
+def entra(bloco):
+    if ZONAS[bloco["subprefeitura"]] not in ZONAS_QUE_ENTRAM:
+        return False
+    return bool(atracoes_do(bloco)) or any(re.search(p, bloco["itinerario"], re.I) for p in CIRCUITOS)
+
+
+oficiais = [b for b in todos_os_oficiais if entra(b)]
+
+# ------------------------------------------------------------------ os lugares (subprefeituras)
+contagem, fama_do_lugar = {}, {}
+for bloco in oficiais:
+    contagem[bloco["subprefeitura"]] = contagem.get(bloco["subprefeitura"], 0) + 1
+    fama_do_lugar[bloco["subprefeitura"]] = fama_do_lugar.get(bloco["subprefeitura"], 0) + fama(bloco)
+# Os lugares com os artistas mais famosos vêm primeiro; depois, os que têm mais blocos.
+subprefeituras = sorted(contagem, key=lambda s: (-fama_do_lugar[s], -contagem[s], sem_acento(s)))
+id_do_lugar = {s: slug(s) for s in subprefeituras}
+
+linhas = [
+    "import { Local } from './tipos';",
+    "",
+    "/**",
+    " * Os lugares: as subprefeituras de São Paulo do Centro, da Zona Sul e da Zona Oeste que têm",
+    " * bloco. Os que têm os artistas mais famosos vêm primeiro.",
+    " * Arquivo gerado por design/dados/gerar_dados.py: não mude à mão.",
+    " */",
+    "export const LOCAIS: Local[] = [",
+]
+for s in subprefeituras:
+    linhas.append(f"  {{ id: {ts(id_do_lugar[s])}, nome: {ts(s)}, zona: {ts(ZONAS[s])} }},")
+linhas += ["];", ""]
+open(f"{pasta}/locais.ts", "w", encoding="utf-8", newline="\n").write("\n".join(linhas))
+
+# ------------------------------------------------------------------ os blocos
+
+
+def atracoes_em_ts(atracoes):
+    """As atrações, da mais famosa para a menos, com os seguidores quando a gente sabe."""
+    itens = []
+    for a in sorted(atracoes, key=lambda a: -seguidores.get(a["nome"], 0)):
+        partes = [f"nome: {ts(a['nome'])}"]
+        if a.get("inicio"):
+            partes.append(f"inicio: {ts(a['inicio'])}")
+        if a["nome"] in seguidores:
+            partes.append(f"seguidores: {seguidores[a['nome']]}")
+        itens.append("{ " + ", ".join(partes) + " }")
+    return "[" + ", ".join(itens) + "]"
+
+
+ordem = sorted(oficiais, key=lambda b: (subprefeituras.index(b["subprefeitura"]), b["data"], b["concentracao"], sem_acento(b["nome"])))
+repetidos = {}
+for bloco in ordem:
+    repetidos[slug(bloco["nome"])] = repetidos.get(slug(bloco["nome"]), 0) + 1
+
+trajetos, indice_do_trajeto, trajeto_do_bloco = [], {}, {}
+itinerarios, indice_do_itinerario, itinerario_do_bloco = [], {}, {}
+linhas = [
+    "import { Bloco } from './tipos';",
+    "",
+    "/**",
+    " * Os blocos do carnaval de rua de São Paulo em 2026, usados como dados de teste.",
+    " *",
+    " * Vêm da lista oficial dos blocos aprovados, publicada pela SPTuris e pela Secretaria de",
+    " * Cultura no Diário Oficial (Portaria Conjunta nº 1, de 22/01/2026): nome, dia, subprefeitura,",
+    " * itinerário e os horários de concentração (inicio), desfile e término (fim). Os artistas, o",
+    " * estilo e o público vêm de notícias, só nos blocos que elas citam, e os seguidores de cada",
+    " * artista, de contadores públicos do Instagram. Entram só os blocos do Centro, da Zona Sul e da",
+    " * Zona Oeste que têm atração divulgada ou desfilam num circuito de megabloco.",
+    " * Arquivo gerado por design/dados/gerar_dados.py: não mude à mão.",
+    " */",
+    "export const BLOCOS: Bloco[] = [",
+]
+lugar_atual = None
+usados = set()
+for bloco in ordem:
+    if bloco["subprefeitura"] != lugar_atual:
+        lugar_atual = bloco["subprefeitura"]
+        linhas.append(f"  // {lugar_atual}")
+    base = slug(bloco["nome"])
+    dia, mes = bloco["data"][8:], bloco["data"][5:7]
+    identificador = base if repetidos[base] == 1 else f"{base}-{dia}-{mes}"
+    n = 2
+    while identificador in usados:
+        identificador = f"{base}-{dia}-{mes}-{n}"
+        n += 1
+    usados.add(identificador)
+    nome = bloco["nome"].strip(" .")
+    antigo = antigo_do(bloco)
+    partes = [
+        f"id: {ts(identificador)}",
+        f"nome: {ts(nome)}",
+        f"data: {ts(bloco['data'])}",
+        f"inicio: {ts(bloco['concentracao'])}",
+        f"desfile: {ts(bloco['desfile'])}",
+        f"fim: {ts(bloco['termino'])}",
+        f"localId: {ts(id_do_lugar[bloco['subprefeitura']])}",
+        f"atracoes: {atracoes_em_ts(atracoes_do(bloco))}",
+    ]
+    if antigo and antigo.get("estilo"):
+        partes.append(f"estilo: {ts(antigo['estilo'])}")
+    if antigo and antigo.get("publico"):
+        partes.append(f"publico: {ts(antigo['publico'])}")
+    linhas.append("  { " + ", ".join(re.sub(r"\s*\n\s*", " ", p) for p in partes) + " },")
+    if bloco["itinerario"] not in indice_do_itinerario:
+        indice_do_itinerario[bloco["itinerario"]] = len(itinerarios)
+        itinerarios.append(bloco["itinerario"])
+    itinerario_do_bloco[identificador] = indice_do_itinerario[bloco["itinerario"]]
+
+    tracado = tracados.get(f"{bloco['subprefeitura']}|{bloco['itinerario']}")
+    if tracado and tracado.get("linha"):
+        codigo = codificar(tracado["linha"])
+        aproximado = 1 if "aproximado" in tracado["jeito"] or tracado["jeito"] in ("na rua", "lugar", "cruzamento") else 0
+        if (codigo, aproximado) not in indice_do_trajeto:
+            indice_do_trajeto[(codigo, aproximado)] = len(trajetos)
+            trajetos.append((codigo, aproximado))
+        trajeto_do_bloco[identificador] = indice_do_trajeto[(codigo, aproximado)]
+linhas += ["];", ""]
+open(f"{pasta}/blocos.ts", "w", encoding="utf-8", newline="\n").write("\n".join(linhas))
+
+# ------------------------------------------------------------------ os itinerários em texto
+linhas = [
+    "/**",
+    " * O itinerário de cada bloco, como a lista oficial escreve. Fica fora de blocos.ts para só ser",
+    " * baixado na página do bloco e no mapa, sem pesar a primeira tela. Vários blocos dividem o mesmo",
+    " * itinerário (os do Ibirapuera, por exemplo), então cada texto aparece uma vez só.",
+    " * Arquivo gerado por design/dados/gerar_dados.py: não mude à mão.",
+    " */",
+    "export const ITINERARIOS: readonly string[] = [",
+]
+for texto in itinerarios:
+    linhas.append(f"  {ts(texto)},")
+linhas += ["];", "", "/** O itinerário de cada bloco (pelo id do bloco). */",
+           "export const ITINERARIO_DO_BLOCO: Readonly<Record<string, number>> = {"]
+for identificador, indice in itinerario_do_bloco.items():
+    linhas.append(f"  {ts(identificador)}: {indice},")
+linhas += ["};", ""]
+open(f"{pasta}/itinerarios.ts", "w", encoding="utf-8", newline="\n").write("\n".join(linhas))
+
+# ------------------------------------------------------------------ os pontos e as linhas (só o mapa usa)
+linhas = [
+    "/**",
+    " * Onde cada bloco se concentra e por onde ele passa, para o mapa. Fica fora de blocos.ts para só",
+    " * ser baixado junto com o mapa.",
+    " *",
+    " * Vem do itinerário oficial de cada bloco, casado com as ruas do OpenStreetMap: a linha começa",
+    " * na concentração (o primeiro número, o primeiro \"entre\" ou o primeiro cruzamento) e segue as",
+    " * ruas na ordem do itinerário. Um ponto sozinho é um bloco parado (numa praça, numa rua). Cada",
+    " * trajeto é [linha, aproximado]: a linha no formato \"encoded polyline\" do Google, e 1 quando o",
+    " * ponto ou a linha não são exatos (uma rua que o mapa não tem, uma rua sem os números, um",
+    " * itinerário de duas ruas só).",
+    " * Arquivo gerado por design/dados/gerar_dados.py: não mude à mão.",
+    " */",
+    "export const TRAJETOS: readonly (readonly [string, 0 | 1])[] = [",
+]
+for codigo, aproximado in trajetos:
+    linhas.append(f"  [{json.dumps(codigo)}, {aproximado}],")
+linhas += ["];", "", "/** O trajeto de cada bloco (pelo id do bloco). Blocos sem ponto conhecido ficam de fora. */",
+           "export const TRAJETO_DO_BLOCO: Readonly<Record<string, number>> = {"]
+for identificador, indice in trajeto_do_bloco.items():
+    linhas.append(f"  {ts(identificador)}: {indice},")
+linhas += ["};", ""]
+open(f"{pasta}/pontos-dos-blocos.ts", "w", encoding="utf-8", newline="\n").write("\n".join(linhas))
+
+print(len(subprefeituras), "lugares;", len(ordem), "blocos;", len(trajeto_do_bloco), "com ponto;", len(trajetos), "trajetos diferentes")
+print("com artistas:", sum(1 for b in ordem if atracoes_do(b)))
