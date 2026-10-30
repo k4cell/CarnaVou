@@ -17,7 +17,8 @@ export interface LugarDoAfter {
  * tem fonte (decisão de 30/10/2026):
  * - Beco do Batman e Meio Fio Bar foram indicados na decisão. Os endereços vêm da Wikipedia
  *   (Beco do Batman) e do guia BaresSP (Meio Fio Bar, baressp.com.br/bares/meio-fio-bar).
- * - Meretriz e Galo também foram indicados (30/10/2026), com o nome sem o "Bar". Os endereços vêm
+ * - Meretriz e Galo também foram indicados (30/10/2026). Os três bares indicados aparecem sem o
+ *   "Bar" no nome (Meio Fio, Meretriz e Galo), como o povo chama. Os endereços vêm
  *   do TripAdvisor e do Bendito Guia (Bar Meretriz) e do guia BaresSP (Bar Galo,
  *   baressp.com.br/bares/bar-galo, página atualizada em 12/03/2026).
  * - Boteco Todos os Santos, Vila 567 e Praça A são bares da Rua Aspicuelta que fazem o "after"
@@ -37,7 +38,7 @@ export const LUGARES_DO_AFTER: LugarDoAfter[] = [
   },
   {
     id: 'meio-fio-bar',
-    nome: 'Meio Fio Bar',
+    nome: 'Meio Fio',
     tipo: 'Bar',
     endereco: 'Rua Vupabussu, 31, Pinheiros',
     zona: 'oeste',
