@@ -14,7 +14,7 @@ export type Estilo =
 /** As zonas de São Paulo. Cada uma tem a sua cor (ver zona-tag). */
 export type Zona = 'centro' | 'sul' | 'leste' | 'oeste' | 'norte';
 
-/** Um lugar é uma subprefeitura de São Paulo. */
+/** Um lugar: um grande ponto do carnaval (como o Parque Ibirapuera) ou uma subprefeitura. */
 export interface Local {
   id: string;
   nome: string;

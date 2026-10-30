@@ -7,6 +7,12 @@ Enquanto o app está em beta, o número é `0.MEIO.FINAL`. O número do meio sob
 uma tela ou funcionalidade nova (0.3.0, 0.4.0…) e o último, quando é só uma correção pequena
 (0.3.1). Cada versão tem uma etiqueta no GitHub, como `v0.3.0`.
 
+## 0.11.2 (30/10/2026)
+
+- Arrumação do código, sem mudar nada na tela: a regra que junta os blocos por ponto do mapa foi
+  para os dados (com testes próprios), os desenhos do mapa saíram do componente do mapa e os
+  nomes que ficaram errados foram corrigidos.
+
 ## 0.11.1 (30/10/2026)
 
 - Os grandes pontos do carnaval voltam a ser lugares com nome próprio (Parque Ibirapuera, Rua da

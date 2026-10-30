@@ -219,8 +219,9 @@ a:focus-visible {
   white-space: nowrap;
 }
 
-// Os artistas são o que chama o clique: o primeiro nome vem maior e em negrito.
-.artistas {
+// Os nomes (artistas ou blocos) são o que chama o clique: o primeiro vem maior e em negrito.
+.artistas,
+.nomes {
   margin-top: 4px;
   font-size: 1rem;
 }

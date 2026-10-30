@@ -14,12 +14,14 @@ export interface CartaoDoLugar {
   faixa: string;
   /** O que a linha de baixo lista: os artistas, quando as notícias citam algum, ou os blocos. */
   rotulo: 'Artistas' | 'Blocos';
+  /** O primeiro nome da lista (o artista mais famoso, ou o primeiro bloco), que vem em destaque. */
   principal: string;
-  /** O resto dos artistas, já com a vírgula na frente: ", B, C e mais 4". */
+  /** O resto dos nomes, já com a vírgula na frente: ", B, C e mais 4". */
   resto: string;
 }
 
-const MAXIMO_DE_ARTISTAS = 3;
+/** Quantos nomes o cartão mostra antes do "e mais N". */
+const MAXIMO_DE_NOMES = 3;
 const JA_ACABOU = 'Já acabou';
 
 const doisDigitos = (numero: number): string => String(numero).padStart(2, '0');
@@ -50,10 +52,10 @@ function pesoDoDia(blocos: Bloco[]): Peso {
   return { fama: blocos.reduce((soma, bloco) => soma + famaDoBloco(bloco), 0), quantos: blocos.length };
 }
 
-/** O primeiro artista aparece em destaque; dos outros, só os primeiros e a conta do resto. */
-function resumirArtistas(nomes: string[]): { principal: string; resto: string } {
+/** O primeiro nome aparece em destaque; dos outros, só os primeiros e a conta do resto. */
+function resumirNomes(nomes: string[]): { principal: string; resto: string } {
   const [principal = '', ...outros] = nomes;
-  const mostrados = outros.slice(0, MAXIMO_DE_ARTISTAS - 1);
+  const mostrados = outros.slice(0, MAXIMO_DE_NOMES - 1);
   const escondidos = outros.length - mostrados.length;
 
   let resto = mostrados.length > 0 ? `, ${mostrados.join(', ')}` : '';
@@ -116,7 +118,7 @@ function montar(local: Local, selo: string, artistas: string[], blocos: Bloco[])
     selo,
     faixa: faixaDoLocal(local.id),
     rotulo: comArtistas ? 'Artistas' : 'Blocos',
-    ...resumirArtistas(nomes),
+    ...resumirNomes(nomes),
   };
 }
 

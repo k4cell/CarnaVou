@@ -13,11 +13,9 @@ import {
 import { RouterLink } from '@angular/router';
 
 import { AbasDoDia } from '../abas/abas-do-dia';
-import { blocosDaAba } from '../dados/agenda';
+import { concentracoesDaAba } from '../dados/concentracoes';
 import { formatarHora, partesDaData } from '../dados/formato';
 import { itinerarioDoBloco } from '../dados/itinerario';
-import { Bloco, Local, Trajeto } from '../dados/tipos';
-import { trajetoDoBloco } from '../dados/trajetos';
 import { FiltroDeDia } from '../filtro/filtro-de-dia';
 import { distanciaEmMetros, textoDaDistancia } from '../localizacao/distancia';
 import { ExplicacaoDaLocalizacao } from '../localizacao/explicacao-da-localizacao';
@@ -30,22 +28,6 @@ import { MapaBase, PontoNoMapa, TrajetoNoMapa } from './mapa-base';
 
 /** No cartão do ponto cabem só alguns blocos; o resto fica na página do lugar. */
 const BLOCOS_NO_CARTAO = 3;
-
-/** Um ponto do mapa: onde um ou mais blocos da aba se concentram. */
-interface Concentracao {
-  id: string;
-  local: Local;
-  /** Os blocos que se concentram aqui, em ordem de data e hora. */
-  blocos: Bloco[];
-  trajetos: Trajeto[];
-  lat: number;
-  lng: number;
-}
-
-/** O id do ponto: a posição dele. Blocos que se concentram no mesmo lugar dividem o ponto. */
-function idDoPonto([lng, lat]: [number, number]): string {
-  return `${lng.toFixed(5)},${lat.toFixed(5)}`;
-}
 
 const AVISOS = {
   procurando: 'Procurando você…',
@@ -70,7 +52,7 @@ const AVISOS = {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PaginaMapa {
-  /** Vem do endereço (`/mapa?lugar=se`): abre o mapa no próximo bloco desse lugar. */
+  /** Vem do endereço (`/mapa?lugar=ibirapuera`): abre o mapa no próximo bloco desse lugar. */
   readonly lugar = input<string | undefined>();
   /** Vem do endereço (`/mapa?bloco=pipoca-da-rainha`): abre o mapa já nesse bloco. */
   readonly bloco = input<string | undefined>();
@@ -95,34 +77,8 @@ export class PaginaMapa {
   protected readonly voce = this.localizacao.posicao;
   protected readonly procurando = computed(() => this.localizacao.estado() === 'procurando');
 
-  /**
-   * Onde se concentram os blocos da aba. Blocos que se concentram no mesmo lugar (como os do
-   * Ibirapuera) dividem o ponto. Os blocos que a gente não conseguiu pôr no mapa ficam de fora.
-   */
-  private readonly concentracoes = computed<Concentracao[]>(() => {
-    const aba = this.filtro.ativa();
-    const agora = this.relogio.agora();
-    const porId = new Map<string, Concentracao>();
-    for (const { local } of this.filtro.cartoes()) {
-      for (const bloco of blocosDaAba(aba, local.id, agora)) {
-        const trajeto = trajetoDoBloco(bloco.id);
-        if (!trajeto) {
-          continue;
-        }
-        const id = idDoPonto(trajeto.inicio);
-        let ponto = porId.get(id);
-        if (!ponto) {
-          ponto = { id, local, blocos: [], trajetos: [], lng: trajeto.inicio[0], lat: trajeto.inicio[1] };
-          porId.set(id, ponto);
-        }
-        ponto.blocos.push(bloco);
-        if (!ponto.trajetos.includes(trajeto)) {
-          ponto.trajetos.push(trajeto);
-        }
-      }
-    }
-    return [...porId.values()];
-  });
+  /** Onde se concentram os blocos da aba: blocos que se concentram no mesmo lugar dividem o ponto. */
+  private readonly concentracoes = computed(() => concentracoesDaAba(this.filtro.ativa(), this.relogio.agora()));
 
   protected readonly pontos = computed<PontoNoMapa[]>(() =>
     this.concentracoes().map(({ id, local, blocos, lat, lng }) => ({
