@@ -245,27 +245,6 @@ app-mapa-base {
   font-weight: 600;
 }
 
-.botao {
-  display: inline-flex;
-  flex: 1 1 auto;
-  align-items: center;
-  justify-content: center;
-  min-height: 44px;
-  padding: 0 10px;
-  white-space: nowrap;
-  border: 1px solid var(--borda);
-  border-radius: 999px;
-  background: var(--cartao);
-  color: var(--texto);
-  font-weight: 700;
-  text-decoration: none;
-}
-
-.botao-principal {
-  border-color: var(--amarelo);
-  background: var(--amarelo);
-}
-
 // A lista "Perto de você": até três blocos, cada um uma linha que se toca.
 .perto-de-voce {
   position: relative;

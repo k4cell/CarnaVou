@@ -32,6 +32,20 @@
     <li>
       <a
         class="item"
+        routerLink="/after"
+        [class.ativo]="ativo('/after')"
+        [attr.aria-current]="ativo('/after') ? 'page' : null"
+      >
+        <!-- Lua: Lucide (licença ISC). -->
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z" />
+        </svg>
+        <span>After</span>
+      </a>
+    </li>
+    <li>
+      <a
+        class="item"
         routerLink="/mapa"
         [class.ativo]="ativo('/mapa')"
         [attr.aria-current]="ativo('/mapa') ? 'page' : null"

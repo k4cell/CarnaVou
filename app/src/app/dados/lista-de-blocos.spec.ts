@@ -1,6 +1,6 @@
 import { BLOCOS } from './blocos';
 import { famaDoBloco } from './consultas';
-import { secoesDosBlocos } from './lista-de-blocos';
+import { blocosDaNoite, eDaNoite, secoesDosBlocos } from './lista-de-blocos';
 
 // Sábado de carnaval de 2026, duas da tarde.
 const SABADO_14H = new Date(2026, 1, 14, 14, 0);
@@ -53,5 +53,43 @@ describe('secoesDosBlocos (a aba Blocos)', () => {
   it('sem saber o dia de hoje (a página pronta), a Geral traz todos os blocos', () => {
     expect(secoesDosBlocos('geral', null).flatMap((secao) => secao.blocos).length).toBe(BLOCOS.length);
     expect(secoesDosBlocos('hoje', null)).toEqual([]);
+  });
+});
+
+describe('blocosDaNoite (a aba After)', () => {
+  // Sábado, 07/02/2026, meio-dia: o "hoje" de demonstração.
+  const SABADO_7 = new Date(2026, 1, 7, 12, 0);
+  const nomes = (aba: 'hoje' | 'amanha' | 'geral', agora: Date | null) =>
+    blocosDaNoite(aba, agora).map((bloco) => bloco.nome);
+
+  it('é da noite o bloco que começa a partir das 16h ou vai até as 20h ou mais', () => {
+    const daNoite = BLOCOS.filter(eDaNoite);
+    expect(daNoite.length).toBeGreaterThan(0);
+    for (const bloco of daNoite) {
+      const vaiANoite = !!bloco.fim && (bloco.fim >= '20:00' || bloco.fim <= bloco.inicio);
+      expect(bloco.inicio >= '16:00' || vaiANoite, bloco.nome).toBe(true);
+    }
+    expect(eDaNoite(BLOCOS.find((bloco) => bloco.id === 'carnafacul-quem-pede-pede')!)).toBe(false);
+  });
+
+  it('em Hoje e Amanhã, só os blocos da noite do dia', () => {
+    expect(nomes('hoje', SABADO_7)).toEqual(['Blocos dos Sem Tetos']);
+    expect(nomes('amanha', SABADO_7)).toEqual(['Banda do Fuxico']);
+  });
+
+  it('o que já acabou hoje sai da lista', () => {
+    expect(nomes('hoje', new Date(2026, 1, 7, 18, 30))).toEqual([]);
+  });
+
+  it('na Geral, de hoje em diante, em ordem de data e hora', () => {
+    const datas = blocosDaNoite('geral', SABADO_7).map((bloco) => bloco.data + bloco.inicio);
+    expect(datas.length).toBe(BLOCOS.filter(eDaNoite).length);
+    expect(datas).toEqual([...datas].sort());
+    expect(blocosDaNoite('geral', new Date(2026, 1, 12, 12, 0)).every((bloco) => bloco.data >= '2026-02-12')).toBe(true);
+  });
+
+  it('sem saber o dia (a página pronta), a Geral traz todos e as outras abas ficam vazias', () => {
+    expect(blocosDaNoite('geral', null).length).toBe(BLOCOS.filter(eDaNoite).length);
+    expect(blocosDaNoite('hoje', null)).toEqual([]);
   });
 });

@@ -31,6 +31,11 @@ export const routes: Routes = [
     title: `Blocos · ${NOME_DO_SITE}`,
   },
   {
+    path: 'after',
+    loadComponent: () => import('./after/pagina-after').then((modulo) => modulo.PaginaAfter),
+    title: `After · ${NOME_DO_SITE}`,
+  },
+  {
     path: 'mapa',
     // O mapa (e o MapLibre, que pesa) só é baixado quando a pessoa abre esta aba.
     loadComponent: () => import('./mapa/pagina-mapa').then((modulo) => modulo.PaginaMapa),
