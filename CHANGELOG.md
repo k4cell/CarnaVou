@@ -7,6 +7,12 @@ Enquanto o app está em beta, o número é `0.MEIO.FINAL`. O número do meio sob
 uma tela ou funcionalidade nova (0.3.0, 0.4.0…) e o último, quando é só uma correção pequena
 (0.3.1). Cada versão tem uma etiqueta no GitHub, como `v0.3.0`.
 
+## 0.19.1 (30/10/2026)
+
+- Os testes passam a usar uma cópia congelada dos dados de 2026, para não quebrarem quando os dados
+  mudarem de ano. Quem confere os dados novos é o gerador.
+- Histórico de onde os megablocos desfilaram de 2018 a 2026 (`design/dados/historico-dos-megablocos.json`).
+
 ## 0.19.0 (30/10/2026)
 
 - A aba **Blocos** virou a tela principal e a primeira do menu (Blocos · Descobrir · After · Mapa).

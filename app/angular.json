@@ -68,6 +68,26 @@
               "optimization": false,
               "extractLicenses": false,
               "sourceMap": true
+            },
+            "testes": {
+              "fileReplacements": [
+                {
+                  "replace": "src/app/dados/blocos.ts",
+                  "with": "src/app/dados/teste-2026/blocos.ts"
+                },
+                {
+                  "replace": "src/app/dados/locais.ts",
+                  "with": "src/app/dados/teste-2026/locais.ts"
+                },
+                {
+                  "replace": "src/app/dados/itinerarios.ts",
+                  "with": "src/app/dados/teste-2026/itinerarios.ts"
+                },
+                {
+                  "replace": "src/app/dados/pontos-dos-blocos.ts",
+                  "with": "src/app/dados/teste-2026/pontos-dos-blocos.ts"
+                }
+              ]
             }
           },
           "defaultConfiguration": "production"
@@ -85,7 +105,10 @@
           "defaultConfiguration": "development"
         },
         "test": {
-          "builder": "@angular/build:unit-test"
+          "builder": "@angular/build:unit-test",
+          "options": {
+            "buildTarget": "::development,testes"
+          }
         }
       }
     }

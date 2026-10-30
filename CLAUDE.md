@@ -88,7 +88,10 @@ calendário e o que eu ainda não pensei.
 - **Os dados** (`locais.ts`, `blocos.ts`, `itinerarios.ts` e `pontos-dos-blocos.ts`) são
   gerados pelos scripts de `design/dados/` a partir da lista oficial do Diário Oficial: não
   edite à mão. Cada ano tem a sua pasta (`design/dados/2026/`: o PDF oficial, as notícias e o
-  que sai dos scripts), e um comando só refaz tudo: `python -I design/dados/atualizar.py 2027`. O ponto da concentração e a linha de cada bloco vêm do itinerário oficial casado
+  que sai dos scripts), e um comando só refaz tudo: `python -I design/dados/atualizar.py 2027`. Os
+  testes usam uma cópia congelada dos dados de 2026 (`dados/teste-2026/`, trocada pela configuração
+  `testes` do `angular.json`): não atualize essa cópia ao mudar de ano. Quem confere os dados novos é
+  o `gerar_dados.py`, que avisa o que parece errado. O ponto da concentração e a linha de cada bloco vêm do itinerário oficial casado
   com as ruas do OpenStreetMap; quando não dá certeza, o ponto fica marcado como aproximado ou o
   bloco fica sem ponto. `trajetoDoBloco` (`dados/trajetos.ts`) e `itinerarioDoBloco`
   (`dados/itinerario.ts`) ficam separados das outras consultas, para só serem baixados com o

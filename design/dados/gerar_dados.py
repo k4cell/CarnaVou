@@ -332,3 +332,20 @@ por_zona = {}
 for bloco in ordem:
     por_zona[lugar_do(bloco)[2]] = por_zona.get(lugar_do(bloco)[2], 0) + 1
 print("por zona:", ", ".join(f"{zona} {n}" for zona, n in sorted(por_zona.items())))
+
+# ------------------------------------------------------------------ conferências
+# Os testes do app usam uma cópia congelada dos dados de 2026 (app/src/app/dados/teste-2026), então
+# quem confere os dados novos é este script. Avisa o que parece errado, sem parar.
+avisos = []
+for bloco in ordem:
+    if not bloco["concentracao"] <= bloco["desfile"] or not (bloco["termino"] > bloco["desfile"] or bloco["termino"] == "00:00"):
+        avisos.append(f"horários fora de ordem: {bloco['nome']} ({bloco['data']}, {bloco['concentracao']}, {bloco['desfile']}, {bloco['termino']})")
+for (codigo, _), indice in indice_do_trajeto.items():
+    tracado = next(t for t in tracados.values() if t.get("linha") and codificar(t["linha"]) == codigo)
+    # O retângulo da Grande São Paulo, o mesmo de app/src/app/mapa/limites.ts.
+    if not all(-47.2 <= lng <= -46.2 and -23.95 <= lat <= -23.2 for lng, lat in tracado["linha"]):
+        avisos.append(f"trajeto fora da Grande São Paulo: {tracado['linha'][0]}")
+if len(trajeto_do_bloco) < 0.8 * len(ordem):
+    avisos.append(f"só {len(trajeto_do_bloco)} de {len(ordem)} blocos têm ponto no mapa (veja relatorio.txt)")
+for aviso in avisos:
+    print("AVISO:", aviso)
