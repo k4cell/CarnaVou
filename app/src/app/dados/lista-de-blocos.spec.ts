@@ -74,7 +74,7 @@ describe('blocosDaNoite (a aba After)', () => {
 
   it('em Hoje e Amanhã, só os blocos da noite do dia', () => {
     expect(nomes('hoje', SABADO_7)).toEqual(['Blocos dos Sem Tetos']);
-    expect(nomes('amanha', SABADO_7)).toEqual(['Banda do Fuxico']);
+    expect(nomes('amanha', SABADO_7)).toEqual(['Banda do Fuxico', "Banda Grone's - G.C.E. Grone's"]);
   });
 
   it('o que já acabou hoje sai da lista', () => {

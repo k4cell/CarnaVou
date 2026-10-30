@@ -1,0 +1,32 @@
+{'lugar': 50, 'na rua': 47, 'ruas aproximado': 66, 'falhou': 31, 'volta aproximado': 81, 'ruas': 90, 'cruzamento': 30, 'volta': 80, 'entre': 8, 'numeros': 22}
+  Butantã | R. da Fonte R. Padre Justino, R. Maria Emilia Leonel, R. Capitão Paulo Carrilho, Pça. do M | Rua da Fonte fica longe de Rua Padre Justino
+  Casa Verde | R. Dr. Gabbriel Covelli, R. Armando Coelho Silva | não achei 'R. Dr. Gabbriel Covelli'
+  Casa Verde | R. Antônio Rates, Av. Inajar de Souza, R. Silvério de Carvalho, R. João Pires Coelho, R. S | Rua João Pires Coelho fica longe de Rua São Leonardo
+  Freguesia/Brasilândia | Casa de Cultura da Freguesia do Ó, volta no entorno da praça | não achei 'Casa de Cultura da Freguesia do Ó', 'volta no entorno da praça'
+  Freguesia/Brasilândia | R. Puxixana, R. Cedro Branco, R. Dep. Fernando Ferreira, R. Ouvido José Santana | não achei 'R. Puxixana', 'R. Ouvido José Santana'
+  Freguesia/Brasilândia | R. Macururé (ida e volta) | não achei 'R. Macururé'
+  Guaianases | Praça Gustavo Miguel Dias, Av. Utaro Kanai | não achei 'Praça Gustavo Miguel Dias'
+  Ipiranga | R. 2 de Julho, R. Cipriano Barata, R. Brigadeiro Jordão, R. Agostinho Gomes, R. 2 de Julho | Rua 28 de Julho fica longe de Rua Cipriano Barata
+  Ipiranga | R. dos Patriotas, entre a R. Bom Pastor e Av. Nazaré. bloco de pessoas PCD | não achei 'Av. Nazaré. bloco de pessoas PCD'
+  Ipiranga | Na R. Izonzo do número 459 até 397 | não achei a rua 'Na R. Izonzo do número'
+  Ipiranga | R. Anita Tagliaferri, entre R. Aroldo Chiorino e R. Prof Jose Ozi, até R. Comandante Taylo | não achei 'R. Prof Jose Ozi, até R. Comandante Taylor'
+  Jabaquara | R. Teresa Toedtli, Av. do Café, R. Humberto de Campos, R. Domingos de Santa Maria, R. Abra | Rua Abraão Miguel do Carmo fica longe de Rua Soares de Avelar
+  Jabaquara | R. Matuim, R. Apace, Av. George Corbisier, R. Carmine de Engenho, R. Jurupari, R. Matuim | não achei 'R. Matuim', 'R. Carmine de Engenho', 'R. Matuim'
+  Jabaquara | R. Anita Costa, R. Onze de Fevereiro, R. dos Jornalistas, R. Onze de Fevereiro, R. Anita C | não achei 'R. Onze de Fevereiro', 'R. Onze de Fevereiro', 'R. Onze de Fevereiro'
+  Jabaquara | R. Charles Hoyt, R. Cinco de Outubro, R. Leno, R. Waldir Maluf, R. Romana de Oliveira Sall | o caminho entre dois pontos dá uma volta grande (628 m)
+  Lapa | Pça. Dr. Vicente Tramonte Garcia | não achei 'Pça. Dr. Vicente Tramonte Garcia'
+  M'Boi Mirim | R. Pinhal Velho, R. Acédio José Fontanete, R. Murisoca, R. Aldeia de Ajuane, R. Pinhal Vel | não achei 'R. Murisoca', 'R. Aldeia de Ajuane'
+  Penha | Praça da Toco | não achei 'Praça da Toco'
+  Perus | Av. Dr. Sylvio de Campos, Pça. Luiz Nery | não achei 'Pça. Luiz Nery'
+  Perus | Av. Dr. Sylvio de Campos, Praça Luiz Nery | não achei 'Praça Luiz Nery'
+  Pinheiros | R. Wizard, R. Girassol, R. Purpurina, R. Fradique Coutinho, R. Wizard | Wizard fica longe de Rua Girassol
+  Pinheiros | R. Wizard, R. Girassol | Wizard fica longe de Rua Girassol
+  Pinheiros | R. Cipriano Jucá, R. Gerard Davi, R. Medeiros de Albuquerque, R. Aspicuelta, R. Girassol,  | Rua Girassol fica longe de Wizard
+  Pinheiros | R. Fidalga, R. Purpurina, R. Girassol, R. Wizard, R. Fidalga | Rua Girassol fica longe de Wizard
+  Santo Amaro | Av. Brigadeiro Faria Lima, 4100 a 4500 | não achei a rua 'Av. Brigadeiro Faria Lima'
+  São Miguel Paulista | Av. Dr. José Aristodemos Pinotti, Av. Nordestina | não achei 'Av. Dr. José Aristodemos Pinotti'
+  São Miguel Paulista | Av. Dr.José Aristodemos Pinotti, Av. Nordestina | não achei 'Av. Dr.José Aristodemos Pinotti'
+  São Miguel Paulista | Av. Dr. José Aristodemos Pinotti | não achei 'Av. Dr. José Aristodemos Pinotti'
+  Sé | R. Augusta, 1300 x R. Matias Aires até R. Martins Fontes, 205 x R. Álvaro de Carvalho | Rua Matias Aires fica longe de Rua Martins Fontes
+  Sé | R. Rui Barbosa, R. João Passalaqua, R. Santo Antonio, R. 13 de Maio, R. Rui Barbosa | Rua Santo Antônio fica longe de Rua 13 de Maio
+  Vila Mariana | R. Agostinho Rodrigues Filho, R. Napoleão de Barros, Av. Altino Arantes, R. 3 de Maio, R.  | Avenida Doutor Altino Arantes fica longe de Rua 13 de Maio

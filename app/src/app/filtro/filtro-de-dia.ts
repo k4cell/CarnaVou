@@ -10,8 +10,8 @@ export const MENSAGENS_DA_ABA_VAZIA: Record<Aba, string> = {
 };
 
 /**
- * O filtro Hoje / Amanhã / Geral. A tela inicial, a aba Blocos, o mapa e a página do lugar usam o
- * mesmo, então a aba que a pessoa escolheu vale em todas.
+ * O filtro Hoje / Amanhã / Geral. A aba Blocos (a tela inicial), o Descobrir, o mapa e a página do
+ * lugar usam o mesmo, então a aba que a pessoa escolheu vale em todas.
  */
 @Injectable({ providedIn: 'root' })
 export class FiltroDeDia {

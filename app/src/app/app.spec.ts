@@ -66,12 +66,12 @@ describe('App', () => {
 
     it('no lugar, volta para a Em alta', async () => {
       const seta = await abrir('/local/ibirapuera');
-      expect(seta?.getAttribute('href')).toBe('/');
+      expect(seta?.getAttribute('href')).toBe('/descobrir');
     });
 
     it('não aparece nas abas do menu', async () => {
       expect(await abrir('/')).toBeNull();
-      expect(await abrir('/blocos')).toBeNull();
+      expect(await abrir('/descobrir')).toBeNull();
     });
   });
 

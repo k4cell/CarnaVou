@@ -3,8 +3,11 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterLink } from '@angular/router';
 import { filter, map } from 'rxjs';
 
-/** As abas que têm endereço próprio. Tudo que não for delas é o "Descobrir". */
-const OUTRAS_ABAS = ['/blocos', '/after', '/mapa'];
+/**
+ * As abas que têm endereço próprio. Os lugares e os blocos (/local/…) são galhos do Descobrir. Tudo
+ * que não for delas é a aba Blocos, a tela principal.
+ */
+const OUTRAS_ABAS = ['/descobrir', '/local', '/after', '/mapa'];
 
 @Component({
   selector: 'app-menu-inferior',
@@ -24,9 +27,11 @@ export class MenuInferior {
     { initialValue: this.router.url },
   );
 
-  protected readonly descobrirAtivo = computed(
+  protected readonly blocosAtivo = computed(
     () => !OUTRAS_ABAS.some((aba) => this.endereco().startsWith(aba)),
   );
+
+  protected readonly descobrirAtivo = computed(() => this.ativo('/descobrir') || this.ativo('/local'));
 
   protected ativo(aba: string): boolean {
     return this.endereco().startsWith(aba);

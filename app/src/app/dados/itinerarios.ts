@@ -43,6 +43,14 @@ export const ITINERARIOS: readonly string[] = [
   'R. Henrique Schaumann, 567 a 125',
   'R. Henrique Schaumann, 567 ao 125',
   'Av. Paulo VI, entre Praça Marcia Alberti Mammana e Av. Sumaré, 1529',
+  'Largo da Matriz de Nossa Senhora do Ó',
+  'R. Dr. Saturnino Villalva, R. dos Mártires Armênios, R. Leopoldo Brentano, R. Alcindo Bueno de Assis, R. Lavínia Pacheco e Silva, R. Dr. Saturnino Villalva',
+  'Av. Engenheiro Caetano Álvares, 6580 a 7900',
+  'Av. Águas de São Pedro, R. Maria do Carmo Sene, R. Professor Alfredo Bresser, R. Julia Lopes de Almeida, Pça. Lions',
+  'R. Serra de Botucatu',
+  'Pça. Comendador Alberto de Souza',
+  'Av. Dr. Sylvio de Campos, 225 a 229',
+  'R. Miguel de Quadros Marinho, R. Rio do Sono',
 ];
 
 /** O itinerário de cada bloco (pelo id do bloco). */
@@ -121,4 +129,14 @@ export const ITINERARIO_DO_BLOCO: Readonly<Record<string, number>> = {
   'fico-fei-nunca-2025': 37,
   'bloco-emo': 37,
   'e-tao-bom': 37,
+  'bloco-urubo-08-02': 38,
+  'bloco-urubo-14-02': 38,
+  'bloco-urubo-15-02': 38,
+  'banda-grone-s-g-c-e-grone-s': 39,
+  'bloco-vemdancar': 40,
+  'bloco-do-pauliceia': 41,
+  'bloco-tatuzinho': 42,
+  'bloco-do-salve': 43,
+  'bloco-turminha-do-bem': 44,
+  'bloco-afro-da-vovo-zulma': 45,
 };

@@ -42,6 +42,14 @@ export const TRAJETOS: readonly (readonly [string, 0 | 1])[] = [
   ["pbunCxlt{GS`@JJND`@o@bBzB\\NARhBdC_@b@tFnH\\o@t@Be@j@W]L]QC]u@KD}DcFxJuMz@uADo@", 1],
   ["rkxnClm|{G", 1],
   ["fsvnCjs{{G?L_D]aEWeWgA", 0],
+  ["vcmnCbx_|G", 1],
+  ["pdfnClen{GdA\\lJmEo@aBi@OyA_A_Bg@_DhK", 0],
+  ["dkjnCxsu{G", 1],
+  ["nkjnCd~n{G~IBBnJ", 1],
+  ["z~tnCtfd{G", 1],
+  ["nafnCdqi{G", 1],
+  ["ntzmCbkk|G", 1],
+  ["brinCl|bzG", 1],
 ];
 
 /** O trajeto de cada bloco (pelo id do bloco). Blocos sem ponto conhecido ficam de fora. */
@@ -120,4 +128,14 @@ export const TRAJETO_DO_BLOCO: Readonly<Record<string, number>> = {
   'fico-fei-nunca-2025': 30,
   'bloco-emo': 30,
   'e-tao-bom': 30,
+  'bloco-urubo-08-02': 31,
+  'bloco-urubo-14-02': 31,
+  'bloco-urubo-15-02': 31,
+  'banda-grone-s-g-c-e-grone-s': 32,
+  'bloco-vemdancar': 33,
+  'bloco-do-pauliceia': 34,
+  'bloco-tatuzinho': 35,
+  'bloco-do-salve': 36,
+  'bloco-turminha-do-bem': 37,
+  'bloco-afro-da-vovo-zulma': 38,
 };

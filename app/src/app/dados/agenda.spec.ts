@@ -3,6 +3,9 @@ import { BLOCOS } from './blocos';
 import { textoDoHorario } from './formato';
 import { LOCAIS } from './locais';
 
+/** As sete cores das faixas, do rosa ao azul. Com mais de sete lugares, elas recomeçam. */
+const SETE_CORES = ['rosa', 'amarelo', 'verde', 'laranja', 'roxo', 'vermelho', 'azul'];
+
 /** Os selos de cada lugar, no formato { id: selo }, para os testes ficarem fáceis de ler. */
 function selos(cartoes: CartaoDoLugar[]): Record<string, string> {
   return Object.fromEntries(cartoes.map((cartao) => [cartao.local.id, cartao.selo]));
@@ -72,8 +75,14 @@ describe('agenda', () => {
 
     it('põe primeiro os lugares com os artistas mais famosos do dia e, depois, os com mais blocos', () => {
       // O Ibirapuera tem a Gloria Groove; a Av. Ipiranga, a Lia Clark; Faria Lima e Paulo VI,
-      // ninguém conhecido (e empatam em dois blocos cada).
-      expect(cartoes.map((cartao) => cartao.local.id)).toEqual(['ibirapuera', 'ipiranga-sao-joao', 'faria-lima', 'paulo-vi']);
+      // ninguém conhecido (e empatam em dois blocos cada); a Freguesia, só o Urubó.
+      expect(cartoes.map((cartao) => cartao.local.id)).toEqual([
+        'ibirapuera',
+        'ipiranga-sao-joao',
+        'faria-lima',
+        'paulo-vi',
+        'freguesia-brasilandia',
+      ]);
     });
 
     it('diz "Já começou" quando o bloco está rolando', () => {
@@ -195,7 +204,7 @@ describe('agenda', () => {
 
     it('vai do rosa ao azul, na ordem dos lugares', () => {
       const faixas = cartoesDaAba('geral', null).map((cartao) => cartao.faixa);
-      expect(faixas).toEqual(['rosa', 'amarelo', 'verde', 'laranja', 'roxo', 'vermelho', 'azul'].slice(0, faixas.length));
+      expect(faixas).toEqual(faixas.map((_, i) => SETE_CORES[i % SETE_CORES.length]));
     });
   });
 

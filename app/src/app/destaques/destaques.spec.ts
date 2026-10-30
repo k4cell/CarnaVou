@@ -6,6 +6,9 @@ import { LOCAIS } from '../dados/locais';
 import { Relogio } from '../relogio/relogio';
 import { Destaques } from './destaques';
 
+/** As sete cores das faixas, do rosa ao azul. Com mais de sete lugares, elas recomeçam. */
+const SETE_CORES = ['rosa', 'amarelo', 'verde', 'laranja', 'roxo', 'vermelho', 'azul'];
+
 // Sábado de carnaval de 2026, duas da tarde.
 const SABADO_14H = new Date(2026, 1, 14, 14, 0);
 
@@ -83,7 +86,7 @@ describe('Destaques', () => {
     it('dá a cada lugar a sua faixa de cor, do rosa ao azul', async () => {
       const { cartoes } = await renderizar();
       const faixas = cartoes().map((c) => c.getAttribute('data-faixa'));
-      expect(faixas).toEqual(['rosa', 'amarelo', 'verde', 'laranja', 'roxo', 'vermelho', 'azul'].slice(0, faixas.length));
+      expect(faixas).toEqual(faixas.map((_, i) => SETE_CORES[i % SETE_CORES.length]));
     });
 
   });
@@ -92,7 +95,7 @@ describe('Destaques', () => {
     it('abre na aba Hoje, só com os lugares que têm bloco hoje', async () => {
       const { abaAtiva, cartoes, selos } = await renderizar(SABADO_14H);
       expect(abaAtiva()).toBe('Hoje');
-      expect(cartoes().length).toBe(4);
+      expect(cartoes().length).toBe(5);
       expect(selos()).toContain('Já começou');
     });
 
@@ -100,7 +103,7 @@ describe('Destaques', () => {
       const { abaAtiva, cartoes, selos, tocar } = await renderizar(SABADO_14H);
       await tocar('Amanhã');
       expect(abaAtiva()).toBe('Amanhã');
-      expect(cartoes().length).toBe(3);
+      expect(cartoes().length).toBe(4);
       expect(selos().every((selo) => selo?.startsWith('Amanhã às '))).toBe(true);
     });
 

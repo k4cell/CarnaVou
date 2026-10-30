@@ -1,7 +1,7 @@
 import { ResolveFn, Routes } from '@angular/router';
 
 import { acharBloco, acharLocal } from './dados/consultas';
-import { Destaques } from './destaques/destaques';
+import { PaginaBlocos } from './lista-de-blocos/pagina-blocos';
 import { PaginaLocal } from './local/pagina-local';
 
 const NOME_DO_SITE = 'CarnaVou';
@@ -17,7 +17,14 @@ const tituloDoBloco: ResolveFn<string> = (rota) => {
 };
 
 export const routes: Routes = [
-  { path: '', component: Destaques, title: NOME_DO_SITE },
+  // A tela principal é a aba Blocos: o que está rolando agora e o que vem.
+  { path: '', component: PaginaBlocos, title: NOME_DO_SITE },
+  // O Descobrir (os lugares em alta) já foi a tela principal.
+  {
+    path: 'descobrir',
+    loadComponent: () => import('./destaques/destaques').then((modulo) => modulo.Destaques),
+    title: `Descobrir · ${NOME_DO_SITE}`,
+  },
   { path: 'local/:local', component: PaginaLocal, title: tituloDoLocal },
   {
     path: 'local/:local/:bloco',
@@ -25,11 +32,8 @@ export const routes: Routes = [
     loadComponent: () => import('./bloco/pagina-bloco').then((modulo) => modulo.PaginaBloco),
     title: tituloDoBloco,
   },
-  {
-    path: 'blocos',
-    loadComponent: () => import('./lista-de-blocos/pagina-blocos').then((modulo) => modulo.PaginaBlocos),
-    title: `Blocos · ${NOME_DO_SITE}`,
-  },
+  // O endereço antigo da aba Blocos, para os links já mandados continuarem abrindo.
+  { path: 'blocos', redirectTo: '' },
   {
     path: 'after',
     loadComponent: () => import('./after/pagina-after').then((modulo) => modulo.PaginaAfter),

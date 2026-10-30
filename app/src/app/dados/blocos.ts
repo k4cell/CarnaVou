@@ -1,14 +1,14 @@
 import { Bloco } from './tipos';
 
 /**
- * Os blocos do carnaval de rua de São Paulo em 2026, usados como dados de teste.
+ * Os blocos do carnaval de rua de São Paulo em 2026.
  *
  * Vêm da lista oficial dos blocos aprovados, publicada pela SPTuris e pela Secretaria de
- * Cultura no Diário Oficial (Portaria Conjunta nº 1, de 22/01/2026): nome, dia, subprefeitura,
+ * Cultura no Diário Oficial (Portaria Conjunta SPTuris/SMC nº 1, de 22/01/2026): nome, dia, subprefeitura,
  * itinerário e os horários de concentração (inicio), desfile e término (fim). Os artistas e o
  * estilo vêm de notícias, só nos blocos que elas citam, e os seguidores de cada
- * artista, de contadores públicos do Instagram. Entram só os blocos do Centro, da Zona Sul e da
- * Zona Oeste que têm atração divulgada ou desfilam num circuito de megabloco.
+ * artista, de contadores públicos do Instagram. Entram os blocos que têm atração divulgada,
+ * que desfilam num circuito de megabloco ou que as notícias chamam de destaque da região.
  * Arquivo gerado por design/dados/gerar_dados.py: não mude à mão.
  */
 export const BLOCOS: Bloco[] = [
@@ -93,4 +93,20 @@ export const BLOCOS: Bloco[] = [
   { id: 'fico-fei-nunca-2025', nome: 'Fico fei nunca 2025', data: '2026-02-14', inicio: '11:00', desfile: '12:00', fim: '16:00', localId: 'paulo-vi', atracoes: [] },
   { id: 'bloco-emo', nome: 'Bloco Emo', data: '2026-02-14', inicio: '13:00', desfile: '14:00', fim: '18:00', localId: 'paulo-vi', atracoes: [], estilo: 'rock' },
   { id: 'e-tao-bom', nome: 'É Tão Bom!', data: '2026-02-17', inicio: '12:00', desfile: '13:00', fim: '17:00', localId: 'paulo-vi', atracoes: [] },
+  // Freguesia/Brasilândia
+  { id: 'bloco-urubo-08-02', nome: 'Bloco Urubó', data: '2026-02-08', inicio: '09:00', desfile: '12:00', fim: '14:00', localId: 'freguesia-brasilandia', atracoes: [] },
+  { id: 'bloco-urubo-14-02', nome: 'Bloco Urubó', data: '2026-02-14', inicio: '13:00', desfile: '14:00', fim: '18:00', localId: 'freguesia-brasilandia', atracoes: [] },
+  { id: 'bloco-urubo-15-02', nome: 'Bloco Urubó', data: '2026-02-15', inicio: '13:00', desfile: '14:00', fim: '18:00', localId: 'freguesia-brasilandia', atracoes: [] },
+  // Santana/Tucuruvi
+  { id: 'banda-grone-s-g-c-e-grone-s', nome: 'Banda Grone\'s - G.C.E. Grone\'s', data: '2026-02-08', inicio: '13:00', desfile: '17:00', fim: '22:00', localId: 'santana-tucuruvi', atracoes: [] },
+  { id: 'bloco-vemdancar', nome: 'Bloco #VemDançar', data: '2026-02-08', inicio: '13:00', desfile: '13:00', fim: '18:00', localId: 'santana-tucuruvi', atracoes: [] },
+  { id: 'bloco-do-pauliceia', nome: 'Bloco do Paulicéia', data: '2026-02-08', inicio: '14:00', desfile: '15:00', fim: '18:00', localId: 'santana-tucuruvi', atracoes: [] },
+  // Aricanduva/Vila Formosa
+  { id: 'bloco-tatuzinho', nome: 'Bloco Tatuzinho', data: '2026-02-08', inicio: '09:00', desfile: '10:00', fim: '14:00', localId: 'aricanduva-vila-formosa', atracoes: [] },
+  // Jaçanã/Tremembé
+  { id: 'bloco-do-salve', nome: 'Bloco do Salve', data: '2026-02-16', inicio: '12:00', desfile: '14:00', fim: '17:30', localId: 'jacana-tremembe', atracoes: [] },
+  // Perus
+  { id: 'bloco-turminha-do-bem', nome: 'Bloco Turminha do Bem', data: '2026-02-17', inicio: '13:00', desfile: '16:30', fim: '18:00', localId: 'perus', atracoes: [] },
+  // São Miguel Paulista
+  { id: 'bloco-afro-da-vovo-zulma', nome: 'Bloco Afro da Vovó Zulma', data: '2026-02-17', inicio: '14:00', desfile: '15:00', fim: '18:00', localId: 'sao-miguel-paulista', atracoes: [] },
 ];

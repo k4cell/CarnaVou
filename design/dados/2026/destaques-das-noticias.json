@@ -1,0 +1,45 @@
+{
+  "_sobre": "Blocos da Zona Leste e da Zona Norte que as notícias chamam de destaque da região, sem artista divulgado. Entram no app mesmo sem atração (decisão de 30/10/2026). Valem o nome e a subprefeitura da lista oficial, e o bloco entra em todos os dias dele. O Megabloco do Fervo ficou de fora: não achei notícia dele.",
+  "blocos": [
+    {
+      "nome": "Bloco #VemDançar",
+      "subprefeitura": "Santana/Tucuruvi",
+      "fonte": "Band News FM, 08/02/2026: em Santana, Vem Dançar e Banda Grone's são as atrações da região (band.com.br/bandnews-fm/noticias/carnaval-2026-domingo-8-tem-programacao-intensa-de-blocos-em-sao-paulo-202602080946)"
+    },
+    {
+      "nome": "Banda Grone's - G.C.E. Grone's",
+      "subprefeitura": "Santana/Tucuruvi",
+      "fonte": "Band News FM, 08/02/2026 (a mesma notícia do Vem Dançar)"
+    },
+    {
+      "nome": "Bloco do Paulicéia",
+      "subprefeitura": "Santana/Tucuruvi",
+      "fonte": "Band News FM, 08/02/2026: leva samba para a região do Tucuruvi"
+    },
+    {
+      "nome": "Bloco Urubó",
+      "subprefeitura": "Freguesia/Brasilândia",
+      "fonte": "São Paulo Secreto, guia de bloquinhos de 2026: o queridinho da Freguesia do Ó (saopaulosecreto.com/bloquinhos-blocos-de-carnaval-sao-paulo-2026); Metrópoles, sobre a tradição do bloco (metropoles.com/sao-paulo/carnaval-sp-bloco-urubo-tradicao)"
+    },
+    {
+      "nome": "Bloco do Salve",
+      "subprefeitura": "Jaçanã/Tremembé",
+      "fonte": "Brasil de Fato, 30/01/2026: anima a região do Guapira em 16/02 (brasildefato.com.br/2026/01/30/carnaval-2026-em-sao-paulo-confira-a-programacao-completa-dos-blocos-de-rua-na-capital)"
+    },
+    {
+      "nome": "Bloco Turminha do Bem",
+      "subprefeitura": "Perus",
+      "fonte": "Brasil de Fato, 30/01/2026 (a mesma notícia do Bloco do Salve): desfila em Perus em 17/02"
+    },
+    {
+      "nome": "Bloco Tatuzinho",
+      "subprefeitura": "Aricanduva/Vila Formosa",
+      "fonte": "Band News FM, 08/02/2026; CNN Brasil, programação completa dos blocos de rua de 2026 (cnnbrasil.com.br/pop/carnaval/confira-a-programacao-completa-do-carnaval-de-rua-2026-de-sao-paulo)"
+    },
+    {
+      "nome": "Bloco Afro da Vovó Zulma",
+      "subprefeitura": "São Miguel Paulista",
+      "fonte": "Brasil de Fato, 30/01/2026 (a mesma notícia do Bloco do Salve): ocupa o Jardim Margarida em 17/02"
+    }
+  ]
+}

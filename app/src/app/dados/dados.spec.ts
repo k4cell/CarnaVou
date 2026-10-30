@@ -1,9 +1,12 @@
 import { estaNaGrandeSP } from '../mapa/limites';
 import { BLOCOS } from './blocos';
-import { artistasDoLugar, blocosDoLocal, faixaDoLocal, famaDoBloco } from './consultas';
+import { acharLocal, artistasDoLugar, blocosDoLocal, faixaDoLocal, famaDoBloco } from './consultas';
 import { itinerarioDoBloco } from './itinerario';
 import { LOCAIS } from './locais';
 import { lerLinha, trajetoDoBloco } from './trajetos';
+
+/** As sete cores das faixas, do rosa ao azul. Com mais de sete lugares, elas recomeçam. */
+const SETE_CORES = ['rosa', 'amarelo', 'verde', 'laranja', 'roxo', 'vermelho', 'azul'];
 
 describe('dados', () => {
   describe('os lugares', () => {
@@ -13,8 +16,8 @@ describe('dados', () => {
       expect(new Set(ids).size).toBe(ids.length);
     });
 
-    it('ficam só no Centro, na Zona Sul e na Zona Oeste', () => {
-      expect(new Set(LOCAIS.map((local) => local.zona))).toEqual(new Set(['centro', 'sul', 'oeste']));
+    it('cobrem as cinco zonas da cidade', () => {
+      expect(new Set(LOCAIS.map((local) => local.zona))).toEqual(new Set(['centro', 'sul', 'oeste', 'leste', 'norte']));
     });
 
     it('têm os grandes pontos do carnaval com o nome que o povo conhece', () => {
@@ -43,10 +46,14 @@ describe('dados', () => {
       expect(new Set(ids).size).toBe(ids.length);
     });
 
-    it('só ficam os que têm atração ou desfilam num circuito de megabloco', () => {
+    it('só ficam os que têm atração, desfilam num circuito de megabloco ou são destaque na Leste ou na Norte', () => {
       const circuito = /Pedro [ÁA]lvares Cabral|Consola[çc][ãa]o, 2101|Faria Lima, 4100|^Av\.? Ipiranga|Pça\.? ?da Rep[úu]blica|Av\. S[ãa]o Jo[ãa]o|Paulo VI|Henrique Schaumann/i;
       for (const bloco of BLOCOS) {
-        expect(bloco.atracoes.length > 0 || circuito.test(itinerarioDoBloco(bloco.id) ?? ''), bloco.id).toBe(true);
+        const zona = acharLocal(bloco.localId)?.zona;
+        const destaque = zona === 'leste' || zona === 'norte';
+        expect(bloco.atracoes.length > 0 || circuito.test(itinerarioDoBloco(bloco.id) ?? '') || destaque, bloco.id).toBe(
+          true,
+        );
       }
     });
 
@@ -141,7 +148,7 @@ describe('dados', () => {
   describe('faixaDoLocal', () => {
     it('reveza as cores, do rosa ao azul, na ordem dos lugares', () => {
       const faixas = LOCAIS.map((local) => faixaDoLocal(local.id));
-      expect(faixas).toEqual(['rosa', 'amarelo', 'verde', 'laranja', 'roxo', 'vermelho', 'azul'].slice(0, faixas.length));
+      expect(faixas).toEqual(faixas.map((_, i) => SETE_CORES[i % SETE_CORES.length]));
     });
 
     it('dá a mesma cor para o mesmo lugar, sempre', () => {
