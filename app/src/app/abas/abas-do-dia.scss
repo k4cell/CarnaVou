@@ -1,5 +1,10 @@
+// Presas no alto da tela quando a lista rola (no mapa, ficam dentro da caixa de cima).
 :host {
+  position: sticky;
+  top: 0;
+  z-index: 10;
   display: block;
+  background: var(--fundo);
 }
 
 .abas {
@@ -29,12 +34,4 @@
     outline: 3px solid var(--texto);
     outline-offset: -3px;
   }
-}
-
-.teste {
-  margin: 12px 0 0;
-  padding: 8px 12px;
-  border: 1px dashed var(--texto-suave);
-  border-radius: 8px;
-  font-size: 0.875rem;
 }

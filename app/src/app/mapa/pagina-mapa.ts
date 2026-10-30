@@ -28,6 +28,10 @@ import { MapaBase, PontoNoMapa, TrajetoNoMapa } from './mapa-base';
 
 /** No cartão do ponto cabem só alguns blocos; o resto fica na página do lugar. */
 const BLOCOS_NO_CARTAO = 3;
+/** Quanto puxar a alça do cartão (em pixels) para ele abrir, encolher ou fechar. */
+const PUXAO = 30;
+/** Um toque que mexe menos que isso é toque, não arrasto. */
+const TREMIDA_DO_DEDO = 8;
 
 const AVISOS = {
   procurando: 'Procurando você…',
@@ -67,6 +71,13 @@ export class PaginaMapa {
   /** O ponto em que a pessoa tocou. */
   private readonly escolhido = signal<string | null>(null);
   private readonly avisoFechado = signal(false);
+
+  /** O cartão do ponto está aberto (mostrando tudo) ou pequeno (só o nome e os botões)? */
+  protected readonly aberto = signal(false);
+  /** Quanto o dedo já puxou a alça do cartão, em pixels (para baixo é positivo). */
+  protected readonly arrasto = signal(0);
+  private comecoDoArrasto: number | null = null;
+  private acabouDeArrastar = false;
 
   /** A tela que explica a localização está aberta? */
   protected readonly explicando = signal(false);
@@ -199,16 +210,71 @@ export class PaginaMapa {
           this.filtro.escolher('geral');
         }
         this.escolhido.set(acharOPonto()?.id ?? null);
+        this.aberto.set(false);
       });
     });
   }
 
   protected escolher(id: string): void {
     this.escolhido.set(id);
+    this.aberto.set(false);
   }
 
   protected fechar(): void {
     this.escolhido.set(null);
+    this.aberto.set(false);
+  }
+
+  /** Tocar na alça abre ou encolhe o cartão (o arrasto já cuidou disso, se teve). */
+  protected alternar(): void {
+    if (this.acabouDeArrastar) {
+      this.acabouDeArrastar = false;
+      return;
+    }
+    this.aberto.update((aberto) => !aberto);
+  }
+
+  protected comecarArrasto(evento: PointerEvent): void {
+    // Depois de um arrasto, alguns celulares não mandam o "clique": o aviso não pode sobrar.
+    this.acabouDeArrastar = false;
+    this.comecoDoArrasto = evento.clientY;
+    (evento.currentTarget as Element | null)?.setPointerCapture?.(evento.pointerId);
+  }
+
+  /** O cartão acompanha o dedo: para baixo, inteiro; para cima, só um pouco (ele vai abrir). */
+  protected arrastar(evento: PointerEvent): void {
+    if (this.comecoDoArrasto === null) {
+      return;
+    }
+    const puxado = evento.clientY - this.comecoDoArrasto;
+    this.arrasto.set(puxado > 0 ? puxado : puxado / 3);
+  }
+
+  /** Puxou para cima: abre. Para baixo: encolhe e, se já estava pequeno, fecha. */
+  protected soltar(): void {
+    if (this.comecoDoArrasto === null) {
+      return;
+    }
+    const puxado = this.arrasto() >= 0 ? this.arrasto() : this.arrasto() * 3;
+    this.cancelarArrasto();
+    if (Math.abs(puxado) < TREMIDA_DO_DEDO) {
+      return;
+    }
+    this.acabouDeArrastar = true;
+    if (puxado <= -PUXAO) {
+      this.aberto.set(true);
+    } else if (puxado >= PUXAO) {
+      if (this.aberto()) {
+        this.aberto.set(false);
+      } else {
+        this.fechar();
+      }
+    }
+  }
+
+  protected cancelarArrasto(): void {
+    this.comecoDoArrasto = null;
+    this.arrasto.set(0);
   }
 
   /** A pessoa tocou em "onde estou": explica antes, se o celular ainda vai perguntar. */

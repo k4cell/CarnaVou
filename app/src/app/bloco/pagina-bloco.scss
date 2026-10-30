@@ -2,22 +2,27 @@
   font-weight: 700;
 }
 
+// Um cartão só na cor do lugar, com uma linha por horário.
 .atracoes {
-  display: grid;
-  gap: 8px;
   margin: 0;
-  padding: 0;
+  padding: 4px 16px;
+  border: 1px solid var(--borda);
+  border-left: 6px solid var(--cor-da-faixa, var(--rosa));
+  border-radius: 8px;
+  background: var(--cartao);
   list-style: none;
 }
 
 .atracao {
   display: flex;
-  gap: 16px;
-  padding: 12px 16px;
-  border: 1px solid var(--borda);
-  border-left: 6px solid var(--cor-da-faixa, var(--rosa));
-  border-radius: 8px;
-  background: var(--cartao);
+  gap: 12px;
+  padding: 10px 0;
+  font-size: 1.0625rem;
+  font-weight: 600;
+
+  + .atracao {
+    border-top: 1px solid var(--borda);
+  }
 }
 
 .hora {
@@ -25,4 +30,12 @@
   min-width: 56px;
   font-weight: 700;
   color: var(--roxo);
+}
+
+.ja-passou {
+  margin: 0 0 8px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: var(--borda);
+  font-weight: 700;
 }

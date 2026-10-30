@@ -7,6 +7,17 @@ Enquanto o app está em beta, o número é `0.MEIO.FINAL`. O número do meio sob
 uma tela ou funcionalidade nova (0.3.0, 0.4.0…) e o último, quando é só uma correção pequena
 (0.3.1). Cada versão tem uma etiqueta no GitHub, como `v0.3.0`.
 
+## 0.12.0 (30/10/2026)
+
+- Aba nova **Blocos** no menu de baixo: os blocos de hoje (com "Rolando agora" primeiro), de
+  amanhã ou de todos os dias.
+- A página do lugar mostra só os blocos da aba escolhida (Hoje, Amanhã ou Geral), com "Ver todos
+  os dias". Os dias que já passaram somem do app.
+- Cabeçalho mais baixo: logo menor, o aviso de teste e a data numa linha só, e a seta ← de
+  voltar no canto. As abas Hoje / Amanhã / Geral ficam presas no alto ao rolar.
+- Atrações lado a lado, juntas por horário. Selos com cor para ler no sol (verde, amarelo, cinza).
+- No mapa, o cartão do ponto abre pequeno e cresce ao puxar a alça.
+
 ## 0.11.2 (30/10/2026)
 
 - Arrumação do código, sem mudar nada na tela: a regra que junta os blocos por ponto do mapa foi

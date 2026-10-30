@@ -4,7 +4,7 @@ import { NavigationEnd, Router, RouterLink } from '@angular/router';
 import { filter, map } from 'rxjs';
 
 /** As abas que têm endereço próprio. Tudo que não for delas é o "Descobrir". */
-const OUTRAS_ABAS = ['/mapa'];
+const OUTRAS_ABAS = ['/blocos', '/mapa'];
 
 @Component({
   selector: 'app-menu-inferior',

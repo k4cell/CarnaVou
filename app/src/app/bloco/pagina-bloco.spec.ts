@@ -20,8 +20,8 @@ describe('PaginaBloco', () => {
 
   function atracoesDe(tela: HTMLElement) {
     return Array.from(tela.querySelectorAll('.atracao')).map((a) => ({
-      hora: a.querySelector('.hora')?.textContent,
-      nome: a.querySelector('.hora + span')?.textContent,
+      hora: a.querySelector('.hora')?.textContent ?? '',
+      nomes: a.querySelector('.nomes-da-hora')?.textContent,
     }));
   }
 
@@ -71,19 +71,16 @@ describe('PaginaBloco', () => {
     expect(texto).toContain('Concentração às 13h · desfile às 14h · termina às 18h');
   });
 
-  it('lista todas as atrações do bloco', async () => {
+  it('lista as atrações sem hora divulgada numa linha só, lado a lado', async () => {
     const tela = await renderizar('ibirapuera', 'agrada-gregos');
-    expect(atracoesDe(tela).map((a) => a.nome)).toEqual(['Gloria Groove', 'Gretchen']);
+    expect(atracoesDe(tela)).toEqual([{ hora: '', nomes: 'Gloria Groove e Gretchen' }]);
   });
 
-  it('mostra a hora da atração quando existe, da mais cedo para a mais tarde', async () => {
+  it('junta por horário quem canta na mesma hora, do mais cedo para o mais tarde', async () => {
     const tela = await renderizar('consolacao', 'bloco-skol');
     expect(atracoesDe(tela)).toEqual([
-      { hora: '11h30', nome: 'Zé Vaqueiro' },
-      { hora: '11h30', nome: 'Nattan' },
-      { hora: '11h30', nome: 'Xand Avião' },
-      { hora: '11h30', nome: 'Felipe Amorim' },
-      { hora: '14h', nome: 'Calvin Harris' },
+      { hora: '11h30', nomes: 'Zé Vaqueiro, Nattan, Xand Avião e Felipe Amorim' },
+      { hora: '14h', nomes: 'Calvin Harris' },
     ]);
   });
 
@@ -91,11 +88,6 @@ describe('PaginaBloco', () => {
     const tela = await renderizar('ibirapuera', 'galo-da-madrugada');
     expect(tela.querySelectorAll('.atracao').length).toBe(0);
     expect(tela.textContent).toContain('Ainda não tem atrações divulgadas.');
-  });
-
-  it('volta para a página do lugar', async () => {
-    const tela = await renderizar('ibirapuera', 'agrada-gregos');
-    expect(tela.querySelector('.voltar')?.getAttribute('href')).toBe('/local/ibirapuera');
   });
 
   it('mostra o estilo só quando alguma fonte diz', async () => {

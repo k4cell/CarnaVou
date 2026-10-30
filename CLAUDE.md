@@ -28,7 +28,7 @@ calendário e o que eu ainda não pensei.
 
 - Já pode programar. O beta é uma **árvore de opções** com três telas: Em alta (os lugares,
   com o filtro Hoje / Amanhã / Geral), um lugar (os dias de festa e os principais artistas) e um bloco (a lista
-  detalhada de atrações). Embaixo fica o menu fixo: Descobrir e Mapa. As abas Amigos e
+  detalhada de atrações). Embaixo fica o menu fixo: Descobrir, Blocos e Mapa. As abas Amigos e
   Favoritos saíram até eu decidir o que serão: não crie páginas vazias. Os dados de teste são o carnaval
   de rua de 2026 **de verdade, com nomes reais** (ver `docs/dados-carnaval-2026.md`). Fica de fora, por enquanto, o "Vou", o "Tô aqui" e o "Como tá?".
 - O visual tem só a **primeira camada de cor**. A paleta fica em variáveis no topo de
@@ -40,8 +40,9 @@ calendário e o que eu ainda não pensei.
   fora da página (`html`) tem a cor escura do cabeçalho: nunca deixe branca. Amarelo, verde e laranja só como fundo, com texto escuro. Rosa nunca
   em texto pequeno. Sem degradê. As letras e o resto do estilo eu decido mais pra frente:
   não capriche antes de eu pedir.
-- Os **selos** dos cartões ("Já começou", "Hoje às 16h", "Amanhã às 11h", "5 blocos") ficam **sem cor** por
-  enquanto: não coloque cor neles até eu pedir.
+- Os **selos** dos cartões têm cor, pensada para ler no sol (fundo forte, texto escuro):
+  verde "Já começou", amarelo "Hoje às…"/"Amanhã às…", cinza "Já acabou". O app mostra só o
+  presente e o futuro: o que é de um dia que já passou some das listas.
 - Antes de mexer no mapa ou na forma de guardar os dados, leia
   [`docs/planejamento-do-mapa.md`](docs/planejamento-do-mapa.md): ali estão as regras pra não
   travar o futuro (dados atrás da camada de consulta, ids e endereços que não mudam, mapa
@@ -63,11 +64,11 @@ calendário e o que eu ainda não pensei.
 - **Tem que ser leve.** O povo vai usar no celular fraco, com internet ruim no meio da
   multidão. Sem fontes da internet nem bibliotecas pesadas, e o que não for da primeira
   tela (como o mapa) só carrega quando for aberto.
-- As telas ficam em `destaques/`, `local/`, `bloco/` e `mapa/`; o banner que se repete fica
-  em `banner/` e o menu de baixo em `menu/`. O filtro
-  Hoje / Amanhã / Geral é um só para a tela inicial e para o mapa: o estado fica em `filtro/` e
-  os botões em `abas/`. Os endereços
-  são `/`, `/local/:local`, `/local/:local/:bloco` e `/mapa`, e
+- As telas ficam em `destaques/`, `local/`, `bloco/`, `lista-de-blocos/` (a aba Blocos) e
+  `mapa/`; o banner que se repete fica em `banner/`, o menu de baixo em `menu/` e a seta de
+  voltar do cabeçalho em `voltar/`. O filtro Hoje / Amanhã / Geral é um só para a tela inicial,
+  a aba Blocos, o mapa e a página do lugar: o estado fica em `filtro/` e os botões em `abas/`.
+  Os endereços são `/`, `/local/:local`, `/local/:local/:bloco`, `/blocos` e `/mapa`, e
   cada um vira uma página pronta no `ng build`.
 - As páginas prontas não sabem o dia de hoje. O que depende da data (as abas Hoje e Amanhã
   e os selos) é calculado no navegador, depois da primeira pintura, pelo serviço em
@@ -138,26 +139,21 @@ calendário e o que eu ainda não pensei.
   código vai ali, e ela fica ligada a este repositório.
 - Eu prefiro **poucos commits, mais concretos**, principalmente neste começo. Nada de
   várias mudanças pequenas: junte o trabalho num commit que faça sentido.
-- Faça o **commit** do que for feito, mas **não dê push sem eu autorizar**. Depois do
-  commit, pergunte: "Fiz o commit, posso dar o push?". Eu confiro tudo e respondo, por
-  exemplo, "pode dar" ou "pode publicar o commit". Só publique depois desse aval, e só o
-  que eu autorizei. Só o que está no GitHub fica.
+- **Commit e push na hora, sem me perguntar** (decidi em 30/10/2026), principalmente nas
+  melhorias pequenas: quando o trabalho estiver pronto, com os testes e o build passando, faça o
+  commit, o push e a etiqueta da versão, e depois me conte o que foi para o ar. Só o que está no
+  GitHub fica.
 - **Todo push na `main` publica o site** no GitHub Pages (https://k4cell.github.io/CarnaVou/),
   pelo `.github/workflows/publicar.yml`: ele roda os testes e monta com
   `ng build --configuration production,github-pages`. O site mora em `/CarnaVou/`, então nunca
   use caminho de arquivo do site começando com "/": use caminho relativo ou `enderecoNoSite`.
-- Quando eu disser **"pode fazer o commit"**, isso quer dizer **o commit e o push**, de uma vez:
-  faça o commit e, em seguida, envie ao GitHub, com a etiqueta da versão. Vale para o trabalho
-  de que eu estava falando naquela hora. Sem essa frase (ou um "pode dar"), continue pedindo o
-  aval antes do push.
 - **Versões:** **todo push leva um número de versão**, não esqueça. O número fica em `app/package.json` e o histórico no
   `CHANGELOG.md`. Enquanto o app está em beta uso `0.MEIO.FINAL`: o número do meio sobe
   quando entra tela ou funcionalidade nova (0.6.0) e o último, numa correção pequena
-  (0.6.1). Antes de pedir o aval do push, escolha o número, diga qual é e por quê, e suba
-  no `package.json` (`npm version X.Y.Z --no-git-tag-version`, dentro de `app/`), troque o título "Próxima versão" do
-  `CHANGELOG.md` pelo número e a data, ponha o número na linha da Situação do README e
-  marque o commit com a etiqueta `vX.Y.Z` (git tag). A etiqueta vai pro GitHub junto com o
-  push, com o meu aval. Se eu disser outro número, troque.
+  (0.6.1). Antes do push, escolha o número (e me diga depois qual foi e por quê), suba no
+  `package.json` (`npm version X.Y.Z --no-git-tag-version`, dentro de `app/`), ponha uma linha
+  curta no `CHANGELOG.md` com o número e a data e marque o commit com a etiqueta `vX.Y.Z`
+  (git tag), que vai pro GitHub junto com o push. Se eu disser outro número, troque.
 - Mensagens de commit em português, com um **título claro**. Quando falar de um commit
   comigo, use o título dele, por extenso. Nunca o código curto (hash): aqueles números só
   uma IA entende.

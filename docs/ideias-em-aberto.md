@@ -9,6 +9,19 @@ O planejamento do mapa e das próximas fases, que junta todas estas ideias num r
 
 ---
 
+## Para depois da 0.12.0
+
+- **Abas Hoje / Amanhã / Geral também na página do lugar** (talvez na 0.13): ao abrir, por
+  exemplo, a Avenida Faria Lima, as abas continuam ali para trocar de dia sem voltar.
+- **Cor dos pinos do mapa pelo dia:** verde para hoje, amarelo para amanhã e azul ou roxo para a
+  Geral. Por enquanto a cor continua sendo a da zona.
+- **Mais atrações:** buscar nas notícias os artistas dos blocos dos circuitos (hoje só 20 dos 74
+  têm artista).
+- **Busca por artista ou bloco:** ainda não é o momento.
+- **Agrupar os pinos do mapa** quando ficam muito juntos: por enquanto não.
+
+---
+
 ## Já respondidas pelas decisões
 
 | Sugestão | O que foi decidido |

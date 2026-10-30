@@ -11,6 +11,9 @@
       <span class="atracoes">{{ atracoes() }}</span>
     }
     <span class="horario">{{ horario() }}</span>
+    @if (lugar(); as onde) {
+      <span class="lugar">{{ onde }}</span>
+    }
   </span>
 
   <span class="seta" aria-hidden="true">›</span>

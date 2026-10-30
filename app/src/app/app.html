@@ -1,5 +1,10 @@
 <header class="topo">
-  <div class="miolo">
+  <div class="miolo linha-do-topo">
+    @if (voltar(); as volta) {
+      <a class="voltar" [routerLink]="volta.link" [attr.aria-label]="'Voltar para ' + volta.nome">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M15 5l-7 7 7 7" /></svg>
+      </a>
+    }
     <h1 class="marca">
       <a routerLink="/">
         <!-- WebP é bem mais leve; o PNG fica para navegador antigo. -->
@@ -18,10 +23,12 @@
       conexao.online() ? '' : 'Sem internet'
     }}</span>
   </div>
+  <div class="miolo">
+    <app-aviso-de-teste />
+  </div>
 </header>
 
 <main class="miolo corpo">
-  <app-aviso-de-teste />
   <router-outlet />
 </main>
 

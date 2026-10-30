@@ -1,6 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 
+import { BLOCOS } from '../dados/blocos';
 import { LOCAIS } from '../dados/locais';
 import { Relogio } from '../relogio/relogio';
 import { Destaques } from './destaques';
@@ -85,10 +86,6 @@ describe('Destaques', () => {
       expect(faixas).toEqual(['rosa', 'amarelo', 'verde', 'laranja', 'roxo', 'vermelho', 'azul'].slice(0, faixas.length));
     });
 
-    it('não mostra aviso de data de teste', async () => {
-      const { tela } = await renderizar();
-      expect(tela.querySelector('.teste')).toBeNull();
-    });
   });
 
   describe('num sábado de carnaval, às 14h', () => {
@@ -107,11 +104,23 @@ describe('Destaques', () => {
       expect(selos().every((selo) => selo?.startsWith('Amanhã às '))).toBe(true);
     });
 
-    it('mostra todos os lugares ao tocar em Geral', async () => {
+    it('mostra ao tocar em Geral os lugares que ainda têm bloco, e some com os que já passaram', async () => {
       const { abaAtiva, cartoes, tocar } = await renderizar(SABADO_14H);
       await tocar('Geral');
       expect(abaAtiva()).toBe('Geral');
-      expect(cartoes().length).toBe(LOCAIS.length);
+      const comBlocoPelaFrente = LOCAIS.filter((local) =>
+        BLOCOS.some((bloco) => bloco.localId === local.id && bloco.data >= '2026-02-14'),
+      );
+      expect(cartoes().length).toBe(comBlocoPelaFrente.length);
+      // Santo Amaro só tinha o Modo Surto, no dia 8: no dia 14 ele já não aparece.
+      expect(cartoes().some((cartao) => cartao.getAttribute('href') === '/local/santo-amaro')).toBe(false);
+    });
+
+    it('pinta o selo de quem já começou (verde) e de quem vai começar (amarelo)', async () => {
+      const { tela } = await renderizar(SABADO_14H);
+      const tipos = Array.from(tela.querySelectorAll('.selo')).map((selo) => [selo.textContent, selo.getAttribute('data-selo')]);
+      expect(tipos).toContainEqual(['Já começou', 'agora']);
+      expect(tipos.every(([texto, tipo]) => tipo !== 'agora' || texto === 'Já começou')).toBe(true);
     });
 
     it('mantém a cor da faixa do lugar quando troca de aba', async () => {
@@ -124,15 +133,6 @@ describe('Destaques', () => {
       expect(faixaEm()).toBe(emAmanha);
     });
 
-    it('não mostra aviso de data de teste quando é o relógio de verdade', async () => {
-      const { tela } = await renderizar(SABADO_14H, false);
-      expect(tela.querySelector('.teste')).toBeNull();
-    });
-
-    it('mostra a data de teste quando ela não vem do relógio do celular', async () => {
-      const { tela } = await renderizar(SABADO_14H, true);
-      expect(tela.querySelector('.teste')?.textContent).toBe('Data de teste: Sábado, 14/2/2026, 14h');
-    });
   });
 
   describe('num dia sem bloco nenhum', () => {

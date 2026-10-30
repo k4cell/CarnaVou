@@ -20,7 +20,7 @@
           <span class="texto">
             <span class="cabeca">
               <strong class="nome">{{ cartao.local.nome }}</strong>
-              <span class="selo">{{ cartao.selo }}</span>
+              <span class="selo" [attr.data-selo]="cartao.tipoDoSelo">{{ cartao.selo }}</span>
             </span>
             <app-zona-tag [zona]="cartao.local.zona" />
             @if (cartao.principal) {
