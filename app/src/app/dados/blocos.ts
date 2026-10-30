@@ -5,8 +5,8 @@ import { Bloco } from './tipos';
  *
  * Vêm da lista oficial dos blocos aprovados, publicada pela SPTuris e pela Secretaria de
  * Cultura no Diário Oficial (Portaria Conjunta nº 1, de 22/01/2026): nome, dia, subprefeitura,
- * itinerário e os horários de concentração (inicio), desfile e término (fim). Os artistas, o
- * estilo e o público vêm de notícias, só nos blocos que elas citam, e os seguidores de cada
+ * itinerário e os horários de concentração (inicio), desfile e término (fim). Os artistas e o
+ * estilo vêm de notícias, só nos blocos que elas citam, e os seguidores de cada
  * artista, de contadores públicos do Instagram. Entram só os blocos do Centro, da Zona Sul e da
  * Zona Oeste que têm atração divulgada ou desfilam num circuito de megabloco.
  * Arquivo gerado por design/dados/gerar_dados.py: não mude à mão.
@@ -19,11 +19,11 @@ export const BLOCOS: Bloco[] = [
   { id: 'quintal-dos-pretos', nome: 'Quintal dos Pretos', data: '2026-02-08', inicio: '12:00', desfile: '13:00', fim: '15:00', localId: 'ibirapuera', atracoes: [{ nome: 'Emicida', seguidores: 2921767 }, { nome: 'Maria Rita', seguidores: 904499 }] },
   { id: 'monobloco', nome: 'Monobloco', data: '2026-02-08', inicio: '15:00', desfile: '16:00', fim: '18:00', localId: 'ibirapuera', atracoes: [{ nome: 'Monobloco' }] },
   { id: 'carna-lau', nome: 'Carna Lau', data: '2026-02-14', inicio: '12:00', desfile: '13:00', fim: '16:00', localId: 'ibirapuera', atracoes: [] },
-  { id: 'agrada-gregos', nome: 'Agrada Gregos', data: '2026-02-14', inicio: '13:00', desfile: '14:00', fim: '18:00', localId: 'ibirapuera', atracoes: [{ nome: 'Gloria Groove', seguidores: 5268515 }, { nome: 'Gretchen' }], publico: 'LGBTQIA+' },
+  { id: 'agrada-gregos', nome: 'Agrada Gregos', data: '2026-02-14', inicio: '13:00', desfile: '14:00', fim: '18:00', localId: 'ibirapuera', atracoes: [{ nome: 'Gloria Groove', seguidores: 5268515 }, { nome: 'Gretchen' }] },
   { id: 'sertanejinho-do-telo', nome: 'Sertanejinho do Teló', data: '2026-02-15', inicio: '11:00', desfile: '12:00', fim: '16:00', localId: 'ibirapuera', atracoes: [{ nome: 'Michel Teló', seguidores: 11911609 }], estilo: 'sertanejo' },
   { id: 'bloco-da-pocah', nome: 'Bloco da Pocah', data: '2026-02-15', inicio: '13:00', desfile: '14:00', fim: '18:00', localId: 'ibirapuera', atracoes: [{ nome: 'Pocah', seguidores: 13194686 }], estilo: 'funk' },
   { id: 'bloco-vou-de-taxi', nome: 'Bloco Vou de Táxi', data: '2026-02-16', inicio: '11:00', desfile: '12:00', fim: '16:00', localId: 'ibirapuera', atracoes: [] },
-  { id: 'bloco-da-pabllo', nome: 'Bloco da Pabllo', data: '2026-02-16', inicio: '13:00', desfile: '14:00', fim: '18:00', localId: 'ibirapuera', atracoes: [{ nome: 'Pabllo Vittar', seguidores: 12300000 }, { nome: 'NMIXX', seguidores: 6141925 }], estilo: 'pop', publico: 'LGBTQIA+' },
+  { id: 'bloco-da-pabllo', nome: 'Bloco da Pabllo', data: '2026-02-16', inicio: '13:00', desfile: '14:00', fim: '18:00', localId: 'ibirapuera', atracoes: [{ nome: 'Pabllo Vittar', seguidores: 12300000 }, { nome: 'NMIXX', seguidores: 6141925 }], estilo: 'pop' },
   { id: 'galo-da-madrugada', nome: 'Galo da Madrugada', data: '2026-02-17', inicio: '09:00', desfile: '10:00', fim: '14:00', localId: 'ibirapuera', atracoes: [], estilo: 'frevo' },
   { id: 'bloco-solteiro-nao-trai', nome: 'Bloco Solteiro não Trai', data: '2026-02-17', inicio: '11:00', desfile: '12:00', fim: '16:00', localId: 'ibirapuera', atracoes: [{ nome: 'Gustavo Mioto', seguidores: 9386129 }], estilo: 'sertanejo' },
   { id: 'bloco-da-latinha-mix', nome: 'Bloco da Latinha Mix', data: '2026-02-17', inicio: '13:00', desfile: '14:00', fim: '18:00', localId: 'ibirapuera', atracoes: [] },
@@ -57,7 +57,7 @@ export const BLOCOS: Bloco[] = [
   { id: 'banda-do-fuxico', nome: 'Banda do Fuxico', data: '2026-02-08', inicio: '12:00', desfile: '18:00', fim: '22:00', localId: 'ipiranga-sao-joao', atracoes: [] },
   { id: 'banda-redonda', nome: 'Banda Redonda', data: '2026-02-09', inicio: '17:30', desfile: '20:00', fim: '23:00', localId: 'ipiranga-sao-joao', atracoes: [] },
   { id: 'banda-do-candinho', nome: 'Banda do Candinho', data: '2026-02-11', inicio: '19:00', desfile: '21:00', fim: '00:00', localId: 'ipiranga-sao-joao', atracoes: [] },
-  { id: 'bloco-afro-ilu-oba-de-min', nome: 'Bloco Afro Ilú Obá De Min', data: '2026-02-13', inicio: '19:00', desfile: '20:00', fim: '23:00', localId: 'ipiranga-sao-joao', atracoes: [], publico: 'Mulheres' },
+  { id: 'bloco-afro-ilu-oba-de-min', nome: 'Bloco Afro Ilú Obá De Min', data: '2026-02-13', inicio: '19:00', desfile: '20:00', fim: '23:00', localId: 'ipiranga-sao-joao', atracoes: [] },
   { id: 'bloco-afrikaliente', nome: 'BLOCO AFRIKALIENTE', data: '2026-02-14', inicio: '10:00', desfile: '11:00', fim: '15:00', localId: 'ipiranga-sao-joao', atracoes: [] },
   { id: 'bloco-laco-branco', nome: 'Bloco Laço Branco', data: '2026-02-14', inicio: '10:00', desfile: '11:00', fim: '15:00', localId: 'ipiranga-sao-joao', atracoes: [] },
   { id: 'bloco-segura-a-onca', nome: 'Bloco Segura a Onça', data: '2026-02-14', inicio: '10:00', desfile: '11:00', fim: '15:00', localId: 'ipiranga-sao-joao', atracoes: [] },
@@ -65,7 +65,7 @@ export const BLOCOS: Bloco[] = [
   { id: 'samby-junior-sp', nome: 'Samby Junior SP', data: '2026-02-14', inicio: '11:00', desfile: '12:00', fim: '16:00', localId: 'ipiranga-sao-joao', atracoes: [], estilo: 'pop' },
   { id: 'tarado-ni-voce', nome: 'Tarado Ni Você', data: '2026-02-14', inicio: '11:00', desfile: '12:00', fim: '16:00', localId: 'ipiranga-sao-joao', atracoes: [], estilo: 'mpb' },
   { id: 'bloco-tardes-de-emorio', nome: 'Bloco Tardes de Emoriô', data: '2026-02-14', inicio: '12:00', desfile: '13:00', fim: '17:00', localId: 'ipiranga-sao-joao', atracoes: [] },
-  { id: 'bloco-minhoqueens', nome: 'Bloco Minhoqueens', data: '2026-02-14', inicio: '13:00', desfile: '14:00', fim: '17:00', localId: 'ipiranga-sao-joao', atracoes: [{ nome: 'Lia Clark', seguidores: 493353 }, { nome: 'MC Xuxu' }], estilo: 'pop', publico: 'LGBTQIA+' },
+  { id: 'bloco-minhoqueens', nome: 'Bloco Minhoqueens', data: '2026-02-14', inicio: '13:00', desfile: '14:00', fim: '17:00', localId: 'ipiranga-sao-joao', atracoes: [{ nome: 'Lia Clark', seguidores: 493353 }, { nome: 'MC Xuxu' }], estilo: 'pop' },
   { id: 'carnavrah', nome: 'CarnaVrah', data: '2026-02-14', inicio: '13:00', desfile: '14:00', fim: '18:00', localId: 'ipiranga-sao-joao', atracoes: [] },
   { id: 'perdi-foi-tudo-big-bear', nome: 'Perdi foi Tudo/Big Bear', data: '2026-02-14', inicio: '14:00', desfile: '15:00', fim: '18:00', localId: 'ipiranga-sao-joao', atracoes: [] },
   { id: 'bloco-preto-zumbiido-afropercussivo', nome: 'Bloco Preto ZUMBIIDO Afropercussivo', data: '2026-02-14', inicio: '15:00', desfile: '16:00', fim: '18:00', localId: 'ipiranga-sao-joao', atracoes: [] },
@@ -77,7 +77,7 @@ export const BLOCOS: Bloco[] = [
   { id: 'sp-forro', nome: 'SP Forró', data: '2026-02-15', inicio: '14:00', desfile: '15:00', fim: '18:00', localId: 'ipiranga-sao-joao', atracoes: [] },
   { id: 'bloco-educa', nome: 'Bloco éduca', data: '2026-02-16', inicio: '13:00', desfile: '14:00', fim: '18:00', localId: 'ipiranga-sao-joao', atracoes: [] },
   { id: 'moita', nome: 'Moita', data: '2026-02-17', inicio: '10:00', desfile: '11:00', fim: '15:00', localId: 'ipiranga-sao-joao', atracoes: [] },
-  { id: 'bloco-pagu', nome: 'Bloco Pagu', data: '2026-02-17', inicio: '11:00', desfile: '12:00', fim: '16:00', localId: 'ipiranga-sao-joao', atracoes: [], publico: 'Mulheres' },
+  { id: 'bloco-pagu', nome: 'Bloco Pagu', data: '2026-02-17', inicio: '11:00', desfile: '12:00', fim: '16:00', localId: 'ipiranga-sao-joao', atracoes: [] },
   // Rua Henrique Schaumann
   { id: 'bloco-casa-comigo', nome: 'Bloco Casa Comigo', data: '2026-02-07', inicio: '11:00', desfile: '12:00', fim: '16:00', localId: 'henrique-schaumann', atracoes: [] },
   { id: 'bloco-toca-um-samba-ai', nome: 'Bloco Toca Um Samba Aí', data: '2026-02-07', inicio: '14:00', desfile: '15:00', fim: '18:00', localId: 'henrique-schaumann', atracoes: [] },

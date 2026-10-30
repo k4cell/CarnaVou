@@ -11,9 +11,6 @@
   @if (resumo()?.estilo) {
     <p>Estilo: {{ resumo()?.estilo }}</p>
   }
-  @if (bloco.publico) {
-    <p>Público: {{ bloco.publico }}</p>
-  }
 
   <div class="acoes-da-pagina">
     <a class="botao-claro ver-no-mapa" routerLink="/mapa" [queryParams]="{ bloco: bloco.id }">

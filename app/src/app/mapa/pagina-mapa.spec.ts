@@ -232,28 +232,28 @@ describe('PaginaMapa', () => {
       expect(cartao()?.querySelector('.artistas')?.textContent).toContain('Gloria Groove');
     });
 
-    it('leva o botão "Como chegar" ao Google Maps e o outro ao Waze, com o ponto da concentração', async () => {
+    it('leva o botão "Ir" ao Google Maps, o Waze e o Uber ao ponto da concentração', async () => {
       const { cartao, tocarNoBloco } = await renderizar(SABADO_14H);
       const [bloco] = acharPonto('hoje', umBloco);
       await tocarNoBloco(bloco);
       const [lng, lat] = trajetoDoBloco(bloco.id)!.inicio;
       const links = Array.from(cartao()!.querySelectorAll<HTMLAnchorElement>('.acoes a'));
-      const comoChegar = links.find((link) => link.textContent?.trim() === 'Como chegar');
-      const waze = links.find((link) => link.textContent?.trim() === 'Waze');
-      expect(comoChegar?.getAttribute('href')).toBe(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`);
-      expect(waze?.getAttribute('href')).toBe(`https://waze.com/ul?ll=${lat}%2C${lng}&navigate=yes`);
-      expect(comoChegar?.getAttribute('rel')).toBe('noopener');
-      expect(comoChegar?.getAttribute('target')).toBe('_blank');
+      expect(links.map((link) => link.textContent?.trim())).toEqual(['Ir', 'Waze', 'Uber']);
+      const [ir, waze, uber] = links;
+      expect(ir.getAttribute('href')).toBe(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`);
+      expect(waze.getAttribute('href')).toBe(`https://waze.com/ul?ll=${lat}%2C${lng}&navigate=yes`);
+      expect(uber.getAttribute('href')).toContain(encodeURIComponent(`"latitude":${lat},"longitude":${lng}`));
+      for (const link of links) {
+        expect(link.getAttribute('rel')).toBe('noopener');
+        expect(link.getAttribute('target')).toBe('_blank');
+      }
     });
 
-    it('tem um botão para ver a página do lugar', async () => {
+    it('o nome do lugar leva para a página dele', async () => {
       const { cartao, tocarNoBloco } = await renderizar(SABADO_14H);
       const [bloco] = acharPonto('hoje', umBloco);
       await tocarNoBloco(bloco);
-      const ver = Array.from(cartao()!.querySelectorAll<HTMLAnchorElement>('.acoes a')).find(
-        (link) => link.textContent?.trim() === 'Ver o lugar',
-      );
-      expect(ver?.getAttribute('href')).toBe(`/local/${bloco.localId}`);
+      expect(cartao()!.querySelector('a.lugar')?.getAttribute('href')).toBe(`/local/${bloco.localId}`);
     });
 
     it('põe o pino, com o nome do bloco, no ponto escolhido', async () => {

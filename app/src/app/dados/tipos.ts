@@ -45,8 +45,6 @@ export interface Bloco {
   atracoes: Atracao[];
   /** Só quando alguma fonte diz o estilo. */
   estilo?: Estilo;
-  /** Público-alvo, só quando for claro (ex.: "LGBTQIA+", "Mulheres"). */
-  publico?: string;
 }
 
 /** Onde um bloco se concentra e por onde ele passa. */

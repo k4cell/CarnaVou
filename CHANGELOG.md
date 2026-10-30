@@ -7,6 +7,13 @@ Enquanto o app está em beta, o número é `0.MEIO.FINAL`. O número do meio sob
 uma tela ou funcionalidade nova (0.3.0, 0.4.0…) e o último, quando é só uma correção pequena
 (0.3.1). Cada versão tem uma etiqueta no GitHub, como `v0.3.0`.
 
+## 0.14.0 (30/10/2026)
+
+- As estações de metrô e de trem aparecem no mapa, com o nome, quando chego mais perto.
+- Cartão do ponto no mapa: "Como chegar" virou "Ir", e o botão do Uber entrou no lugar de "Ver o
+  lugar". O nome do lugar, no cartão, leva para a página dele.
+- Saiu o público-alvo dos blocos.
+
 ## 0.13.0 (30/10/2026)
 
 - Abas Hoje / Amanhã / Geral também na página do lugar, para trocar de dia sem voltar. Elas

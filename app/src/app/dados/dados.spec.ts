@@ -81,11 +81,10 @@ describe('dados', () => {
       expect(BLOCOS.every((bloco) => (itinerarioDoBloco(bloco.id) ?? '').length > 2)).toBe(true);
     });
 
-    it('só marca artistas, público-alvo e estilo em alguns blocos, quando as notícias dizem', () => {
+    it('só marca artistas e estilo em alguns blocos, quando as notícias dizem', () => {
       const comArtista = BLOCOS.filter((bloco) => bloco.atracoes.length > 0);
       expect(comArtista.length).toBeGreaterThan(10);
       expect(comArtista.length).toBeLessThan(BLOCOS.length);
-      expect(BLOCOS.some((bloco) => bloco.publico)).toBe(true);
       expect(BLOCOS.some((bloco) => bloco.estilo)).toBe(true);
     });
   });

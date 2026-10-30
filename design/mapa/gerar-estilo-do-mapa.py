@@ -1,7 +1,8 @@
 """Gera o estilo do mapa do CarnaVou a partir do estilo "positron" do OpenFreeMap.
 
 Pinta o mapa de lilás (as cores da marca), tira o que uma cidade não precisa (fronteiras,
-países, aeroportos, geleiras) e grava o resultado em app/public/mapa/estilo-carnavou.json.
+países, aeroportos, geleiras), põe as estações de metrô e de trem e grava o resultado em
+app/public/mapa/estilo-carnavou.json.
 
 Como usar, a partir da raiz do projeto:
 
@@ -101,6 +102,29 @@ TIRAR = {
     "label_country_1",
 }
 
+# As estações de metrô e de trem (CPTM), com o nome, de perto (zoom 13 em diante). Vêm do próprio
+# mapa da OpenFreeMap (camada "poi") e os ícones, do sprite que ele já baixa: nada a mais para
+# carregar. Ficam por último, para ganharem dos nomes das ruas quando não cabe tudo.
+ESTACOES = {
+    "id": "estacoes",
+    "type": "symbol",
+    "source": "openmaptiles",
+    "source-layer": "poi",
+    "minzoom": 13,
+    "filter": ["all", ["==", ["get", "class"], "railway"], ["match", ["get", "subclass"], ["subway", "station"], True, False]],
+    "layout": {
+        "icon-image": ["match", ["get", "subclass"], "subway", "railway_metro_11", "railway_11"],
+        "text-field": ["coalesce", ["get", "name"], ""],
+        "text-font": ["Noto Sans Regular"],
+        "text-size": 12,
+        "text-anchor": "top",
+        "text-offset": [0, 0.8],
+        "text-max-width": 8,
+        "text-optional": True,
+    },
+    "paint": {"text-color": COR["texto"], "text-halo-color": COR["halo"], "text-halo-width": 1.5},
+}
+
 
 def main() -> None:
     # O OpenFreeMap recusa pedidos sem um nome de aplicativo (User-Agent).
@@ -115,6 +139,8 @@ def main() -> None:
         for propriedade, nome_da_cor in PINTURA.get(camada["id"], {}).items():
             camada.setdefault("paint", {})[propriedade] = COR[nome_da_cor]
         camadas.append(camada)
+
+    camadas.append(ESTACOES)
 
     estilo["layers"] = camadas
     estilo["name"] = "CarnaVou"

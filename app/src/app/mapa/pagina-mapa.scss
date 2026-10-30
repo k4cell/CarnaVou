@@ -195,6 +195,12 @@ app-mapa-base {
   margin: 4px 0;
 }
 
+// O nome do lugar é um link: o padding dá a altura do toque.
+.lugar {
+  padding: 10px 0;
+  color: var(--texto);
+}
+
 .distancia,
 .trajeto,
 .aproximado,
