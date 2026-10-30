@@ -15,6 +15,7 @@ import { Relogio } from '../relogio/relogio';
 import { CARREGAR_MAPLIBRE } from './maplibre';
 import { criarMapLibreFalso, esperarOMapa } from './maplibre-falso';
 import { PaginaMapa } from './pagina-mapa';
+import { blocosPertoDeVoce } from './perto-de-voce';
 
 // Sábado de carnaval de 2026, duas da tarde: tem bloco hoje e amanhã.
 const SABADO_14H = new Date(2026, 1, 14, 14, 0);
@@ -559,6 +560,68 @@ describe('PaginaMapa', () => {
       expect(aviso()).toBeNull();
       await tocarEmOndeEstou();
       expect(aviso()).not.toBeNull();
+    });
+
+    describe('a lista "Perto de você"', () => {
+      const lista = (tela: HTMLElement) => tela.querySelector<HTMLElement>('.perto-de-voce');
+      const nomesDaLista = (tela: HTMLElement) =>
+        Array.from(tela.querySelectorAll('.bloco-perto strong')).map((nome) => nome.textContent);
+
+      it('não aparece antes de a pessoa mostrar onde está', async () => {
+        const { tela } = await renderizar(SABADO_14H, { permissao: 'granted' });
+        expect(lista(tela)).toBeNull();
+      });
+
+      it('depois do "onde estou", mostra os blocos rolando perto, com a distância', async () => {
+        const { tela, tocarEmOndeEstou } = await renderizar(SABADO_14H, { permissao: 'granted' });
+        await tocarEmOndeEstou();
+        const esperados = blocosPertoDeVoce({ lat: -23.5614, lng: -46.6559 }, SABADO_14H);
+        expect(lista(tela)?.querySelector('h2')?.textContent).toBe('Rolando perto de você');
+        expect(nomesDaLista(tela)).toEqual(esperados.map(({ bloco }) => bloco.nome));
+        const [primeiro] = esperados;
+        expect(tela.querySelector('.bloco-perto span')?.textContent).toContain(
+          `${textoDaDistancia(primeiro.metros)} · Já começou`,
+        );
+      });
+
+      it('tocar num bloco da lista abre o cartão dele, na aba Hoje', async () => {
+        const { tela, fixture, falso, cartao, tocarNaAba, tocarEmOndeEstou } = await renderizar(SABADO_14H, {
+          permissao: 'granted',
+        });
+        await tocarNaAba('Geral');
+        await tocarEmOndeEstou();
+        const [primeiro] = blocosPertoDeVoce({ lat: -23.5614, lng: -46.6559 }, SABADO_14H);
+        tela.querySelector<HTMLButtonElement>('.bloco-perto')!.click();
+        await esperarOMapa(fixture);
+        expect(cartao()).not.toBeNull();
+        expect(tela.querySelector('.aba[aria-pressed="true"]')?.textContent?.trim()).toBe('Hoje');
+        expect(falso.pinos().map((pino) => comoTexto(pino.posicao!))).toEqual([
+          comoTexto(trajetoDoBloco(primeiro.bloco.id)!.inicio),
+        ]);
+        expect(lista(tela)).toBeNull();
+      });
+
+      it('fecha no ×, e volta no próximo "onde estou"', async () => {
+        const { tela, fixture, tocarEmOndeEstou } = await renderizar(SABADO_14H, { permissao: 'granted' });
+        await tocarEmOndeEstou();
+        lista(tela)!.querySelector<HTMLButtonElement>('.fechar')!.click();
+        await esperarOMapa(fixture);
+        expect(lista(tela)).toBeNull();
+        await tocarEmOndeEstou();
+        expect(lista(tela)).not.toBeNull();
+      });
+
+      it('não aparece para quem está fora da Grande São Paulo', async () => {
+        const { tela, tocarEmOndeEstou } = await renderizar(SABADO_14H, { permissao: 'granted', resposta: NO_RIO });
+        await tocarEmOndeEstou();
+        expect(lista(tela)).toBeNull();
+      });
+
+      it('num dia sem bloco, diz que não tem bloco hoje', async () => {
+        const { tela, tocarEmOndeEstou } = await renderizar(SEXTA_ANTES, { permissao: 'granted' });
+        await tocarEmOndeEstou();
+        expect(lista(tela)?.textContent).toContain('Nenhum bloco hoje.');
+      });
     });
 
     describe('a distância no cartão do ponto', () => {

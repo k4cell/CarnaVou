@@ -14,6 +14,7 @@ import { RouterLink } from '@angular/router';
 
 import { AbasDoDia } from '../abas/abas-do-dia';
 import { concentracoesDaAba } from '../dados/concentracoes';
+import { artistasPorFama } from '../dados/consultas';
 import { formatarHora, partesDaData } from '../dados/formato';
 import { itinerarioDoBloco } from '../dados/itinerario';
 import { FiltroDeDia } from '../filtro/filtro-de-dia';
@@ -25,6 +26,7 @@ import { ZonaTag } from '../zona/zona-tag';
 import { estaNaGrandeSP } from './limites';
 import { linkDoGoogleMaps, linkDoUber, linkDoWaze } from './links';
 import { MapaBase, PontoNoMapa, TrajetoNoMapa } from './mapa-base';
+import { blocosPertoDeVoce } from './perto-de-voce';
 
 /** No cartão do ponto cabem só alguns blocos; o resto fica na página do lugar. */
 const BLOCOS_NO_CARTAO = 3;
@@ -56,7 +58,8 @@ const AVISOS = {
 /**
  * A aba Mapa: onde se concentram os blocos da aba escolhida (Hoje, Amanhã ou Geral), como pontos
  * no mapa, e o botão "onde estou". Tocando num ponto, aparece a linha por onde o bloco passa e
- * um cartão com os blocos dali. A localização só é pedida quando a pessoa toca em "onde estou".
+ * um cartão com os blocos dali. A localização só é pedida quando a pessoa toca em "onde estou";
+ * achando a pessoa, aparecem os blocos rolando perto dela.
  */
 @Component({
   selector: 'app-pagina-mapa',
@@ -91,6 +94,8 @@ export class PaginaMapa {
 
   /** A tela que explica a localização está aberta? */
   protected readonly explicando = signal(false);
+  /** A lista "Perto de você" foi fechada no ×? Ela volta no próximo "onde estou". */
+  private readonly pertoFechado = signal(false);
 
   protected readonly vazio = computed(() => this.filtro.cartoes().length === 0);
   protected readonly mensagemVazia = this.filtro.mensagemVazia;
@@ -180,6 +185,36 @@ export class PaginaMapa {
     return voce && ponto ? textoDaDistancia(distanciaEmMetros(voce, ponto)) : null;
   });
 
+  /**
+   * Depois do "onde estou", os blocos que o CarnaVou recomenda: os que estão rolando perto da
+   * pessoa (os grandes ganham peso). A lista some enquanto o cartão de um ponto está aberto.
+   */
+  protected readonly perto = computed(() => {
+    const voce = this.voce();
+    const agora = this.relogio.agora();
+    const achou = this.localizacao.estado() === 'ligada' && voce && estaNaGrandeSP(voce.lat, voce.lng);
+    if (!achou || !agora || this.pertoFechado() || this.cartao()) {
+      return null;
+    }
+    const blocos = blocosPertoDeVoce(voce, agora);
+    const titulo =
+      blocos.length === 0 ? 'Perto de você' : blocos[0].rolando ? 'Rolando perto de você' : 'Mais tarde hoje, perto de você';
+    return {
+      titulo,
+      blocos: blocos.map(({ bloco, ponto, metros, rolando }) => ({
+        id: bloco.id,
+        ponto,
+        nome: bloco.nome,
+        // "1,2 km · Já começou · Gloria Groove"
+        detalhe: [
+          textoDaDistancia(metros),
+          rolando ? 'Já começou' : `Hoje às ${formatarHora(bloco.inicio)}`,
+          ...artistasPorFama([bloco]).slice(0, 1),
+        ].join(' · '),
+      })),
+    };
+  });
+
   /** O que dizer sobre a localização. O aviso de "procurando" não pode ser fechado. */
   protected readonly aviso = computed<string | null>(() => {
     const estado = this.localizacao.estado();
@@ -243,6 +278,16 @@ export class PaginaMapa {
     this.aberto.set(false);
   }
 
+  /** Um bloco da lista "Perto de você": abre o cartão dele, na aba Hoje (a lista é de hoje). */
+  protected escolherPerto(ponto: string): void {
+    this.filtro.escolher('hoje');
+    this.escolher(ponto);
+  }
+
+  protected fecharPerto(): void {
+    this.pertoFechado.set(true);
+  }
+
   /** Tocar na alça abre ou encolhe o cartão (o arrasto já cuidou disso, se teve). */
   protected alternar(): void {
     if (this.acabouDeArrastar) {
@@ -301,6 +346,7 @@ export class PaginaMapa {
       return;
     }
     this.avisoFechado.set(false);
+    this.pertoFechado.set(false);
     const passo = await this.localizacao.proximoPasso();
     if (passo === 'explicar') {
       this.explicando.set(true);
