@@ -3,12 +3,13 @@
 **A central do "point" do carnaval de rua de São Paulo.** Quero responder a pergunta que
 todo grupo faz no carnaval: *"pra onde a gente vai agora?"*
 
-> **Situação (29/10/2026): começando o beta, versão 0.10.1.** Já tem o projeto criado, as três telas do
-> esqueleto (lugares em destaque, um lugar e um bloco) e o mapa, com dados de teste: o
-> carnaval de rua de 2026, com nomes reais, como se hoje fosse 07/02/2026. O mapa mostra os trajetos
-> dos megablocos e, quando eu toco no botão, onde eu estou e a distância até cada lugar. Sem internet, o
-> site continua funcionando com o que já foi aberto. O beta está no ar para teste em
-> https://k4cell.github.io/CarnaVou/, com um aviso de que é uma versão de teste.
+> **Situação (30/10/2026): beta, versão 0.12.3.** O beta está no ar para teste em
+> https://k4cell.github.io/CarnaVou/, com um aviso de que é uma versão de teste. Os dados são a lista
+> oficial dos blocos aprovados de 2026 (Diário Oficial), como se hoje fosse 07/02/2026: só Centro,
+> Zona Sul e Zona Oeste, e só os blocos com atração divulgada ou num circuito de megabloco (74 blocos
+> em 7 lugares). Tem três abas: Descobrir (os lugares em alta), Blocos (o que está rolando agora e o
+> que vem) e Mapa (o ponto da concentração e a linha de cada bloco). Sem internet, o site continua
+> funcionando com o que já foi aberto, e o app instalado no celular se atualiza sozinho.
 
 ---
 
@@ -61,6 +62,14 @@ Daí veio o CarnaVou, uma central que mostra:
 | **Versão de teste no ar** | Com os dados do carnaval de 2026, um aviso no alto de toda página ("Versão de teste: os blocos e os horários são do carnaval de rua de 2026") e o ano na data de teste. O site pode aparecer no Google. |
 | **Blocos do mesmo dia** | Na página do lugar, os blocos do mesmo dia ficam juntos num cartão só, um embaixo do outro, cada um com o dia, o nome, o artista e o horário. |
 | **Fonte dos dados** | O Diário Oficial da Prefeitura, que publica a lista oficial dos blocos e é de uso livre (a lei de direito autoral não protege os atos oficiais). Os pontos e as linhas eu marco a partir dela. O site Carnaval SP tem a lista completa, mas os termos dele proíbem copiar e comercializar, então não uso. No futuro, quero pedir autorização ao máximo de sites e à Prefeitura. |
+| **Lista oficial dos blocos** | Os dados vêm da lista oficial dos blocos aprovados de 2026 (Portaria Conjunta SPTuris/SMC nº 1, de 22/01/2026), com os artistas que as notícias citam. Os scripts ficam em `design/dados/`. |
+| **Zonas, por enquanto** | Só o Centro, a Zona Sul e a Zona Oeste. A Leste e a Norte saíram até terem blocos com atrações conhecidas. |
+| **Em alta é fama** | Ficam os blocos com atração divulgada e os dos circuitos dos megablocos; os outros saem. A ordem é pela soma dos seguidores no Instagram dos artistas (contadores públicos, com fonte e data). |
+| **Lugares** | Os grandes pontos têm nome próprio (Parque Ibirapuera, Rua da Consolação e Baixo Augusta, Avenida Faria Lima, Av. Ipiranga, São João e República, Rua Henrique Schaumann, Avenida Paulo VI); os outros blocos ficam na subprefeitura. Na página do lugar, os 4 mais famosos ficam em destaque. |
+| **Só o presente e o futuro** | O que é de um dia que já passou some do app. A página do lugar mostra só os blocos da aba escolhida (Hoje, Amanhã ou Geral). |
+| **Aba Blocos** | Uma aba no menu de baixo com os blocos (não os lugares): "Rolando agora" primeiro em Hoje. |
+| **Telas** | Cabeçalho baixo, com a seta ← de voltar no canto; atrações lado a lado, juntas por horário; selos com cor para ler no sol; no mapa, o cartão abre pequeno e cresce puxando a setinha. As cores dos pinos continuam sendo as da zona. |
+| **Como trabalho com o Claude** | Ele faz o commit e o push direto, com o número da versão, e me diz o que subiu. Testa pelo terminal, sem abrir o navegador nem tirar foto da tela (gastava muito), e não precisa me mostrar os testes. |
 | **Social** | A parte social (Amigos) fica por último, porque não é o foco. |
 
 ### Sobre compartilhar
@@ -117,23 +126,19 @@ já estar acabando, meio morto. O aplicativo seria muito bom se até me avisasse
 
 ## Próximo passo
 
-Já respondi as perguntas sobre o carnaval de 2026 e já escolhi a stack. Mandei o primeiro
-desenho (a árvore de opções) e o beta já tem as três telas, com dados de teste do carnaval de 2026. Mandei também o segundo
-desenho (o filtro Hoje / Amanhã / Geral) e ele já está na tela inicial e no mapa. O mapa de
-leitura já está na aba Mapa. O mapa também mostra onde eu estou (0.7.0), dá pra copiar o link (0.7.1) e o mapa mostra
-os trajetos dos megablocos (0.8.0), e o site funciona sem internet com o que já foi aberto
-(0.9.0). Com isso, o roteiro do beta está completo. Os próximos passos são testar num celular
-de verdade (o beta está no ar), decidir o endereço definitivo e o que vem depois do beta. O que ficou de fora e os cuidados
-para publicar estão anotados no planejamento, em
-[`docs/planejamento-do-mapa.md`](docs/planejamento-do-mapa.md), com o Macadam como referência.
-A parte social fica por último. Vou continuar desenhando o
-projeto pra definir o visual.
+O beta está no ar e eu testo no celular junto com um usuário. Na 0.12 entraram as melhorias que
+combinamos (aba Blocos, página do lugar pela aba, cabeçalho baixo, selos com cor, cartão do mapa
+que cresce). Falta confirmar no celular se o aviso de versão nova aparece sozinho. As próximas
+ideias, que eu ainda decido, estão em [`docs/ideias-em-aberto.md`](docs/ideias-em-aberto.md), na
+parte "Para depois da 0.12.0": as abas também na página do lugar (talvez na 0.13), a cor dos pinos
+pelo dia e buscar mais atrações nas notícias. Depois vêm o endereço definitivo, os dados de 2027 e
+o visual.
 
 ### Ainda não pensei
 
 - Como o CarnaVou vai ganhar dinheiro.
-- De onde vêm os dados dos blocos de 2027 (lista da prefeitura, cadastro manual,
-  organizadores…). Por enquanto uso o carnaval de 2026, reconstituído de notícias e guias.
+- Quem cadastra os dados de 2027. A fonte já decidi (a lista oficial do Diário Oficial); por
+  enquanto uso a de 2026.
 - Como definir a "tendência de hoje" sem os votos dos usuários.
 - Como montar o "Em alta" no começo. Pensei em usar as APIs do Google Maps, do Instagram e do
   X, mas já pesquisei e nenhuma entrega pronto o que está em alta na cidade: o Instagram
@@ -146,7 +151,8 @@ projeto pra definir o visual.
   próximas fases, com o andamento.
 - [`docs/dados-carnaval-2026.md`](docs/dados-carnaval-2026.md): de onde vieram os dados de teste
   e o quanto confiar em cada um.
-- [`design/`](design): a logo e as imagens de referência do visual, cada uma com a sua legenda.
+- [`design/`](design): a logo, as imagens de referência do visual e, em `design/dados/`, os
+  scripts que geram os dados do app a partir da lista oficial.
 - [`CHANGELOG.md`](CHANGELOG.md): o que mudou em cada versão.
 - [`CLAUDE.md`](CLAUDE.md): minhas regras de trabalho para o Claude Code neste projeto.
 - [`docs/ideias-em-aberto.md`](docs/ideias-em-aberto.md): ideias que surgiram e que eu

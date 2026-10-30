@@ -4,7 +4,16 @@ Para testar o app, eu uso o **carnaval de rua de 2026 de verdade**, como se hoje
 **07/02/2026** (sábado, primeiro dia do pré-carnaval). Os nomes são reais. Este documento diz de onde vieram os dados, como escolhi
 quando as fontes discordam e o que ainda precisa de conferência.
 
-> **Aviso importante.** Isto é uma **reconstituição** feita de notícias e guias, **não é a
+> **Desde a 0.11.0 (30/10/2026), os dados vêm da lista oficial.** É o anexo da Portaria Conjunta
+> SPTuris/SMC nº 1, de 22/01/2026 (Diário Oficial): 630 blocos com dia, subprefeitura, itinerário e
+> horários de concentração, desfile e término. Os scripts que leem o PDF, acham o ponto e a linha de
+> cada bloco no OpenStreetMap e geram os dados do app ficam em `design/dados/`, junto com a lista já
+> lida (`blocos-oficiais-2026.json`), os artistas que as notícias citam (`atracoes-das-noticias.json`)
+> e os seguidores de cada artista, com fonte e data (`seguidores.json`). Entram só o Centro, a Zona
+> Sul e a Zona Oeste, e só os blocos com atração ou num circuito de megabloco. O que vem abaixo é a
+> reconstituição de antes, que fica como histórico (dela só sobraram os artistas).
+
+> **Aviso de antes (até a 0.10.1).** Isto é uma **reconstituição** feita de notícias e guias, **não é a
 > lista oficial**. Eu não consegui abrir o site da Prefeitura ([carnavalsp.com](https://www.carnavalsp.com)),
 > que só carrega com JavaScript. As fontes **discordam** em muitos horários, e às vezes até no
 > dia e no local. Serve para testar o app, **não para ninguém sair de casa**. O beta está

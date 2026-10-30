@@ -7,6 +7,11 @@ Enquanto o app está em beta, o número é `0.MEIO.FINAL`. O número do meio sob
 uma tela ou funcionalidade nova (0.3.0, 0.4.0…) e o último, quando é só uma correção pequena
 (0.3.1). Cada versão tem uma etiqueta no GitHub, como `v0.3.0`.
 
+## 0.12.3 (30/10/2026)
+
+- Documentos em dia: a situação e as decisões novas no README, o andamento das versões no
+  planejamento e a fonte oficial dos dados. Nada muda no site.
+
 ## 0.12.2 (30/10/2026)
 
 - Cartão do ponto no mapa: os três botões numa linha só, os nomes dos blocos do ponto já no

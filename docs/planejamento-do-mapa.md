@@ -18,8 +18,14 @@
 | 0.8.0 | Blocos no mapa: os trajetos dos megablocos | feito |
 | 0.9.0 | Offline e desempenho | feito |
 | 0.10.0 | O beta no ar para teste, no GitHub Pages | feito |
-| **0.10.1** | **Os blocos do mesmo dia num cartão só** | **feito** |
-| **0.11.0** | **Os dados do Diário Oficial: mais blocos, zonas Leste e Norte, o pino na concentração e a linha de cada bloco** | **próximo** |
+| 0.10.1 | Os blocos do mesmo dia num cartão só | feito |
+| 0.11.0 | Os dados do Diário Oficial: em ordem de fama, só Centro, Sul e Oeste, o ponto da concentração e a linha de cada bloco | feito |
+| 0.11.1 | Os grandes pontos (Ibirapuera, Consolação, Faria Lima…) voltam a ser lugares com nome próprio | feito |
+| 0.11.2 | Arrumação do código do mapa e dos cartões | feito |
+| 0.12.0 | Aba Blocos, página do lugar pela aba escolhida, cabeçalho baixo, selos com cor, cartão do mapa que cresce | feito |
+| 0.12.1 | O app instalado no celular passa a se atualizar sozinho | feito |
+| **0.12.2** | **Cartão do mapa: botões numa linha, nomes dos blocos e setinha** | **feito** |
+| **Próxima** | **A escolher na lista "Para depois da 0.12.0" (docs/ideias-em-aberto.md)** | **a decidir** |
 | depois | Backend, Favoritos, "Em alta" calculado e, **por último**, a parte social | |
 | fim do projeto | Decidir o que dá para cortar para o site ficar ainda mais leve | depois |
 
