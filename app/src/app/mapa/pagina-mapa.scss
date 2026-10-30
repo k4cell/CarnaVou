@@ -126,11 +126,42 @@ app-mapa-base {
   &.arrastando {
     transition: none;
   }
+}
 
-  .nome {
-    margin: 0;
-    padding-right: 44px;
+// Os blocos do ponto no cartão pequeno: o nome em destaque e, embaixo, os artistas ou o horário.
+// O espaço à direita é do "×".
+.blocos-do-ponto {
+  margin: 0;
+  padding: 0 44px 0 0;
+  list-style: none;
+
+  a {
+    display: block;
+    padding: 4px 0;
+    color: var(--texto);
+    text-decoration: none;
   }
+
+  .nome,
+  .sobre {
+    display: block;
+  }
+
+  .sobre {
+    color: var(--texto-suave);
+  }
+}
+
+// "+ 3 blocos aqui": abre o cartão com os outros blocos do ponto.
+.mais-blocos {
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--roxo);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
 }
 
 // A alça de puxar: uma setinha no alto do cartão (para cima: abre; para baixo: encolhe), com
@@ -212,7 +243,7 @@ app-mapa-base {
   font-size: 0.95rem;
 }
 
-// Os blocos do lugar na aba: uma linha cada, e o link leva para a página do bloco.
+// Os outros blocos do ponto, ao abrir o cartão: uma linha cada, e o link leva para a página do bloco.
 .blocos {
   margin: 8px 0 0;
   padding: 0;
@@ -238,11 +269,6 @@ app-mapa-base {
   display: flex;
   gap: 8px;
   margin-top: 12px;
-}
-
-.nomes-do-ponto {
-  margin: 4px 0 0;
-  font-weight: 600;
 }
 
 // A lista "Perto de você": até três blocos, cada um uma linha que se toca.

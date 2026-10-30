@@ -7,6 +7,13 @@ Enquanto o app está em beta, o número é `0.MEIO.FINAL`. O número do meio sob
 uma tela ou funcionalidade nova (0.3.0, 0.4.0…) e o último, quando é só uma correção pequena
 (0.3.1). Cada versão tem uma etiqueta no GitHub, como `v0.3.0`.
 
+## 0.18.0 (30/10/2026)
+
+- Cartão do ponto no mapa: no lugar de "2 blocos neste ponto", o nome de cada bloco numa linha,
+  com os artistas embaixo (ou o horário, quando o bloco não tem artista divulgado). A zona e o
+  lugar vêm depois. Num ponto com 4 blocos ou mais, aparecem os 2 de agora ou dos próximos
+  horários e um "+ X blocos aqui" que abre o resto.
+
 ## 0.17.0 (30/10/2026)
 
 - O After vale sempre o hoje: saíram as abas Hoje / Amanhã / Geral. Ganhou o botão "Onde estou",
