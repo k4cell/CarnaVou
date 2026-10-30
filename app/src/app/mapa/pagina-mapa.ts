@@ -24,7 +24,7 @@ import { Localizacao } from '../localizacao/localizacao';
 import { Relogio } from '../relogio/relogio';
 import { ZonaTag } from '../zona/zona-tag';
 import { estaNaGrandeSP } from './limites';
-import { linkDoGoogleMaps, linkDoUber, linkDoWaze } from './links';
+import { linksDeIr } from './links';
 import { MapaBase, PontoNoMapa, TrajetoNoMapa } from './mapa-base';
 import { blocosPertoDeVoce } from './perto-de-voce';
 
@@ -168,14 +168,7 @@ export class PaginaMapa {
 
   protected readonly links = computed(() => {
     const ponto = this.cartao();
-    if (!ponto) {
-      return undefined;
-    }
-    return {
-      google: linkDoGoogleMaps(ponto.lat, ponto.lng),
-      waze: linkDoWaze(ponto.lat, ponto.lng),
-      uber: linkDoUber(ponto.lat, ponto.lng, ponto.titulo),
-    };
+    return ponto ? linksDeIr(ponto.lat, ponto.lng, ponto.titulo) : undefined;
   });
 
   /** "1,2 km", se a pessoa já mostrou onde está. Em linha reta, sem ênfase. */

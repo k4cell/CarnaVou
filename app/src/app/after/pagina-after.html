@@ -1,0 +1,59 @@
+<h2 class="titulo">After</h2>
+<p class="subtitulo">Para onde ir hoje, depois dos blocos.</p>
+
+<button
+  #botaoOndeEstou
+  type="button"
+  class="botao-claro onde-estou"
+  [attr.aria-busy]="procurando()"
+  (click)="ondeEstou()"
+>
+  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <circle cx="12" cy="12" r="6.5" />
+    <circle cx="12" cy="12" r="1.5" />
+    <path d="M12 2v3M12 19v3M2 12h3M19 12h3" />
+  </svg>
+  {{ procurando() ? 'Procurando você…' : 'Onde estou' }}
+</button>
+@if (aviso(); as texto) {
+  <p class="aviso" role="status">{{ texto }}</p>
+}
+
+<h3 class="secao">Blocos da noite</h3>
+<!-- Na página pronta ainda não se sabe o dia: a lista só aparece depois. -->
+@if (blocos(); as lista) {
+  @if (lista.length > 0) {
+    <ul class="lista">
+      @for (bloco of lista; track bloco.id) {
+        <li><app-banner-bloco [bloco]="bloco" [mostrarLugar]="true" /></li>
+      }
+    </ul>
+  } @else {
+    <p class="vazio">Nenhum bloco da noite hoje.</p>
+  }
+}
+
+<h3 class="secao">Bares e pontos de encontro</h3>
+<ul class="lista">
+  @for (lugar of lugares(); track lugar.id) {
+    <li class="cartao lugar-do-after" [attr.data-faixa]="lugar.faixa">
+      <span class="texto">
+        <strong class="nome">{{ lugar.nome }}</strong>
+        <app-zona-tag [zona]="lugar.zona" />
+        <span class="endereco">{{ lugar.tipo }} · {{ lugar.endereco }}</span>
+        @if (lugar.distancia) {
+          <span class="distancia">A {{ lugar.distancia }} de você, em linha reta.</span>
+        }
+        <span class="acoes">
+          <a class="botao botao-principal" [href]="lugar.links.aPe" target="_blank" rel="noopener">Ir a pé</a>
+          <a class="botao" [href]="lugar.links.uber" target="_blank" rel="noopener">Uber</a>
+          <a class="botao" [href]="lugar.links.metro" target="_blank" rel="noopener">Metrô</a>
+        </span>
+      </span>
+    </li>
+  }
+</ul>
+
+@if (explicando()) {
+  <app-explicacao-da-localizacao (continuar)="continuar()" (agoraNao)="agoraNao()" />
+}

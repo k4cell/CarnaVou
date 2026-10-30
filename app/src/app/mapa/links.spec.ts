@@ -1,15 +1,15 @@
-import { linkDoGoogleMaps, linkDoUber, linkDoWaze } from './links';
+import { linkDoGoogleMaps, linkDoUber, linksDeIr } from './links';
 
-describe('links de "Ir", Waze e Uber', () => {
-  it('monta o link de rota do Google Maps com a latitude e a longitude do destino', () => {
-    expect(linkDoGoogleMaps(-23.58485, -46.65482)).toBe(
-      'https://www.google.com/maps/dir/?api=1&destination=-23.58485,-46.65482',
+describe('links de "Ir a pé", Uber e Metrô', () => {
+  it('monta a rota a pé do Google Maps com a latitude e a longitude do destino', () => {
+    expect(linkDoGoogleMaps(-23.58485, -46.65482, 'a-pe')).toBe(
+      'https://www.google.com/maps/dir/?api=1&destination=-23.58485,-46.65482&travelmode=walking',
     );
   });
 
-  it('monta o link do Waze já mandando navegar até o destino', () => {
-    expect(linkDoWaze(-23.58485, -46.65482)).toBe(
-      'https://waze.com/ul?ll=-23.58485%2C-46.65482&navigate=yes',
+  it('monta a rota de transporte público (metrô, trem e ônibus) do Google Maps', () => {
+    expect(linkDoGoogleMaps(-23.58485, -46.65482, 'metro')).toBe(
+      'https://www.google.com/maps/dir/?api=1&destination=-23.58485,-46.65482&travelmode=transit',
     );
   });
 
@@ -19,5 +19,9 @@ describe('links de "Ir", Waze e Uber', () => {
     const destino = JSON.parse(decodeURIComponent(link.split('=')[1]));
     expect(destino).toEqual({ latitude: -23.58485, longitude: -46.65482, addressLine1: 'Agrada Gregos' });
     expect(link).not.toContain('pickup');
+  });
+
+  it('junta os três, na ordem da tela', () => {
+    expect(Object.keys(linksDeIr(-23.5, -46.6, 'X'))).toEqual(['aPe', 'uber', 'metro']);
   });
 });

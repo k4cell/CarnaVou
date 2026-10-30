@@ -1,15 +1,16 @@
 /**
  * Links que abrem o app de mapa do celular (ou o site dele) já com o destino. Sem API e sem custo.
- * Os formatos vêm da documentação do Google Maps (parâmetro `api=1`), do Waze (`waze.com/ul`) e
- * do Uber (`m.uber.com/looking`, o "universal link").
+ * Os formatos vêm da documentação do Google Maps (parâmetros `api=1` e `travelmode`) e do Uber
+ * (`m.uber.com/looking`, o "universal link"). No carnaval quase ninguém vai de carro: as rotas são
+ * a pé e de metrô (o transporte público do Google Maps, com trem e ônibus).
  */
 
-export function linkDoGoogleMaps(lat: number, lng: number): string {
-  return `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
-}
+export type ModoDaRota = 'a-pe' | 'metro';
 
-export function linkDoWaze(lat: number, lng: number): string {
-  return `https://waze.com/ul?ll=${lat}%2C${lng}&navigate=yes`;
+const MODOS_DO_GOOGLE: Record<ModoDaRota, string> = { 'a-pe': 'walking', metro: 'transit' };
+
+export function linkDoGoogleMaps(lat: number, lng: number, modo: ModoDaRota): string {
+  return `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}&travelmode=${MODOS_DO_GOOGLE[modo]}`;
 }
 
 /**
@@ -19,4 +20,13 @@ export function linkDoWaze(lat: number, lng: number): string {
 export function linkDoUber(lat: number, lng: number, nome: string): string {
   const destino = JSON.stringify({ latitude: lat, longitude: lng, addressLine1: nome });
   return `https://m.uber.com/looking?drop%5B0%5D=${encodeURIComponent(destino)}`;
+}
+
+/** Os três botões de ir até um ponto, na ordem da tela: Ir a pé, Uber e Metrô. */
+export function linksDeIr(lat: number, lng: number, nome: string) {
+  return {
+    aPe: linkDoGoogleMaps(lat, lng, 'a-pe'),
+    uber: linkDoUber(lat, lng, nome),
+    metro: linkDoGoogleMaps(lat, lng, 'metro'),
+  };
 }

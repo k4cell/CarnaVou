@@ -233,17 +233,18 @@ describe('PaginaMapa', () => {
       expect(cartao()?.querySelector('.artistas')?.textContent).toContain('Gloria Groove');
     });
 
-    it('leva o botão "Ir" ao Google Maps, o Waze e o Uber ao ponto da concentração', async () => {
+    it('leva "Ir a pé", Uber e Metrô ao ponto da concentração', async () => {
       const { cartao, tocarNoBloco } = await renderizar(SABADO_14H);
       const [bloco] = acharPonto('hoje', umBloco);
       await tocarNoBloco(bloco);
       const [lng, lat] = trajetoDoBloco(bloco.id)!.inicio;
       const links = Array.from(cartao()!.querySelectorAll<HTMLAnchorElement>('.acoes a'));
-      expect(links.map((link) => link.textContent?.trim())).toEqual(['Ir', 'Waze', 'Uber']);
-      const [ir, waze, uber] = links;
-      expect(ir.getAttribute('href')).toBe(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`);
-      expect(waze.getAttribute('href')).toBe(`https://waze.com/ul?ll=${lat}%2C${lng}&navigate=yes`);
+      expect(links.map((link) => link.textContent?.trim())).toEqual(['Ir a pé', 'Uber', 'Metrô']);
+      const [aPe, uber, metro] = links;
+      const rota = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
+      expect(aPe.getAttribute('href')).toBe(`${rota}&travelmode=walking`);
       expect(uber.getAttribute('href')).toContain(encodeURIComponent(`"latitude":${lat},"longitude":${lng}`));
+      expect(metro.getAttribute('href')).toBe(`${rota}&travelmode=transit`);
       for (const link of links) {
         expect(link.getAttribute('rel')).toBe('noopener');
         expect(link.getAttribute('target')).toBe('_blank');

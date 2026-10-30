@@ -1,0 +1,42 @@
+.titulo {
+  margin-top: 16px;
+}
+
+.onde-estou {
+  cursor: pointer;
+  font: inherit;
+  font-weight: 700;
+}
+
+.aviso {
+  margin: 8px 0 0;
+  color: var(--texto-suave);
+}
+
+.vazio {
+  margin: 8px 0 0;
+}
+
+.lugar-do-after .texto {
+  flex: 1;
+  gap: 4px;
+  min-width: 0;
+}
+
+.endereco,
+.distancia {
+  color: var(--texto-suave);
+}
+
+.acoes {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+// No mapa a explicação cobre só o mapa; aqui ela cobre a tela entre o cabeçalho e o menu.
+app-explicacao-da-localizacao {
+  position: fixed;
+  top: var(--altura-topo);
+  bottom: var(--altura-menu);
+}

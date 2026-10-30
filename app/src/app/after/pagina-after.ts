@@ -1,106 +1,106 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, computed, inject, signal, viewChild } from '@angular/core';
 
-import { AbasDoDia } from '../abas/abas-do-dia';
 import { BannerBloco } from '../banner/banner-bloco';
-import { Aba } from '../dados/agenda';
 import { FAIXAS } from '../dados/consultas';
 import { blocosDaNoite } from '../dados/lista-de-blocos';
 import { LUGARES_DO_AFTER } from '../dados/lugares-do-after';
-import { FiltroDeDia } from '../filtro/filtro-de-dia';
-import { linkDoGoogleMaps, linkDoUber, linkDoWaze } from '../mapa/links';
+import { distanciaEmMetros, textoDaDistancia } from '../localizacao/distancia';
+import { ExplicacaoDaLocalizacao } from '../localizacao/explicacao-da-localizacao';
+import { Localizacao } from '../localizacao/localizacao';
+import { linksDeIr } from '../mapa/links';
 import { Relogio } from '../relogio/relogio';
 import { ZonaTag } from '../zona/zona-tag';
-
-const NADA_NA_ABA: Record<Aba, string> = {
-  hoje: 'Nenhum bloco da noite hoje.',
-  amanha: 'Nenhum bloco da noite amanhã.',
-  geral: 'Não tem mais blocos da noite.',
-};
 
 /** Os lugares do After, cada um com a sua cor de faixa (as cores se revezam) e os links de ir. */
 const LUGARES = LUGARES_DO_AFTER.map((lugar, posicao) => ({
   ...lugar,
   faixa: FAIXAS[posicao % FAIXAS.length],
-  links: {
-    google: linkDoGoogleMaps(lugar.lat, lugar.lng),
-    waze: linkDoWaze(lugar.lat, lugar.lng),
-    uber: linkDoUber(lugar.lat, lugar.lng, lugar.nome),
-  },
+  links: linksDeIr(lugar.lat, lugar.lng, lugar.nome),
 }));
 
+const AVISOS = {
+  negada:
+    'O celular não deixou o CarnaVou ver onde você está. Para mudar, abra as configurações do navegador, em permissões do site.',
+  semSinal: 'Não consegui achar você agora. Tente de novo em um lugar aberto.',
+  indisponivel: 'Este navegador não consegue dizer onde você está.',
+};
+
 /**
- * A aba After: para onde ir depois dos blocos. Os blocos da noite seguem o filtro Hoje | Amanhã |
- * Geral, o mesmo das outras abas; os bares e pontos de encontro valem para todos os dias.
+ * A aba After: para onde ir agora, depois dos blocos. Vale sempre o hoje (sem as abas de dia):
+ * os blocos da noite de hoje e os bares e pontos de encontro. Tocando em "Onde estou", os lugares
+ * ficam do mais perto para o mais longe; a localização segue as mesmas regras do mapa.
  */
 @Component({
   selector: 'app-pagina-after',
-  imports: [AbasDoDia, BannerBloco, ZonaTag],
-  template: `
-    <app-abas-do-dia />
-    <h2 class="titulo">After</h2>
-    <p class="subtitulo">Para onde ir depois dos blocos.</p>
-
-    <h3 class="secao">Blocos da noite</h3>
-    @if (blocos().length > 0) {
-      <ul class="lista">
-        @for (bloco of blocos(); track bloco.id) {
-          <li><app-banner-bloco [bloco]="bloco" [mostrarLugar]="true" /></li>
-        }
-      </ul>
-    } @else {
-      <p class="vazio">{{ nadaNaAba() }}</p>
-    }
-
-    <h3 class="secao">Bares e pontos de encontro</h3>
-    <ul class="lista">
-      @for (lugar of lugares; track lugar.id) {
-        <li class="cartao lugar-do-after" [attr.data-faixa]="lugar.faixa">
-          <span class="texto">
-            <strong class="nome">{{ lugar.nome }}</strong>
-            <app-zona-tag [zona]="lugar.zona" />
-            <span class="endereco">{{ lugar.tipo }} · {{ lugar.endereco }}</span>
-            <span class="acoes">
-              <a class="botao botao-principal" [href]="lugar.links.google" target="_blank" rel="noopener">Ir</a>
-              <a class="botao" [href]="lugar.links.waze" target="_blank" rel="noopener">Waze</a>
-              <a class="botao" [href]="lugar.links.uber" target="_blank" rel="noopener">Uber</a>
-            </span>
-          </span>
-        </li>
-      }
-    </ul>
-  `,
-  styles: `
-    .titulo {
-      margin-top: 16px;
-    }
-
-    .vazio {
-      margin: 8px 0 0;
-    }
-
-    .lugar-do-after .texto {
-      flex: 1;
-      gap: 4px;
-      min-width: 0;
-    }
-
-    .endereco {
-      color: var(--texto-suave);
-    }
-
-    .acoes {
-      display: flex;
-      gap: 8px;
-      margin-top: 8px;
-    }
-  `,
+  imports: [BannerBloco, ExplicacaoDaLocalizacao, ZonaTag],
+  templateUrl: './pagina-after.html',
+  styleUrl: './pagina-after.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PaginaAfter {
-  private readonly filtro = inject(FiltroDeDia);
+  private readonly localizacao = inject(Localizacao);
   private readonly relogio = inject(Relogio);
 
-  protected readonly lugares = LUGARES;
-  protected readonly blocos = computed(() => blocosDaNoite(this.filtro.ativa(), this.relogio.agora()));
-  protected readonly nadaNaAba = computed(() => NADA_NA_ABA[this.filtro.ativa()]);
+  private readonly botaoOndeEstou = viewChild.required<ElementRef<HTMLButtonElement>>('botaoOndeEstou');
+
+  /** Os blocos da noite de hoje. Nulo enquanto não se sabe o dia (na página pronta). */
+  protected readonly blocos = computed(() => {
+    const agora = this.relogio.agora();
+    return agora ? blocosDaNoite('hoje', agora) : null;
+  });
+
+  /** Os lugares, do mais perto para o mais longe quando já se sabe onde a pessoa está. */
+  protected readonly lugares = computed(() => {
+    const voce = this.localizacao.estado() === 'ligada' ? this.localizacao.posicao() : null;
+    if (!voce) {
+      return LUGARES.map((lugar) => ({ ...lugar, distancia: null as string | null }));
+    }
+    return LUGARES.map((lugar) => ({ lugar, metros: distanciaEmMetros(voce, lugar) }))
+      .sort((a, b) => a.metros - b.metros)
+      .map(({ lugar, metros }) => ({ ...lugar, distancia: textoDaDistancia(metros) }));
+  });
+
+  /** A tela que explica a localização está aberta? */
+  protected readonly explicando = signal(false);
+  protected readonly procurando = computed(() => this.localizacao.estado() === 'procurando');
+
+  protected readonly aviso = computed<string | null>(() => {
+    switch (this.localizacao.estado()) {
+      case 'negada':
+        return AVISOS.negada;
+      case 'sem-sinal':
+        return AVISOS.semSinal;
+      case 'indisponivel':
+        return AVISOS.indisponivel;
+      default:
+        return null;
+    }
+  });
+
+  /** A pessoa tocou em "Onde estou": explica antes, se o celular ainda vai perguntar. */
+  protected async ondeEstou(): Promise<void> {
+    if (this.procurando()) {
+      return;
+    }
+    const passo = await this.localizacao.proximoPasso();
+    if (passo === 'explicar') {
+      this.explicando.set(true);
+    } else if (passo === 'procurar') {
+      await this.localizacao.procurar();
+    }
+  }
+
+  protected async continuar(): Promise<void> {
+    this.fecharAExplicacao();
+    await this.localizacao.procurar();
+  }
+
+  protected agoraNao(): void {
+    this.fecharAExplicacao();
+  }
+
+  private fecharAExplicacao(): void {
+    this.explicando.set(false);
+    this.botaoOndeEstou().nativeElement.focus();
+  }
 }
