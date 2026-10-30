@@ -7,6 +7,13 @@ Enquanto o app está em beta, o número é `0.MEIO.FINAL`. O número do meio sob
 uma tela ou funcionalidade nova (0.3.0, 0.4.0…) e o último, quando é só uma correção pequena
 (0.3.1). Cada versão tem uma etiqueta no GitHub, como `v0.3.0`.
 
+## 0.17.0 (30/10/2026)
+
+- O After vale sempre o hoje: saíram as abas Hoje / Amanhã / Geral. Ganhou o botão "Onde estou",
+  que põe os bares e pontos de encontro do mais perto para o mais longe, com a distância.
+- Os botões de ir, no mapa e no After, agora são **Ir a pé**, **Uber** e **Metrô** (rota de
+  transporte público). O Waze saiu.
+
 ## 0.16.4 (30/10/2026)
 
 - O Meio Fio Bar virou só "Meio Fio" no After, como o Meretriz e o Galo.

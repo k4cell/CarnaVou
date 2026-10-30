@@ -9,6 +9,18 @@ O planejamento do mapa e das próximas fases, que junta todas estas ideias num r
 
 ---
 
+## Diferenciais (para o próximo planejamento)
+
+- **Modo Maratona (agenda do dia):** eu marco 2 ou 3 blocos do dia e o app diz se dá tempo de ir
+  de um para o outro, a pé ou de transporte, antes de cada um acabar. Ideia de um amigo que está
+  testando o app (30/10/2026); eu gostei. Pontos para pensar:
+  - Marcar blocos precisa guardar a escolha: pode ser o começo dos Favoritos, só no aparelho, sem
+    conta.
+  - A pé dá para calcular sem internet e sem custo, pela distância, com folga para a multidão.
+    Transporte (metrô e ônibus) precisa de um serviço de rotas, que pode custar.
+  - O bloco anda: o certo é medir da dispersão de um até a concentração do outro, e nem todo bloco
+    tem esse trajeto nas fontes.
+
 ## Para depois da 0.12.0
 
 - **Abas Hoje / Amanhã / Geral também na página do lugar** (talvez na 0.13): ao abrir, por
