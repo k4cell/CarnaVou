@@ -1,9 +1,7 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 
-import { Aba, diaIso, horaIso } from '../dados/agenda';
-import { dataPorExtenso, formatarHora } from '../dados/formato';
+import { Aba } from '../dados/agenda';
 import { FiltroDeDia } from '../filtro/filtro-de-dia';
-import { Relogio } from '../relogio/relogio';
 
 const ABAS: { id: Aba; nome: string }[] = [
   { id: 'hoje', nome: 'Hoje' },
@@ -11,7 +9,10 @@ const ABAS: { id: Aba; nome: string }[] = [
   { id: 'geral', nome: 'Geral' },
 ];
 
-/** O filtro Hoje | Amanhã | Geral, com o aviso de data de teste quando "hoje" não é o de verdade. */
+/**
+ * O filtro Hoje | Amanhã | Geral. Fica preso no alto da tela quando a lista rola, para trocar de
+ * dia sem voltar lá em cima. (A data de teste fica no aviso do cabeçalho.)
+ */
 @Component({
   selector: 'app-abas-do-dia',
   templateUrl: './abas-do-dia.html',
@@ -20,25 +21,9 @@ const ABAS: { id: Aba; nome: string }[] = [
 })
 export class AbasDoDia {
   private readonly filtro = inject(FiltroDeDia);
-  private readonly relogio = inject(Relogio);
 
   protected readonly abas = ABAS;
   protected readonly ativa = this.filtro.ativa;
-  protected readonly simulado = this.relogio.simulado;
-
-  /**
-   * "Sábado, 7/2/2026, 12h": só aparece quando a data não vem do relógio do celular. O ano fica à
-   * vista, para ninguém achar que é o carnaval que vem, e a data em números cabe numa linha só.
-   */
-  protected readonly dataDeTeste = computed(() => {
-    const agora = this.relogio.agora();
-    if (!agora) {
-      return '';
-    }
-    const semana = dataPorExtenso(diaIso(agora)).split(',')[0];
-    const data = `${agora.getDate()}/${agora.getMonth() + 1}/${agora.getFullYear()}`;
-    return `${semana}, ${data}, ${formatarHora(horaIso(agora))}`;
-  });
 
   protected escolher(aba: Aba): void {
     this.filtro.escolher(aba);

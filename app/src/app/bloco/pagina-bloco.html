@@ -1,6 +1,7 @@
 @if (achado(); as bloco) {
-  <a class="voltar" [routerLink]="['/local', bloco.localId]">← {{ lugar()?.nome }}</a>
-
+  @if (jaPassou()) {
+    <p class="ja-passou">Esse bloco já aconteceu.</p>
+  }
   <h2 class="titulo">{{ bloco.nome }}</h2>
   <p class="subtitulo">{{ resumo()?.dia }} · {{ lugar()?.nome }}</p>
   <p class="horario">{{ resumo()?.horario }}</p>
@@ -27,11 +28,14 @@
 
   <h3 class="secao">Atrações</h3>
   @if (resumo()?.atracoes?.length) {
+    <!-- Um cartão só, com uma linha por horário e os nomes lado a lado. -->
     <ul class="atracoes">
-      @for (atracao of resumo()?.atracoes; track atracao.nome) {
+      @for (grupo of resumo()?.atracoes; track grupo.hora) {
         <li class="atracao">
-          <span class="hora">{{ atracao.hora }}</span>
-          <span>{{ atracao.nome }}</span>
+          @if (grupo.hora) {
+            <span class="hora">{{ grupo.hora }}</span>
+          }
+          <span class="nomes-da-hora">{{ grupo.nomes }}</span>
         </li>
       }
     </ul>
@@ -39,6 +43,5 @@
     <p class="sem-atracoes">Ainda não tem atrações divulgadas.</p>
   }
 } @else {
-  <a class="voltar" routerLink="/">← Em alta</a>
-  <p>Não achei esse bloco.</p>
+  <p>Não achei esse bloco. <a routerLink="/">Ver os lugares em alta</a></p>
 }

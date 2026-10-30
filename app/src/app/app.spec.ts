@@ -1,13 +1,14 @@
 import { TestBed } from '@angular/core/testing';
-import { provideRouter } from '@angular/router';
+import { Router, provideRouter, withComponentInputBinding } from '@angular/router';
 import { App } from './app';
 import { routes } from './app.routes';
+import { DATA_DE_DEMONSTRACAO } from './relogio/relogio';
 
 describe('App', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [App],
-      providers: [provideRouter(routes)],
+      providers: [provideRouter(routes, withComponentInputBinding())],
     }).compileComponents();
   });
 
@@ -25,13 +26,53 @@ describe('App', () => {
     expect(compiled.querySelector('h1 img[alt="CarnaVou"]')).not.toBeNull();
   });
 
-  it('avisa no alto de toda página que é uma versão de teste, com o ano dos dados', async () => {
+  it('avisa no cabeçalho de toda página, numa linha só, que é uma versão de teste, com o ano dos dados', async () => {
     const fixture = TestBed.createComponent(App);
     await fixture.whenStable();
     const compiled = fixture.nativeElement as HTMLElement;
-    const aviso = compiled.querySelector('main app-aviso-de-teste');
-    expect(aviso?.textContent?.trim()).toBe('Versão de teste: os blocos e os horários são do carnaval de rua de 2026.');
-    expect(compiled.querySelector('main')?.firstElementChild?.tagName.toLowerCase()).toBe('app-aviso-de-teste');
+    const aviso = compiled.querySelector('header app-aviso-de-teste');
+    expect(aviso?.textContent?.replace(/\s+/g, ' ').trim()).toMatch(/^Teste Blocos de 2026/);
+  });
+
+  it('põe a data de teste no mesmo aviso, quando "hoje" não vem do relógio do celular', async () => {
+    // Sem nada no endereço, vale a data de demonstração do app: sábado, 7/2/2026, meio-dia.
+    const fixture = TestBed.createComponent(App);
+    await fixture.whenStable();
+    const aviso = (fixture.nativeElement as HTMLElement).querySelector('header app-aviso-de-teste');
+    expect(aviso?.textContent?.replace(/\s+/g, ' ').trim()).toBe('Teste Blocos de 2026 · hoje é sáb, 7/2/2026, 12h');
+  });
+
+  it('não põe a data de teste quando é o relógio de verdade', async () => {
+    TestBed.overrideProvider(DATA_DE_DEMONSTRACAO, { useValue: null });
+    const fixture = TestBed.createComponent(App);
+    await fixture.whenStable();
+    const aviso = (fixture.nativeElement as HTMLElement).querySelector('header app-aviso-de-teste');
+    expect(aviso?.textContent).not.toContain('hoje é');
+  });
+
+  describe('a seta de voltar, no canto do cabeçalho', () => {
+    async function abrir(endereco: string) {
+      const fixture = TestBed.createComponent(App);
+      await TestBed.inject(Router).navigateByUrl(endereco);
+      await fixture.whenStable();
+      return (fixture.nativeElement as HTMLElement).querySelector<HTMLAnchorElement>('header a.voltar');
+    }
+
+    it('no bloco, volta para o lugar, com o nome dele para o leitor de tela', async () => {
+      const seta = await abrir('/local/consolacao/bloco-skol');
+      expect(seta?.getAttribute('href')).toBe('/local/consolacao');
+      expect(seta?.getAttribute('aria-label')).toBe('Voltar para Rua da Consolação e Baixo Augusta');
+    });
+
+    it('no lugar, volta para a Em alta', async () => {
+      const seta = await abrir('/local/ibirapuera');
+      expect(seta?.getAttribute('href')).toBe('/');
+    });
+
+    it('não aparece nas abas do menu', async () => {
+      expect(await abrir('/')).toBeNull();
+      expect(await abrir('/blocos')).toBeNull();
+    });
   });
 
   it('oferece a logo em WebP, que é mais leve, com o PNG de reserva', async () => {

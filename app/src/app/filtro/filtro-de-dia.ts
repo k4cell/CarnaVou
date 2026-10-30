@@ -6,7 +6,7 @@ import { Relogio } from '../relogio/relogio';
 export const MENSAGENS_DA_ABA_VAZIA: Record<Aba, string> = {
   hoje: 'Nenhum bloco hoje. Veja a aba Geral.',
   amanha: 'Nenhum bloco amanhã. Veja a aba Geral.',
-  geral: 'Nenhum lugar por aqui ainda.',
+  geral: 'Não tem mais blocos pela frente.',
 };
 
 /**

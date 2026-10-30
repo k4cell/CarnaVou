@@ -6,10 +6,31 @@ import { Bloco, Local } from './tipos';
 /** As três abas da tela inicial. */
 export type Aba = 'hoje' | 'amanha' | 'geral';
 
+/**
+ * O jeito do selo, que dá a cor dele (fundo forte e texto escuro, para ler no sol): rolando agora,
+ * ainda vai começar (hoje ou amanhã), já acabou, ou só a conta dos blocos.
+ */
+export type TipoDoSelo = 'agora' | 'em-breve' | 'acabou' | 'conta';
+
+export function tipoDoSelo(selo: string): TipoDoSelo {
+  if (selo === 'Já começou') {
+    return 'agora';
+  }
+  if (selo.startsWith('Hoje às') || selo.startsWith('Amanhã às')) {
+    return 'em-breve';
+  }
+  if (selo === 'Já acabou' || selo === 'Sem mais blocos') {
+    return 'acabou';
+  }
+  return 'conta';
+}
+
 export interface CartaoDoLugar {
   local: Local;
   /** O selo do canto do cartão: "Já começou", "Hoje às 16h", "Amanhã às 11h", "5 blocos"… */
   selo: string;
+  /** O jeito do selo, que dá a cor dele. */
+  tipoDoSelo: TipoDoSelo;
   /** Nome da cor da faixa (rosa, amarelo…): é sempre a mesma para o mesmo lugar. */
   faixa: string;
   /** O que a linha de baixo lista: os artistas, quando as notícias citam algum, ou os blocos. */
@@ -116,6 +137,7 @@ function montar(local: Local, selo: string, artistas: string[], blocos: Bloco[])
   return {
     local,
     selo,
+    tipoDoSelo: tipoDoSelo(selo),
     faixa: faixaDoLocal(local.id),
     rotulo: comArtistas ? 'Artistas' : 'Blocos',
     ...resumirNomes(nomes),
@@ -155,10 +177,13 @@ export function cartoesDaAba(aba: Aba, agora: Date | null): CartaoDoLugar[] {
       const cartao = montar(local, seloDeAmanha(deAmanha), artistasPorFama(deAmanha), deAmanha);
       cartoes.push({ cartao, peso: pesoDoDia(deAmanha) });
     } else if (aba === 'geral') {
+      // O app só mostra o presente e o futuro: o lugar cujos blocos já passaram todos some.
       const proximos = blocos.filter((bloco) => bloco.data >= dia);
-      const selo = seloGeral(blocos, dia, amanha, hora);
-      const cartao = montar(local, selo, artistasDoLugar(local.id, dia), proximos.length > 0 ? proximos : blocos);
-      cartoes.push({ cartao, peso: { fama: 0, quantos: 0 } });
+      if (proximos.length > 0) {
+        const selo = seloGeral(blocos, dia, amanha, hora);
+        const cartao = montar(local, selo, artistasDoLugar(local.id, dia), proximos);
+        cartoes.push({ cartao, peso: { fama: 0, quantos: 0 } });
+      }
     }
   }
   // Em Hoje e Amanhã, vêm primeiro os lugares com os artistas mais famosos do dia e, depois, os

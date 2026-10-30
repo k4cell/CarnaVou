@@ -19,18 +19,25 @@ describe('MenuInferior', () => {
     return tela.querySelector('[aria-current="page"]')?.textContent?.trim();
   }
 
-  it('tem só as abas Descobrir e Mapa, na ordem', async () => {
+  it('tem as abas Descobrir, Blocos e Mapa, na ordem', async () => {
     const fixture = await montar();
     const tela = fixture.nativeElement as HTMLElement;
     const nomes = Array.from(tela.querySelectorAll('a')).map((a) => a.textContent?.trim());
-    expect(nomes).toEqual(['Descobrir', 'Mapa']);
+    expect(nomes).toEqual(['Descobrir', 'Blocos', 'Mapa']);
+  });
+
+  it('marca a aba Blocos quando a pessoa está nela', async () => {
+    const fixture = await montar();
+    await TestBed.inject(Router).navigateByUrl('/blocos');
+    await fixture.whenStable();
+    expect(abaAtual(fixture.nativeElement)).toBe('Blocos');
   });
 
   it('leva cada aba para o seu endereço', async () => {
     const fixture = await montar();
     const tela = fixture.nativeElement as HTMLElement;
     const enderecos = Array.from(tela.querySelectorAll('a')).map((a) => a.getAttribute('href'));
-    expect(enderecos).toEqual(['/', '/mapa']);
+    expect(enderecos).toEqual(['/', '/blocos', '/mapa']);
   });
 
   it('manda os endereços antigos /amigos e /favoritos para o Descobrir', async () => {

@@ -47,12 +47,17 @@ export function artistasPorFama(blocos: Bloco[]): string[] {
   return [...seguidores].sort(([, a], [, b]) => b - a).map(([nome]) => nome);
 }
 
-/** Os blocos mais famosos do lugar (os que têm artista conhecido), do mais para o menos. */
-export function destaquesDoLocal(localId: string, quantos: number): Bloco[] {
-  return blocosDoLocal(localId)
+/** Os mais famosos entre os blocos (só os que têm artista conhecido), do mais para o menos. */
+export function maisFamosos(blocos: Bloco[], quantos: number): Bloco[] {
+  return blocos
     .filter((bloco) => famaDoBloco(bloco) > 0)
     .sort((a, b) => famaDoBloco(b) - famaDoBloco(a))
     .slice(0, quantos);
+}
+
+/** Os blocos mais famosos do lugar, do mais para o menos. */
+export function destaquesDoLocal(localId: string, quantos: number): Bloco[] {
+  return maisFamosos(blocosDoLocal(localId), quantos);
 }
 
 export function acharBloco(localId: string, blocoId: string): Bloco | undefined {

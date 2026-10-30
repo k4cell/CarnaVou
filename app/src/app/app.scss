@@ -8,22 +8,53 @@
   padding: 0 16px;
 }
 
+// O cabeçalho é baixo, para sobrar tela para os cartões: a linha da logo (com a seta de voltar,
+// quando tem) e, embaixo, a faixa fina do aviso de teste. A altura total é a --altura-topo.
 .topo {
-  padding: 16px 0;
+  height: var(--altura-topo);
+  padding-bottom: 6px;
   background: var(--noite);
   color: #fff;
+}
 
-  .miolo {
-    display: flex;
-    gap: 12px;
-    align-items: center;
-    justify-content: space-between;
+.linha-do-topo {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  height: 52px;
+}
+
+.voltar {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  margin-left: -10px;
+  border-radius: 50%;
+  color: #fff;
+
+  svg {
+    width: 28px;
+    height: 28px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  &:focus-visible {
+    outline: 3px solid #fff;
+    outline-offset: -3px;
   }
 }
 
 // O aviso de "Sem internet" fica no canto do cabeçalho, sem mudar a altura dele.
 .sem-internet {
   flex: none;
+  margin-left: auto;
   padding: 4px 12px;
   border-radius: 999px;
   background: var(--amarelo);
@@ -48,7 +79,7 @@
 
   a {
     display: inline-flex;
-    gap: 12px;
+    gap: 8px;
     align-items: center;
 
     &:focus-visible {
@@ -61,16 +92,16 @@
 
 .emblema {
   width: auto;
-  height: 56px;
+  height: 36px;
 }
 
 .palavra {
   width: auto;
-  height: 37px;
+  height: 24px;
 }
 
 // Espaço embaixo para o menu fixo não cobrir o fim da página.
 .corpo {
-  padding-top: 16px;
+  padding-top: 8px;
   padding-bottom: calc(96px + env(safe-area-inset-bottom));
 }

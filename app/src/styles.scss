@@ -21,7 +21,7 @@
   --texto: #121214;
   --texto-suave: #55556a;
   // Alturas do cabeçalho e do menu de baixo: o mapa ocupa o espaço entre os dois.
-  --altura-topo: 88px;
+  --altura-topo: 82px;
   --altura-menu: calc(62px + env(safe-area-inset-bottom));
 }
 
@@ -67,6 +67,22 @@ a:focus-visible {
   margin: 4px 0 16px;
 }
 
+// Na página do lugar: qual dia está à vista (a aba escolhida) e o botão de ver todos os dias.
+.filtro-do-lugar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  align-items: center;
+  margin: 16px 0 0;
+  font-weight: 600;
+
+  button {
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+  }
+}
+
 // Os botões de ação de uma página (ver no mapa, copiar o link), lado a lado.
 .acoes-da-pagina {
   display: flex;
@@ -108,18 +124,6 @@ a:focus-visible {
     outline: 3px solid var(--texto);
     outline-offset: 2px;
   }
-}
-
-.voltar {
-  display: inline-flex;
-  align-items: center;
-  min-height: 44px;
-  padding: 0 16px;
-  border-radius: 999px;
-  background: var(--amarelo);
-  color: var(--texto);
-  font-weight: 700;
-  text-decoration: none;
 }
 
 .lista {
@@ -208,15 +212,33 @@ a:focus-visible {
 }
 
 // O selo no canto do cartão do lugar, na tela inicial e no mapa. Ainda não tem cor.
+// O selo do cartão: fundo forte e texto escuro, para ler no sol. Verde = rolando agora,
+// amarelo = ainda vai começar (hoje ou amanhã), cinza = já acabou; a conta dos blocos fica branca.
 .selo {
   flex: none;
-  padding: 2px 10px;
+  padding: 4px 10px;
   border: 1px solid var(--texto-suave);
   border-radius: 999px;
   background: var(--cartao);
-  font-size: 0.8125rem;
-  font-weight: 700;
+  color: var(--texto);
+  font-size: 0.875rem;
+  font-weight: 800;
   white-space: nowrap;
+
+  &[data-selo='agora'] {
+    border-color: var(--verde);
+    background: var(--verde);
+  }
+
+  &[data-selo='em-breve'] {
+    border-color: var(--amarelo);
+    background: var(--amarelo);
+  }
+
+  &[data-selo='acabou'] {
+    border-color: var(--borda);
+    background: var(--borda);
+  }
 }
 
 // Os nomes (artistas ou blocos) são o que chama o clique: o primeiro vem maior e em negrito.

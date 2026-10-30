@@ -17,6 +17,21 @@
     <li>
       <a
         class="item"
+        routerLink="/blocos"
+        [class.ativo]="ativo('/blocos')"
+        [attr.aria-current]="ativo('/blocos') ? 'page' : null"
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M9 18V6l11-2v12" />
+          <circle cx="6.5" cy="18" r="2.5" />
+          <circle cx="17.5" cy="16" r="2.5" />
+        </svg>
+        <span>Blocos</span>
+      </a>
+    </li>
+    <li>
+      <a
+        class="item"
         routerLink="/mapa"
         [class.ativo]="ativo('/mapa')"
         [attr.aria-current]="ativo('/mapa') ? 'page' : null"

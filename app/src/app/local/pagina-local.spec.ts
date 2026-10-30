@@ -4,6 +4,8 @@ import { provideRouter } from '@angular/router';
 import { cartoesDaAba } from '../dados/agenda';
 import { BLOCOS } from '../dados/blocos';
 import { destaquesDoLocal } from '../dados/consultas';
+import { FiltroDeDia } from '../filtro/filtro-de-dia';
+import { Relogio } from '../relogio/relogio';
 import { PaginaLocal } from './pagina-local';
 
 describe('PaginaLocal', () => {
@@ -116,6 +118,54 @@ describe('PaginaLocal', () => {
         expect(banner.querySelector('.horario')?.textContent).toContain('Começa às');
         expect(banner.querySelector('a')?.getAttribute('href')).toMatch(/^\/local\/ibirapuera\//);
       }
+    });
+  });
+
+  describe('com o dia de hoje conhecido (a aba escolhida na tela inicial vale aqui)', () => {
+    // Sábado, 14/02/2026, duas da tarde: no Ibirapuera tem Carna Lau e Agrada Gregos.
+    async function renderizarNoDia(local: string, aba?: 'hoje' | 'amanha' | 'geral') {
+      await TestBed.configureTestingModule({
+        imports: [PaginaLocal],
+        providers: [provideRouter([])],
+      }).compileComponents();
+      TestBed.inject(Relogio).definir(new Date(2026, 1, 14, 14, 0));
+      if (aba) {
+        TestBed.inject(FiltroDeDia).escolher(aba);
+      }
+      const fixture = TestBed.createComponent(PaginaLocal);
+      fixture.componentRef.setInput('local', local);
+      await fixture.whenStable();
+      const tela = fixture.nativeElement as HTMLElement;
+      const datas = () => Array.from(tela.querySelectorAll('time')).map((t) => t.getAttribute('datetime'));
+      return { fixture, tela, datas };
+    }
+
+    it('vindo de Hoje, mostra só os blocos de hoje e diz isso', async () => {
+      const { tela, datas } = await renderizarNoDia('ibirapuera', 'hoje');
+      expect(datas().length).toBe(BLOCOS.filter((b) => b.localId === 'ibirapuera' && b.data === '2026-02-14').length);
+      expect(datas().every((data) => data === '2026-02-14')).toBe(true);
+      expect(tela.querySelector('.filtro-do-lugar')?.textContent).toContain('Mostrando os blocos de hoje.');
+    });
+
+    it('"Ver todos os dias" passa para a Geral: de hoje em diante', async () => {
+      const { fixture, tela, datas } = await renderizarNoDia('ibirapuera', 'hoje');
+      tela.querySelector<HTMLButtonElement>('.ver-todos')!.click();
+      await fixture.whenStable();
+      expect(TestBed.inject(FiltroDeDia).ativa()).toBe('geral');
+      expect(datas().length).toBe(BLOCOS.filter((b) => b.localId === 'ibirapuera' && b.data >= '2026-02-14').length);
+      expect(tela.querySelector('.ver-todos')).toBeNull();
+    });
+
+    it('na Geral, os dias que já passaram somem', async () => {
+      const { datas } = await renderizarNoDia('ibirapuera', 'geral');
+      expect(datas().length).toBeGreaterThan(0);
+      expect(datas().every((data) => (data ?? '') >= '2026-02-14')).toBe(true);
+    });
+
+    it('avisa quando o lugar não tem bloco no dia da aba', async () => {
+      const { tela } = await renderizarNoDia('consolacao', 'hoje');
+      expect(tela.querySelector('.filtro-do-lugar')?.textContent).toContain('Nenhum bloco aqui hoje.');
+      expect(tela.querySelectorAll('app-banner-bloco').length).toBe(0);
     });
   });
 

@@ -1,5 +1,3 @@
-<a class="voltar" routerLink="/">← Em alta</a>
-
 @if (lugar(); as achado) {
   <h2 class="titulo">{{ achado.nome }}</h2>
   <app-zona-tag [zona]="achado.zona" />
@@ -14,6 +12,16 @@
     </a>
     <app-copiar-link />
   </div>
+
+  <!-- Vale a aba escolhida na tela inicial: quem veio de Hoje vê só os blocos de hoje. -->
+  @if (oQueMostra()) {
+    <p class="filtro-do-lugar">
+      {{ nadaNaAba() || oQueMostra() }}
+      @if (aba() !== 'geral') {
+        <button type="button" class="botao-claro ver-todos" (click)="verTodos()">Ver todos os dias</button>
+      }
+    </p>
+  }
 
   @if (destaques().length > 0) {
     <h3 class="secao">Destaques</h3>

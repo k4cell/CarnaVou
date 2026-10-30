@@ -137,9 +137,17 @@ describe('agenda', () => {
   describe('aba Geral', () => {
     const geral = selos(cartoesDaAba('geral', SABADO_14H));
 
-    it('mostra todos os lugares, na ordem dos lugares, cada um com o seu selo', () => {
-      expect(cartoesDaAba('geral', SABADO_14H).map((c) => c.local.id)).toEqual(LOCAIS.map((local) => local.id));
+    it('mostra os lugares que ainda têm bloco, na ordem dos lugares, cada um com o seu selo', () => {
+      const comBlocoPelaFrente = LOCAIS.filter((local) =>
+        BLOCOS.some((bloco) => bloco.localId === local.id && bloco.data >= '2026-02-14'),
+      );
+      expect(cartoesDaAba('geral', SABADO_14H).map((c) => c.local.id)).toEqual(comBlocoPelaFrente.map((l) => l.id));
       expect(geral['ibirapuera']).toBe('Já começou');
+    });
+
+    it('some com o lugar cujos blocos já passaram todos (o app mostra só o presente e o futuro)', () => {
+      // Santo Amaro só tinha o Modo Surto, no dia 8.
+      expect(geral['santo-amaro']).toBeUndefined();
     });
 
     it('conta quantos blocos faltam para quem não tem bloco hoje nem amanhã', () => {
@@ -152,9 +160,8 @@ describe('agenda', () => {
       );
     });
 
-    it('diz que não tem mais blocos quando todos já passaram', () => {
-      const depois = selos(cartoesDaAba('geral', new Date(2026, 2, 1, 12, 0)));
-      expect(Object.values(depois).every((selo) => selo === 'Sem mais blocos')).toBe(true);
+    it('fica vazia quando todos os blocos já passaram', () => {
+      expect(cartoesDaAba('geral', new Date(2026, 2, 1, 12, 0))).toEqual([]);
     });
 
     it('mostra os artistas dos blocos de hoje em diante, o mais famoso primeiro', () => {
