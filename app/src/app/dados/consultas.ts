@@ -12,7 +12,7 @@ export function acharLocal(id: string): Local | undefined {
 
 // As cores das faixas, do rosa ao azul: são as variáveis de cor de `styles.scss`, na mesma ordem
 // do `@each` que pinta `.cartao[data-faixa]`.
-const FAIXAS = ['rosa', 'amarelo', 'verde', 'laranja', 'roxo', 'vermelho', 'azul'];
+export const FAIXAS = ['rosa', 'amarelo', 'verde', 'laranja', 'roxo', 'vermelho', 'azul'];
 
 /**
  * A cor da faixa de um lugar (rosa, amarelo…). É sempre a mesma para o mesmo lugar, onde quer que

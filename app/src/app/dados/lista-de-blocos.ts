@@ -59,3 +59,32 @@ export function secoesDosBlocos(aba: Aba, agora: Date | null): SecaoDeBlocos[] {
   }
   return secoes.filter((secao) => secao.blocos.length > 0);
 }
+
+/**
+ * Bloco da noite: começa a partir das 16h ou vai até as 20h ou mais (um fim antes do começo passa
+ * da meia-noite).
+ */
+export function eDaNoite(bloco: Bloco): boolean {
+  return bloco.inicio >= '16:00' || (!!bloco.fim && (bloco.fim >= '20:00' || bloco.fim <= bloco.inicio));
+}
+
+/**
+ * Os blocos da noite, para a aba After, em ordem de data e hora: os de hoje (sem os que já
+ * acabaram), os de amanhã ou, na Geral, os de hoje em diante. Sem saber o dia, a Geral traz todos.
+ */
+export function blocosDaNoite(aba: Aba, agora: Date | null): Bloco[] {
+  const daNoite = porHorario(BLOCOS.filter(eDaNoite));
+  if (agora === null) {
+    return aba === 'geral' ? daNoite : [];
+  }
+  const dia = diaIso(agora);
+  const deHoje = daNoite.filter((bloco) => bloco.data === dia && !jaAcabou(bloco, horaIso(agora)));
+  if (aba === 'hoje') {
+    return deHoje;
+  }
+  if (aba === 'amanha') {
+    const amanha = diaIso(diaSeguinte(agora));
+    return daNoite.filter((bloco) => bloco.data === amanha);
+  }
+  return [...deHoje, ...daNoite.filter((bloco) => bloco.data > dia)];
+}

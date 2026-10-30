@@ -7,6 +7,12 @@ Enquanto o app está em beta, o número é `0.MEIO.FINAL`. O número do meio sob
 uma tela ou funcionalidade nova (0.3.0, 0.4.0…) e o último, quando é só uma correção pequena
 (0.3.1). Cada versão tem uma etiqueta no GitHub, como `v0.3.0`.
 
+## 0.16.0 (30/10/2026)
+
+- Aba nova **After**, entre Blocos e Mapa: os blocos da noite (que começam a partir das 16h ou vão
+  até as 20h ou mais), com o filtro Hoje / Amanhã / Geral, e os bares e pontos de encontro para
+  depois dos blocos (Beco do Batman, Meio Fio Bar e bares da Rua Aspicuelta), com Ir, Waze e Uber.
+
 ## 0.15.1 (30/10/2026)
 
 - O horário do bloco fala no passado quando ele já começou: "Começou às 9h · vai até 14h" e,
