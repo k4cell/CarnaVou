@@ -4,6 +4,9 @@ Pinta o mapa de lilás (as cores da marca), tira o que uma cidade não precisa (
 países, aeroportos, geleiras), põe as estações de metrô e de trem e grava o resultado em
 app/public/mapa/estilo-carnavou.json.
 
+Para pesar menos (decisão de 30/10/2026), o mapa não usa o sprite (a imagem com os ícones, uns
+120 kB) e usa uma letra só, a normal: a itálica (uns 46 kB) e o negrito não são baixados.
+
 Como usar, a partir da raiz do projeto:
 
     python design/mapa/gerar-estilo-do-mapa.py
@@ -102,28 +105,54 @@ TIRAR = {
     "label_country_1",
 }
 
-# As estações de metrô e de trem (CPTM), com o nome, de perto (zoom 13 em diante). Vêm do próprio
-# mapa da OpenFreeMap (camada "poi") e os ícones, do sprite que ele já baixa: nada a mais para
-# carregar. Ficam por último, para ganharem dos nomes das ruas quando não cabe tudo.
-ESTACOES = {
-    "id": "estacoes",
-    "type": "symbol",
+# A única letra do mapa: só ela é baixada.
+LETRA = ["Noto Sans Regular"]
+
+# As estações de metrô e de trem (CPTM), de perto (zoom 13 em diante): uma bolinha escura com "M"
+# (metrô) ou "T" (trem) e o nome embaixo. Vêm do próprio mapa da OpenFreeMap (camada "poi"), sem
+# nada a mais para baixar. Ficam por último, para o nome ganhar dos nomes das ruas quando não cabe
+# tudo.
+_ESTACAO = {
     "source": "openmaptiles",
     "source-layer": "poi",
     "minzoom": 13,
     "filter": ["all", ["==", ["get", "class"], "railway"], ["match", ["get", "subclass"], ["subway", "station"], True, False]],
-    "layout": {
-        "icon-image": ["match", ["get", "subclass"], "subway", "railway_metro_11", "railway_11"],
-        "text-field": ["coalesce", ["get", "name"], ""],
-        "text-font": ["Noto Sans Regular"],
-        "text-size": 12,
-        "text-anchor": "top",
-        "text-offset": [0, 0.8],
-        "text-max-width": 8,
-        "text-optional": True,
-    },
-    "paint": {"text-color": COR["texto"], "text-halo-color": COR["halo"], "text-halo-width": 1.5},
 }
+ESTACOES = [
+    {
+        **_ESTACAO,
+        "id": "estacoes-ponto",
+        "type": "circle",
+        "paint": {"circle-radius": 8, "circle-color": COR["texto"], "circle-stroke-color": "#ffffff", "circle-stroke-width": 1.5},
+    },
+    {
+        **_ESTACAO,
+        "id": "estacoes-letra",
+        "type": "symbol",
+        "layout": {
+            "text-field": ["match", ["get", "subclass"], "subway", "M", "T"],
+            "text-font": LETRA,
+            "text-size": 11,
+            "text-allow-overlap": True,
+            "text-ignore-placement": True,
+        },
+        "paint": {"text-color": "#ffffff"},
+    },
+    {
+        **_ESTACAO,
+        "id": "estacoes-nome",
+        "type": "symbol",
+        "layout": {
+            "text-field": ["coalesce", ["get", "name"], ""],
+            "text-font": LETRA,
+            "text-size": 12,
+            "text-anchor": "top",
+            "text-offset": [0, 0.9],
+            "text-max-width": 8,
+        },
+        "paint": {"text-color": COR["texto"], "text-halo-color": COR["halo"], "text-halo-width": 1.5},
+    },
+]
 
 
 def main() -> None:
@@ -138,14 +167,22 @@ def main() -> None:
             continue
         for propriedade, nome_da_cor in PINTURA.get(camada["id"], {}).items():
             camada.setdefault("paint", {})[propriedade] = COR[nome_da_cor]
+        # Sem o sprite, nenhum ícone (só as bolinhas ao lado dos nomes das cidades usavam); e a
+        # letra é sempre a normal.
+        layout = camada.get("layout", {})
+        for propriedade in [p for p in layout if p.startswith("icon-")]:
+            del layout[propriedade]
+        if "text-font" in layout:
+            layout["text-font"] = LETRA
         camadas.append(camada)
 
-    camadas.append(ESTACOES)
+    camadas.extend(ESTACOES)
 
     estilo["layers"] = camadas
     estilo["name"] = "CarnaVou"
     # Só os mapas de relevo antigos usavam esta fonte de imagem; nenhuma camada daqui a usa.
     estilo["sources"].pop("ne2_shaded", None)
+    estilo.pop("sprite", None)
 
     os.makedirs(os.path.dirname(DESTINO), exist_ok=True)
     with open(DESTINO, "w", encoding="utf-8") as arquivo:
