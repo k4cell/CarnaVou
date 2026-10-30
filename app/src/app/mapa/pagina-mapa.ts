@@ -13,10 +13,12 @@ import {
 import { RouterLink } from '@angular/router';
 
 import { AbasDoDia } from '../abas/abas-do-dia';
+import { momentoDoBloco } from '../dados/agenda';
 import { concentracoesDaAba } from '../dados/concentracoes';
 import { artistasPorFama } from '../dados/consultas';
-import { formatarHora, partesDaData } from '../dados/formato';
+import { formatarHora, partesDaData, textoDoHorario } from '../dados/formato';
 import { itinerarioDoBloco } from '../dados/itinerario';
+import { Bloco } from '../dados/tipos';
 import { FiltroDeDia } from '../filtro/filtro-de-dia';
 import { distanciaEmMetros, textoDaDistancia } from '../localizacao/distancia';
 import { ExplicacaoDaLocalizacao } from '../localizacao/explicacao-da-localizacao';
@@ -28,17 +30,12 @@ import { linksDeIr } from './links';
 import { MapaBase, PontoNoMapa, TrajetoNoMapa } from './mapa-base';
 import { blocosPertoDeVoce } from './perto-de-voce';
 
-/** No cartão do ponto cabem só alguns blocos; o resto fica na página do lugar. */
+/** Até quantos blocos o cartão pequeno mostra todos; com mais, mostra só os do horário de agora. */
+const TODOS_NO_CARTAO_ATE = 3;
+/** Quantos blocos o cartão pequeno mostra quando o ponto tem muitos. */
+const BLOCOS_EM_DESTAQUE = 2;
+/** Quantos dos outros blocos aparecem ao abrir o cartão; o resto fica na página do lugar. */
 const BLOCOS_NO_CARTAO = 3;
-/** Os nomes dos blocos de um ponto, já no cartão pequeno: "A, B e C" ou "A, B, C e mais 2". */
-function nomesDoPonto(nomes: string[]): string {
-  const mostrados = nomes.slice(0, 3);
-  const resto = nomes.length - mostrados.length;
-  if (resto > 0) {
-    return `${mostrados.join(', ')} e mais ${resto}`;
-  }
-  return mostrados.length > 1 ? `${mostrados.slice(0, -1).join(', ')} e ${mostrados.at(-1)}` : mostrados.join('');
-}
 
 /** Quanto puxar a alça do cartão (em pixels) para ele abrir, encolher ou fechar. */
 const PUXAO = 30;
@@ -123,14 +120,12 @@ export class PaginaMapa {
       return undefined;
     }
     const [primeiro] = ponto.blocos;
-    const artistas = [...new Set(ponto.blocos.flatMap((bloco) => bloco.atracoes.map((atracao) => atracao.nome)))];
     return {
       ...ponto,
-      titulo: ponto.blocos.length === 1 ? primeiro.nome : `${ponto.blocos.length} blocos neste ponto`,
-      nomes: ponto.blocos.length > 1 ? nomesDoPonto(ponto.blocos.map((bloco) => bloco.nome)) : '',
+      // O nome que vai para o Uber: o do bloco ou, num ponto de vários blocos, o do lugar.
+      titulo: ponto.blocos.length === 1 ? primeiro.nome : ponto.local.nome,
       itinerario: itinerarioDoBloco(primeiro.id),
       aproximado: ponto.trajetos.some((trajeto) => trajeto.aproximado),
-      artistas: artistas.join(', '),
     };
   });
 
@@ -144,26 +139,43 @@ export class PaginaMapa {
   });
 
   /**
-   * Os blocos do ponto escolhido: "13h · Agrada Gregos" em Hoje e Amanhã e, na Geral, com o dia
-   * na frente ("sáb 14 fev · 13h").
+   * Os blocos do ponto escolhido. No cartão pequeno (destaque), cada um com o nome e, embaixo, os
+   * artistas ou, sem artista divulgado, o horário. Até 3 blocos, aparecem todos; com 4 ou mais, só
+   * os 2 de agora ou dos próximos horários, e os outros aparecem ao abrir o cartão ("13h · Carna
+   * Lau" em Hoje e Amanhã e, na Geral, com o dia na frente: "sáb 14 fev · 13h").
    */
   protected readonly blocos = computed(() => {
     const ponto = this.cartao();
     if (!ponto) {
-      return { lista: [], mais: 0 };
+      return { destaque: [], outros: [], escondidos: 0, mais: 0 };
     }
+    const agora = this.relogio.agora();
     const aba = this.filtro.ativa();
-    const lista = ponto.blocos.slice(0, BLOCOS_NO_CARTAO).map((bloco) => {
-      const hora = formatarHora(bloco.inicio);
+    const linha = (bloco: Bloco) => {
       const { semana, dia, mes } = partesDaData(bloco.data);
+      const noDia = aba === 'geral' ? `${semana} ${dia} ${mes} · ` : '';
+      const artistas = artistasPorFama([bloco]).join(', ');
       return {
         id: bloco.id,
         nome: bloco.nome,
-        quando: aba === 'geral' ? `${semana} ${dia} ${mes} · ${hora}` : hora,
+        sobre: artistas || noDia + textoDoHorario(bloco, momentoDoBloco(bloco, agora)),
+        quando: noDia + formatarHora(bloco.inicio),
         caminho: ['/local', bloco.localId, bloco.id],
       };
-    });
-    return { lista, mais: ponto.blocos.length - lista.length };
+    };
+    let destaque = ponto.blocos;
+    if (ponto.blocos.length > TODOS_NO_CARTAO_ATE) {
+      const aindaVao = ponto.blocos.filter((bloco) => momentoDoBloco(bloco, agora) !== 'acabou');
+      destaque = (aindaVao.length > 0 ? aindaVao : ponto.blocos).slice(0, BLOCOS_EM_DESTAQUE);
+    }
+    const resto = ponto.blocos.filter((bloco) => !destaque.includes(bloco));
+    const outros = resto.slice(0, BLOCOS_NO_CARTAO);
+    return {
+      destaque: destaque.map(linha),
+      outros: outros.map(linha),
+      escondidos: resto.length,
+      mais: resto.length - outros.length,
+    };
   });
 
   protected readonly links = computed(() => {
@@ -269,6 +281,10 @@ export class PaginaMapa {
   protected fechar(): void {
     this.escolhido.set(null);
     this.aberto.set(false);
+  }
+
+  protected abrir(): void {
+    this.aberto.set(true);
   }
 
   /** Um bloco da lista "Perto de você": abre o cartão dele, na aba Hoje (a lista é de hoje). */

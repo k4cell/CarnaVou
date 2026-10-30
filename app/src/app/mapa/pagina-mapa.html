@@ -89,15 +89,28 @@
       </button>
       <button type="button" class="fechar" aria-label="Fechar" (click)="fechar()">×</button>
 
-      <h2 class="nome">{{ achado.titulo }}</h2>
+      <!--
+        Os blocos do ponto, um por linha: o nome em destaque e, embaixo, os artistas (ou o horário,
+        quando não tem artista divulgado). Com 4 ou mais, só os 2 de agora ou dos próximos horários.
+      -->
+      <ul class="blocos-do-ponto">
+        @for (bloco of blocos().destaque; track bloco.id) {
+          <li>
+            <a [routerLink]="bloco.caminho">
+              <strong class="nome">{{ bloco.nome }}</strong>
+              <span class="sobre">{{ bloco.sobre }}</span>
+            </a>
+          </li>
+        }
+      </ul>
+      @if (blocos().escondidos > 0 && !aberto()) {
+        <button type="button" class="mais-blocos" (click)="abrir()">+ {{ blocos().escondidos }} blocos aqui</button>
+      }
       <div class="linha">
         <app-zona-tag [zona]="achado.local.zona" />
         <!-- O nome do lugar leva para a página dele. -->
         <a class="lugar" [routerLink]="['/local', achado.local.id]">{{ achado.local.nome }}</a>
       </div>
-      @if (achado.nomes) {
-        <p class="nomes-do-ponto">{{ achado.nomes }}</p>
-      }
 
       @if (distancia(); as perto) {
         <p class="distancia">A {{ perto }} de você, em linha reta.</p>
@@ -117,13 +130,9 @@
           <p class="aproximado">O ponto e a linha são aproximados: o itinerário oficial não diz o bastante.</p>
         }
 
-        @if (achado.artistas) {
-          <p class="artistas">Artistas: {{ achado.artistas }}</p>
-        }
-
-        @if (blocos().lista.length > 0) {
-          <ul class="blocos" aria-label="Blocos">
-            @for (bloco of blocos().lista; track bloco.id) {
+        @if (blocos().outros.length > 0) {
+          <ul class="blocos" aria-label="Mais blocos neste ponto">
+            @for (bloco of blocos().outros; track bloco.id) {
               <li>
                 <a [routerLink]="bloco.caminho"><span class="quando">{{ bloco.quando }}</span> · {{ bloco.nome }}</a>
               </li>

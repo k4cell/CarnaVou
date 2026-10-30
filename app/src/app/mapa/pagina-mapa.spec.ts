@@ -1,9 +1,9 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 
-import { Aba, blocosDaAba, cartoesDaAba } from '../dados/agenda';
+import { Aba, blocosDaAba, cartoesDaAba, momentoDoBloco } from '../dados/agenda';
 import { BLOCOS } from '../dados/blocos';
-import { formatarHora } from '../dados/formato';
+import { formatarHora, textoDoHorario } from '../dados/formato';
 import { itinerarioDoBloco } from '../dados/itinerario';
 import { Bloco } from '../dados/tipos';
 import { trajetoDoBloco } from '../dados/trajetos';
@@ -197,12 +197,28 @@ describe('PaginaMapa', () => {
       expect(cartao()?.querySelector('app-zona-tag')).not.toBeNull();
     });
 
-    it('num ponto de vários blocos, o título diz quantos são e o cartão pequeno já diz os nomes', async () => {
+    it('num ponto de vários blocos, mostra o nome de cada um numa linha, sem "X blocos neste ponto"', async () => {
       const { cartao, tocarNoBloco } = await renderizar(SABADO_14H);
       const blocos = acharPonto('hoje', (grupo) => grupo.length === 2);
       await tocarNoBloco(blocos[0]);
-      expect(cartao()?.querySelector('.nome')?.textContent).toBe('2 blocos neste ponto');
-      expect(cartao()?.querySelector('.nomes-do-ponto')?.textContent).toBe(`${blocos[0].nome} e ${blocos[1].nome}`);
+      const nomes = Array.from(cartao()!.querySelectorAll('.blocos-do-ponto .nome')).map((nome) => nome.textContent);
+      expect(nomes).toEqual(blocos.map((bloco) => bloco.nome));
+      expect(cartao()?.textContent).not.toContain('blocos neste ponto');
+      expect(cartao()?.querySelector('.mais-blocos')).toBeNull();
+    });
+
+    it('cada nome leva para a página do bloco', async () => {
+      const { cartao, tocarNoBloco } = await renderizar(SABADO_14H);
+      const [bloco] = acharPonto('hoje', umBloco);
+      await tocarNoBloco(bloco);
+      expect(cartao()?.querySelector('.blocos-do-ponto a')?.getAttribute('href')).toBe(`/local/${bloco.localId}/${bloco.id}`);
+    });
+
+    it('põe a zona e o lugar depois dos blocos', async () => {
+      const { cartao, tocarNoBloco } = await renderizar(SABADO_14H);
+      await tocarNoBloco(acharPonto('hoje', umBloco)[0]);
+      const ordem = Array.from(cartao()!.children).map((filho) => filho.className);
+      expect(ordem.indexOf('blocos-do-ponto')).toBeLessThan(ordem.indexOf('linha'));
     });
 
     it('mostra o itinerário oficial do bloco', async () => {
@@ -225,12 +241,27 @@ describe('PaginaMapa', () => {
       expect(cartao()?.querySelector('.aproximado')).toBeNull();
     });
 
-    it('mostra os artistas dos blocos do ponto, quando as notícias citam', async () => {
-      const { cartao, tocarNoBloco, abrirOCartao } = await renderizar(SABADO_14H);
-      const agrada = BLOCOS.find((bloco) => bloco.id === 'agrada-gregos')!;
-      await tocarNoBloco(agrada);
-      await abrirOCartao();
-      expect(cartao()?.querySelector('.artistas')?.textContent).toContain('Gloria Groove');
+    describe('embaixo do nome de cada bloco, já no cartão pequeno', () => {
+      const sobre = (cartao: HTMLElement | null, nome: string) =>
+        Array.from(cartao?.querySelectorAll('.blocos-do-ponto li') ?? [])
+          .find((linha) => linha.querySelector('.nome')?.textContent === nome)
+          ?.querySelector('.sobre')?.textContent;
+
+      it('vêm os artistas, quando as notícias citam', async () => {
+        const { cartao, tocarNoBloco } = await renderizar(SABADO_14H);
+        const agrada = BLOCOS.find((bloco) => bloco.id === 'agrada-gregos')!;
+        await tocarNoBloco(agrada);
+        expect(sobre(cartao(), 'Agrada Gregos')).toBe('Gloria Groove, Gretchen');
+      });
+
+      it('vem o horário, quando o bloco não tem artista divulgado', async () => {
+        const { cartao, tocarNoBloco } = await renderizar(SABADO_14H);
+        const carnaLau = BLOCOS.find((bloco) => bloco.id === 'carna-lau')!;
+        await tocarNoBloco(carnaLau);
+        // Às 14h, o Carna Lau (12h às 16h) já começou.
+        expect(sobre(cartao(), 'Carna Lau')).toBe(textoDoHorario(carnaLau, 'rolando'));
+        expect(sobre(cartao(), 'Carna Lau')).toBe('Começou às 12h · vai até 16h');
+      });
     });
 
     it('leva "Ir a pé", Uber e Metrô ao ponto da concentração', async () => {
@@ -382,34 +413,47 @@ describe('PaginaMapa', () => {
     });
   });
 
-  describe('os blocos no cartão do ponto', () => {
+  describe('um ponto com 4 blocos ou mais', () => {
     const linhasDosBlocos = (cartao: HTMLElement | null) =>
       Array.from(cartao?.querySelectorAll<HTMLAnchorElement>('.blocos a') ?? []);
+    const nomesEmDestaque = (cartao: HTMLElement | null) =>
+      Array.from(cartao?.querySelectorAll('.blocos-do-ponto .nome') ?? []).map((nome) => nome.textContent);
 
-    it('lista os blocos do ponto, com a hora, levando para a página do bloco', async () => {
-      const { cartao, tocarNoBloco, abrirOCartao } = await renderizar(SABADO_14H);
-      const blocos = acharPonto('hoje', (grupo) => grupo.length > 1);
-      await tocarNoBloco(blocos[0]);
-      await abrirOCartao();
-      const links = linhasDosBlocos(cartao());
-      expect(links.length).toBe(Math.min(3, blocos.length));
-      const [primeiro] = blocos;
-      expect(links[0].textContent?.trim()).toBe(`${formatarHora(primeiro.inicio)} · ${primeiro.nome}`);
-      expect(links[0].getAttribute('href')).toBe(`/local/${primeiro.localId}/${primeiro.id}`);
-    });
-
-    it('na Geral, põe o dia na frente, mostra só três e diz quantos ficaram de fora', async () => {
-      const { cartao, tocarNoBloco, tocarNaAba, abrirOCartao } = await renderizar(SABADO_14H);
-      await tocarNaAba('Geral');
+    // Na Geral, o ponto do Agrada Gregos (Ibirapuera) junta os blocos de vários dias.
+    async function abrirOPontoCheio() {
+      const tela = await renderizar(SABADO_14H);
+      await tela.tocarNaAba('Geral');
       const agrada = BLOCOS.find((bloco) => bloco.id === 'agrada-gregos')!;
       const doPonto = pontosDaAba('geral', SABADO_14H).get(comoTexto(trajetoDoBloco(agrada.id)!.inicio))!;
       expect(doPonto.length).toBeGreaterThan(3);
-      await tocarNoBloco(agrada);
-      await abrirOCartao();
+      await tela.tocarNoBloco(agrada);
+      return { ...tela, doPonto };
+    }
+
+    it('mostra só os 2 de agora ou dos próximos horários, sem os que já acabaram', async () => {
+      const { cartao, doPonto } = await abrirOPontoCheio();
+      const aindaVao = [...doPonto]
+        .sort((a, b) => (a.data + a.inicio).localeCompare(b.data + b.inicio))
+        .filter((bloco) => momentoDoBloco(bloco, SABADO_14H) !== 'acabou');
+      expect(nomesEmDestaque(cartao())).toEqual(aindaVao.slice(0, 2).map((bloco) => bloco.nome));
+    });
+
+    it('tem o "+ X blocos aqui", que abre o cartão com os outros', async () => {
+      const { cartao, doPonto, fixture } = await abrirOPontoCheio();
+      const mais = cartao()!.querySelector<HTMLButtonElement>('.mais-blocos')!;
+      expect(mais.textContent?.trim()).toBe(`+ ${doPonto.length - 2} blocos aqui`);
+      mais.click();
+      await esperarOMapa(fixture);
+      expect(cartao()?.querySelector('.alca')?.getAttribute('aria-expanded')).toBe('true');
+      expect(cartao()?.querySelector('.mais-blocos')).toBeNull();
       const links = linhasDosBlocos(cartao());
-      expect(links.length).toBe(3);
-      expect(links[0].textContent?.trim()).toMatch(/^sáb 14 fev · \d+h(\d\d)? · /);
-      expect(cartao()?.querySelector('.mais')?.textContent).toBe(`E mais ${doPonto.length - 3} na página do lugar.`);
+      expect(links.length).toBe(Math.min(3, doPonto.length - 2));
+      expect(links[0].textContent?.trim()).toMatch(/^\w{3} \d+ \w{3} · \d+h(\d\d)? · /);
+      expect(links[0].getAttribute('href')).toMatch(/^\/local\/ibirapuera\//);
+      const sobram = doPonto.length - 2 - links.length;
+      if (sobram > 0) {
+        expect(cartao()?.querySelector('.mais')?.textContent).toBe(`E mais ${sobram} na página do lugar.`);
+      }
     });
   });
 
@@ -428,7 +472,7 @@ describe('PaginaMapa', () => {
       const { tela, cartao, abrirOCartao } = await renderizar(SABADO_14H, {}, { bloco: outroDia.id });
       await abrirOCartao();
       expect(tela.querySelector('.aba[aria-pressed="true"]')?.textContent?.trim()).toBe('Geral');
-      expect(cartao()?.querySelector('.blocos')?.textContent).toContain(outroDia.nome);
+      expect(cartao()?.querySelector('.blocos-do-ponto')?.textContent).toContain(outroDia.nome);
     });
 
     it('abre o mapa no ponto do próximo bloco do lugar', async () => {
@@ -436,7 +480,7 @@ describe('PaginaMapa', () => {
       await abrirOCartao();
       const primeiro = blocosDaAba('hoje', 'ibirapuera', SABADO_14H).find((bloco) => trajetoDoBloco(bloco.id))!;
       expect(cartao()?.querySelector('.lugar')?.textContent).toBe('Parque Ibirapuera');
-      expect(cartao()?.querySelector('.blocos')?.textContent).toContain(primeiro.nome);
+      expect(cartao()?.querySelector('.blocos-do-ponto')?.textContent).toContain(primeiro.nome);
     });
   });
 
