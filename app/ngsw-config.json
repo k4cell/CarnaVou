@@ -49,8 +49,7 @@
       "name": "mapa-pedacos",
       "urls": [
         "https://tiles.openfreemap.org/planet/**",
-        "https://tiles.openfreemap.org/fonts/**",
-        "https://tiles.openfreemap.org/sprites/**"
+        "https://tiles.openfreemap.org/fonts/**"
       ],
       "cacheConfig": {
         "strategy": "performance",
