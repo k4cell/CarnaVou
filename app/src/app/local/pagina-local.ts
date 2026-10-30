@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
+import { AbasDoDia } from '../abas/abas-do-dia';
 import { BannerBloco } from '../banner/banner-bloco';
 import { CopiarLink } from '../copiar-link/copiar-link';
 import { Aba, blocosDaAba } from '../dados/agenda';
@@ -14,23 +15,25 @@ import { ZonaTag } from '../zona/zona-tag';
 /** Quantos blocos ficam no quadro de destaques do lugar. */
 const DESTAQUES = 4;
 
-/** O que a página está mostrando, conforme a aba que a pessoa escolheu na tela inicial. */
-const O_QUE_MOSTRA: Record<Aba, string> = {
-  hoje: 'Mostrando os blocos de hoje.',
-  amanha: 'Mostrando os blocos de amanhã.',
-  geral: 'Mostrando os blocos de hoje em diante.',
-};
-
 const NADA_NA_ABA: Record<Aba, string> = {
-  hoje: 'Nenhum bloco aqui hoje.',
-  amanha: 'Nenhum bloco aqui amanhã.',
+  hoje: 'Nenhum bloco aqui hoje. Veja a aba Geral.',
+  amanha: 'Nenhum bloco aqui amanhã. Veja a aba Geral.',
   geral: 'Não tem mais blocos aqui.',
 };
 
 @Component({
   selector: 'app-pagina-local',
-  imports: [RouterLink, BannerBloco, CopiarLink, ZonaTag],
+  imports: [RouterLink, AbasDoDia, BannerBloco, CopiarLink, ZonaTag],
   templateUrl: './pagina-local.html',
+  styles: `
+    .titulo {
+      margin-top: 16px;
+    }
+
+    .vazio {
+      margin: 24px 0;
+    }
+  `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PaginaLocal {
@@ -43,8 +46,9 @@ export class PaginaLocal {
   protected readonly lugar = computed(() => acharLocal(this.local()));
 
   /**
-   * A aba escolhida na tela inicial (Hoje, Amanhã ou Geral), quando já se sabe o dia de hoje.
-   * Na página pronta (sem saber o dia), fica nula e a página mostra todos os blocos.
+   * A aba escolhida (Hoje, Amanhã ou Geral), a mesma da tela inicial, da aba Blocos e do mapa,
+   * quando já se sabe o dia de hoje. Na página pronta (sem saber o dia), fica nula e a página
+   * mostra todos os blocos.
    */
   protected readonly aba = computed<Aba | null>(() => (this.relogio.agora() ? this.filtro.ativa() : null));
 
@@ -53,11 +57,6 @@ export class PaginaLocal {
    * já passaram somem.
    */
   private readonly blocos = computed(() => blocosDaAba(this.aba() ?? 'geral', this.local(), this.relogio.agora()));
-
-  protected readonly oQueMostra = computed(() => {
-    const aba = this.aba();
-    return aba ? O_QUE_MOSTRA[aba] : '';
-  });
 
   protected readonly nadaNaAba = computed(() => {
     const aba = this.aba();
@@ -84,9 +83,4 @@ export class PaginaLocal {
     }
     return dias;
   });
-
-  /** "Ver todos os dias": passa para a Geral (que vale também na tela inicial e no mapa). */
-  protected verTodos(): void {
-    this.filtro.escolher('geral');
-  }
 }
