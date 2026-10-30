@@ -37,7 +37,8 @@ app-mapa-base {
   margin: 12px 0 0;
 }
 
-// Embaixo ficam, de cima para baixo: o botão "onde estou", o aviso e o cartão do ponto. Ficam um
+// Embaixo ficam, de cima para baixo: o botão "onde estou", o aviso, a lista "Perto de você" e o
+// cartão do ponto. Ficam um
 // pouco acima do fundo para o crédito do mapa (canto de baixo) continuar à vista. O espaço vazio
 // deixa o toque passar para o mapa; só o que está dentro recebe toques.
 .rodape {
@@ -182,7 +183,8 @@ app-mapa-base {
 }
 
 // O "×" do cartão fica no canto de cima, à direita.
-.cartao-do-ponto > .fechar {
+.cartao-do-ponto > .fechar,
+.perto-de-voce > .fechar {
   position: absolute;
   top: 4px;
   right: 4px;
@@ -262,4 +264,59 @@ app-mapa-base {
 .botao-principal {
   border-color: var(--amarelo);
   background: var(--amarelo);
+}
+
+// A lista "Perto de você": até três blocos, cada um uma linha que se toca.
+.perto-de-voce {
+  position: relative;
+  padding: 12px 16px 4px;
+  border-radius: 16px;
+  background: var(--cartao);
+  box-shadow: 0 2px 12px rgb(0 0 0 / 25%);
+
+  h2 {
+    margin: 0;
+    padding-right: 44px;
+    color: var(--roxo);
+    font-size: 1.1rem;
+  }
+
+  ul {
+    margin: 4px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .nenhum {
+    padding: 8px 0 12px;
+  }
+}
+
+.bloco-perto {
+  display: block;
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 0;
+  border: 0;
+  border-top: 1px solid var(--borda);
+  background: none;
+  color: var(--texto);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+
+  strong,
+  span {
+    display: block;
+  }
+
+  span {
+    color: var(--texto-suave);
+    font-size: 0.95rem;
+  }
+
+  &:focus-visible {
+    outline: 3px solid var(--texto);
+    outline-offset: -3px;
+  }
 }

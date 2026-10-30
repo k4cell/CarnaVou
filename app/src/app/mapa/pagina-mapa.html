@@ -39,6 +39,26 @@
     </div>
   }
 
+  @if (perto(); as lista) {
+    <!-- Depois do "onde estou": os blocos rolando perto da pessoa. Tocar num abre o cartão dele. -->
+    <section class="perto-de-voce" aria-label="Perto de você">
+      <button type="button" class="fechar" aria-label="Fechar a lista" (click)="fecharPerto()">×</button>
+      <h2>{{ lista.titulo }}</h2>
+      <ul>
+        @for (item of lista.blocos; track item.id) {
+          <li>
+            <button type="button" class="bloco-perto" (click)="escolherPerto(item.ponto)">
+              <strong>{{ item.nome }}</strong>
+              <span>{{ item.detalhe }}</span>
+            </button>
+          </li>
+        } @empty {
+          <li class="nenhum">Nenhum bloco hoje.</li>
+        }
+      </ul>
+    </section>
+  }
+
   @if (cartao(); as achado) {
     <!--
       O cartão abre pequeno, para a rota inteira ficar à vista. Puxando a alça para cima (ou tocando

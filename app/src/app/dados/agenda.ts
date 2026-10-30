@@ -57,6 +57,14 @@ export function horaIso(data: Date): string {
   return `${doisDigitos(data.getHours())}:${doisDigitos(data.getMinutes())}`;
 }
 
+/**
+ * O bloco de hoje já acabou, nesta hora? Sem a hora do fim, ele conta até o fim do dia; e um fim
+ * antes do começo ("00:00") é depois da meia-noite: o bloco também vai até o fim do dia.
+ */
+export function jaAcabou(bloco: Bloco, hora: string): boolean {
+  return !!bloco.fim && bloco.fim > bloco.inicio && hora >= bloco.fim;
+}
+
 export function diaSeguinte(data: Date): Date {
   const seguinte = new Date(data);
   seguinte.setDate(seguinte.getDate() + 1);

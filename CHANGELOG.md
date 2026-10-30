@@ -7,6 +7,13 @@ Enquanto o app está em beta, o número é `0.MEIO.FINAL`. O número do meio sob
 uma tela ou funcionalidade nova (0.3.0, 0.4.0…) e o último, quando é só uma correção pequena
 (0.3.1). Cada versão tem uma etiqueta no GitHub, como `v0.3.0`.
 
+## 0.15.0 (30/10/2026)
+
+- **Perto de você:** depois do "onde estou", o mapa recomenda até três blocos rolando perto, os
+  mais perto primeiro. Os blocos com artista conhecido contam como se estivessem na metade da
+  distância. Se nenhum estiver rolando, a lista mostra os que ainda começam hoje. Tocar num bloco
+  da lista abre o cartão dele.
+
 ## 0.14.0 (30/10/2026)
 
 - As estações de metrô e de trem aparecem no mapa, com o nome, quando chego mais perto.

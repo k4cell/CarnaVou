@@ -1,4 +1,4 @@
-import { Aba, diaIso, diaSeguinte, horaIso } from './agenda';
+import { Aba, diaIso, diaSeguinte, horaIso, jaAcabou } from './agenda';
 import { BLOCOS } from './blocos';
 import { famaDoBloco } from './consultas';
 import { dataPorExtenso } from './formato';
@@ -19,11 +19,6 @@ function porFama(blocos: Bloco[]): Bloco[] {
 
 function porHorario(blocos: Bloco[]): Bloco[] {
   return [...blocos].sort((a, b) => quando(a).localeCompare(quando(b)));
-}
-
-/** Um fim antes do começo ("00:00") é depois da meia-noite: o bloco vai até o fim do dia. */
-function jaAcabou(bloco: Bloco, hora: string): boolean {
-  return !!bloco.fim && bloco.fim > bloco.inicio && hora >= bloco.fim;
 }
 
 /** Os blocos de cada dia, os mais famosos primeiro, um pedaço por dia. */
