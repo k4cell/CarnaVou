@@ -7,6 +7,10 @@ Enquanto o app está em beta, o número é `0.MEIO.FINAL`. O número do meio sob
 uma tela ou funcionalidade nova (0.3.0, 0.4.0…) e o último, quando é só uma correção pequena
 (0.3.1). Cada versão tem uma etiqueta no GitHub, como `v0.3.0`.
 
+## 0.16.4 (30/10/2026)
+
+- O Meio Fio Bar virou só "Meio Fio" no After, como o Meretriz e o Galo.
+
 ## 0.16.3 (30/10/2026)
 
 - O Meretriz e o Galo voltaram para o After, agora sem o "Bar" no nome.
