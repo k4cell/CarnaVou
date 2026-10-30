@@ -361,9 +361,9 @@ describe('PaginaMapa', () => {
     });
 
     it('abre o mapa no ponto do próximo bloco do lugar', async () => {
-      const { cartao } = await renderizar(SABADO_14H, {}, { lugar: 'vila-mariana' });
-      const primeiro = blocosDaAba('hoje', 'vila-mariana', SABADO_14H).find((bloco) => trajetoDoBloco(bloco.id))!;
-      expect(cartao()?.querySelector('.lugar')?.textContent).toBe('Vila Mariana');
+      const { cartao } = await renderizar(SABADO_14H, {}, { lugar: 'ibirapuera' });
+      const primeiro = blocosDaAba('hoje', 'ibirapuera', SABADO_14H).find((bloco) => trajetoDoBloco(bloco.id))!;
+      expect(cartao()?.querySelector('.lugar')?.textContent).toBe('Parque Ibirapuera');
       expect(cartao()?.querySelector('.blocos')?.textContent).toContain(primeiro.nome);
     });
   });

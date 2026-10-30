@@ -19,42 +19,42 @@ describe('PaginaLocal', () => {
   }
 
   it('mostra só os blocos do lugar escolhido', async () => {
-    const tela = await renderizar('vila-mariana');
-    const esperados = BLOCOS.filter((bloco) => bloco.localId === 'vila-mariana');
-    expect(tela.querySelector('h2')?.textContent).toContain('Vila Mariana');
+    const tela = await renderizar('ibirapuera');
+    const esperados = BLOCOS.filter((bloco) => bloco.localId === 'ibirapuera');
+    expect(tela.querySelector('h2')?.textContent).toContain('Parque Ibirapuera');
     expect(tela.querySelectorAll('app-banner-bloco').length).toBe(esperados.length);
   });
 
   it('põe os blocos de cada dia em ordem de data', async () => {
-    const tela = await renderizar('vila-mariana');
+    const tela = await renderizar('ibirapuera');
     const datas = Array.from(tela.querySelectorAll('.dia time')).map((t) => t.getAttribute('datetime') ?? '');
     expect(datas.length).toBeGreaterThan(1);
     expect(datas).toEqual([...datas].sort());
   });
 
   it('leva cada banner para a página do bloco', async () => {
-    const tela = await renderizar('se');
+    const tela = await renderizar('consolacao');
     const hrefs = Array.from(tela.querySelectorAll('app-banner-bloco a')).map((a) => a.getAttribute('href'));
-    expect(hrefs).toContain('/local/se/bloco-skol');
+    expect(hrefs).toContain('/local/consolacao/bloco-skol');
   });
 
   it('mostra a hora da concentração e a do fim', async () => {
-    const tela = await renderizar('vila-mariana');
+    const tela = await renderizar('ibirapuera');
     const horarios = Array.from(tela.querySelectorAll('.horario')).map((h) => h.textContent ?? '');
     expect(horarios.length).toBeGreaterThan(0);
     expect(horarios.every((h) => /^Começa às \d+h(\d\d)? · vai até \d+h(\d\d)?$/.test(h))).toBe(true);
   });
 
   it('só mostra a linha de artistas nos blocos que têm artista', async () => {
-    const tela = await renderizar('se');
-    const comArtista = tela.querySelector('a[href="/local/se/pipoca-da-rainha"] .atracoes');
-    const semArtista = tela.querySelector('a[href="/local/se/banda-do-candinho"] .atracoes');
-    expect(comArtista?.textContent).toBe('Daniela Mercury');
+    const tela = await renderizar('ibirapuera');
+    const comArtista = tela.querySelector('a[href="/local/ibirapuera/forrozin"] .atracoes');
+    const semArtista = tela.querySelector('a[href="/local/ibirapuera/carna-lau"] .atracoes');
+    expect(comArtista?.textContent).toBe('Mariana Aydar');
     expect(semArtista).toBeNull();
   });
 
   it('mostra a zona do lugar na etiqueta de cor', async () => {
-    const tela = await renderizar('vila-mariana');
+    const tela = await renderizar('ibirapuera');
     const etiqueta = tela.querySelector('.zona');
     expect(etiqueta?.textContent).toBe('Zona Sul');
     expect(etiqueta?.classList.contains('sul')).toBe(true);
@@ -64,12 +64,12 @@ describe('PaginaLocal', () => {
     const faixasDosBanners = (tela: HTMLElement) =>
       Array.from(tela.querySelectorAll('.banner')).map((banner) => banner.getAttribute('data-faixa'));
 
-    it('é a cor do lugar: rosa para a Vila Mariana, amarelo para a Sé', async () => {
-      const vilaMariana = await renderizar('vila-mariana');
-      expect(new Set(faixasDosBanners(vilaMariana))).toEqual(new Set(['rosa']));
+    it('é a cor do lugar: rosa para o Ibirapuera, amarelo para a Consolação', async () => {
+      const ibirapuera = await renderizar('ibirapuera');
+      expect(new Set(faixasDosBanners(ibirapuera))).toEqual(new Set(['rosa']));
       TestBed.resetTestingModule();
-      const se = await renderizar('se');
-      expect(new Set(faixasDosBanners(se))).toEqual(new Set(['amarelo']));
+      const consolacao = await renderizar('consolacao');
+      expect(new Set(faixasDosBanners(consolacao))).toEqual(new Set(['amarelo']));
     });
 
     it('é a mesma do cartão do lugar na lista, em todos os lugares', async () => {
@@ -85,9 +85,9 @@ describe('PaginaLocal', () => {
 
   describe('os blocos do mesmo dia', () => {
     it('ficam juntos num cartão só, um por dia, na ordem das datas', async () => {
-      const tela = await renderizar('vila-mariana');
-      const emDestaque = new Set(destaquesDoLocal('vila-mariana', 4).map((bloco) => bloco.id));
-      const datas = BLOCOS.filter((bloco) => bloco.localId === 'vila-mariana' && !emDestaque.has(bloco.id)).map(
+      const tela = await renderizar('ibirapuera');
+      const emDestaque = new Set(destaquesDoLocal('ibirapuera', 4).map((bloco) => bloco.id));
+      const datas = BLOCOS.filter((bloco) => bloco.localId === 'ibirapuera' && !emDestaque.has(bloco.id)).map(
         (bloco) => bloco.data,
       );
       const dias = Array.from(tela.querySelectorAll('li.dia'));
@@ -96,8 +96,8 @@ describe('PaginaLocal', () => {
       expect(datasDosDias).toEqual([...datasDosDias].sort());
     });
 
-    it('juntam os blocos do sábado, 7 de fevereiro, na Vila Mariana, sem perder nenhum', async () => {
-      const tela = await renderizar('vila-mariana');
+    it('juntam os blocos do sábado, 7 de fevereiro, no Ibirapuera, sem perder nenhum', async () => {
+      const tela = await renderizar('ibirapuera');
       const sabado = Array.from(tela.querySelectorAll('li.dia')).find(
         (dia) => dia.getAttribute('aria-label') === 'Sábado, 7 de fevereiro',
       );
@@ -107,14 +107,14 @@ describe('PaginaLocal', () => {
     });
 
     it('cada bloco do cartão continua com o dia, o horário e o link dele', async () => {
-      const tela = await renderizar('vila-mariana');
+      const tela = await renderizar('ibirapuera');
       const primeiroDia = tela.querySelector('li.dia')!;
       const banners = Array.from(primeiroDia.querySelectorAll('app-banner-bloco'));
       expect(banners.length).toBeGreaterThan(1);
       for (const banner of banners) {
         expect(banner.querySelector('time')).not.toBeNull();
         expect(banner.querySelector('.horario')?.textContent).toContain('Começa às');
-        expect(banner.querySelector('a')?.getAttribute('href')).toMatch(/^\/local\/vila-mariana\//);
+        expect(banner.querySelector('a')?.getAttribute('href')).toMatch(/^\/local\/ibirapuera\//);
       }
     });
   });
@@ -124,7 +124,7 @@ describe('PaginaLocal', () => {
       Array.from(tela.querySelectorAll('.destaques .nome')).map((nome) => nome.textContent);
 
     it('mostra no topo os quatro blocos mais famosos, do mais para o menos', async () => {
-      const tela = await renderizar('vila-mariana');
+      const tela = await renderizar('ibirapuera');
       expect(nomesDosDestaques(tela)).toEqual([
         'Carnafacul - Quem Pede, Pede',
         'Carnafacul - Vem com o Gigante',
@@ -134,26 +134,26 @@ describe('PaginaLocal', () => {
     });
 
     it('não repete nos dias o bloco que está nos destaques', async () => {
-      const tela = await renderizar('vila-mariana');
+      const tela = await renderizar('ibirapuera');
       const nosDias = Array.from(tela.querySelectorAll('.dia .nome')).map((nome) => nome.textContent);
       expect(nosDias).not.toContain('Carnafacul - Quem Pede, Pede');
       expect(nosDias).toContain('Forrozin');
     });
 
     it('não aparecem quando o lugar não tem artista conhecido', async () => {
-      const tela = await renderizar('lapa');
+      const tela = await renderizar('paulo-vi');
       expect(tela.querySelector('.destaques')).toBeNull();
       expect(tela.querySelectorAll('app-banner-bloco').length).toBeGreaterThan(0);
     });
   });
 
   it('leva para o mapa já com o lugar escolhido', async () => {
-    const tela = await renderizar('se');
-    expect(tela.querySelector('a.ver-no-mapa')?.getAttribute('href')).toBe('/mapa?lugar=se');
+    const tela = await renderizar('consolacao');
+    expect(tela.querySelector('a.ver-no-mapa')?.getAttribute('href')).toBe('/mapa?lugar=consolacao');
   });
 
   it('tem o botão de copiar o link do lugar', async () => {
-    const tela = await renderizar('se');
+    const tela = await renderizar('consolacao');
     expect(tela.querySelector('app-copiar-link button')?.textContent).toContain('Copiar link');
   });
 
