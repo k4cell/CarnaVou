@@ -9,7 +9,7 @@ export interface CaminhoDeVolta {
 /**
  * Para onde a seta do cabeçalho volta: sempre um nível acima na árvore (bloco → lugar → Em alta),
  * e não para a página anterior do navegador, porque quem chega por um link compartilhado não tem
- * para onde voltar. Nas abas do menu (Descobrir, Blocos, After, Mapa) não tem seta.
+ * para onde voltar. Nas abas do menu (Blocos, Descobrir, After, Mapa) não tem seta.
  */
 export function caminhoDeVolta(endereco: string): CaminhoDeVolta | null {
   const partes = endereco.split(/[?#]/)[0].split('/').filter(Boolean).map(decodeURIComponent);
@@ -20,7 +20,7 @@ export function caminhoDeVolta(endereco: string): CaminhoDeVolta | null {
     return { link: ['/local', partes[1]], nome: acharLocal(partes[1])?.nome ?? 'o lugar' };
   }
   if (partes.length === 2) {
-    return { link: ['/'], nome: 'Em alta' };
+    return { link: ['/descobrir'], nome: 'Em alta' };
   }
   return null;
 }

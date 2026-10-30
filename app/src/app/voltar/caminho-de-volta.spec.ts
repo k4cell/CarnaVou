@@ -9,16 +9,19 @@ describe('caminhoDeVolta', () => {
   });
 
   it('do lugar volta para a Em alta', () => {
-    expect(caminhoDeVolta('/local/ibirapuera')).toEqual({ link: ['/'], nome: 'Em alta' });
+    expect(caminhoDeVolta('/local/ibirapuera')).toEqual({ link: ['/descobrir'], nome: 'Em alta' });
   });
 
   it('ignora a data de teste e o resto do endereço', () => {
-    expect(caminhoDeVolta('/local/ibirapuera?hoje=2026-02-07T12:00#topo')).toEqual({ link: ['/'], nome: 'Em alta' });
+    expect(caminhoDeVolta('/local/ibirapuera?hoje=2026-02-07T12:00#topo')).toEqual({
+      link: ['/descobrir'],
+      nome: 'Em alta',
+    });
   });
 
   it('não tem seta nas abas do menu', () => {
     expect(caminhoDeVolta('/')).toBeNull();
     expect(caminhoDeVolta('/mapa?bloco=agrada-gregos')).toBeNull();
-    expect(caminhoDeVolta('/blocos')).toBeNull();
+    expect(caminhoDeVolta('/descobrir')).toBeNull();
   });
 });

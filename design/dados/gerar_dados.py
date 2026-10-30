@@ -1,19 +1,25 @@
 """Gera os dados do app (locais.ts, blocos.ts, itinerarios.ts e pontos-dos-blocos.ts).
 
-Uso: python -I gerar_dados.py pasta_de_design_dados tracados.json pasta_dos_dados_do_app
+Uso: python -I gerar_dados.py pasta_do_ano pasta_dos_dados_do_app
+(o atualizar.py roda este script junto com os outros; normalmente é só ele que se usa)
 
-Da pasta design/dados vêm:
-- blocos-oficiais-2026.json: a lista oficial lida do Diário Oficial (ler_tabela.py).
+Da pasta do ano (design/dados/2026, por exemplo) vêm:
+- sobre.json: o ano e o nome da publicação oficial.
+- blocos-oficiais.json: a lista oficial lida do Diário Oficial (ler_tabela.py).
+- tracados.json: o ponto e a linha de cada itinerário (tracar.py).
 - atracoes-das-noticias.json: os artistas e o estilo que as notícias dão para alguns blocos;
   valem quando o bloco é o mesmo (mesmo nome e mesmo dia).
-- seguidores.json: os seguidores no Instagram de cada artista, para ordenar por fama.
-E tracados.json é o ponto e a linha de cada itinerário (tracar.py).
+- destaques-das-noticias.json (se tiver): blocos sem artista que as notícias chamam de destaque
+  da região; valem em todos os dias do bloco (mesmo nome e mesma subprefeitura).
+E de design/dados vem seguidores.json: os seguidores no Instagram de cada artista, para ordenar
+por fama. Ele vale para todos os anos.
 
-Entram só os blocos do Centro, da Zona Sul e da Zona Oeste que têm atração divulgada ou que
-desfilam num circuito de megabloco (os trajetos que a CET fecha). Os outros ficam de fora.
+Entram os blocos que têm atração divulgada, que desfilam num circuito de megabloco (os trajetos
+que a CET fecha) ou que as notícias chamam de destaque da região. Os outros ficam de fora.
 """
 
 import json
+import os
 import re
 import sys
 import unicodedata
@@ -32,8 +38,6 @@ ZONAS = {
     "Penha": "leste", "São Mateus": "leste", "São Miguel Paulista": "leste", "Sapopemba": "leste",
     "Vila Prudente": "leste",
 }
-# Por enquanto, só estas zonas (decisão de 30/10/2026).
-ZONAS_QUE_ENTRAM = {"centro", "sul", "oeste"}
 # Os grandes pontos: os circuitos dos megablocos (os trajetos que a CET fecha). Quem desfila
 # neles entra mesmo sem atração divulgada, e cada um vira um lugar com o nome que o povo conhece
 # (decisão de 30/10/2026). Os ids são os mesmos de antes, para os links antigos continuarem valendo.
@@ -100,13 +104,22 @@ def codificar(linha):
     return "".join(saida)
 
 
-design, arquivo_dos_tracados, pasta = sys.argv[1], sys.argv[2], sys.argv[3]
-todos_os_oficiais = json.load(open(f"{design}/blocos-oficiais-2026.json", encoding="utf-8"))
-tracados = json.load(open(arquivo_dos_tracados, encoding="utf-8"))
-antigos = json.load(open(f"{design}/atracoes-das-noticias.json", encoding="utf-8"))
+def ler(caminho, sem_o_arquivo=None):
+    if sem_o_arquivo is not None and not os.path.exists(caminho):
+        return sem_o_arquivo
+    return json.load(open(caminho, encoding="utf-8"))
+
+
+pasta_do_ano, pasta = sys.argv[1], sys.argv[2]
+design = os.path.dirname(os.path.abspath(__file__))
+sobre = ler(f"{pasta_do_ano}/sobre.json")
+todos_os_oficiais = ler(f"{pasta_do_ano}/blocos-oficiais.json")
+tracados = ler(f"{pasta_do_ano}/tracados.json")
+antigos = ler(f"{pasta_do_ano}/atracoes-das-noticias.json")
 for antigo in antigos:
     antigo["nome"] = OUTROS_NOMES.get(antigo["nome"], antigo["nome"])
-seguidores = {nome: dados["seguidores"] for nome, dados in json.load(open(f"{design}/seguidores.json", encoding="utf-8")).items() if not nome.startswith("_")}
+destaques = {(d["nome"], d["subprefeitura"]) for d in ler(f"{pasta_do_ano}/destaques-das-noticias.json", {"blocos": []})["blocos"]}
+seguidores = {nome: dados["seguidores"] for nome, dados in ler(f"{design}/seguidores.json").items() if not nome.startswith("_")}
 
 
 def antigo_do(bloco):
@@ -141,13 +154,18 @@ def fama(bloco):
     return sum(seguidores.get(a["nome"], 0) for a in atracoes_do(bloco))
 
 
+def destaque(bloco):
+    return (bloco["nome"], bloco["subprefeitura"]) in destaques
+
+
 def entra(bloco):
-    if ZONAS[bloco["subprefeitura"]] not in ZONAS_QUE_ENTRAM:
-        return False
-    return bool(atracoes_do(bloco)) or grande_ponto_do(bloco) is not None
+    return bool(atracoes_do(bloco)) or grande_ponto_do(bloco) is not None or destaque(bloco)
 
 
 oficiais = [b for b in todos_os_oficiais if entra(b)]
+faltou = destaques - {(b["nome"], b["subprefeitura"]) for b in todos_os_oficiais}
+if faltou:
+    sys.exit(f"destaques-das-noticias.json tem blocos que não estão na lista oficial: {sorted(faltou)}")
 
 # ------------------------------------------------------------------ os lugares
 contagem, fama_do_lugar, dados_do_lugar = {}, {}, {}
@@ -164,8 +182,8 @@ linhas = [
     "",
     "/**",
     " * Os lugares: os grandes pontos do carnaval (os circuitos dos megablocos, como o Parque",
-    " * Ibirapuera) e, para os outros blocos, a subprefeitura. Só Centro, Zona Sul e Zona Oeste.",
-    " * Os que têm os artistas mais famosos vêm primeiro.",
+    " * Ibirapuera) e, para os outros blocos, a subprefeitura. Os que têm os artistas mais famosos",
+    " * vêm primeiro.",
     " * Arquivo gerado por design/dados/gerar_dados.py: não mude à mão.",
     " */",
     "export const LOCAIS: Local[] = [",
@@ -203,14 +221,14 @@ linhas = [
     "import { Bloco } from './tipos';",
     "",
     "/**",
-    " * Os blocos do carnaval de rua de São Paulo em 2026, usados como dados de teste.",
+    f" * Os blocos do carnaval de rua de São Paulo em {sobre['ano']}.",
     " *",
     " * Vêm da lista oficial dos blocos aprovados, publicada pela SPTuris e pela Secretaria de",
-    " * Cultura no Diário Oficial (Portaria Conjunta nº 1, de 22/01/2026): nome, dia, subprefeitura,",
+    f" * Cultura no Diário Oficial ({sobre['lista_oficial']}): nome, dia, subprefeitura,",
     " * itinerário e os horários de concentração (inicio), desfile e término (fim). Os artistas e o",
     " * estilo vêm de notícias, só nos blocos que elas citam, e os seguidores de cada",
-    " * artista, de contadores públicos do Instagram. Entram só os blocos do Centro, da Zona Sul e da",
-    " * Zona Oeste que têm atração divulgada ou desfilam num circuito de megabloco.",
+    " * artista, de contadores públicos do Instagram. Entram os blocos que têm atração divulgada,",
+    " * que desfilam num circuito de megabloco ou que as notícias chamam de destaque da região.",
     " * Arquivo gerado por design/dados/gerar_dados.py: não mude à mão.",
     " */",
     "export const BLOCOS: Bloco[] = [",
@@ -309,4 +327,8 @@ linhas += ["};", ""]
 open(f"{pasta}/pontos-dos-blocos.ts", "w", encoding="utf-8", newline="\n").write("\n".join(linhas))
 
 print(len(lugares), "lugares;", len(ordem), "blocos;", len(trajeto_do_bloco), "com ponto;", len(trajetos), "trajetos diferentes")
-print("com artistas:", sum(1 for b in ordem if atracoes_do(b)))
+print("com artistas:", sum(1 for b in ordem if atracoes_do(b)), "· destaques sem artista:", sum(1 for b in ordem if destaque(b) and not atracoes_do(b)))
+por_zona = {}
+for bloco in ordem:
+    por_zona[lugar_do(bloco)[2]] = por_zona.get(lugar_do(bloco)[2], 0) + 1
+print("por zona:", ", ".join(f"{zona} {n}" for zona, n in sorted(por_zona.items())))

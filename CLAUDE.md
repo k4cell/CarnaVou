@@ -26,9 +26,10 @@ calendário e o que eu ainda não pensei.
 
 ## Fase atual: beta
 
-- Já pode programar. O beta é uma **árvore de opções** com três telas: Em alta (os lugares,
-  com o filtro Hoje / Amanhã / Geral), um lugar (os dias de festa e os principais artistas) e um bloco (a lista
-  detalhada de atrações). Embaixo fica o menu fixo: Descobrir, Blocos e Mapa. As abas Amigos e
+- Já pode programar. A tela principal é a aba **Blocos** (o que está rolando agora e o que vem,
+  com o filtro Hoje / Amanhã / Geral). O Descobrir é uma **árvore de opções**: Em alta (os
+  lugares), um lugar (os dias de festa e os principais artistas) e um bloco (a lista detalhada de
+  atrações). Embaixo fica o menu fixo: Blocos, Descobrir, After e Mapa. As abas Amigos e
   Favoritos saíram até eu decidir o que serão: não crie páginas vazias. Os dados de teste são o carnaval
   de rua de 2026 **de verdade, com nomes reais** (ver `docs/dados-carnaval-2026.md`). Fica de fora, por enquanto, o "Vou", o "Tô aqui" e o "Como tá?".
 - O visual tem só a **primeira camada de cor**. A paleta fica em variáveis no topo de
@@ -66,10 +67,11 @@ calendário e o que eu ainda não pensei.
   tela (como o mapa) só carrega quando for aberto.
 - As telas ficam em `destaques/`, `local/`, `bloco/`, `lista-de-blocos/` (a aba Blocos) e
   `mapa/`; o banner que se repete fica em `banner/`, o menu de baixo em `menu/` e a seta de
-  voltar do cabeçalho em `voltar/`. O filtro Hoje / Amanhã / Geral é um só para a tela inicial,
-  a aba Blocos, o mapa e a página do lugar: o estado fica em `filtro/` e os botões em `abas/`.
-  Os endereços são `/`, `/local/:local`, `/local/:local/:bloco`, `/blocos` e `/mapa`, e
-  cada um vira uma página pronta no `ng build`.
+  voltar do cabeçalho em `voltar/`. O filtro Hoje / Amanhã / Geral é um só para a aba Blocos,
+  o Descobrir, o mapa e a página do lugar: o estado fica em `filtro/` e os botões em `abas/`.
+  Os endereços são `/` (a aba Blocos), `/descobrir`, `/local/:local`, `/local/:local/:bloco`,
+  `/after` e `/mapa` (o antigo `/blocos` leva para `/`), e cada um vira uma página pronta no
+  `ng build`.
 - As páginas prontas não sabem o dia de hoje. O que depende da data (as abas Hoje e Amanhã
   e os selos) é calculado no navegador, depois da primeira pintura, pelo serviço em
   `relogio/`. Pra testar, abra o site com `?hoje=2027-02-06T14:00` no endereço: aí "hoje" fica
@@ -85,7 +87,8 @@ calendário e o que eu ainda não pensei.
   créditos "OpenFreeMap © OpenMapTiles Data from OpenStreetMap" têm que continuar à vista.
 - **Os dados** (`locais.ts`, `blocos.ts`, `itinerarios.ts` e `pontos-dos-blocos.ts`) são
   gerados pelos scripts de `design/dados/` a partir da lista oficial do Diário Oficial: não
-  edite à mão. O ponto da concentração e a linha de cada bloco vêm do itinerário oficial casado
+  edite à mão. Cada ano tem a sua pasta (`design/dados/2026/`: o PDF oficial, as notícias e o
+  que sai dos scripts), e um comando só refaz tudo: `python -I design/dados/atualizar.py 2027`. O ponto da concentração e a linha de cada bloco vêm do itinerário oficial casado
   com as ruas do OpenStreetMap; quando não dá certeza, o ponto fica marcado como aproximado ou o
   bloco fica sem ponto. `trajetoDoBloco` (`dados/trajetos.ts`) e `itinerarioDoBloco`
   (`dados/itinerario.ts`) ficam separados das outras consultas, para só serem baixados com o
@@ -116,14 +119,16 @@ calendário e o que eu ainda não pensei.
   se a logo mudar, gere de novo a partir de `design/logo/`.
 - Os dados ficam em `app/src/app/dados/`: `locais.ts` (os lugares: os grandes pontos, como o
   Parque Ibirapuera, e, para os outros blocos, a subprefeitura) e `blocos.ts` (os blocos
-  aprovados do carnaval de rua de 2026). Por decisão minha, só entram o Centro, a Zona Sul
-  e a Zona Oeste, e só os blocos com atração divulgada ou num circuito de megabloco. A ordem é
+  aprovados do carnaval de rua de 2026). Por decisão minha, entram só os blocos com atração
+  divulgada, num circuito de megabloco ou, na Zona Leste e na Norte, os que as notícias chamam
+  de destaque da região (`design/dados/2026/destaques-das-noticias.json`). A ordem é
   por fama: a soma dos seguidores no Instagram dos artistas (`design/dados/seguidores.json`). **Não invente
   dado**: só vale o que uma fonte diz e, na dúvida, deixe em branco. A fonte oficial é o
   Diário Oficial (dados abertos da Prefeitura); **não copie dados do site Carnaval SP**, porque os
   termos dele proíbem copiar e comercializar. As fontes e a confiança
   de cada bloco estão em `docs/dados-carnaval-2026.md`; se achar uma divergência nova,
-  anote lá. O "hoje" do app é 07/02/2026 (`DATA_DE_DEMONSTRACAO`, em `relogio/`) e a tela
+  anote lá. O "hoje" do app é o primeiro sábado com bloco, 07/02/2026 (`DATA_DE_DEMONSTRACAO`,
+  em `relogio/`), e a tela
   avisa que é data de teste. O site no ar usa a simulação de 2026, com o aviso de versão de
   teste no alto de toda página (`aviso-de-teste/`): decidi assim. Quando os dados de 2027
   saírem, pergunte se eu quero trocar.

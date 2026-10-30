@@ -7,6 +7,18 @@ Enquanto o app está em beta, o número é `0.MEIO.FINAL`. O número do meio sob
 uma tela ou funcionalidade nova (0.3.0, 0.4.0…) e o último, quando é só uma correção pequena
 (0.3.1). Cada versão tem uma etiqueta no GitHub, como `v0.3.0`.
 
+## 0.19.0 (30/10/2026)
+
+- A aba **Blocos** virou a tela principal e a primeira do menu (Blocos · Descobrir · After · Mapa).
+  O Descobrir, com os lugares em alta, mudou para `/descobrir`; o link antigo `/blocos` continua
+  abrindo.
+- A Zona Leste e a Zona Norte voltaram, com os blocos que as notícias chamam de destaque da região,
+  mesmo sem artista divulgado: 8 blocos (10 desfiles) em 6 lugares novos. O Megabloco do Fervo
+  ficou de fora, porque não achei notícia dele.
+- Ensaio da troca para 2027: cada ano tem a sua pasta em `design/dados/` (com o PDF oficial) e um
+  comando só refaz todos os dados (`python -I design/dados/atualizar.py 2027`). A data de teste do
+  app passa a ser o primeiro sábado com bloco, então acompanha o ano dos dados.
+
 ## 0.18.0 (30/10/2026)
 
 - Cartão do ponto no mapa: no lugar de "2 blocos neste ponto", o nome de cada bloco numa linha,

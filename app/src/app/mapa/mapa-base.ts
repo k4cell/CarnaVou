@@ -118,11 +118,11 @@ interface Pino {
     @if (erro() === 'sem-internet') {
       <p class="mapa-erro" role="alert">
         Sem internet, e o mapa ainda não está guardado neste celular. Ele fica guardado depois que você
-        abre o mapa uma vez com internet. Enquanto isso, veja a lista em <a routerLink="/">Descobrir</a>.
+        abre o mapa uma vez com internet. Enquanto isso, veja a lista em <a routerLink="/">Blocos</a>.
       </p>
     } @else if (erro() === 'falhou') {
       <p class="mapa-erro" role="alert">
-        Não consegui abrir o mapa neste celular. Veja a lista em <a routerLink="/">Descobrir</a>.
+        Não consegui abrir o mapa neste celular. Veja a lista em <a routerLink="/">Blocos</a>.
       </p>
     }
   `,

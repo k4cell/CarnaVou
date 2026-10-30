@@ -1,6 +1,7 @@
 """Lê a lista oficial dos blocos aprovados (texto do pdftotext -raw) e grava um JSON.
 
 Uso: python -I ler_tabela.py cru.txt saida.json
+(o atualizar.py roda este script junto com os outros)
 
 No modo -raw o texto sai na ordem em que o PDF foi escrito: célula por célula, linha por linha
 da tabela. Cada bloco é: o nome, a data ("08/02/2026 - Pré Carnaval"), a subprefeitura, o
@@ -31,7 +32,7 @@ SUB = re.compile(
     + r")(?:\s+|$)",
     re.IGNORECASE,
 )
-DATA = re.compile(r"(\d\d)/(\d\d)/(2026)\s*-\s*")
+DATA = re.compile(r"(\d\d)/(\d\d)/(20\d\d)\s*-\s*")
 PERIODO = re.compile(r"^(Pré|Período|Pós)\s+Carnaval\s*", re.IGNORECASE)
 HORA = r"(\d{1,2}[:h]\d{2})"
 HORARIOS = re.compile(r"\s*" + HORA + r"\s+" + HORA + r"\s+" + HORA + r"\s*$")
