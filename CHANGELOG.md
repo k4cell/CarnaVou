@@ -7,6 +7,13 @@ Enquanto o app está em beta, o número é `0.MEIO.FINAL`. O número do meio sob
 uma tela ou funcionalidade nova (0.3.0, 0.4.0…) e o último, quando é só uma correção pequena
 (0.3.1). Cada versão tem uma etiqueta no GitHub, como `v0.3.0`.
 
+## 0.11.1 (30/10/2026)
+
+- Os grandes pontos do carnaval voltam a ser lugares com nome próprio (Parque Ibirapuera, Rua da
+  Consolação e Baixo Augusta, Avenida Faria Lima, Av. Ipiranga, São João e República, Rua Henrique
+  Schaumann e Avenida Paulo VI); os outros blocos ficam na subprefeitura. São 7 lugares, e todos os
+  blocos têm ponto no mapa.
+
 ## 0.11.0 (30/10/2026)
 
 - Os dados passam a vir da lista oficial do Diário Oficial: só Centro, Zona Sul e Zona Oeste, e

@@ -34,15 +34,34 @@ ZONAS = {
 }
 # Por enquanto, só estas zonas (decisão de 30/10/2026).
 ZONAS_QUE_ENTRAM = {"centro", "sul", "oeste"}
-# Os circuitos dos megablocos: quem desfila neles entra mesmo sem atração divulgada.
-CIRCUITOS = [
-    r"Pedro [ÁA]lvares Cabral",  # Ibirapuera
-    r"Consola[çc][ãa]o, 2101",
-    r"Faria Lima, 4100",
-    r"^Av\.? Ipiranga|Pça\.? ?da Rep[úu]blica|Av\. S[ãa]o Jo[ãa]o",
-    r"Paulo VI",
-    r"Henrique Schaumann",
+# Os grandes pontos: os circuitos dos megablocos (os trajetos que a CET fecha). Quem desfila
+# neles entra mesmo sem atração divulgada, e cada um vira um lugar com o nome que o povo conhece
+# (decisão de 30/10/2026). Os ids são os mesmos de antes, para os links antigos continuarem valendo.
+GRANDES_PONTOS = [
+    ("ibirapuera", "Parque Ibirapuera", "sul", r"Pedro [ÁA]lvares Cabral"),
+    ("consolacao", "Rua da Consolação e Baixo Augusta", "centro", r"Consola[çc][ãa]o, 2101"),
+    ("faria-lima", "Avenida Faria Lima", "oeste", r"Faria Lima, 4100"),
+    ("ipiranga-sao-joao", "Av. Ipiranga, São João e República", "centro",
+     r"^Av\.? Ipiranga|Pça\.? ?da Rep[úu]blica|Av\. S[ãa]o Jo[ãa]o"),
+    ("paulo-vi", "Avenida Paulo VI", "oeste", r"Paulo VI"),
+    ("henrique-schaumann", "Rua Henrique Schaumann", "oeste", r"Henrique Schaumann"),
 ]
+
+
+def grande_ponto_do(bloco):
+    for ponto in GRANDES_PONTOS:
+        if re.search(ponto[3], bloco["itinerario"], re.I):
+            return ponto
+    return None
+
+
+def lugar_do(bloco):
+    """(id, nome, zona) do lugar do bloco: o grande ponto onde ele desfila ou a subprefeitura."""
+    ponto = grande_ponto_do(bloco)
+    if ponto:
+        return ponto[:3]
+    sub = bloco["subprefeitura"]
+    return slug(sub), sub, ZONAS[sub]
 # Nomes que as notícias escrevem diferente da lista oficial (mesmo bloco, mesmo dia).
 OUTROS_NOMES = {"Quintal dos Prettos": "Quintal dos Pretos"}
 
@@ -125,32 +144,35 @@ def fama(bloco):
 def entra(bloco):
     if ZONAS[bloco["subprefeitura"]] not in ZONAS_QUE_ENTRAM:
         return False
-    return bool(atracoes_do(bloco)) or any(re.search(p, bloco["itinerario"], re.I) for p in CIRCUITOS)
+    return bool(atracoes_do(bloco)) or grande_ponto_do(bloco) is not None
 
 
 oficiais = [b for b in todos_os_oficiais if entra(b)]
 
-# ------------------------------------------------------------------ os lugares (subprefeituras)
-contagem, fama_do_lugar = {}, {}
+# ------------------------------------------------------------------ os lugares
+contagem, fama_do_lugar, dados_do_lugar = {}, {}, {}
 for bloco in oficiais:
-    contagem[bloco["subprefeitura"]] = contagem.get(bloco["subprefeitura"], 0) + 1
-    fama_do_lugar[bloco["subprefeitura"]] = fama_do_lugar.get(bloco["subprefeitura"], 0) + fama(bloco)
+    lugar = lugar_do(bloco)
+    dados_do_lugar[lugar[0]] = lugar
+    contagem[lugar[0]] = contagem.get(lugar[0], 0) + 1
+    fama_do_lugar[lugar[0]] = fama_do_lugar.get(lugar[0], 0) + fama(bloco)
 # Os lugares com os artistas mais famosos vêm primeiro; depois, os que têm mais blocos.
-subprefeituras = sorted(contagem, key=lambda s: (-fama_do_lugar[s], -contagem[s], sem_acento(s)))
-id_do_lugar = {s: slug(s) for s in subprefeituras}
+lugares = sorted(contagem, key=lambda l: (-fama_do_lugar[l], -contagem[l], l))
 
 linhas = [
     "import { Local } from './tipos';",
     "",
     "/**",
-    " * Os lugares: as subprefeituras de São Paulo do Centro, da Zona Sul e da Zona Oeste que têm",
-    " * bloco. Os que têm os artistas mais famosos vêm primeiro.",
+    " * Os lugares: os grandes pontos do carnaval (os circuitos dos megablocos, como o Parque",
+    " * Ibirapuera) e, para os outros blocos, a subprefeitura. Só Centro, Zona Sul e Zona Oeste.",
+    " * Os que têm os artistas mais famosos vêm primeiro.",
     " * Arquivo gerado por design/dados/gerar_dados.py: não mude à mão.",
     " */",
     "export const LOCAIS: Local[] = [",
 ]
-for s in subprefeituras:
-    linhas.append(f"  {{ id: {ts(id_do_lugar[s])}, nome: {ts(s)}, zona: {ts(ZONAS[s])} }},")
+for l in lugares:
+    identificador, nome, zona = dados_do_lugar[l]
+    linhas.append(f"  {{ id: {ts(identificador)}, nome: {ts(nome)}, zona: {ts(zona)} }},")
 linhas += ["];", ""]
 open(f"{pasta}/locais.ts", "w", encoding="utf-8", newline="\n").write("\n".join(linhas))
 
@@ -170,7 +192,7 @@ def atracoes_em_ts(atracoes):
     return "[" + ", ".join(itens) + "]"
 
 
-ordem = sorted(oficiais, key=lambda b: (subprefeituras.index(b["subprefeitura"]), b["data"], b["concentracao"], sem_acento(b["nome"])))
+ordem = sorted(oficiais, key=lambda b: (lugares.index(lugar_do(b)[0]), b["data"], b["concentracao"], sem_acento(b["nome"])))
 repetidos = {}
 for bloco in ordem:
     repetidos[slug(bloco["nome"])] = repetidos.get(slug(bloco["nome"]), 0) + 1
@@ -196,8 +218,8 @@ linhas = [
 lugar_atual = None
 usados = set()
 for bloco in ordem:
-    if bloco["subprefeitura"] != lugar_atual:
-        lugar_atual = bloco["subprefeitura"]
+    if lugar_do(bloco)[1] != lugar_atual:
+        lugar_atual = lugar_do(bloco)[1]
         linhas.append(f"  // {lugar_atual}")
     base = slug(bloco["nome"])
     dia, mes = bloco["data"][8:], bloco["data"][5:7]
@@ -216,7 +238,7 @@ for bloco in ordem:
         f"inicio: {ts(bloco['concentracao'])}",
         f"desfile: {ts(bloco['desfile'])}",
         f"fim: {ts(bloco['termino'])}",
-        f"localId: {ts(id_do_lugar[bloco['subprefeitura']])}",
+        f"localId: {ts(lugar_do(bloco)[0])}",
         f"atracoes: {atracoes_em_ts(atracoes_do(bloco))}",
     ]
     if antigo and antigo.get("estilo"):
@@ -230,6 +252,10 @@ for bloco in ordem:
     itinerario_do_bloco[identificador] = indice_do_itinerario[bloco["itinerario"]]
 
     tracado = tracados.get(f"{bloco['subprefeitura']}|{bloco['itinerario']}")
+    if not tracado or not tracado.get("linha"):
+        # A lista às vezes põe o bloco numa subprefeitura vizinha (a Faria Lima 4100 aparece em
+        # Santo Amaro): vale o traçado do mesmo itinerário em outra subprefeitura.
+        tracado = next((v for k, v in tracados.items() if k.split("|", 1)[1] == bloco["itinerario"] and v.get("linha")), tracado)
     if tracado and tracado.get("linha"):
         codigo = codificar(tracado["linha"])
         aproximado = 1 if "aproximado" in tracado["jeito"] or tracado["jeito"] in ("na rua", "lugar", "cruzamento") else 0
@@ -284,5 +310,5 @@ for identificador, indice in trajeto_do_bloco.items():
 linhas += ["};", ""]
 open(f"{pasta}/pontos-dos-blocos.ts", "w", encoding="utf-8", newline="\n").write("\n".join(linhas))
 
-print(len(subprefeituras), "lugares;", len(ordem), "blocos;", len(trajeto_do_bloco), "com ponto;", len(trajetos), "trajetos diferentes")
+print(len(lugares), "lugares;", len(ordem), "blocos;", len(trajeto_do_bloco), "com ponto;", len(trajetos), "trajetos diferentes")
 print("com artistas:", sum(1 for b in ordem if atracoes_do(b)))

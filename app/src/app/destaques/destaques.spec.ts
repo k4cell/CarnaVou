@@ -68,15 +68,15 @@ describe('Destaques', () => {
 
     it('mostra os artistas, o primeiro em destaque, nos lugares que têm artista', async () => {
       const { cartoes } = await renderizar();
-      const vilaMariana = cartoes().find((c) => c.getAttribute('href') === '/local/vila-mariana');
-      expect(vilaMariana?.querySelector('.artistas')?.textContent).toMatch(/^Artistas: Ivete Sangalo, /);
-      expect(vilaMariana?.querySelector('.artistas .principal')?.textContent).toBe('Ivete Sangalo');
+      const ibirapuera = cartoes().find((c) => c.getAttribute('href') === '/local/ibirapuera');
+      expect(ibirapuera?.querySelector('.artistas')?.textContent).toMatch(/^Artistas: Ivete Sangalo, /);
+      expect(ibirapuera?.querySelector('.artistas .principal')?.textContent).toBe('Ivete Sangalo');
     });
 
     it('mostra os nomes dos blocos nos lugares sem artista divulgado', async () => {
       const { cartoes } = await renderizar();
-      const lapa = cartoes().find((c) => c.getAttribute('href') === '/local/lapa');
-      expect(lapa?.querySelector('.artistas')?.textContent).toMatch(/^Blocos: /);
+      const pauloVi = cartoes().find((c) => c.getAttribute('href') === '/local/paulo-vi');
+      expect(pauloVi?.querySelector('.artistas')?.textContent).toMatch(/^Blocos: /);
     });
 
     it('dá a cada lugar a sua faixa de cor, do rosa ao azul', async () => {
@@ -117,10 +117,10 @@ describe('Destaques', () => {
     it('mantém a cor da faixa do lugar quando troca de aba', async () => {
       const { tela, tocar } = await renderizar(SABADO_14H);
       await tocar('Amanhã');
-      const faixaEm = () => tela.querySelector('a[href="/local/se"]')?.getAttribute('data-faixa');
+      const faixaEm = () => tela.querySelector('a[href="/local/faria-lima"]')?.getAttribute('data-faixa');
       const emAmanha = faixaEm();
       await tocar('Geral');
-      expect(emAmanha).toBe('amarelo');
+      expect(emAmanha).toBe('laranja');
       expect(faixaEm()).toBe(emAmanha);
     });
 

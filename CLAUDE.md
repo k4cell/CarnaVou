@@ -113,8 +113,9 @@ calendário e o que eu ainda não pensei.
 - A logo e as imagens de referência ficam em `design/`, cada uma com legenda no
   `design/README.md`. O que o site usa fica em `app/public/logo/` e `app/public/icons/`:
   se a logo mudar, gere de novo a partir de `design/logo/`.
-- Os dados ficam em `app/src/app/dados/`: `locais.ts` (as subprefeituras) e `blocos.ts` (os
-  blocos aprovados do carnaval de rua de 2026). Por decisão minha, só entram o Centro, a Zona Sul
+- Os dados ficam em `app/src/app/dados/`: `locais.ts` (os lugares: os grandes pontos, como o
+  Parque Ibirapuera, e, para os outros blocos, a subprefeitura) e `blocos.ts` (os blocos
+  aprovados do carnaval de rua de 2026). Por decisão minha, só entram o Centro, a Zona Sul
   e a Zona Oeste, e só os blocos com atração divulgada ou num circuito de megabloco. A ordem é
   por fama: a soma dos seguidores no Instagram dos artistas (`design/dados/seguidores.json`). **Não invente
   dado**: só vale o que uma fonte diz e, na dúvida, deixe em branco. A fonte oficial é o

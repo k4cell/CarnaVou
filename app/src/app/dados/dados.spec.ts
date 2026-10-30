@@ -7,21 +7,27 @@ import { lerLinha, trajetoDoBloco } from './trajetos';
 
 describe('dados', () => {
   describe('os lugares', () => {
-    it('são subprefeituras, sem repetir', () => {
+    it('não repetem o id', () => {
       const ids = LOCAIS.map((local) => local.id);
       expect(ids.length).toBeGreaterThan(3);
       expect(new Set(ids).size).toBe(ids.length);
     });
 
-    it('ficam só no Centro, na Zona Sul e na Zona Oeste, com a Sé no Centro', () => {
+    it('ficam só no Centro, na Zona Sul e na Zona Oeste', () => {
       expect(new Set(LOCAIS.map((local) => local.zona))).toEqual(new Set(['centro', 'sul', 'oeste']));
-      expect(LOCAIS.filter((local) => local.zona === 'centro').map((local) => local.nome)).toEqual(['Sé']);
+    });
+
+    it('têm os grandes pontos do carnaval com o nome que o povo conhece', () => {
+      const nomes = LOCAIS.map((local) => local.nome);
+      expect(nomes).toContain('Parque Ibirapuera');
+      expect(nomes).toContain('Rua da Consolação e Baixo Augusta');
+      expect(nomes).toContain('Avenida Faria Lima');
     });
 
     it('vêm em ordem, dos que têm os artistas mais famosos para os menos', () => {
       const fama = LOCAIS.map((local) => blocosDoLocal(local.id).reduce((soma, bloco) => soma + famaDoBloco(bloco), 0));
       expect(fama).toEqual([...fama].sort((a, b) => b - a));
-      expect(LOCAIS[0].id).toBe('vila-mariana');
+      expect(LOCAIS[0].id).toBe('ibirapuera');
     });
 
     it('todo lugar tem pelo menos um bloco', () => {
@@ -140,8 +146,8 @@ describe('dados', () => {
     });
 
     it('dá a mesma cor para o mesmo lugar, sempre', () => {
-      expect(faixaDoLocal('vila-mariana')).toBe('rosa');
-      expect(faixaDoLocal('se')).toBe('amarelo');
+      expect(faixaDoLocal('ibirapuera')).toBe('rosa');
+      expect(faixaDoLocal('consolacao')).toBe('amarelo');
     });
 
     it('cai na primeira cor para um lugar que não existe', () => {
@@ -151,24 +157,24 @@ describe('dados', () => {
 
   describe('artistasDoLugar', () => {
     it('junta os artistas do lugar sem repetir, do mais famoso para o menos', () => {
-      const artistas = artistasDoLugar('vila-mariana');
+      const artistas = artistasDoLugar('ibirapuera');
       expect(artistas.length).toBeGreaterThan(5);
       expect(new Set(artistas).size).toBe(artistas.length);
       expect(artistas[0]).toBe('Ivete Sangalo');
     });
 
     it('pega só os dos blocos de um dia em diante', () => {
-      const artistas = artistasDoLugar('vila-mariana', '2026-02-14');
+      const artistas = artistasDoLugar('ibirapuera', '2026-02-14');
       expect(artistas[0]).toBe('Léo Santana');
       expect(artistas).not.toContain('Ivete Sangalo');
     });
 
     it('volta a valer a lista toda quando nenhum bloco dali em diante tem artista', () => {
-      expect(artistasDoLugar('vila-mariana', '2026-03-01')).toEqual(artistasDoLugar('vila-mariana'));
+      expect(artistasDoLugar('ibirapuera', '2026-03-01')).toEqual(artistasDoLugar('ibirapuera'));
     });
 
     it('fica vazio quando o lugar não tem artista divulgado', () => {
-      expect(artistasDoLugar('lapa')).toEqual([]);
+      expect(artistasDoLugar('paulo-vi')).toEqual([]);
     });
   });
 });
