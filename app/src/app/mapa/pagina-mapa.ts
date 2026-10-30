@@ -28,6 +28,16 @@ import { MapaBase, PontoNoMapa, TrajetoNoMapa } from './mapa-base';
 
 /** No cartão do ponto cabem só alguns blocos; o resto fica na página do lugar. */
 const BLOCOS_NO_CARTAO = 3;
+/** Os nomes dos blocos de um ponto, já no cartão pequeno: "A, B e C" ou "A, B, C e mais 2". */
+function nomesDoPonto(nomes: string[]): string {
+  const mostrados = nomes.slice(0, 3);
+  const resto = nomes.length - mostrados.length;
+  if (resto > 0) {
+    return `${mostrados.join(', ')} e mais ${resto}`;
+  }
+  return mostrados.length > 1 ? `${mostrados.slice(0, -1).join(', ')} e ${mostrados.at(-1)}` : mostrados.join('');
+}
+
 /** Quanto puxar a alça do cartão (em pixels) para ele abrir, encolher ou fechar. */
 const PUXAO = 30;
 /** Um toque que mexe menos que isso é toque, não arrasto. */
@@ -112,6 +122,7 @@ export class PaginaMapa {
     return {
       ...ponto,
       titulo: ponto.blocos.length === 1 ? primeiro.nome : `${ponto.blocos.length} blocos neste ponto`,
+      nomes: ponto.blocos.length > 1 ? nomesDoPonto(ponto.blocos.map((bloco) => bloco.nome)) : '',
       itinerario: itinerarioDoBloco(primeiro.id),
       aproximado: ponto.trajetos.some((trajeto) => trajeto.aproximado),
       artistas: artistas.join(', '),

@@ -196,11 +196,12 @@ describe('PaginaMapa', () => {
       expect(cartao()?.querySelector('app-zona-tag')).not.toBeNull();
     });
 
-    it('num ponto de vários blocos, o título diz quantos são', async () => {
+    it('num ponto de vários blocos, o título diz quantos são e o cartão pequeno já diz os nomes', async () => {
       const { cartao, tocarNoBloco } = await renderizar(SABADO_14H);
-      const blocos = acharPonto('hoje', (grupo) => grupo.length > 1);
+      const blocos = acharPonto('hoje', (grupo) => grupo.length === 2);
       await tocarNoBloco(blocos[0]);
-      expect(cartao()?.querySelector('.nome')?.textContent).toBe(`${blocos.length} blocos neste ponto`);
+      expect(cartao()?.querySelector('.nome')?.textContent).toBe('2 blocos neste ponto');
+      expect(cartao()?.querySelector('.nomes-do-ponto')?.textContent).toBe(`${blocos[0].nome} e ${blocos[1].nome}`);
     });
 
     it('mostra o itinerário oficial do bloco', async () => {
