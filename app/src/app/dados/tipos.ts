@@ -19,6 +19,11 @@ export interface Local {
   id: string;
   nome: string;
   zona: Zona;
+  /**
+   * É um circuito de megabloco (como o Parque Ibirapuera): os blocos saem todos do mesmo ponto, um
+   * depois do outro. Os outros lugares são uma subprefeitura inteira, com blocos em ruas diferentes.
+   */
+  circuito?: boolean;
 }
 
 export interface Atracao {

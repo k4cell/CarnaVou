@@ -14,8 +14,9 @@ const NADA_NA_ABA: Record<Aba, string> = {
 };
 
 /**
- * A aba Blocos: os blocos (e não os lugares), com o filtro Hoje | Amanhã | Geral, o mesmo da tela
- * inicial e do mapa. Em Hoje, os que estão rolando agora vêm primeiro.
+ * A aba Blocos, a tela principal: os blocos (e não os lugares), com o filtro Hoje | Amanhã | Geral,
+ * o mesmo do Descobrir e do mapa. Em Hoje, os que estão rolando agora vêm primeiro. Os blocos do
+ * mesmo dia no mesmo lugar ficam juntos, um embaixo do outro.
  */
 @Component({
   selector: 'app-pagina-blocos',
@@ -26,8 +27,13 @@ const NADA_NA_ABA: Record<Aba, string> = {
     @for (secao of secoes(); track secao.titulo) {
       <h3 class="secao">{{ secao.titulo }}</h3>
       <ul class="lista">
-        @for (bloco of secao.blocos; track bloco.id) {
-          <li><app-banner-bloco [bloco]="bloco" [mostrarLugar]="true" /></li>
+        <!-- Os blocos do mesmo dia no mesmo lugar ficam num cartão só, com o lugar no primeiro. -->
+        @for (grupo of secao.grupos; track grupo[0].id) {
+          <li [class.dia]="grupo.length > 1">
+            @for (bloco of grupo; track bloco.id; let primeiro = $first) {
+              <app-banner-bloco [bloco]="bloco" [mostrarLugar]="primeiro" />
+            }
+          </li>
         }
       </ul>
     } @empty {

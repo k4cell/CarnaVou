@@ -188,9 +188,11 @@ linhas = [
     " */",
     "export const LOCAIS: Local[] = [",
 ]
+circuitos = {ponto[0] for ponto in GRANDES_PONTOS}
 for l in lugares:
     identificador, nome, zona = dados_do_lugar[l]
-    linhas.append(f"  {{ id: {ts(identificador)}, nome: {ts(nome)}, zona: {ts(zona)} }},")
+    circuito = ", circuito: true" if identificador in circuitos else ""
+    linhas.append(f"  {{ id: {ts(identificador)}, nome: {ts(nome)}, zona: {ts(zona)}{circuito} }},")
 linhas += ["];", ""]
 open(f"{pasta}/locais.ts", "w", encoding="utf-8", newline="\n").write("\n".join(linhas))
 
