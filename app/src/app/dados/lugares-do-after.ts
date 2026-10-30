@@ -17,6 +17,9 @@ export interface LugarDoAfter {
  * tem fonte (decisão de 30/10/2026):
  * - Beco do Batman e Meio Fio Bar foram indicados na decisão. Os endereços vêm da Wikipedia
  *   (Beco do Batman) e do guia BaresSP (Meio Fio Bar, baressp.com.br/bares/meio-fio-bar).
+ * - Bar Meretriz e Bar Galo também foram indicados (30/10/2026). Os endereços vêm do TripAdvisor e
+ *   do Bendito Guia (Bar Meretriz) e do guia BaresSP (Bar Galo, baressp.com.br/bares/bar-galo,
+ *   página atualizada em 12/03/2026).
  * - Boteco Todos os Santos, Vila 567 e Praça A são bares da Rua Aspicuelta que fazem o "after"
  *   dos blocos, segundo o GPS Brasília (27/02/2025, endereços) e o ABC do ABC (10/02/2025). As
  *   baladas citadas ficaram de fora: o foco é o carnaval de rua.
@@ -40,6 +43,24 @@ export const LUGARES_DO_AFTER: LugarDoAfter[] = [
     zona: 'oeste',
     lat: -23.55994,
     lng: -46.69696,
+  },
+  {
+    id: 'bar-meretriz',
+    nome: 'Bar Meretriz',
+    tipo: 'Bar',
+    endereco: 'Rua Edson Dias, 99, Pinheiros',
+    zona: 'oeste',
+    lat: -23.56368,
+    lng: -46.69254,
+  },
+  {
+    id: 'bar-galo',
+    nome: 'Bar Galo',
+    tipo: 'Bar',
+    endereco: 'Rua Álvaro Anes, 88, Pinheiros',
+    zona: 'oeste',
+    lat: -23.56311,
+    lng: -46.69299,
   },
   {
     id: 'boteco-todos-os-santos',
