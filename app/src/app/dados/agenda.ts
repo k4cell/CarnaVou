@@ -1,7 +1,7 @@
 import { artistasDoLugar, artistasPorFama, blocosDoLocal, faixaDoLocal, famaDoBloco } from './consultas';
 import { formatarHora } from './formato';
 import { LOCAIS } from './locais';
-import { Bloco, Local } from './tipos';
+import { Bloco, Local, MomentoDoBloco } from './tipos';
 
 /** As três abas da tela inicial. */
 export type Aba = 'hoje' | 'amanha' | 'geral';
@@ -63,6 +63,22 @@ export function horaIso(data: Date): string {
  */
 export function jaAcabou(bloco: Bloco, hora: string): boolean {
   return !!bloco.fim && bloco.fim > bloco.inicio && hora >= bloco.fim;
+}
+
+/** Em que pé o bloco está agora. Sem saber o dia de hoje (a página pronta), conta como "antes". */
+export function momentoDoBloco(bloco: Bloco, agora: Date | null): MomentoDoBloco {
+  if (agora === null) {
+    return 'antes';
+  }
+  const dia = diaIso(agora);
+  if (bloco.data !== dia) {
+    return bloco.data < dia ? 'acabou' : 'antes';
+  }
+  const hora = horaIso(agora);
+  if (bloco.inicio > hora) {
+    return 'antes';
+  }
+  return jaAcabou(bloco, hora) ? 'acabou' : 'rolando';
 }
 
 export function diaSeguinte(data: Date): Date {

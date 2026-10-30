@@ -1,5 +1,6 @@
-import { CartaoDoLugar, blocosDaAba, cartoesDaAba, diaIso, diaSeguinte, horaIso } from './agenda';
+import { CartaoDoLugar, blocosDaAba, cartoesDaAba, diaIso, diaSeguinte, horaIso, momentoDoBloco } from './agenda';
 import { BLOCOS } from './blocos';
+import { textoDoHorario } from './formato';
 import { LOCAIS } from './locais';
 
 /** Os selos de cada lugar, no formato { id: selo }, para os testes ficarem fáceis de ler. */
@@ -232,6 +233,37 @@ describe('agenda', () => {
     it('fica vazia num dia em que o lugar não tem bloco', () => {
       const semBlocoNoSabado = LOCAIS.find((local) => quantosNoDia(local.id, '2026-02-14') === 0)!;
       expect(blocosDaAba('hoje', semBlocoNoSabado.id, SABADO_14H)).toEqual([]);
+    });
+  });
+
+  describe('o momento do bloco e o horário dele', () => {
+    // Carnafacul - Quem Pede, Pede: sábado, 07/02/2026, das 9h às 14h.
+    const ivete = BLOCOS.find((bloco) => bloco.id === 'carnafacul-quem-pede-pede')!;
+    const sabado7 = (hora: number) => new Date(2026, 1, 7, hora, 0);
+
+    it('antes de começar: "Começa às"', () => {
+      expect(momentoDoBloco(ivete, sabado7(8))).toBe('antes');
+      expect(textoDoHorario(ivete, 'antes')).toBe('Começa às 9h · vai até 14h');
+    });
+
+    it('depois de começar: "Começou às", e ainda "vai até"', () => {
+      expect(momentoDoBloco(ivete, sabado7(12))).toBe('rolando');
+      expect(textoDoHorario(ivete, 'rolando')).toBe('Começou às 9h · vai até 14h');
+    });
+
+    it('depois de acabar: "Começou às" e "acabou às"', () => {
+      expect(momentoDoBloco(ivete, sabado7(15))).toBe('acabou');
+      expect(textoDoHorario(ivete, 'acabou')).toBe('Começou às 9h · acabou às 14h');
+    });
+
+    it('noutro dia: antes, se for depois; acabou, se já passou', () => {
+      expect(momentoDoBloco(ivete, new Date(2026, 1, 6, 23, 0))).toBe('antes');
+      expect(momentoDoBloco(ivete, new Date(2026, 1, 8, 9, 0))).toBe('acabou');
+    });
+
+    it('sem saber a hora (a página pronta), conta como antes', () => {
+      expect(momentoDoBloco(ivete, null)).toBe('antes');
+      expect(textoDoHorario(ivete)).toBe('Começa às 9h · vai até 14h');
     });
   });
 });

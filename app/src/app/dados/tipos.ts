@@ -47,6 +47,9 @@ export interface Bloco {
   estilo?: Estilo;
 }
 
+/** Em que pé o bloco está agora: ainda vai começar, já começou (está rolando) ou já acabou. */
+export type MomentoDoBloco = 'antes' | 'rolando' | 'acabou';
+
 /** Onde um bloco se concentra e por onde ele passa. */
 export interface Trajeto {
   /** O ponto da concentração, como [longitude, latitude]. */
