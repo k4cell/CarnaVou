@@ -67,22 +67,6 @@ a:focus-visible {
   margin: 4px 0 16px;
 }
 
-// Na página do lugar: qual dia está à vista (a aba escolhida) e o botão de ver todos os dias.
-.filtro-do-lugar {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px 12px;
-  align-items: center;
-  margin: 16px 0 0;
-  font-weight: 600;
-
-  button {
-    font: inherit;
-    font-weight: 700;
-    cursor: pointer;
-  }
-}
-
 // Os botões de ação de uma página (ver no mapa, copiar o link), lado a lado.
 .acoes-da-pagina {
   display: flex;

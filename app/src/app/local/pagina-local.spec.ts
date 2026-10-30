@@ -121,7 +121,7 @@ describe('PaginaLocal', () => {
     });
   });
 
-  describe('com o dia de hoje conhecido (a aba escolhida na tela inicial vale aqui)', () => {
+  describe('com o dia de hoje conhecido (a aba escolhida em qualquer tela vale aqui)', () => {
     // Sábado, 14/02/2026, duas da tarde: no Ibirapuera tem Carna Lau e Agrada Gregos.
     async function renderizarNoDia(local: string, aba?: 'hoje' | 'amanha' | 'geral') {
       await TestBed.configureTestingModule({
@@ -140,20 +140,28 @@ describe('PaginaLocal', () => {
       return { fixture, tela, datas };
     }
 
-    it('vindo de Hoje, mostra só os blocos de hoje e diz isso', async () => {
-      const { tela, datas } = await renderizarNoDia('ibirapuera', 'hoje');
-      expect(datas().length).toBe(BLOCOS.filter((b) => b.localId === 'ibirapuera' && b.data === '2026-02-14').length);
-      expect(datas().every((data) => data === '2026-02-14')).toBe(true);
-      expect(tela.querySelector('.filtro-do-lugar')?.textContent).toContain('Mostrando os blocos de hoje.');
+    it('mostra as abas, com a escolhida marcada', async () => {
+      const { tela } = await renderizarNoDia('ibirapuera', 'amanha');
+      const abas = Array.from(tela.querySelectorAll('app-abas-do-dia button'));
+      expect(abas.map((aba) => aba.textContent?.trim())).toEqual(['Hoje', 'Amanhã', 'Geral']);
+      expect(abas.map((aba) => aba.getAttribute('aria-pressed'))).toEqual(['false', 'true', 'false']);
     });
 
-    it('"Ver todos os dias" passa para a Geral: de hoje em diante', async () => {
+    it('vindo de Hoje, mostra só os blocos de hoje', async () => {
+      const { datas } = await renderizarNoDia('ibirapuera', 'hoje');
+      expect(datas().length).toBe(BLOCOS.filter((b) => b.localId === 'ibirapuera' && b.data === '2026-02-14').length);
+      expect(datas().every((data) => data === '2026-02-14')).toBe(true);
+    });
+
+    it('tocar na aba Geral troca os blocos sem sair da página, e vale nas outras telas', async () => {
       const { fixture, tela, datas } = await renderizarNoDia('ibirapuera', 'hoje');
-      tela.querySelector<HTMLButtonElement>('.ver-todos')!.click();
+      const geral = Array.from(tela.querySelectorAll<HTMLButtonElement>('app-abas-do-dia button')).find(
+        (aba) => aba.textContent?.trim() === 'Geral',
+      )!;
+      geral.click();
       await fixture.whenStable();
       expect(TestBed.inject(FiltroDeDia).ativa()).toBe('geral');
       expect(datas().length).toBe(BLOCOS.filter((b) => b.localId === 'ibirapuera' && b.data >= '2026-02-14').length);
-      expect(tela.querySelector('.ver-todos')).toBeNull();
     });
 
     it('na Geral, os dias que já passaram somem', async () => {
@@ -164,7 +172,7 @@ describe('PaginaLocal', () => {
 
     it('avisa quando o lugar não tem bloco no dia da aba', async () => {
       const { tela } = await renderizarNoDia('consolacao', 'hoje');
-      expect(tela.querySelector('.filtro-do-lugar')?.textContent).toContain('Nenhum bloco aqui hoje.');
+      expect(tela.querySelector('.vazio')?.textContent).toContain('Nenhum bloco aqui hoje. Veja a aba Geral.');
       expect(tela.querySelectorAll('app-banner-bloco').length).toBe(0);
     });
   });

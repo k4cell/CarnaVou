@@ -1,4 +1,6 @@
 @if (lugar(); as achado) {
+  <!-- As abas trocam o dia sem voltar: valem também na tela inicial, na aba Blocos e no mapa. -->
+  <app-abas-do-dia />
   <h2 class="titulo">{{ achado.nome }}</h2>
   <app-zona-tag [zona]="achado.zona" />
   <p class="subtitulo">Dias de festa e principais artistas</p>
@@ -13,14 +15,8 @@
     <app-copiar-link />
   </div>
 
-  <!-- Vale a aba escolhida na tela inicial: quem veio de Hoje vê só os blocos de hoje. -->
-  @if (oQueMostra()) {
-    <p class="filtro-do-lugar">
-      {{ nadaNaAba() || oQueMostra() }}
-      @if (aba() !== 'geral') {
-        <button type="button" class="botao-claro ver-todos" (click)="verTodos()">Ver todos os dias</button>
-      }
-    </p>
+  @if (nadaNaAba()) {
+    <p class="vazio">{{ nadaNaAba() }}</p>
   }
 
   @if (destaques().length > 0) {
