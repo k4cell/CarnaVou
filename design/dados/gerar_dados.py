@@ -4,8 +4,8 @@ Uso: python -I gerar_dados.py pasta_de_design_dados tracados.json pasta_dos_dado
 
 Da pasta design/dados vêm:
 - blocos-oficiais-2026.json: a lista oficial lida do Diário Oficial (ler_tabela.py).
-- atracoes-das-noticias.json: os artistas, o estilo e o público que as notícias dão para alguns
-  blocos; valem quando o bloco é o mesmo (mesmo nome e mesmo dia).
+- atracoes-das-noticias.json: os artistas e o estilo que as notícias dão para alguns blocos;
+  valem quando o bloco é o mesmo (mesmo nome e mesmo dia).
 - seguidores.json: os seguidores no Instagram de cada artista, para ordenar por fama.
 E tracados.json é o ponto e a linha de cada itinerário (tracar.py).
 
@@ -207,8 +207,8 @@ linhas = [
     " *",
     " * Vêm da lista oficial dos blocos aprovados, publicada pela SPTuris e pela Secretaria de",
     " * Cultura no Diário Oficial (Portaria Conjunta nº 1, de 22/01/2026): nome, dia, subprefeitura,",
-    " * itinerário e os horários de concentração (inicio), desfile e término (fim). Os artistas, o",
-    " * estilo e o público vêm de notícias, só nos blocos que elas citam, e os seguidores de cada",
+    " * itinerário e os horários de concentração (inicio), desfile e término (fim). Os artistas e o",
+    " * estilo vêm de notícias, só nos blocos que elas citam, e os seguidores de cada",
     " * artista, de contadores públicos do Instagram. Entram só os blocos do Centro, da Zona Sul e da",
     " * Zona Oeste que têm atração divulgada ou desfilam num circuito de megabloco.",
     " * Arquivo gerado por design/dados/gerar_dados.py: não mude à mão.",
@@ -243,8 +243,6 @@ for bloco in ordem:
     ]
     if antigo and antigo.get("estilo"):
         partes.append(f"estilo: {ts(antigo['estilo'])}")
-    if antigo and antigo.get("publico"):
-        partes.append(f"publico: {ts(antigo['publico'])}")
     linhas.append("  { " + ", ".join(re.sub(r"\s*\n\s*", " ", p) for p in partes) + " },")
     if bloco["itinerario"] not in indice_do_itinerario:
         indice_do_itinerario[bloco["itinerario"]] = len(itinerarios)

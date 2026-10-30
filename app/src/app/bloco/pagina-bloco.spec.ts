@@ -98,16 +98,6 @@ describe('PaginaBloco', () => {
     expect(semEstilo.textContent).not.toContain('Estilo:');
   });
 
-  it('mostra o público-alvo quando o bloco tem', async () => {
-    const tela = await renderizar('ibirapuera', 'agrada-gregos');
-    expect(tela.textContent).toContain('Público: LGBTQIA+');
-  });
-
-  it('não mostra público-alvo quando o bloco não tem', async () => {
-    const tela = await renderizar('ibirapuera', 'carnafacul-quem-pede-pede');
-    expect(tela.textContent).not.toContain('Público:');
-  });
-
   it('avisa quando o bloco não existe', async () => {
     const tela = await renderizar('ibirapuera', 'bloco-que-nao-existe');
     expect(tela.textContent).toContain('Não achei esse bloco');

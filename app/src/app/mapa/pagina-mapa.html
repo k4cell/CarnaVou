@@ -72,7 +72,8 @@
       <h2 class="nome">{{ achado.titulo }}</h2>
       <div class="linha">
         <app-zona-tag [zona]="achado.local.zona" />
-        <span class="lugar">{{ achado.local.nome }}</span>
+        <!-- O nome do lugar leva para a página dele. -->
+        <a class="lugar" [routerLink]="['/local', achado.local.id]">{{ achado.local.nome }}</a>
       </div>
       @if (achado.nomes) {
         <p class="nomes-do-ponto">{{ achado.nomes }}</p>
@@ -83,9 +84,9 @@
       }
 
       <div class="acoes">
-        <a class="botao botao-principal" [href]="links()?.google" target="_blank" rel="noopener">Como chegar</a>
+        <a class="botao botao-principal" [href]="links()?.google" target="_blank" rel="noopener">Ir</a>
         <a class="botao" [href]="links()?.waze" target="_blank" rel="noopener">Waze</a>
-        <a class="botao" [routerLink]="['/local', achado.local.id]">Ver o lugar</a>
+        <a class="botao" [href]="links()?.uber" target="_blank" rel="noopener">Uber</a>
       </div>
 
       @if (aberto()) {
