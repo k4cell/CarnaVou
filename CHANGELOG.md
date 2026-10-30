@@ -7,6 +7,13 @@ Enquanto o app está em beta, o número é `0.MEIO.FINAL`. O número do meio sob
 uma tela ou funcionalidade nova (0.3.0, 0.4.0…) e o último, quando é só uma correção pequena
 (0.3.1). Cada versão tem uma etiqueta no GitHub, como `v0.3.0`.
 
+## 0.20.0 (30/10/2026)
+
+- Na aba Blocos, os blocos do mesmo dia no mesmo circuito (Ibirapuera, Faria Lima, Consolação,
+  Henrique Schaumann, Paulo VI e República) ficam num cartão só, um embaixo do outro, por horário.
+  O que começa mais tarde ali aparece junto com o que já está rolando. Nos lugares que são uma
+  subprefeitura inteira, com blocos em ruas diferentes, cada bloco continua sozinho.
+
 ## 0.19.1 (30/10/2026)
 
 - Os testes passam a usar uma cópia congelada dos dados de 2026, para não quebrarem quando os dados

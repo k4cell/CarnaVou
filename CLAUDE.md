@@ -71,7 +71,9 @@ calendário e o que eu ainda não pensei.
   o Descobrir, o mapa e a página do lugar: o estado fica em `filtro/` e os botões em `abas/`.
   Os endereços são `/` (a aba Blocos), `/descobrir`, `/local/:local`, `/local/:local/:bloco`,
   `/after` e `/mapa` (o antigo `/blocos` leva para `/`), e cada um vira uma página pronta no
-  `ng build`.
+  `ng build`. Na aba Blocos, os blocos do mesmo dia no mesmo circuito de megabloco
+  (`Local.circuito`) ficam num cartão só, um embaixo do outro, para quem está ali ver que o
+  próximo é no mesmo lugar.
 - As páginas prontas não sabem o dia de hoje. O que depende da data (as abas Hoje e Amanhã
   e os selos) é calculado no navegador, depois da primeira pintura, pelo serviço em
   `relogio/`. Pra testar, abra o site com `?hoje=2027-02-06T14:00` no endereço: aí "hoje" fica
