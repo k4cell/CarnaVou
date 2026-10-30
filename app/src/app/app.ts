@@ -3,6 +3,8 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterLink, RouterOutlet } from '@angular/router';
 import { filter, map } from 'rxjs';
 
+import { Atualizacao } from './atualizacao/atualizacao';
+import { AvisoDeAtualizacao } from './atualizacao/aviso-de-atualizacao';
 import { AvisoDeTeste } from './aviso-de-teste/aviso-de-teste';
 import { Conexao } from './conexao/conexao';
 import { MenuInferior } from './menu/menu-inferior';
@@ -11,7 +13,7 @@ import { caminhoDeVolta } from './voltar/caminho-de-volta';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, RouterLink, MenuInferior, AvisoDeTeste],
+  imports: [RouterOutlet, RouterLink, MenuInferior, AvisoDeTeste, AvisoDeAtualizacao],
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })
@@ -32,11 +34,13 @@ export class App {
 
   constructor() {
     const relogio = inject(Relogio);
+    const atualizacao = inject(Atualizacao);
     // Só no navegador, depois da primeira pintura: assim a página pronta que vem do servidor
     // (que não sabe o dia de hoje nem se há internet) e a primeira pintura do navegador saem iguais.
     afterNextRender(() => {
       relogio.iniciar(window.location.search);
       this.conexao.iniciar();
+      atualizacao.iniciar();
     });
   }
 }

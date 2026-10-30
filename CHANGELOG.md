@@ -7,6 +7,11 @@ Enquanto o app está em beta, o número é `0.MEIO.FINAL`. O número do meio sob
 uma tela ou funcionalidade nova (0.3.0, 0.4.0…) e o último, quando é só uma correção pequena
 (0.3.1). Cada versão tem uma etiqueta no GitHub, como `v0.3.0`.
 
+## 0.12.1 (30/10/2026)
+
+- O app instalado no celular passa a se atualizar: procura versão nova ao abrir, ao voltar para a
+  tela e a cada 15 minutos, e mostra "Tem versão nova do CarnaVou" com o botão Atualizar.
+
 ## 0.12.0 (30/10/2026)
 
 - Aba nova **Blocos** no menu de baixo: os blocos de hoje (com "Rolando agora" primeiro), de
