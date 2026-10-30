@@ -170,6 +170,14 @@ describe('PaginaLocal', () => {
       expect(datas().every((data) => (data ?? '') >= '2026-02-14')).toBe(true);
     });
 
+    it('diz "Começou às" no bloco que já começou e "Começa às" no que ainda vai começar', async () => {
+      const { tela } = await renderizarNoDia('ibirapuera', 'hoje');
+      const horario = (id: string) => tela.querySelector(`a[href="/local/ibirapuera/${id}"] .horario`)?.textContent;
+      // Às 14h: o Carna Lau começou ao meio-dia e vai até as 16h; o Agrada Gregos, à uma.
+      expect(horario('carna-lau')).toBe('Começou às 12h · vai até 16h');
+      expect(horario('agrada-gregos')).toBe('Começou às 13h · vai até 18h');
+    });
+
     it('avisa quando o lugar não tem bloco no dia da aba', async () => {
       const { tela } = await renderizarNoDia('consolacao', 'hoje');
       expect(tela.querySelector('.vazio')?.textContent).toContain('Nenhum bloco aqui hoje. Veja a aba Geral.');

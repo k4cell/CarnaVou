@@ -1,4 +1,4 @@
-import { Bloco, Estilo, Zona } from './tipos';
+import { Bloco, Estilo, MomentoDoBloco, Zona } from './tipos';
 
 const FORMATO_SEMANA = new Intl.DateTimeFormat('pt-BR', { weekday: 'short' });
 const FORMATO_MES = new Intl.DateTimeFormat('pt-BR', { month: 'short' });
@@ -75,8 +75,14 @@ export function horariosDoBloco(bloco: Bloco): string {
   return partes.join(' · ');
 }
 
-/** "Começa às 13h" e, quando a gente sabe, "Começa às 13h · vai até 20h". */
-export function textoDoHorario(bloco: Bloco): string {
-  const inicio = `Começa às ${formatarHora(bloco.inicio)}`;
-  return bloco.fim ? `${inicio} · vai até ${formatarHora(bloco.fim)}` : inicio;
+/**
+ * "Começa às 13h" e, quando a gente sabe, "Começa às 13h · vai até 20h". Depois que o bloco
+ * começou, "Começou às 13h · vai até 20h"; depois que acabou, "Começou às 13h · acabou às 20h".
+ */
+export function textoDoHorario(bloco: Bloco, momento: MomentoDoBloco = 'antes'): string {
+  const inicio = `${momento === 'antes' ? 'Começa' : 'Começou'} às ${formatarHora(bloco.inicio)}`;
+  if (!bloco.fim) {
+    return inicio;
+  }
+  return `${inicio} · ${momento === 'acabou' ? 'acabou às' : 'vai até'} ${formatarHora(bloco.fim)}`;
 }
