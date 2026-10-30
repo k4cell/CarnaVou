@@ -69,14 +69,14 @@ describe('Destaques', () => {
     it('mostra os artistas, o primeiro em destaque, nos lugares que têm artista', async () => {
       const { cartoes } = await renderizar();
       const ibirapuera = cartoes().find((c) => c.getAttribute('href') === '/local/ibirapuera');
-      expect(ibirapuera?.querySelector('.artistas')?.textContent).toMatch(/^Artistas: Ivete Sangalo, /);
-      expect(ibirapuera?.querySelector('.artistas .principal')?.textContent).toBe('Ivete Sangalo');
+      expect(ibirapuera?.querySelector('.nomes')?.textContent).toMatch(/^Artistas: Ivete Sangalo, /);
+      expect(ibirapuera?.querySelector('.nomes .principal')?.textContent).toBe('Ivete Sangalo');
     });
 
     it('mostra os nomes dos blocos nos lugares sem artista divulgado', async () => {
       const { cartoes } = await renderizar();
       const pauloVi = cartoes().find((c) => c.getAttribute('href') === '/local/paulo-vi');
-      expect(pauloVi?.querySelector('.artistas')?.textContent).toMatch(/^Blocos: /);
+      expect(pauloVi?.querySelector('.nomes')?.textContent).toMatch(/^Blocos: /);
     });
 
     it('dá a cada lugar a sua faixa de cor, do rosa ao azul', async () => {
