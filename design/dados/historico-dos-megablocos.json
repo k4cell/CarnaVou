@@ -1,0 +1,125 @@
+{
+  "_sobre": "Onde os megablocos de São Paulo desfilaram em cada ano, para prever 2027 (levantado em 30/10/2026). Vem de avisos da CET e da Prefeitura e de notícias; 2026 vem da lista oficial (design/dados/2026). Em 2021 e 2022 não teve carnaval de rua oficial (pandemia). 'certeza' diz o quanto a fonte é direta: 'oficial' (CET, Prefeitura ou lista oficial), 'noticia' (reportagem) ou 'provavel' (a fonte cita a região, não a rua).",
+  "circuitos": {
+    "ibirapuera": {
+      "nome": "Parque Ibirapuera (Av. Pedro Álvares Cabral)",
+      "anos": {
+        "2018": "noticia",
+        "2019": "oficial",
+        "2023": "noticia",
+        "2024": "noticia",
+        "2025": "oficial",
+        "2026": "oficial"
+      }
+    },
+    "faria-lima": {
+      "nome": "Avenida Faria Lima",
+      "anos": {
+        "2018": "noticia",
+        "2019": "oficial",
+        "2023": "noticia",
+        "2024": "noticia",
+        "2025": "oficial",
+        "2026": "oficial"
+      }
+    },
+    "consolacao": {
+      "nome": "Rua da Consolação",
+      "anos": {
+        "2018": "noticia",
+        "2019": "provavel",
+        "2023": "noticia",
+        "2024": "noticia",
+        "2025": "oficial",
+        "2026": "oficial"
+      }
+    },
+    "marques-de-sao-vicente": {
+      "nome": "Av. Marquês de São Vicente (Barra Funda)",
+      "anos": { "2019": "oficial", "2023": "noticia", "2024": "noticia", "2025": "oficial" },
+      "_2026": "Só blocos menores (8 na lista oficial), sem circuito de megabloco da CET."
+    },
+    "henrique-schaumann": {
+      "nome": "Rua Henrique Schaumann (Pinheiros)",
+      "anos": { "2025": "oficial", "2026": "oficial" }
+    },
+    "paulo-vi": {
+      "nome": "Avenida Paulo VI (Sumaré)",
+      "anos": { "2025": "oficial", "2026": "oficial" }
+    },
+    "ipiranga-sao-joao": {
+      "nome": "Av. Ipiranga, São João e República (Centro)",
+      "anos": { "2025": "oficial", "2026": "oficial" }
+    },
+    "luis-dumont-villares": {
+      "nome": "Av. Eng. Luís Dumont Villares (Santana, Zona Norte)",
+      "anos": { "2023": "noticia", "2025": "oficial" },
+      "_2026": "Nenhum bloco na lista oficial."
+    },
+    "laguna": {
+      "nome": "Rua Laguna (Santo Amaro)",
+      "anos": { "2023": "noticia", "2025": "oficial" },
+      "_2026": "Só blocos menores (5 na lista oficial)."
+    },
+    "tiradentes": {
+      "nome": "Avenida Tiradentes (Centro)",
+      "anos": { "2019": "oficial" },
+      "_depois": "Saiu do circuito em 2023 e não voltou."
+    },
+    "berrini": {
+      "nome": "Av. Eng. Luís Carlos Berrini (Zona Sul)",
+      "anos": { "2019": "oficial" },
+      "_depois": "Saiu do circuito em 2023 e não voltou."
+    },
+    "23-de-maio": {
+      "nome": "Avenida 23 de Maio",
+      "anos": { "2018": "noticia" },
+      "_depois": "Só em 2018; saiu em 2019."
+    },
+    "largo-da-batata": {
+      "nome": "Largo da Batata (Pinheiros)",
+      "anos": { "2018": "noticia" },
+      "_depois": "Saiu do circuito em 2023."
+    }
+  },
+  "blocos_que_voltam": [
+    {
+      "nome": "Pipoca da Rainha (Daniela Mercury)",
+      "onde": "consolacao",
+      "anos": { "2018": "último dia do carnaval", "2025": "domingo do pós-carnaval", "2026": "domingo do pós-carnaval" }
+    },
+    {
+      "nome": "Galo da Madrugada",
+      "onde": "ibirapuera",
+      "anos": { "2024": "terça de carnaval", "2026": "terça de carnaval" }
+    },
+    {
+      "nome": "Navio Pirata (BaianaSystem)",
+      "onde": "ibirapuera",
+      "anos": { "2024": "", "2025": "sábado do pós-carnaval", "2026": "sábado do pós-carnaval" }
+    },
+    {
+      "nome": "Casa Comigo",
+      "onde": "consolacao em 2024, henrique-schaumann em 2026",
+      "anos": { "2024": "domingo do pré-carnaval", "2026": "sábado do pré-carnaval" }
+    },
+    {
+      "nome": "Ritaleena",
+      "onde": "Rua Augusta em 2024, paulo-vi em 2026",
+      "anos": { "2024": "sábado do pré-carnaval", "2026": "sábado do pré-carnaval" }
+    },
+    {
+      "nome": "Bloco da Kebradeira",
+      "onde": "faria-lima",
+      "anos": { "2025": "domingo do pós-carnaval" }
+    }
+  ],
+  "fontes": [
+    "2018: IstoÉ Dinheiro, 18/02/2018 (encerramento na 23 de Maio); O Povo, 02/2018 (Ibirapuera, Faria Lima, Largo da Batata, Consolação, Pedro Álvares Cabral)",
+    "2019: Prefeitura de SP, 'Secretaria de Mobilidade e Transportes organiza operação especial para o Carnaval 2019' (Faria Lima, Marquês de São Vicente, Ibirapuera, Berrini, Tiradentes e região central)",
+    "2023: SBT News, 'Confira as atrações do pré-carnaval em SP' (circuito: Consolação, Luís Dumont Villares, Faria Lima, Marquês de São Vicente, Pedro Álvares Cabral e Laguna); Exame (Tiradentes, Berrini e Largo da Batata fora do circuito)",
+    "2024: Exame e Guia da Semana, agendas de 2024 (Faria Lima, Consolação, Marquês de São Vicente, Pedro Álvares Cabral; Navio Pirata e Galo da Madrugada no Ibirapuera; Casa Comigo na Consolação; Ritaleena na Augusta)",
+    "2025: Prefeitura de SP (todospelocentro), tendas nos circuitos dos megablocos (Henrique Schaumann, Faria Lima, Paulo VI, Consolação, República, Marquês de São Vicente, Pedro Álvares Cabral, Luís Dumont Villares, Laguna e outras); CET, avisos de megablocos de 08 e 09/03/2025 (BaianaSystem no Ibirapuera, Pipoca da Rainha na Consolação, Kebradeira na Faria Lima)",
+    "2026: lista oficial (Portaria Conjunta SPTuris/SMC nº 1, de 22/01/2026) e os seis trajetos de megabloco da CET"
+  ]
+}
