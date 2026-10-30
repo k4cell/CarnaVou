@@ -1,9 +1,12 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 
-import { blocosDaAba, cartoesDaAba } from '../dados/agenda';
-import { circuitoDoLocal } from '../dados/trajetos';
-import { LOCAIS } from '../dados/locais';
+import { Aba, blocosDaAba, cartoesDaAba } from '../dados/agenda';
+import { BLOCOS } from '../dados/blocos';
+import { formatarHora } from '../dados/formato';
+import { itinerarioDoBloco } from '../dados/itinerario';
+import { Bloco } from '../dados/tipos';
+import { trajetoDoBloco } from '../dados/trajetos';
 import { MENSAGENS_DA_ABA_VAZIA } from '../filtro/filtro-de-dia';
 import { distanciaEmMetros, textoDaDistancia } from '../localizacao/distancia';
 import { criarGeolocalizacaoFalsa, Resposta } from '../localizacao/geolocalizacao-falsa';
@@ -31,8 +34,33 @@ interface Celular {
   semLocalizacao?: boolean;
 }
 
+/** O ponto como texto, para comparar posições sem brigar com as casas decimais. */
+const comoTexto = ([lng, lat]: [number, number]) => `${lng.toFixed(5)},${lat.toFixed(5)}`;
+
+/** Os blocos da aba que têm ponto no mapa, como o mapa os junta: um grupo por ponto. */
+function pontosDaAba(aba: Aba, agora: Date): Map<string, Bloco[]> {
+  const pontos = new Map<string, Bloco[]>();
+  for (const { local } of cartoesDaAba(aba, agora)) {
+    for (const bloco of blocosDaAba(aba, local.id, agora)) {
+      const trajeto = trajetoDoBloco(bloco.id);
+      if (trajeto) {
+        const chave = comoTexto(trajeto.inicio);
+        pontos.set(chave, [...(pontos.get(chave) ?? []), bloco]);
+      }
+    }
+  }
+  return pontos;
+}
+
+/** Um ponto da aba que cumpre a condição, com os blocos dele (o que vem primeiro na frente). */
+function acharPonto(aba: Aba, condicao: (blocos: Bloco[]) => boolean): Bloco[] {
+  const achado = [...pontosDaAba(aba, SABADO_14H).values()].find(condicao);
+  expect(achado, 'nenhum ponto da aba serve para este teste').toBeDefined();
+  return achado!;
+}
+
 describe('PaginaMapa', () => {
-  async function renderizar(agora?: Date, celular: Celular = {}, lugar?: string) {
+  async function renderizar(agora?: Date, celular: Celular = {}, endereco: { lugar?: string; bloco?: string } = {}) {
     const falso = criarMapLibreFalso();
     const geo = criarGeolocalizacaoFalsa(celular.resposta ?? NA_PAULISTA);
     let consultas = 0;
@@ -55,16 +83,26 @@ describe('PaginaMapa', () => {
       TestBed.inject(Relogio).definir(agora);
     }
     const fixture = TestBed.createComponent(PaginaMapa);
-    if (lugar) {
-      fixture.componentRef.setInput('lugar', lugar);
+    for (const [nome, valor] of Object.entries(endereco)) {
+      fixture.componentRef.setInput(nome, valor);
     }
+    await esperarOMapa(fixture);
+    falso.mapas[0].carregar();
     await esperarOMapa(fixture);
     const tela = fixture.nativeElement as HTMLElement;
 
-    const nomesDosPinos = () => falso.pinos().map((pino) => pino.elemento.getAttribute('aria-label'));
+    /** As posições das bolinhas no mapa, mais a do pino (o ponto escolhido sai das bolinhas). */
+    const posicoes = () =>
+      [...falso.mapas[0].pontos().map((ponto) => ponto.posicao), ...falso.pinos().map((pino) => pino.posicao!)]
+        .map(comoTexto)
+        .sort();
     const cartao = () => tela.querySelector<HTMLElement>('.cartao-do-ponto');
-    const tocarNoPino = async (nome: string) => {
-      falso.pinos().find((pino) => pino.elemento.getAttribute('aria-label') === nome)?.elemento.click();
+    /** Toca na bolinha onde o bloco se concentra. */
+    const tocarNoBloco = async (bloco: Bloco) => {
+      const inicio = comoTexto(trajetoDoBloco(bloco.id)!.inicio);
+      const ponto = falso.mapas[0].pontos().find((candidato) => comoTexto(candidato.posicao) === inicio);
+      expect(ponto, `o ponto de ${bloco.nome} não está no mapa`).toBeDefined();
+      falso.mapas[0].tocarNoPonto(ponto!.id);
       await esperarOMapa(fixture);
     };
     const tocarNaAba = async (nome: string) => {
@@ -72,6 +110,12 @@ describe('PaginaMapa', () => {
         .find((aba) => aba.textContent?.trim() === nome)
         ?.click();
       await esperarOMapa(fixture);
+    };
+    const linhasNoMapa = () => {
+      const dados = falso.mapas[0].fontes.get('trajetos')?.dados as
+        | { features: { properties: { id: string }; geometry: { type: string; coordinates: unknown } }[] }
+        | undefined;
+      return (dados?.features ?? []).filter((desenho) => desenho.geometry.type === 'LineString');
     };
     const botaoOndeEstou = () => tela.querySelector<HTMLButtonElement>('.botao-redondo')!;
     const tocarEmOndeEstou = async () => {
@@ -90,10 +134,11 @@ describe('PaginaMapa', () => {
       falso,
       geo,
       consultas: () => consultas,
-      nomesDosPinos,
+      posicoes,
       cartao,
-      tocarNoPino,
+      tocarNoBloco,
       tocarNaAba,
+      linhasNoMapa,
       botaoOndeEstou,
       tocarEmOndeEstou,
       botaoDaExplicacao,
@@ -102,145 +147,170 @@ describe('PaginaMapa', () => {
     };
   }
 
+  const umBloco = (blocos: Bloco[]) => blocos.length === 1;
+
   describe('num dia de carnaval', () => {
-    it('abre na aba Hoje, com um pino para cada lugar que tem bloco hoje', async () => {
-      const { tela, nomesDosPinos } = await renderizar(SABADO_14H);
+    it('abre na aba Hoje, com uma bolinha onde cada bloco de hoje se concentra', async () => {
+      const { tela, posicoes } = await renderizar(SABADO_14H);
       expect(tela.querySelector('.aba[aria-pressed="true"]')?.textContent?.trim()).toBe('Hoje');
-      const esperados = cartoesDaAba('hoje', SABADO_14H).map((c) => c.local.nome);
+      const esperados = [...pontosDaAba('hoje', SABADO_14H).keys()].sort();
       expect(esperados.length).toBeGreaterThan(0);
-      expect(nomesDosPinos()).toEqual(esperados);
+      expect(posicoes()).toEqual(esperados);
     });
 
-    it('mostra todos os lugares na aba Geral', async () => {
-      const { nomesDosPinos, tocarNaAba } = await renderizar(SABADO_14H);
+    it('na Geral, mostra os pontos de todos os blocos que ainda vão passar', async () => {
+      const { posicoes, tocarNaAba } = await renderizar(SABADO_14H);
       await tocarNaAba('Geral');
-      // A ordem muda (a Geral põe os lugares em alta primeiro), mas todos os lugares aparecem.
-      expect(nomesDosPinos().sort()).toEqual(LOCAIS.map((local) => local.nome).sort());
+      const esperados = [...pontosDaAba('geral', SABADO_14H).keys()].sort();
+      expect(esperados.length).toBeGreaterThan(pontosDaAba('hoje', SABADO_14H).size);
+      expect(posicoes()).toEqual(esperados);
     });
 
-    it('não mostra o cartão do lugar enquanto ninguém tocou num pino', async () => {
+    it('junta num ponto só os blocos que se concentram no mesmo lugar', async () => {
+      const { posicoes } = await renderizar(SABADO_14H);
+      const blocosComPonto = [...pontosDaAba('hoje', SABADO_14H).values()].flat();
+      expect(posicoes().length).toBeLessThan(blocosComPonto.length);
+    });
+
+    it('não mostra o cartão enquanto ninguém tocou num ponto', async () => {
       const { cartao } = await renderizar(SABADO_14H);
       expect(cartao()).toBeNull();
     });
 
-    it('mostra o cartão do lugar quando alguém toca no pino', async () => {
-      const { cartao, tocarNoPino } = await renderizar(SABADO_14H);
-      const primeiro = cartoesDaAba('hoje', SABADO_14H)[0];
-      await tocarNoPino(primeiro.local.nome);
-      expect(cartao()?.querySelector('.nome')?.textContent).toContain(primeiro.local.nome);
-      expect(cartao()?.querySelector('.selo')?.textContent).toBe(primeiro.selo);
+    it('mostra o cartão do bloco quando alguém toca no ponto, com o lugar e a zona', async () => {
+      const { cartao, tocarNoBloco } = await renderizar(SABADO_14H);
+      const [bloco] = acharPonto('hoje', umBloco);
+      await tocarNoBloco(bloco);
+      expect(cartao()?.querySelector('.nome')?.textContent).toBe(bloco.nome);
+      expect(cartao()?.querySelector('.lugar')?.textContent).toBe(
+        cartoesDaAba('hoje', SABADO_14H).find((c) => c.local.id === bloco.localId)?.local.nome,
+      );
       expect(cartao()?.querySelector('app-zona-tag')).not.toBeNull();
     });
 
-    it('mostra os artistas do lugar, o primeiro em destaque', async () => {
-      const { cartao, tocarNoPino } = await renderizar(SABADO_14H);
-      const comArtistas = cartoesDaAba('hoje', SABADO_14H).find((c) => c.principal);
-      expect(comArtistas).toBeDefined();
-      await tocarNoPino(comArtistas!.local.nome);
-      expect(cartao()?.querySelector('.principal')?.textContent).toBe(comArtistas!.principal);
+    it('num ponto de vários blocos, o título diz quantos são', async () => {
+      const { cartao, tocarNoBloco } = await renderizar(SABADO_14H);
+      const blocos = acharPonto('hoje', (grupo) => grupo.length > 1);
+      await tocarNoBloco(blocos[0]);
+      expect(cartao()?.querySelector('.nome')?.textContent).toBe(`${blocos.length} blocos neste ponto`);
     });
 
-    it('leva o botão "Como chegar" ao Google Maps e o outro ao Waze, com o destino do lugar', async () => {
-      const { cartao, tocarNoPino } = await renderizar(SABADO_14H);
-      const { local } = cartoesDaAba('hoje', SABADO_14H)[0];
-      await tocarNoPino(local.nome);
+    it('mostra o itinerário oficial do bloco', async () => {
+      const { cartao, tocarNoBloco } = await renderizar(SABADO_14H);
+      const [bloco] = acharPonto('hoje', umBloco);
+      await tocarNoBloco(bloco);
+      expect(cartao()?.querySelector('.trajeto')?.textContent).toBe(`Itinerário: ${itinerarioDoBloco(bloco.id)}`);
+    });
+
+    it('avisa quando o ponto e a linha são aproximados, e só nesse caso', async () => {
+      const { cartao, tocarNoBloco } = await renderizar(SABADO_14H);
+      const aproximado = acharPonto('hoje', (grupo) => grupo.every((b) => trajetoDoBloco(b.id)!.aproximado));
+      const exato = acharPonto('hoje', (grupo) => grupo.every((b) => !trajetoDoBloco(b.id)!.aproximado));
+      await tocarNoBloco(aproximado[0]);
+      expect(cartao()?.querySelector('.aproximado')?.textContent).toContain('aproximados');
+      await tocarNoBloco(exato[0]);
+      expect(cartao()?.querySelector('.aproximado')).toBeNull();
+    });
+
+    it('mostra os artistas dos blocos do ponto, quando as notícias citam', async () => {
+      const { cartao, tocarNoBloco } = await renderizar(SABADO_14H);
+      const agrada = BLOCOS.find((bloco) => bloco.id === 'agrada-gregos')!;
+      await tocarNoBloco(agrada);
+      expect(cartao()?.querySelector('.artistas')?.textContent).toContain('Gloria Groove');
+    });
+
+    it('leva o botão "Como chegar" ao Google Maps e o outro ao Waze, com o ponto da concentração', async () => {
+      const { cartao, tocarNoBloco } = await renderizar(SABADO_14H);
+      const [bloco] = acharPonto('hoje', umBloco);
+      await tocarNoBloco(bloco);
+      const [lng, lat] = trajetoDoBloco(bloco.id)!.inicio;
       const links = Array.from(cartao()!.querySelectorAll<HTMLAnchorElement>('.acoes a'));
       const comoChegar = links.find((link) => link.textContent?.trim() === 'Como chegar');
       const waze = links.find((link) => link.textContent?.trim() === 'Waze');
-      expect(comoChegar?.getAttribute('href')).toBe(
-        `https://www.google.com/maps/dir/?api=1&destination=${local.lat},${local.lng}`,
-      );
-      expect(waze?.getAttribute('href')).toBe(`https://waze.com/ul?ll=${local.lat}%2C${local.lng}&navigate=yes`);
+      expect(comoChegar?.getAttribute('href')).toBe(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`);
+      expect(waze?.getAttribute('href')).toBe(`https://waze.com/ul?ll=${lat}%2C${lng}&navigate=yes`);
       expect(comoChegar?.getAttribute('rel')).toBe('noopener');
       expect(comoChegar?.getAttribute('target')).toBe('_blank');
     });
 
     it('tem um botão para ver a página do lugar', async () => {
-      const { cartao, tocarNoPino } = await renderizar(SABADO_14H);
-      const { local } = cartoesDaAba('hoje', SABADO_14H)[0];
-      await tocarNoPino(local.nome);
+      const { cartao, tocarNoBloco } = await renderizar(SABADO_14H);
+      const [bloco] = acharPonto('hoje', umBloco);
+      await tocarNoBloco(bloco);
       const ver = Array.from(cartao()!.querySelectorAll<HTMLAnchorElement>('.acoes a')).find(
         (link) => link.textContent?.trim() === 'Ver o lugar',
       );
-      expect(ver?.getAttribute('href')).toBe(`/local/${local.id}`);
+      expect(ver?.getAttribute('href')).toBe(`/local/${bloco.localId}`);
     });
 
-    it('destaca o pino do lugar escolhido', async () => {
-      const { falso, tocarNoPino } = await renderizar(SABADO_14H);
-      const { local } = cartoesDaAba('hoje', SABADO_14H)[0];
-      await tocarNoPino(local.nome);
-      const selecionados = falso.pinos().filter((pino) => pino.elemento.classList.contains('selecionado'));
-      expect(selecionados.map((pino) => pino.elemento.getAttribute('aria-label'))).toEqual([local.nome]);
+    it('põe o pino, com o nome do bloco, no ponto escolhido', async () => {
+      const { falso, tocarNoBloco } = await renderizar(SABADO_14H);
+      const [bloco] = acharPonto('hoje', umBloco);
+      await tocarNoBloco(bloco);
+      expect(falso.pinos().map((pino) => pino.elemento.getAttribute('aria-label'))).toEqual([bloco.nome]);
     });
 
     it('fecha o cartão no botão ×', async () => {
-      const { fixture, cartao, tocarNoPino } = await renderizar(SABADO_14H);
-      await tocarNoPino(cartoesDaAba('hoje', SABADO_14H)[0].local.nome);
+      const { fixture, cartao, tocarNoBloco } = await renderizar(SABADO_14H);
+      await tocarNoBloco(acharPonto('hoje', umBloco)[0]);
       cartao()!.querySelector<HTMLButtonElement>('.fechar')!.click();
       await esperarOMapa(fixture);
       expect(cartao()).toBeNull();
     });
 
-    it('fecha o cartão quando alguém toca no mapa fora dos pinos', async () => {
-      const { fixture, falso, cartao, tocarNoPino } = await renderizar(SABADO_14H);
-      await tocarNoPino(cartoesDaAba('hoje', SABADO_14H)[0].local.nome);
+    it('fecha o cartão quando alguém toca no mapa fora dos pontos', async () => {
+      const { fixture, falso, cartao, tocarNoBloco } = await renderizar(SABADO_14H);
+      await tocarNoBloco(acharPonto('hoje', umBloco)[0]);
       expect(cartao()).not.toBeNull();
       falso.mapas[0].tocar();
       await esperarOMapa(fixture);
       expect(cartao()).toBeNull();
     });
 
-    it('troca o cartão quando alguém toca noutro pino', async () => {
-      const { cartao, tocarNoPino } = await renderizar(SABADO_14H);
-      const [primeiro, segundo] = cartoesDaAba('hoje', SABADO_14H);
-      await tocarNoPino(primeiro.local.nome);
-      await tocarNoPino(segundo.local.nome);
-      expect(cartao()?.querySelector('.nome')?.textContent).toContain(segundo.local.nome);
+    it('troca o cartão quando alguém toca noutro ponto', async () => {
+      const { cartao, tocarNoBloco } = await renderizar(SABADO_14H);
+      const [primeiro, segundo] = [...pontosDaAba('hoje', SABADO_14H).values()].filter(umBloco).map(([b]) => b);
+      await tocarNoBloco(primeiro);
+      await tocarNoBloco(segundo);
+      expect(cartao()?.querySelector('.nome')?.textContent).toBe(segundo.nome);
     });
 
-    it('tira o cartão quando a aba nova não tem aquele lugar', async () => {
-      const { cartao, tocarNoPino, tocarNaAba } = await renderizar(SABADO_14H);
-      const hoje = cartoesDaAba('hoje', SABADO_14H);
-      const amanha = new Set(cartoesDaAba('amanha', SABADO_14H).map((c) => c.local.id));
-      const soDeHoje = hoje.find((c) => !amanha.has(c.local.id));
-      expect(soDeHoje).toBeDefined();
-      await tocarNoPino(soDeHoje!.local.nome);
+    it('tira o cartão quando a aba nova não tem aquele ponto', async () => {
+      const { cartao, tocarNoBloco, tocarNaAba } = await renderizar(SABADO_14H);
+      const deAmanha = pontosDaAba('amanha', SABADO_14H);
+      const soDeHoje = acharPonto('hoje', (grupo) => !deAmanha.has(comoTexto(trajetoDoBloco(grupo[0].id)!.inicio)));
+      await tocarNoBloco(soDeHoje[0]);
       expect(cartao()).not.toBeNull();
       await tocarNaAba('Amanhã');
       expect(cartao()).toBeNull();
     });
   });
 
-  describe('os trajetos dos megablocos', () => {
-    const daAbaHoje = () => cartoesDaAba('hoje', SABADO_14H).map((cartao) => cartao.local);
+  describe('a linha do bloco', () => {
+    const comLinha = (grupo: Bloco[]) => grupo.length === 1 && !!trajetoDoBloco(grupo[0].id)!.linha;
 
-    it('manda para o mapa o trajeto dos lugares da aba que têm circuito', async () => {
-      const { fixture, falso } = await renderizar(SABADO_14H);
-      falso.mapas[0].carregar();
-      await esperarOMapa(fixture);
-      const dados = falso.mapas[0].fontes.get('trajetos')?.dados as { features: { properties: { id: string } }[] };
-      const esperados = daAbaHoje()
-        .filter((local) => circuitoDoLocal(local.id))
-        .map((local) => local.id);
-      expect(esperados.length).toBeGreaterThan(0);
-      expect(dados.features.map((linha) => linha.properties.id)).toEqual(esperados);
+    it('não desenha linha nenhuma enquanto ninguém escolheu um ponto', async () => {
+      const { linhasNoMapa } = await renderizar(SABADO_14H);
+      expect(linhasNoMapa()).toEqual([]);
     });
 
-    it('mostra o trajeto em palavras no cartão de um lugar que tem circuito', async () => {
-      const { cartao, tocarNoPino } = await renderizar(SABADO_14H);
-      const comCircuito = daAbaHoje().find((local) => circuitoDoLocal(local.id))!;
-      await tocarNoPino(comCircuito.nome);
-      expect(cartao()?.querySelector('.trajeto')?.textContent).toBe(
-        `Trajeto: ${circuitoDoLocal(comCircuito.id)!.descricao}`,
-      );
+    it('desenha só a linha do ponto escolhido, começando no pino', async () => {
+      const { linhasNoMapa, tocarNoBloco } = await renderizar(SABADO_14H);
+      const [bloco] = acharPonto('hoje', comLinha);
+      await tocarNoBloco(bloco);
+      const trajeto = trajetoDoBloco(bloco.id)!;
+      const linhas = linhasNoMapa();
+      expect(linhas.length).toBe(1);
+      expect(linhas[0].geometry.coordinates).toEqual(trajeto.linha);
+      expect(trajeto.linha![0]).toEqual(trajeto.inicio);
     });
 
-    it('não inventa trajeto para um lugar sem circuito nas fontes', async () => {
-      const { cartao, tocarNoPino } = await renderizar(SABADO_14H);
-      const semCircuito = daAbaHoje().find((local) => !circuitoDoLocal(local.id));
-      expect(semCircuito).toBeDefined();
-      await tocarNoPino(semCircuito!.nome);
-      expect(cartao()?.querySelector('.trajeto')).toBeNull();
+    it('não inventa linha para um bloco parado', async () => {
+      const { linhasNoMapa, tocarNoBloco, tocarNaAba } = await renderizar(SABADO_14H);
+      await tocarNaAba('Geral');
+      const [parado] = acharPonto('geral', (grupo) => grupo.every((b) => !trajetoDoBloco(b.id)!.linha));
+      await tocarNoBloco(parado);
+      expect(linhasNoMapa()).toEqual([]);
     });
   });
 
@@ -248,45 +318,53 @@ describe('PaginaMapa', () => {
     const linhasDosBlocos = (cartao: HTMLElement | null) =>
       Array.from(cartao?.querySelectorAll<HTMLAnchorElement>('.blocos a') ?? []);
 
-    it('lista os blocos de hoje do lugar, com a hora, levando para a página do bloco', async () => {
-      const { cartao, tocarNoPino } = await renderizar(SABADO_14H);
-      await tocarNoPino('Parque Ibirapuera');
-      const deHoje = blocosDaAba('hoje', 'ibirapuera', SABADO_14H);
+    it('lista os blocos do ponto, com a hora, levando para a página do bloco', async () => {
+      const { cartao, tocarNoBloco } = await renderizar(SABADO_14H);
+      const blocos = acharPonto('hoje', (grupo) => grupo.length > 1);
+      await tocarNoBloco(blocos[0]);
       const links = linhasDosBlocos(cartao());
-      expect(links.length).toBe(deHoje.length);
-      expect(links[0].textContent?.trim()).toBe('13h · Agrada Gregos');
-      expect(links[0].getAttribute('href')).toBe('/local/ibirapuera/agrada-gregos');
+      expect(links.length).toBe(Math.min(3, blocos.length));
+      const [primeiro] = blocos;
+      expect(links[0].textContent?.trim()).toBe(`${formatarHora(primeiro.inicio)} · ${primeiro.nome}`);
+      expect(links[0].getAttribute('href')).toBe(`/local/${primeiro.localId}/${primeiro.id}`);
     });
 
     it('na Geral, põe o dia na frente, mostra só três e diz quantos ficaram de fora', async () => {
-      const { cartao, tocarNoPino, tocarNaAba } = await renderizar(SABADO_14H);
+      const { cartao, tocarNoBloco, tocarNaAba } = await renderizar(SABADO_14H);
       await tocarNaAba('Geral');
-      await tocarNoPino('Parque Ibirapuera');
-      const daGeral = blocosDaAba('geral', 'ibirapuera', SABADO_14H);
+      const agrada = BLOCOS.find((bloco) => bloco.id === 'agrada-gregos')!;
+      const doPonto = pontosDaAba('geral', SABADO_14H).get(comoTexto(trajetoDoBloco(agrada.id)!.inicio))!;
+      expect(doPonto.length).toBeGreaterThan(3);
+      await tocarNoBloco(agrada);
       const links = linhasDosBlocos(cartao());
-      expect(daGeral.length).toBeGreaterThan(3);
       expect(links.length).toBe(3);
-      expect(links[0].textContent?.trim()).toBe('sáb 14 fev · 13h · Agrada Gregos');
-      expect(cartao()?.querySelector('.mais')?.textContent).toBe(`E mais ${daGeral.length - 3} na página do lugar.`);
+      expect(links[0].textContent?.trim()).toMatch(/^sáb 14 fev · \d+h(\d\d)? · /);
+      expect(cartao()?.querySelector('.mais')?.textContent).toBe(`E mais ${doPonto.length - 3} na página do lugar.`);
     });
   });
 
-  describe('"Ver no mapa" (o lugar vem no endereço)', () => {
-    it('abre o mapa já com o cartão do lugar', async () => {
-      const { cartao } = await renderizar(SABADO_14H, {}, 'ibirapuera');
-      expect(cartao()?.querySelector('.nome')?.textContent).toContain('Parque Ibirapuera');
-    });
-
-    it('continua na aba Hoje quando o lugar tem bloco hoje', async () => {
-      const { tela } = await renderizar(SABADO_14H, {}, 'ibirapuera');
+  describe('"Ver no mapa" (o bloco ou o lugar vem no endereço)', () => {
+    it('abre o mapa já no ponto do bloco', async () => {
+      const [bloco] = acharPonto('hoje', umBloco);
+      const { cartao, tela } = await renderizar(SABADO_14H, {}, { bloco: bloco.id });
+      expect(cartao()?.querySelector('.nome')?.textContent).toBe(bloco.nome);
       expect(tela.querySelector('.aba[aria-pressed="true"]')?.textContent?.trim()).toBe('Hoje');
     });
 
-    it('passa para a Geral quando o lugar não tem bloco hoje', async () => {
-      const { tela, cartao } = await renderizar(SABADO_14H, {}, 'consolacao');
-      expect(cartoesDaAba('hoje', SABADO_14H).some((c) => c.local.id === 'consolacao')).toBe(false);
+    it('passa para a Geral quando o bloco não é de hoje', async () => {
+      // Um bloco de terça (17/02) num ponto de até três blocos, para ele aparecer na lista do cartão.
+      const doPonto = acharPonto('geral', (grupo) => grupo.length <= 3 && grupo.some((b) => b.data === '2026-02-17'));
+      const outroDia = doPonto.find((bloco) => bloco.data === '2026-02-17')!;
+      const { tela, cartao } = await renderizar(SABADO_14H, {}, { bloco: outroDia.id });
       expect(tela.querySelector('.aba[aria-pressed="true"]')?.textContent?.trim()).toBe('Geral');
-      expect(cartao()?.querySelector('.nome')?.textContent).toContain('Rua da Consolação');
+      expect(cartao()?.querySelector('.blocos')?.textContent).toContain(outroDia.nome);
+    });
+
+    it('abre o mapa no ponto do próximo bloco do lugar', async () => {
+      const { cartao } = await renderizar(SABADO_14H, {}, { lugar: 'vila-mariana' });
+      const primeiro = blocosDaAba('hoje', 'vila-mariana', SABADO_14H).find((bloco) => trajetoDoBloco(bloco.id))!;
+      expect(cartao()?.querySelector('.lugar')?.textContent).toBe('Vila Mariana');
+      expect(cartao()?.querySelector('.blocos')?.textContent).toContain(primeiro.nome);
     });
   });
 
@@ -415,48 +493,36 @@ describe('PaginaMapa', () => {
 
     describe('a distância no cartão do ponto', () => {
       it('não aparece enquanto a pessoa não mostrou onde está', async () => {
-        const { cartao, tocarNoPino } = await renderizar(SABADO_14H);
-        await tocarNoPino(cartoesDaAba('hoje', SABADO_14H)[0].local.nome);
+        const { cartao, tocarNoBloco } = await renderizar(SABADO_14H);
+        await tocarNoBloco(acharPonto('hoje', umBloco)[0]);
         expect(cartao()?.querySelector('.distancia')).toBeNull();
       });
 
-      it('aparece, em linha reta, depois que a pessoa mostrou onde está', async () => {
-        const { cartao, tocarNoPino, tocarEmOndeEstou } = await renderizar(SABADO_14H, { permissao: 'granted' });
+      it('aparece, em linha reta até a concentração, depois que a pessoa mostrou onde está', async () => {
+        const { cartao, tocarNoBloco, tocarEmOndeEstou } = await renderizar(SABADO_14H, { permissao: 'granted' });
         await tocarEmOndeEstou();
-        const { local } = cartoesDaAba('hoje', SABADO_14H)[0];
-        await tocarNoPino(local.nome);
-        const metros = distanciaEmMetros({ lat: -23.5614, lng: -46.6559 }, local);
+        const [bloco] = acharPonto('hoje', umBloco);
+        await tocarNoBloco(bloco);
+        const [lng, lat] = trajetoDoBloco(bloco.id)!.inicio;
+        const metros = distanciaEmMetros({ lat: -23.5614, lng: -46.6559 }, { lat, lng });
         expect(cartao()?.querySelector('.distancia')?.textContent).toBe(
           `A ${textoDaDistancia(metros)} de você, em linha reta.`,
         );
-      });
-
-      it('troca junto com o lugar escolhido', async () => {
-        const { cartao, tocarNoPino, tocarEmOndeEstou } = await renderizar(SABADO_14H, { permissao: 'granted' });
-        await tocarEmOndeEstou();
-        const [primeiro, segundo] = cartoesDaAba('hoje', SABADO_14H);
-        await tocarNoPino(primeiro.local.nome);
-        const textoDoPrimeiro = cartao()?.querySelector('.distancia')?.textContent;
-        await tocarNoPino(segundo.local.nome);
-        const textoDoSegundo = cartao()?.querySelector('.distancia')?.textContent;
-        expect(textoDoPrimeiro).toBeTruthy();
-        expect(textoDoSegundo).toBeTruthy();
-        expect(textoDoSegundo).not.toBe(textoDoPrimeiro);
       });
     });
   });
 
   describe('num dia sem bloco', () => {
-    it('abre na aba Geral, com todos os lugares', async () => {
-      const { tela, nomesDosPinos } = await renderizar(SEXTA_ANTES);
+    it('abre na aba Geral, com os pontos de todos os blocos', async () => {
+      const { tela, posicoes } = await renderizar(SEXTA_ANTES);
       expect(tela.querySelector('.aba[aria-pressed="true"]')?.textContent?.trim()).toBe('Geral');
-      expect(nomesDosPinos().sort()).toEqual(LOCAIS.map((local) => local.nome).sort());
+      expect(posicoes()).toEqual([...pontosDaAba('geral', SEXTA_ANTES).keys()].sort());
     });
 
-    it('avisa e fica sem pinos na aba Hoje', async () => {
-      const { tela, falso, tocarNaAba } = await renderizar(SEXTA_ANTES);
+    it('avisa e fica sem pontos na aba Hoje', async () => {
+      const { tela, posicoes, tocarNaAba } = await renderizar(SEXTA_ANTES);
       await tocarNaAba('Hoje');
-      expect(falso.pinos().length).toBe(0);
+      expect(posicoes()).toEqual([]);
       expect(tela.querySelector('.vazio')?.textContent).toContain(MENSAGENS_DA_ABA_VAZIA.hoje);
     });
   });

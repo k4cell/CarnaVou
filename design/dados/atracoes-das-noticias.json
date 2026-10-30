@@ -1,0 +1,452 @@
+[
+ {
+  "nome": "Quem Pede, Pede",
+  "data": "2026-02-07",
+  "atracoes": [
+   {
+    "nome": "Ivete Sangalo",
+    "inicio": "09:00"
+   }
+  ],
+  "estilo": "axe"
+ },
+ {
+  "nome": "Bloco Forrozin",
+  "data": "2026-02-07",
+  "atracoes": [
+   {
+    "nome": "Mariana Aydar"
+   }
+  ],
+  "estilo": "forro"
+ },
+ {
+  "nome": "Bicho Maluco Beleza",
+  "data": "2026-02-07",
+  "atracoes": [
+   {
+    "nome": "Alceu Valença"
+   }
+  ]
+ },
+ {
+  "nome": "Quintal dos Prettos",
+  "data": "2026-02-08",
+  "atracoes": [
+   {
+    "nome": "Emicida"
+   },
+   {
+    "nome": "Maria Rita"
+   }
+  ]
+ },
+ {
+  "nome": "Monobloco",
+  "data": "2026-02-08",
+  "atracoes": [
+   {
+    "nome": "Monobloco"
+   }
+  ]
+ },
+ {
+  "nome": "Agrada Gregos",
+  "data": "2026-02-14",
+  "atracoes": [
+   {
+    "nome": "Gloria Groove"
+   },
+   {
+    "nome": "Gretchen"
+   }
+  ],
+  "publico": "LGBTQIA+"
+ },
+ {
+  "nome": "Sertanejinho do Teló",
+  "data": "2026-02-15",
+  "atracoes": [
+   {
+    "nome": "Michel Teló"
+   }
+  ],
+  "estilo": "sertanejo"
+ },
+ {
+  "nome": "Bloco da Pocah",
+  "data": "2026-02-15",
+  "atracoes": [
+   {
+    "nome": "Pocah"
+   }
+  ],
+  "estilo": "funk"
+ },
+ {
+  "nome": "Bloco da Pabllo",
+  "data": "2026-02-16",
+  "atracoes": [
+   {
+    "nome": "Pabllo Vittar"
+   },
+   {
+    "nome": "NMIXX"
+   }
+  ],
+  "estilo": "pop",
+  "publico": "LGBTQIA+"
+ },
+ {
+  "nome": "Galo da Madrugada",
+  "data": "2026-02-17",
+  "atracoes": [],
+  "estilo": "frevo"
+ },
+ {
+  "nome": "Bloco Solteiro Não Trai",
+  "data": "2026-02-17",
+  "atracoes": [
+   {
+    "nome": "Gustavo Mioto"
+   }
+  ],
+  "estilo": "sertanejo"
+ },
+ {
+  "nome": "Bloco da Latinha Mix",
+  "data": "2026-02-17",
+  "atracoes": []
+ },
+ {
+  "nome": "Navio Pirata",
+  "data": "2026-02-21",
+  "atracoes": [
+   {
+    "nome": "BaianaSystem"
+   }
+  ]
+ },
+ {
+  "nome": "Vem com o Gigante",
+  "data": "2026-02-22",
+  "atracoes": [
+   {
+    "nome": "Léo Santana"
+   }
+  ],
+  "estilo": "axe"
+ },
+ {
+  "nome": "Bloco Beats",
+  "data": "2026-02-22",
+  "atracoes": [
+   {
+    "nome": "Pedro Sampaio"
+   }
+  ]
+ },
+ {
+  "nome": "Bloco Skol com Calvin Harris",
+  "data": "2026-02-08",
+  "atracoes": [
+   {
+    "nome": "Calvin Harris",
+    "inicio": "14:00"
+   },
+   {
+    "nome": "Nattan",
+    "inicio": "11:30"
+   },
+   {
+    "nome": "Xand Avião",
+    "inicio": "11:30"
+   },
+   {
+    "nome": "Zé Vaqueiro",
+    "inicio": "11:30"
+   },
+   {
+    "nome": "Felipe Amorim",
+    "inicio": "11:30"
+   }
+  ],
+  "estilo": "eletronico"
+ },
+ {
+  "nome": "Acadêmicos do Baixo Augusta",
+  "data": "2026-02-08",
+  "atracoes": [
+   {
+    "nome": "Wilson Simoninha"
+   },
+   {
+    "nome": "Péricles"
+   },
+   {
+    "nome": "KL Jay"
+   },
+   {
+    "nome": "Rael"
+   },
+   {
+    "nome": "Tassia Reis"
+   },
+   {
+    "nome": "Tulipa Ruiz"
+   },
+   {
+    "nome": "André Frateschi"
+   },
+   {
+    "nome": "Rom Santana"
+   }
+  ]
+ },
+ {
+  "nome": "Bloco Eu Sou do Axé",
+  "data": "2026-02-16",
+  "atracoes": [],
+  "estilo": "axe"
+ },
+ {
+  "nome": "Bloco da Salete Campari",
+  "data": "2026-02-17",
+  "atracoes": [],
+  "publico": "LGBTQIA+"
+ },
+ {
+  "nome": "Pipoca da Rainha",
+  "data": "2026-02-22",
+  "atracoes": [
+   {
+    "nome": "Daniela Mercury"
+   }
+  ],
+  "estilo": "axe"
+ },
+ {
+  "nome": "Bloco do Abrava",
+  "data": "2026-02-07",
+  "atracoes": [
+   {
+    "nome": "Tiago Abravanel",
+    "inicio": "12:00"
+   }
+  ]
+ },
+ {
+  "nome": "Beleza Rara e Boca",
+  "data": "2026-02-08",
+  "atracoes": [
+   {
+    "nome": "Banda Eva"
+   }
+  ],
+  "estilo": "axe"
+ },
+ {
+  "nome": "Bloco 89",
+  "data": "2026-02-15",
+  "atracoes": [
+   {
+    "nome": "Supla"
+   }
+  ],
+  "estilo": "rock"
+ },
+ {
+  "nome": "Se Fui Triste Não Me Lembro",
+  "data": "2026-02-17",
+  "atracoes": [
+   {
+    "nome": "Di Ferrero"
+   }
+  ],
+  "estilo": "rock"
+ },
+ {
+  "nome": "Ilú Obá de Min",
+  "data": "2026-02-13",
+  "atracoes": [],
+  "publico": "Mulheres"
+ },
+ {
+  "nome": "Bloco Samby & Júnior",
+  "data": "2026-02-14",
+  "atracoes": [],
+  "estilo": "pop"
+ },
+ {
+  "nome": "Bloco Domingo Ela Não Vai",
+  "data": "2026-02-15",
+  "atracoes": [],
+  "estilo": "axe"
+ },
+ {
+  "nome": "Bloco Explode Coração",
+  "data": "2026-02-15",
+  "atracoes": [],
+  "estilo": "mpb"
+ },
+ {
+  "nome": "Bloco Meu Santo é Pop",
+  "data": "2026-02-21",
+  "atracoes": [],
+  "estilo": "pop",
+  "publico": "LGBTQIA+"
+ },
+ {
+  "nome": "Tarado Ni Você",
+  "data": "2026-02-14",
+  "atracoes": [],
+  "estilo": "mpb"
+ },
+ {
+  "nome": "MinhoQueens",
+  "data": "2026-02-14",
+  "atracoes": [
+   {
+    "nome": "Lia Clark"
+   },
+   {
+    "nome": "MC Xuxu"
+   }
+  ],
+  "estilo": "pop",
+  "publico": "LGBTQIA+"
+ },
+ {
+  "nome": "Bloco Pagu",
+  "data": "2026-02-17",
+  "atracoes": [],
+  "publico": "Mulheres"
+ },
+ {
+  "nome": "Modo Surto",
+  "data": "2026-02-08",
+  "atracoes": [
+   {
+    "nome": "Luísa Sonza"
+   },
+   {
+    "nome": "Melody"
+   },
+   {
+    "nome": "Gretchen"
+   },
+   {
+    "nome": "Zaynara"
+   },
+   {
+    "nome": "Pocah"
+   },
+   {
+    "nome": "Viviane Batidão"
+   },
+   {
+    "nome": "Felipe Amorim"
+   },
+   {
+    "nome": "DENNIS"
+   },
+   {
+    "nome": "Puterrier"
+   }
+  ],
+  "estilo": "pop"
+ },
+ {
+  "nome": "Bloco do Escocês",
+  "data": "2026-02-14",
+  "atracoes": []
+ },
+ {
+  "nome": "Bloco MPBebados",
+  "data": "2026-02-14",
+  "atracoes": [],
+  "estilo": "mpb"
+ },
+ {
+  "nome": "Gringolôco",
+  "data": "2026-02-14",
+  "atracoes": []
+ },
+ {
+  "nome": "Forró da Taylor",
+  "data": "2026-02-15",
+  "atracoes": [],
+  "estilo": "forro"
+ },
+ {
+  "nome": "Bloco Bastardo",
+  "data": "2026-02-15",
+  "atracoes": [],
+  "estilo": "rock"
+ },
+ {
+  "nome": "Bloco Jegue Elétrico",
+  "data": "2026-02-15",
+  "atracoes": []
+ },
+ {
+  "nome": "Bloco Bastardo",
+  "data": "2026-02-17",
+  "atracoes": [],
+  "estilo": "rock"
+ },
+ {
+  "nome": "Gringolôco",
+  "data": "2026-02-17",
+  "atracoes": []
+ },
+ {
+  "nome": "Casa Comigo",
+  "data": "2026-02-07",
+  "atracoes": []
+ },
+ {
+  "nome": "Bloco Me Lembra Que Eu Vou",
+  "data": "2026-02-16",
+  "atracoes": []
+ },
+ {
+  "nome": "Megabloco Emo",
+  "data": "2026-02-14",
+  "atracoes": [],
+  "estilo": "rock"
+ },
+ {
+  "nome": "Cordão da Madonna",
+  "data": "2026-02-08",
+  "atracoes": [],
+  "estilo": "pop"
+ },
+ {
+  "nome": "Bloco dos Bancários",
+  "data": "2026-02-14",
+  "atracoes": []
+ },
+ {
+  "nome": "Bloco Otaku",
+  "data": "2026-02-14",
+  "atracoes": []
+ },
+ {
+  "nome": "Tecnomacumba",
+  "data": "2026-02-14",
+  "atracoes": [],
+  "estilo": "eletronico"
+ },
+ {
+  "nome": "Tecnomacumba",
+  "data": "2026-02-15",
+  "atracoes": [],
+  "estilo": "eletronico"
+ },
+ {
+  "nome": "Bloco Otaku",
+  "data": "2026-02-17",
+  "atracoes": []
+ }
+]

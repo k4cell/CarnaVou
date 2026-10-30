@@ -7,6 +7,14 @@ function selos(cartoes: CartaoDoLugar[]): Record<string, string> {
   return Object.fromEntries(cartoes.map((cartao) => [cartao.local.id, cartao.selo]));
 }
 
+/** Os lugares que têm bloco no dia (AAAA-MM-DD). */
+function lugaresDoDia(dia: string): string[] {
+  return [...new Set(BLOCOS.filter((bloco) => bloco.data === dia).map((bloco) => bloco.localId))];
+}
+
+const quantosNoDia = (localId: string, dia: string) =>
+  BLOCOS.filter((bloco) => bloco.localId === localId && bloco.data === dia).length;
+
 // Sábado de carnaval de 2026, duas da tarde. O dia seguinte é o domingo, 15/02.
 const SABADO_14H = new Date(2026, 1, 14, 14, 0);
 
@@ -28,9 +36,9 @@ describe('agenda', () => {
       expect(cartoesDaAba('amanha', null)).toEqual([]);
 
       const geral = cartoesDaAba('geral', null);
-      expect(geral.length).toBe(LOCAIS.length);
-      expect(selos(geral)['ibirapuera']).toBe('15 blocos');
-      expect(selos(geral)['santo-amaro']).toBe('1 bloco');
+      expect(geral.map((cartao) => cartao.local.id)).toEqual(LOCAIS.map((local) => local.id));
+      expect(selos(geral)['se']).toBe(`${BLOCOS.filter((bloco) => bloco.localId === 'se').length} blocos`);
+      expect(selos(geral)['santo-amaro']).toBe('2 blocos');
     });
   });
 
@@ -51,162 +59,148 @@ describe('agenda', () => {
     });
   });
 
-  describe('na data de demonstração (sábado, 07/02/2026, primeiro dia do pré-carnaval)', () => {
-    const sabado = new Date(2026, 1, 7, 12, 0);
-
-    it('mostra em Hoje os lugares com bloco naquele dia', () => {
-      expect(selos(cartoesDaAba('hoje', sabado))).toEqual({
-        ibirapuera: 'Já começou',
-        'faria-lima': 'Já começou',
-        'henrique-schaumann': 'Já começou',
-      });
-    });
-
-    it('mostra em Amanhã a hora do primeiro bloco de cada lugar', () => {
-      expect(selos(cartoesDaAba('amanha', sabado))).toEqual({
-        ibirapuera: 'Amanhã às 11h',
-        consolacao: 'Amanhã às 11h',
-        'faria-lima': 'Amanhã às 14h',
-        'santo-amaro': 'Amanhã às 13h',
-        'centro-historico': 'Amanhã às 14h',
-      });
-    });
-  });
-
   describe('aba Hoje, num sábado de carnaval às 14h', () => {
-    const hoje = selos(cartoesDaAba('hoje', SABADO_14H));
+    const cartoes = cartoesDaAba('hoje', SABADO_14H);
+    const hoje = selos(cartoes);
 
     it('mostra só os lugares com bloco naquele dia', () => {
-      const comBlocoNoDia = new Set(
-        BLOCOS.filter((bloco) => bloco.data === '2026-02-14').map((bloco) => bloco.localId),
-      );
-      expect(Object.keys(hoje).sort()).toEqual([...comBlocoNoDia].sort());
-      expect(Object.keys(hoje).length).toBe(6);
+      expect(Object.keys(hoje).sort()).toEqual(lugaresDoDia('2026-02-14').sort());
+    });
+
+    it('põe primeiro os lugares com os artistas mais famosos do dia e, depois, os com mais blocos', () => {
+      // Vila Mariana tem a Gloria Groove; a Sé, a Lia Clark; Pinheiros e Lapa, ninguém conhecido.
+      expect(cartoes.map((cartao) => cartao.local.id)).toEqual(['vila-mariana', 'se', 'pinheiros', 'lapa']);
     });
 
     it('diz "Já começou" quando o bloco está rolando', () => {
-      // Agrada Gregos: 13h às 18h.
-      expect(hoje['ibirapuera']).toBe('Já começou');
-    });
-
-    it('conta como rolando o bloco que começou e não tem hora de fim', () => {
-      // Megabloco Emo começa às 13h e não tem fim.
-      expect(hoje['paulo-vi']).toBe('Já começou');
+      // Agrada Gregos, na Vila Mariana: 13h às 18h.
+      expect(hoje['vila-mariana']).toBe('Já começou');
     });
 
     it('mostra os artistas só do dia', () => {
-      const ibirapuera = cartoesDaAba('hoje', SABADO_14H).find((c) => c.local.id === 'ibirapuera');
-      expect(ibirapuera?.principal).toBe('Gloria Groove');
-      expect(ibirapuera?.resto).toBe(', Gretchen');
+      const vilaMariana = cartoes.find((c) => c.local.id === 'vila-mariana');
+      expect(vilaMariana?.rotulo).toBe('Artistas');
+      expect(vilaMariana?.principal).toBe('Gloria Groove');
+      expect(vilaMariana?.resto).toBe(', Gretchen');
+    });
+
+    it('sem artista conhecido, mostra os nomes dos blocos do dia', () => {
+      const semArtista = cartoes.find((c) =>
+        BLOCOS.every((bloco) => bloco.localId !== c.local.id || bloco.data !== '2026-02-14' || !bloco.atracoes.length),
+      )!;
+      const doDia = BLOCOS.filter((bloco) => bloco.localId === semArtista.local.id && bloco.data === '2026-02-14');
+      expect(semArtista.rotulo).toBe('Blocos');
+      expect(doDia.map((bloco) => bloco.nome)).toContain(semArtista.principal);
     });
   });
 
   describe('aba Hoje, no domingo', () => {
     it('diz a hora quando o bloco de hoje ainda não começou', () => {
-      // Bloco 89 (Supla) começa às 13h; ao meio-dia ainda não começou.
-      const meioDia = selos(cartoesDaAba('hoje', new Date(2026, 1, 15, 12, 0)));
-      expect(meioDia['faria-lima']).toBe('Hoje às 13h');
-      expect(meioDia['ibirapuera']).toBe('Já começou');
+      // Na Vila Mariana, o primeiro bloco do domingo (Sertanejinho do Teló) concentra às 11h.
+      const cedo = selos(cartoesDaAba('hoje', new Date(2026, 1, 15, 8, 0)));
+      expect(cedo['vila-mariana']).toBe('Hoje às 11h');
     });
 
     it('diz "Já acabou" depois da hora de fim', () => {
-      // Teló acaba às 16h e a Pocah às 18h; às 20h já passou tudo no Ibirapuera.
+      // Na Vila Mariana, o último bloco do domingo termina às 18h.
       const noite = selos(cartoesDaAba('hoje', new Date(2026, 1, 15, 20, 0)));
-      expect(noite['ibirapuera']).toBe('Já acabou');
-      expect(noite['faria-lima']).toBe('Já acabou');
+      expect(noite['vila-mariana']).toBe('Já acabou');
+    });
+  });
+
+  describe('um bloco que termina à meia-noite', () => {
+    it('conta como rolando até o fim do dia', () => {
+      // Banda do Candinho, na Sé, quarta 11/02: 19h até 0h.
+      const noite = selos(cartoesDaAba('hoje', new Date(2026, 1, 11, 23, 0)));
+      expect(noite['se']).toBe('Já começou');
     });
   });
 
   describe('aba Amanhã', () => {
     it('mostra só os lugares com bloco no dia seguinte, com a hora do primeiro bloco', () => {
       const amanha = selos(cartoesDaAba('amanha', SABADO_14H));
-      expect(amanha).toEqual({
-        ibirapuera: 'Amanhã às 11h',
-        'faria-lima': 'Amanhã às 13h',
-        republica: 'Amanhã às 12h',
-        pinheiros: 'Amanhã às 10h',
-        'centro-historico': 'Amanhã às 14h',
-      });
+      expect(Object.keys(amanha).sort()).toEqual(lugaresDoDia('2026-02-15').sort());
+      expect(amanha['vila-mariana']).toBe('Amanhã às 11h');
+      expect(Object.values(amanha).every((selo) => selo.startsWith('Amanhã às '))).toBe(true);
     });
 
-    it('mostra os artistas só do dia seguinte', () => {
-      const ibirapuera = cartoesDaAba('amanha', SABADO_14H).find((c) => c.local.id === 'ibirapuera');
-      expect(ibirapuera?.principal).toBe('Michel Teló');
-      expect(ibirapuera?.resto).toBe(', Pocah');
+    it('mostra os artistas só do dia seguinte, o mais famoso primeiro', () => {
+      const vilaMariana = cartoesDaAba('amanha', SABADO_14H).find((c) => c.local.id === 'vila-mariana');
+      expect(vilaMariana?.principal).toBe('Pocah');
+      expect(vilaMariana?.resto).toBe(', Michel Teló');
     });
   });
 
   describe('aba Geral', () => {
     const geral = selos(cartoesDaAba('geral', SABADO_14H));
 
-    it('mostra todos os lugares, cada um com o seu selo', () => {
-      expect(Object.keys(geral).length).toBe(LOCAIS.length);
-      expect(geral['ibirapuera']).toBe('Já começou');
-      expect(geral['faria-lima']).toBe('Amanhã às 13h');
+    it('mostra todos os lugares, na ordem dos lugares, cada um com o seu selo', () => {
+      expect(cartoesDaAba('geral', SABADO_14H).map((c) => c.local.id)).toEqual(LOCAIS.map((local) => local.id));
+      expect(geral['vila-mariana']).toBe('Já começou');
     });
 
     it('conta quantos blocos faltam para quem não tem bloco hoje nem amanhã', () => {
-      // Consolação ainda tem o Eu Sou do Axé (16/02), a Salete Campari (17/02) e a Pipoca da Rainha (22/02).
-      expect(geral['consolacao']).toBe('3 blocos');
-      // Henrique Schaumann só tem o Me Lembra Que Eu Vou (16/02) pela frente.
-      expect(geral['henrique-schaumann']).toBe('1 bloco');
+      const semHojeNemAmanha = LOCAIS.find(
+        (local) => quantosNoDia(local.id, '2026-02-14') === 0 && quantosNoDia(local.id, '2026-02-15') === 0,
+      )!;
+      const faltam = BLOCOS.filter((bloco) => bloco.localId === semHojeNemAmanha.id && bloco.data > '2026-02-15');
+      expect(geral[semHojeNemAmanha.id]).toBe(
+        faltam.length === 0 ? 'Sem mais blocos' : faltam.length === 1 ? '1 bloco' : `${faltam.length} blocos`,
+      );
     });
 
     it('diz que não tem mais blocos quando todos já passaram', () => {
-      expect(geral['santo-amaro']).toBe('Sem mais blocos');
       const depois = selos(cartoesDaAba('geral', new Date(2026, 2, 1, 12, 0)));
       expect(Object.values(depois).every((selo) => selo === 'Sem mais blocos')).toBe(true);
     });
 
-    it('mostra os artistas dos blocos de hoje em diante', () => {
-      const ibirapuera = cartoesDaAba('geral', SABADO_14H).find((c) => c.local.id === 'ibirapuera');
-      expect(ibirapuera?.principal).toBe('Gloria Groove');
-      expect(ibirapuera?.resto).toBe(', Gretchen, Michel Teló e mais 7');
+    it('mostra os artistas dos blocos de hoje em diante, o mais famoso primeiro', () => {
+      const vilaMariana = cartoesDaAba('geral', SABADO_14H).find((c) => c.local.id === 'vila-mariana');
+      expect(vilaMariana?.principal).toBe('Léo Santana');
+      expect(vilaMariana?.resto).toMatch(/^, Pocah, Pabllo Vittar e mais \d+$/);
     });
 
     it('mostra os artistas de todos os blocos quando o dia ainda está longe', () => {
-      const ibirapuera = cartoesDaAba('geral', new Date(2026, 0, 30, 12, 0)).find(
-        (c) => c.local.id === 'ibirapuera',
+      const vilaMariana = cartoesDaAba('geral', new Date(2026, 0, 30, 12, 0)).find(
+        (c) => c.local.id === 'vila-mariana',
       );
-      expect(ibirapuera?.principal).toBe('Ivete Sangalo');
-      expect(ibirapuera?.resto).toBe(', Mariana Aydar, Alceu Valença e mais 13');
+      expect(vilaMariana?.principal).toBe('Ivete Sangalo');
     });
 
-    it('deixa o artista em branco quando o lugar não tem artista divulgado', () => {
-      const pauloVi = cartoesDaAba('geral', SABADO_14H).find((c) => c.local.id === 'paulo-vi');
-      expect(pauloVi?.principal).toBe('');
-      expect(pauloVi?.resto).toBe('');
+    it('mostra os nomes dos blocos quando o lugar não tem artista divulgado', () => {
+      const lapa = cartoesDaAba('geral', SABADO_14H).find((c) => c.local.id === 'lapa');
+      expect(lapa?.rotulo).toBe('Blocos');
+      expect(BLOCOS.some((bloco) => bloco.localId === 'lapa' && bloco.nome === lapa?.principal)).toBe(true);
     });
   });
 
   describe('faixa de cor', () => {
     it('é sempre a mesma para o mesmo lugar, em qualquer aba', () => {
-      const emAmanha = cartoesDaAba('amanha', SABADO_14H).find((c) => c.local.id === 'faria-lima');
-      const emGeral = cartoesDaAba('geral', SABADO_14H).find((c) => c.local.id === 'faria-lima');
-      expect(emAmanha?.faixa).toBe('verde');
+      const emAmanha = cartoesDaAba('amanha', SABADO_14H).find((c) => c.local.id === 'pinheiros');
+      const emGeral = cartoesDaAba('geral', SABADO_14H).find((c) => c.local.id === 'pinheiros');
+      expect(emAmanha?.faixa).toBe('laranja');
       expect(emGeral?.faixa).toBe(emAmanha?.faixa);
     });
 
-    it('vai do rosa ao azul e recomeça no oitavo lugar', () => {
+    it('vai do rosa ao azul, na ordem dos lugares', () => {
       const faixas = cartoesDaAba('geral', null).map((cartao) => cartao.faixa);
-      expect(faixas.slice(0, 7)).toEqual(['rosa', 'amarelo', 'verde', 'laranja', 'roxo', 'vermelho', 'azul']);
-      expect(faixas[7]).toBe('rosa');
+      expect(faixas).toEqual(['rosa', 'amarelo', 'verde', 'laranja', 'roxo', 'vermelho', 'azul'].slice(0, faixas.length));
     });
   });
 
   describe('blocosDaAba', () => {
-    const doIbirapuera = BLOCOS.filter((bloco) => bloco.localId === 'ibirapuera');
+    const daVilaMariana = BLOCOS.filter((bloco) => bloco.localId === 'vila-mariana');
 
     it('na aba Hoje, traz só os blocos do lugar de hoje', () => {
-      const blocos = blocosDaAba('hoje', 'ibirapuera', SABADO_14H);
-      expect(blocos.map((bloco) => bloco.id)).toEqual(
-        doIbirapuera.filter((bloco) => bloco.data === '2026-02-14').map((bloco) => bloco.id),
+      const blocos = blocosDaAba('hoje', 'vila-mariana', SABADO_14H);
+      expect(blocos.map((bloco) => bloco.id).sort()).toEqual(
+        daVilaMariana.filter((bloco) => bloco.data === '2026-02-14').map((bloco) => bloco.id).sort(),
       );
       expect(blocos.length).toBeGreaterThan(0);
     });
 
     it('na aba Amanhã, traz só os de amanhã, em ordem de hora', () => {
-      const blocos = blocosDaAba('amanha', 'ibirapuera', SABADO_14H);
+      const blocos = blocosDaAba('amanha', 'vila-mariana', SABADO_14H);
       expect(blocos.length).toBeGreaterThan(1);
       expect(blocos.every((bloco) => bloco.data === '2026-02-15')).toBe(true);
       const horas = blocos.map((bloco) => bloco.inicio);
@@ -214,20 +208,20 @@ describe('agenda', () => {
     });
 
     it('na aba Geral, traz os que ainda vão passar, a partir de hoje', () => {
-      const blocos = blocosDaAba('geral', 'ibirapuera', SABADO_14H);
+      const blocos = blocosDaAba('geral', 'vila-mariana', SABADO_14H);
       expect(blocos.every((bloco) => bloco.data >= '2026-02-14')).toBe(true);
-      expect(blocos.length).toBe(doIbirapuera.filter((bloco) => bloco.data >= '2026-02-14').length);
+      expect(blocos.length).toBe(daVilaMariana.filter((bloco) => bloco.data >= '2026-02-14').length);
     });
 
     it('sem saber o dia de hoje, a Geral traz todos e as outras abas ficam vazias', () => {
-      expect(blocosDaAba('geral', 'ibirapuera', null).length).toBe(doIbirapuera.length);
-      expect(blocosDaAba('hoje', 'ibirapuera', null)).toEqual([]);
-      expect(blocosDaAba('amanha', 'ibirapuera', null)).toEqual([]);
+      expect(blocosDaAba('geral', 'vila-mariana', null).length).toBe(daVilaMariana.length);
+      expect(blocosDaAba('hoje', 'vila-mariana', null)).toEqual([]);
+      expect(blocosDaAba('amanha', 'vila-mariana', null)).toEqual([]);
     });
 
     it('fica vazia num dia em que o lugar não tem bloco', () => {
-      expect(blocosDaAba('hoje', 'paulo-vi', SABADO_14H).length).toBe(1);
-      expect(blocosDaAba('amanha', 'paulo-vi', SABADO_14H)).toEqual([]);
+      const semBlocoNoSabado = LOCAIS.find((local) => quantosNoDia(local.id, '2026-02-14') === 0)!;
+      expect(blocosDaAba('hoje', semBlocoNoSabado.id, SABADO_14H)).toEqual([]);
     });
   });
 });

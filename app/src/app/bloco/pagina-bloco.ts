@@ -3,7 +3,8 @@ import { RouterLink } from '@angular/router';
 
 import { CopiarLink } from '../copiar-link/copiar-link';
 import { acharBloco, acharLocal, faixaDoLocal } from '../dados/consultas';
-import { NOMES_DOS_ESTILOS, dataPorExtenso, formatarHora, textoDoHorario } from '../dados/formato';
+import { NOMES_DOS_ESTILOS, dataPorExtenso, formatarHora, horariosDoBloco } from '../dados/formato';
+import { itinerarioDoBloco } from '../dados/itinerario';
 import { Atracao } from '../dados/tipos';
 
 /** Quem tem hora vem primeiro, do mais cedo para o mais tarde; os outros ficam na ordem da lista. */
@@ -40,7 +41,8 @@ export class PaginaBloco {
     }
     return {
       dia: dataPorExtenso(bloco.data),
-      horario: textoDoHorario(bloco),
+      horario: horariosDoBloco(bloco),
+      itinerario: itinerarioDoBloco(bloco.id),
       estilo: bloco.estilo ? NOMES_DOS_ESTILOS[bloco.estilo] : undefined,
       atracoes: [...bloco.atracoes].sort(porHora).map((atracao) => ({
         nome: atracao.nome,

@@ -63,6 +63,18 @@ export function dataPorExtenso(iso: string): string {
   return texto.charAt(0).toUpperCase() + texto.slice(1);
 }
 
+/** "Concentração às 13h · desfile às 14h · termina às 18h", só com as horas que a gente sabe. */
+export function horariosDoBloco(bloco: Bloco): string {
+  const partes = [`Concentração às ${formatarHora(bloco.inicio)}`];
+  if (bloco.desfile) {
+    partes.push(`desfile às ${formatarHora(bloco.desfile)}`);
+  }
+  if (bloco.fim) {
+    partes.push(`termina às ${formatarHora(bloco.fim)}`);
+  }
+  return partes.join(' · ');
+}
+
 /** "Começa às 13h" e, quando a gente sabe, "Começa às 13h · vai até 20h". */
 export function textoDoHorario(bloco: Bloco): string {
   const inicio = `Começa às ${formatarHora(bloco.inicio)}`;

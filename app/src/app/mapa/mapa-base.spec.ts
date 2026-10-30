@@ -58,48 +58,77 @@ describe('MapaBase', () => {
     expect(falso.worker()).toMatch(/\/mapa\/maplibre-gl-worker\.mjs$/);
   });
 
-  it('põe um pino para cada ponto, na posição certa e com o nome para o leitor de tela', async () => {
-    const { falso } = await renderizar([SE, SANTO_AMARO]);
-    const pinos = falso.pinos();
-    expect(pinos.length).toBe(2);
-    expect(pinos[0].posicao).toEqual([SE.lng, SE.lat]);
-    expect(pinos[0].elemento.getAttribute('aria-label')).toBe('Praça da Sé');
-    expect(pinos[1].posicao).toEqual([SANTO_AMARO.lng, SANTO_AMARO.lat]);
+  it('põe uma bolinha para cada ponto, na posição certa, depois de o mapa carregar', async () => {
+    const { falso, fixture } = await renderizar([SE, SANTO_AMARO]);
+    expect(falso.mapas[0].pontos()).toEqual([]);
+    falso.mapas[0].carregar();
+    await esperarOMapa(fixture);
+    const pontos = falso.mapas[0].pontos();
+    expect(pontos.map((ponto) => ponto.id)).toEqual(['se', 'santo-amaro']);
+    expect(pontos[0].posicao).toEqual([SE.lng, SE.lat]);
+    expect(pontos[1].posicao).toEqual([SANTO_AMARO.lng, SANTO_AMARO.lat]);
+    // São bolinhas do mapa, e não pinos: assim cabem centenas sem pesar no celular.
+    expect(falso.pinos().length).toBe(0);
   });
 
-  it('pinta cada pino com a cor da zona do lugar', async () => {
-    const { falso } = await renderizar([SE, SANTO_AMARO, PINHEIROS]);
-    const classes = falso.pinos().map((pino) => pino.elemento.className);
-    expect(classes[0]).toContain('pino-centro');
-    expect(classes[1]).toContain('pino-sul');
-    expect(classes[2]).toContain('pino-oeste');
+  it('pinta cada bolinha com a cor da zona do lugar', async () => {
+    const { falso, fixture } = await renderizar([SE, SANTO_AMARO, PINHEIROS]);
+    falso.mapas[0].carregar();
+    await esperarOMapa(fixture);
+    expect(falso.mapas[0].pontos().map((ponto) => ponto.cor)).toEqual(['#6a0dad', '#00e676', '#d62828']);
   });
 
-  it('avisa qual lugar foi escolhido quando alguém toca no pino', async () => {
-    const { falso, escolhidos } = await renderizar([SE, SANTO_AMARO]);
-    falso.pinos()[1].elemento.click();
+  it('avisa qual ponto foi escolhido quando alguém toca na bolinha, com folga em volta do dedo', async () => {
+    const { falso, fixture, escolhidos } = await renderizar([SE, SANTO_AMARO]);
+    falso.mapas[0].carregar();
+    await esperarOMapa(fixture);
+    falso.mapas[0].tocarNoPonto('santo-amaro');
     expect(escolhidos).toEqual(['santo-amaro']);
+    const consulta = falso.mapas[0].consultas.at(-1);
+    expect(consulta?.caixa).toEqual([
+      [86, 186],
+      [114, 214],
+    ]);
+    expect(consulta?.opcoes).toEqual({ layers: ['pontos-bolinhas'] });
   });
 
-  it('avisa quando alguém toca no mapa fora dos pinos', async () => {
-    const { fixture, falso } = await renderizar([SE]);
+  it('avisa quando alguém toca no mapa fora dos pontos', async () => {
+    const { fixture, falso, escolhidos } = await renderizar([SE]);
     let toques = 0;
     fixture.componentInstance.fundoTocado.subscribe(() => toques++);
     falso.mapas[0].tocar();
-    expect(toques).toBe(1);
+    falso.mapas[0].carregar();
+    await esperarOMapa(fixture);
+    falso.mapas[0].tocar();
+    expect(toques).toBe(2);
+    expect(escolhidos).toEqual([]);
   });
 
-  it('destaca só o pino do lugar selecionado', async () => {
+  it('põe o pino só no ponto selecionado, com o nome para o leitor de tela, no lugar da bolinha', async () => {
+    const { falso, fixture, mudar } = await renderizar([SE, SANTO_AMARO]);
+    falso.mapas[0].carregar();
+    await mudar({ selecionado: 'se' });
+    const pinos = falso.pinos();
+    expect(pinos.length).toBe(1);
+    expect(pinos[0].posicao).toEqual([SE.lng, SE.lat]);
+    expect(pinos[0].elemento.getAttribute('aria-label')).toBe('Praça da Sé');
+    expect(pinos[0].elemento.getAttribute('aria-pressed')).toBe('true');
+    expect(pinos[0].elemento.className).toContain('pino-centro');
+    expect(pinos[0].opcoes.anchor).toBe('bottom');
+    expect(falso.mapas[0].pontos().map((ponto) => ponto.id)).toEqual(['santo-amaro']);
+    await esperarOMapa(fixture);
+  });
+
+  it('troca o pino quando outro ponto é escolhido e tira quando nenhum está', async () => {
     const { falso, mudar } = await renderizar([SE, SANTO_AMARO]);
     await mudar({ selecionado: 'se' });
-    const [primeiro, segundo] = falso.pinos();
-    expect(primeiro.elemento.classList.contains('selecionado')).toBe(true);
-    expect(primeiro.elemento.getAttribute('aria-pressed')).toBe('true');
-    expect(segundo.elemento.classList.contains('selecionado')).toBe(false);
-    expect(segundo.elemento.getAttribute('aria-pressed')).toBe('false');
+    await mudar({ selecionado: 'santo-amaro' });
+    expect(falso.pinos().map((pino) => pino.posicao)).toEqual([[SANTO_AMARO.lng, SANTO_AMARO.lat]]);
+    await mudar({ selecionado: null });
+    expect(falso.pinos().length).toBe(0);
   });
 
-  it('puxa o mapa para o lugar selecionado', async () => {
+  it('puxa o mapa para o ponto selecionado', async () => {
     const { falso, mudar } = await renderizar([SE, SANTO_AMARO]);
     await mudar({ selecionado: 'santo-amaro' });
     const ultimo = falso.mapas[0].movimentos.at(-1);
@@ -124,13 +153,13 @@ describe('MapaBase', () => {
     expect(movimento['zoom']).toBe(14);
   });
 
-  it('tira do mapa os pinos que saíram da lista e enquadra de novo', async () => {
-    const { falso, mudar } = await renderizar([SE, SANTO_AMARO, PINHEIROS]);
+  it('tira do mapa as bolinhas que saíram da lista e enquadra de novo', async () => {
+    const { falso, fixture, mudar } = await renderizar([SE, SANTO_AMARO, PINHEIROS]);
+    falso.mapas[0].carregar();
+    await esperarOMapa(fixture);
     await mudar({ pontos: [PINHEIROS, SE] });
-    expect(falso.pinos().map((pino) => pino.elemento.getAttribute('aria-label'))).toEqual([
-      'Praça da Sé',
-      'Pinheiros',
-    ]);
+    expect(falso.mapas[0].pontos().map((ponto) => ponto.id)).toEqual(['pinheiros', 'se']);
+    expect(falso.mapas[0].fontes.get('pontos')?.atualizacoes).toBe(1);
     expect(falso.mapas[0].enquadramentos.length).toBe(2);
   });
 
@@ -147,9 +176,17 @@ describe('MapaBase', () => {
       zona: 'sul',
       linha: [[-46.71, -23.64], [-46.712, -23.642]],
     };
-    type Linhas = { features: { properties: Record<string, unknown>; geometry: { coordinates: unknown } }[] };
-    const linhas = (falso: ReturnType<typeof criarMapLibreFalso>) =>
-      falso.mapas[0].fontes.get('trajetos')?.dados as Linhas | undefined;
+    type Desenho = { properties: Record<string, unknown>; geometry: { type: string; coordinates: unknown } };
+    const desenhos = (falso: ReturnType<typeof criarMapLibreFalso>) =>
+      (falso.mapas[0].fontes.get('trajetos')?.dados as { features: Desenho[] } | undefined)?.features;
+    const linhas = (falso: ReturnType<typeof criarMapLibreFalso>) => {
+      const todos = desenhos(falso);
+      return todos && { features: todos.filter((desenho) => desenho.geometry.type === 'LineString') };
+    };
+    const fins = (falso: ReturnType<typeof criarMapLibreFalso>) =>
+      (desenhos(falso) ?? []).filter((desenho) => desenho.geometry.type === 'Point');
+    const camadasDosTrajetos = (falso: ReturnType<typeof criarMapLibreFalso>) =>
+      falso.mapas[0].camadas.filter((camada) => camada['source'] === 'trajetos').map((camada) => camada['id']);
 
     it('só desenha as linhas depois de o mapa carregar', async () => {
       const { falso, fixture, mudar } = await renderizar([SE]);
@@ -158,6 +195,19 @@ describe('MapaBase', () => {
       falso.mapas[0].carregar();
       await esperarOMapa(fixture);
       expect(linhas(falso)?.features.length).toBe(1);
+    });
+
+    it('marca o fim de cada linha com uma bolinha, menos quando a linha volta ao começo', async () => {
+      const VOLTA: TrajetoNoMapa = {
+        id: 'santo-amaro',
+        zona: 'sul',
+        linha: [[-46.71, -23.64], [-46.712, -23.642], [-46.71, -23.64]],
+      };
+      const { falso, mudar } = await renderizar([SE, SANTO_AMARO]);
+      falso.mapas[0].carregar();
+      await mudar({ trajetos: [NA_SE, VOLTA] });
+      expect(fins(falso).map((fim) => fim.geometry.coordinates)).toEqual([NA_SE.linha.at(-1)]);
+      expect(fins(falso)[0].properties['cor']).toBe('#6a0dad');
     });
 
     it('desenha uma linha por trajeto, seguindo os pontos, na cor da zona', async () => {
@@ -170,14 +220,22 @@ describe('MapaBase', () => {
       expect(doSul.properties['cor']).toBe('#00e676');
     });
 
-    it('põe uma borda branca embaixo da linha colorida', async () => {
+    it('põe uma borda branca embaixo da linha colorida, e a bolinha do fim por cima', async () => {
       const { falso, mudar } = await renderizar([SE]);
       falso.mapas[0].carregar();
       await mudar({ trajetos: [NA_SE] });
-      expect(falso.mapas[0].camadas.map((camada) => camada['id'])).toEqual(['trajetos-borda', 'trajetos-linha']);
+      expect(camadasDosTrajetos(falso)).toEqual(['trajetos-borda', 'trajetos-linha', 'trajetos-fim']);
     });
 
-    it('marca o trajeto do lugar selecionado, para ele ficar mais grosso', async () => {
+    it('fica por cima das bolinhas dos pontos', async () => {
+      const { falso, mudar } = await renderizar([SE]);
+      falso.mapas[0].carregar();
+      await mudar({ trajetos: [NA_SE] });
+      const ids = falso.mapas[0].camadas.map((camada) => camada['id']);
+      expect(ids.indexOf('pontos-bolinhas')).toBeLessThan(ids.indexOf('trajetos-borda'));
+    });
+
+    it('marca o trajeto do ponto selecionado, para ele ficar mais grosso', async () => {
       const { falso, mudar } = await renderizar([SE, SANTO_AMARO]);
       falso.mapas[0].carregar();
       await mudar({ trajetos: [NA_SE, EM_SANTO_AMARO], selecionado: 'santo-amaro' });
@@ -189,10 +247,10 @@ describe('MapaBase', () => {
       falso.mapas[0].carregar();
       await mudar({ trajetos: [NA_SE, EM_SANTO_AMARO] });
       await mudar({ trajetos: [EM_SANTO_AMARO] });
-      expect(falso.mapas[0].camadas.length).toBe(2);
+      expect(camadasDosTrajetos(falso).length).toBe(3);
       expect(linhas(falso)!.features.map((linha) => linha.properties['id'])).toEqual(['santo-amaro']);
       await mudar({ trajetos: [] });
-      expect(linhas(falso)!.features).toEqual([]);
+      expect(desenhos(falso)).toEqual([]);
     });
 
     it('não cria nada no mapa enquanto não há trajeto', async () => {
@@ -202,7 +260,7 @@ describe('MapaBase', () => {
       expect(falso.mapas[0].fontes.has('trajetos')).toBe(false);
     });
 
-    it('ao escolher um lugar com trajeto, enquadra o trajeto inteiro e o pino', async () => {
+    it('ao escolher um ponto com trajeto, enquadra o trajeto inteiro e o pino', async () => {
       const { falso, mudar } = await renderizar([SE, SANTO_AMARO]);
       await mudar({ trajetos: [NA_SE] });
       const antes = falso.mapas[0].enquadramentos.length;
@@ -212,7 +270,7 @@ describe('MapaBase', () => {
       expect(ultimo.limites.pontos).toEqual([[SE.lng, SE.lat], ...NA_SE.linha]);
     });
 
-    it('ao escolher um lugar sem trajeto, só puxa o mapa para o pino', async () => {
+    it('ao escolher um ponto sem trajeto, só puxa o mapa para o pino', async () => {
       const { falso, mudar } = await renderizar([SE, SANTO_AMARO]);
       await mudar({ trajetos: [NA_SE] });
       const antes = falso.mapas[0].enquadramentos.length;
@@ -234,12 +292,15 @@ describe('MapaBase', () => {
 
   describe('a pessoa no mapa', () => {
     const VOCE: PosicaoNoMapa = { lat: -23.56, lng: -46.65, precisao: 120 };
+    const camadasDaPessoa = (falso: ReturnType<typeof criarMapLibreFalso>) =>
+      falso.mapas[0].camadas.filter((camada) => camada['source'] === 'voce-precisao');
 
     it('não desenha ninguém enquanto a pessoa não pediu para ver onde está', async () => {
-      const { falso } = await renderizar([SE]);
+      const { falso, fixture } = await renderizar([SE]);
       falso.mapas[0].carregar();
+      await esperarOMapa(fixture);
       expect(falso.bolinha()).toBeUndefined();
-      expect(falso.mapas[0].fontes.size).toBe(0);
+      expect(falso.mapas[0].fontes.has('voce-precisao')).toBe(false);
     });
 
     it('põe uma bolinha, avisada para o leitor de tela, na posição da pessoa', async () => {
@@ -251,10 +312,11 @@ describe('MapaBase', () => {
       expect(bolinha?.opcoes.anchor).toBe('center');
     });
 
-    it('não confunde a bolinha com um pino de lugar', async () => {
+    it('não confunde a bolinha com o pino do ponto escolhido', async () => {
       const { falso, mudar } = await renderizar([SE, SANTO_AMARO]);
-      await mudar({ voce: VOCE });
-      expect(falso.pinos().length).toBe(2);
+      await mudar({ voce: VOCE, selecionado: 'se' });
+      expect(falso.pinos().length).toBe(1);
+      expect(falso.bolinha()).toBeDefined();
     });
 
     it('move a mesma bolinha quando a posição muda', async () => {
@@ -278,8 +340,8 @@ describe('MapaBase', () => {
       expect(falso.mapas[0].fontes.size).toBe(0);
       falso.mapas[0].carregar();
       await esperarOMapa(fixture);
-      expect([...falso.mapas[0].fontes.keys()]).toEqual(['voce-precisao']);
-      expect(falso.mapas[0].camadas.map((camada) => camada['type'])).toEqual(['fill', 'line']);
+      expect(falso.mapas[0].fontes.has('voce-precisao')).toBe(true);
+      expect(camadasDaPessoa(falso).map((camada) => camada['type'])).toEqual(['fill', 'line']);
     });
 
     it('desenha o círculo com o raio da precisão e na cor rosa do app', async () => {
@@ -294,7 +356,7 @@ describe('MapaBase', () => {
         expect(metros).toBeGreaterThan(VOCE.precisao * 0.99);
         expect(metros).toBeLessThan(VOCE.precisao * 1.01);
       }
-      const area = falso.mapas[0].camadas[0]['paint'] as Record<string, unknown>;
+      const area = camadasDaPessoa(falso)[0]['paint'] as Record<string, unknown>;
       expect(String(area['fill-color']).toLowerCase()).toBe('#e21d89');
     });
 
@@ -304,8 +366,7 @@ describe('MapaBase', () => {
       await mudar({ voce: VOCE });
       await mudar({ voce: { lat: -23.57, lng: -46.66, precisao: 30 } });
       const fonte = falso.mapas[0].fontes.get('voce-precisao');
-      expect(falso.mapas[0].fontes.size).toBe(1);
-      expect(falso.mapas[0].camadas.length).toBe(2);
+      expect(camadasDaPessoa(falso).length).toBe(2);
       expect(fonte?.atualizacoes).toBe(1);
       await mudar({ voce: null });
       expect(fonte?.dados).toEqual({ type: 'FeatureCollection', features: [] });
@@ -335,8 +396,10 @@ describe('MapaBase', () => {
     });
   });
 
-  it('fecha o mapa e tira os pinos quando a tela é destruída', async () => {
-    const { fixture, falso } = await renderizar([SE, SANTO_AMARO]);
+  it('fecha o mapa e tira o pino quando a tela é destruída', async () => {
+    const { fixture, falso, mudar } = await renderizar([SE, SANTO_AMARO]);
+    await mudar({ selecionado: 'se' });
+    expect(falso.pinos().length).toBe(1);
     fixture.destroy();
     expect(falso.mapas[0].removido).toBe(true);
     expect(falso.pinos().length).toBe(0);

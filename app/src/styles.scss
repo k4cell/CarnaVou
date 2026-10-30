@@ -130,6 +130,17 @@ a:focus-visible {
   list-style: none;
 }
 
+// O título de uma parte da página ("Destaques", "Atrações"…).
+.secao {
+  margin: 24px 0 8px;
+  font-size: 1.1rem;
+  color: var(--roxo);
+
+  + .lista {
+    margin-top: 0;
+  }
+}
+
 // Os blocos do mesmo dia, um embaixo do outro, viram um cartão só: sem o espaço entre eles, com
 // uma linha fina separando, e os cantos redondos só no começo e no fim do dia.
 .dia {
