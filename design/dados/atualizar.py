@@ -20,8 +20,8 @@ O que ele faz, em ordem:
 4. Grava os arquivos do app (gerar_dados.py).
 5. Troca o ano na descrição do site (app/src/index.html).
 
-O "hoje" de demonstração do app acompanha os dados sozinho (o primeiro sábado com bloco) e o aviso
-de teste mostra o ano dos blocos. Depois, rode os testes: os que conferem um bloco de 2026 pelo
+O aviso de teste mostra o ano dos blocos sozinho, mas o "hoje" de demonstração é fixo: troque a
+data em app/src/app/relogio/relogio.ts (DATA_DE_DEMONSTRACAO). Depois, rode os testes: os que conferem um bloco de 2026 pelo
 nome vão precisar de ajuste com os dados de outro ano.
 """
 
