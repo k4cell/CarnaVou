@@ -3,7 +3,9 @@ import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/c
 import { AbasDoDia } from '../abas/abas-do-dia';
 import { BannerBloco } from '../banner/banner-bloco';
 import { Aba } from '../dados/agenda';
+import { acharLocal, faixaDoLocal } from '../dados/consultas';
 import { secoesDosBlocos } from '../dados/lista-de-blocos';
+import { Bloco } from '../dados/tipos';
 import { FiltroDeDia } from '../filtro/filtro-de-dia';
 import { Relogio } from '../relogio/relogio';
 
@@ -27,11 +29,12 @@ const NADA_NA_ABA: Record<Aba, string> = {
     @for (secao of secoes(); track secao.titulo) {
       <h3 class="secao">{{ secao.titulo }}</h3>
       <ul class="lista">
-        <!-- Os blocos do mesmo dia no mesmo lugar ficam num cartão só, com o lugar no primeiro. -->
+        <!-- Os blocos do mesmo dia no mesmo lugar ficam num cartão só, com o nome do lugar no alto. -->
         @for (grupo of secao.grupos; track grupo[0].id) {
-          <li [class.dia]="grupo.length > 1">
-            @for (bloco of grupo; track bloco.id; let primeiro = $first) {
-              <app-banner-bloco [bloco]="bloco" [mostrarLugar]="primeiro" />
+          <li class="dia" [attr.data-faixa]="faixaDo(grupo[0])">
+            <span class="lugar-do-grupo">{{ lugarDo(grupo[0]) }}</span>
+            @for (bloco of grupo; track bloco.id) {
+              <app-banner-bloco [bloco]="bloco" />
             }
           </li>
         }
@@ -57,4 +60,12 @@ export class PaginaBlocos {
 
   protected readonly secoes = computed(() => secoesDosBlocos(this.filtro.ativa(), this.relogio.agora()));
   protected readonly nadaNaAba = computed(() => NADA_NA_ABA[this.filtro.ativa()]);
+
+  protected lugarDo(bloco: Bloco): string {
+    return acharLocal(bloco.localId)?.nome ?? '';
+  }
+
+  protected faixaDo(bloco: Bloco): string {
+    return faixaDoLocal(bloco.localId);
+  }
 }
