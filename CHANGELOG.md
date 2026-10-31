@@ -7,6 +7,11 @@ Enquanto o app está em beta, o número é `0.MEIO.FINAL`. O número do meio sob
 uma tela ou funcionalidade nova (0.3.0, 0.4.0…) e o último, quando é só uma correção pequena
 (0.3.1). Cada versão tem uma etiqueta no GitHub, como `v0.3.0`.
 
+## 0.20.1 (30/10/2026)
+
+- Na aba Blocos, o nome do lugar fica no alto de cada cartão (como "Parque Ibirapuera"), e não mais
+  dentro do primeiro bloco. Vale também para o cartão de um bloco só.
+
 ## 0.20.0 (30/10/2026)
 
 - Na aba Blocos, os blocos do mesmo dia no mesmo circuito (Ibirapuera, Faria Lima, Consolação,

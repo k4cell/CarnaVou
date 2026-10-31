@@ -16,7 +16,7 @@ describe('PaginaBlocos', () => {
     return fixture.nativeElement as HTMLElement;
   }
 
-  it('põe num cartão só os blocos do mesmo dia no mesmo lugar, com o lugar só no primeiro', async () => {
+  it('põe num cartão só os blocos do mesmo dia no mesmo lugar, com o nome do lugar no alto', async () => {
     // Sábado, 07/02, meio-dia: no Ibirapuera, Quem Pede, Pede e Forrozin rolando e Bicho Maluco às 14h.
     const tela = await renderizar(new Date(2026, 1, 7, 12, 0));
     const cartao = Array.from(tela.querySelectorAll('li.dia')).find((li) =>
@@ -24,20 +24,20 @@ describe('PaginaBlocos', () => {
     )!;
     const nomes = Array.from(cartao.querySelectorAll('.nome')).map((nome) => nome.textContent?.trim());
     expect(nomes).toEqual(['Carnafacul - Quem Pede, Pede', 'Forrozin', 'Bicho Maluco Beleza, com Alceu Valença']);
-    const lugares = Array.from(cartao.querySelectorAll('app-banner-bloco')).map(
-      (banner) => banner.querySelector('.lugar')?.textContent?.trim() ?? null,
-    );
-    expect(lugares).toEqual(['Parque Ibirapuera', null, null]);
+    expect(cartao.firstElementChild?.classList.contains('lugar-do-grupo')).toBe(true);
+    expect(cartao.querySelector('.lugar-do-grupo')?.textContent?.trim()).toBe('Parque Ibirapuera');
+    expect(cartao.getAttribute('data-faixa')).toBe('rosa');
+    // O lugar fica só no alto, e não repete dentro dos blocos.
+    expect(cartao.querySelectorAll('app-banner-bloco .lugar').length).toBe(0);
   });
 
-  it('deixa sozinho o bloco que não tem outro no mesmo lugar e dia', async () => {
+  it('deixa sozinho o bloco que não tem outro no mesmo lugar e dia, também com o lugar no alto', async () => {
     // Domingo, 08/02, às 13h: em Santana, cada bloco é numa rua diferente.
     const tela = await renderizar(new Date(2026, 1, 8, 13, 0));
     const vemDancar = Array.from(tela.querySelectorAll('.lista > li')).find((li) =>
       li.textContent?.includes('#VemDançar'),
     )!;
-    expect(vemDancar.classList.contains('dia')).toBe(false);
     expect(vemDancar.querySelectorAll('app-banner-bloco').length).toBe(1);
-    expect(vemDancar.querySelector('.lugar')?.textContent?.trim()).toBe('Santana/Tucuruvi');
+    expect(vemDancar.querySelector('.lugar-do-grupo')?.textContent?.trim()).toBe('Santana/Tucuruvi');
   });
 });
