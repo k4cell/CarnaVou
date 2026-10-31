@@ -132,8 +132,8 @@ calendário e o que eu ainda não pensei.
   Diário Oficial (dados abertos da Prefeitura); **não copie dados do site Carnaval SP**, porque os
   termos dele proíbem copiar e comercializar. As fontes e a confiança
   de cada bloco estão em `docs/dados-carnaval-2026.md`; se achar uma divergência nova,
-  anote lá. O "hoje" do app é o primeiro sábado com bloco, 07/02/2026 (`DATA_DE_DEMONSTRACAO`,
-  em `relogio/`), e a tela
+  anote lá. O "hoje" do app é sexta, 13/02/2026, meio-dia (`DATA_DE_DEMONSTRACAO`, em
+  `relogio/`), e a tela
   avisa que é data de teste. O site no ar usa a simulação de 2026, com o aviso de versão de
   teste no alto de toda página (`aviso-de-teste/`): decidi assim. Quando os dados de 2027
   saírem, pergunte se eu quero trocar.

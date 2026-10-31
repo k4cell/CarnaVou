@@ -1,17 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 
-import { DATA_DE_DEMONSTRACAO, Relogio, lerDataDeTeste, primeiroSabadoComBloco } from './relogio';
-
-describe('primeiroSabadoComBloco', () => {
-  it('pula a sexta e fica com o primeiro sábado, ao meio-dia, qualquer que seja o ano', () => {
-    expect(primeiroSabadoComBloco(['2026-02-08', '2026-02-06', '2026-02-07'])).toEqual(new Date(2026, 1, 7, 12, 0));
-    expect(primeiroSabadoComBloco(['2027-01-29', '2027-01-30', '2027-02-06'])).toEqual(new Date(2027, 0, 30, 12, 0));
-  });
-
-  it('sem sábado com bloco, não tem data de demonstração', () => {
-    expect(primeiroSabadoComBloco(['2026-02-06'])).toBeNull();
-  });
-});
+import { DATA_DE_DEMONSTRACAO, Relogio, lerDataDeTeste } from './relogio';
 
 describe('lerDataDeTeste', () => {
   it('lê dia e hora', () => {
@@ -54,17 +43,17 @@ describe('Relogio', () => {
     expect(relogio.simulado()).toBe(true);
   });
 
-  it('usa o "hoje" de demonstração (07/02/2026) quando o endereço não tem data', () => {
+  it('usa o "hoje" de demonstração (13/02/2026) quando o endereço não tem data', () => {
     const relogio = TestBed.inject(Relogio);
     relogio.iniciar('');
-    expect(relogio.agora()).toEqual(new Date(2026, 1, 7, 12, 0));
+    expect(relogio.agora()).toEqual(new Date(2026, 1, 13, 12, 0));
     expect(relogio.simulado()).toBe(true);
   });
 
   it('ignora uma data de teste que não existe e usa a de demonstração', () => {
     const relogio = TestBed.inject(Relogio);
     relogio.iniciar('?hoje=2026-02-31');
-    expect(relogio.agora()).toEqual(new Date(2026, 1, 7, 12, 0));
+    expect(relogio.agora()).toEqual(new Date(2026, 1, 13, 12, 0));
   });
 
   it('só começa uma vez: voltar para a tela inicial não perde a data de teste', () => {

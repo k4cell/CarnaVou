@@ -7,6 +7,11 @@ Enquanto o app está em beta, o número é `0.MEIO.FINAL`. O número do meio sob
 uma tela ou funcionalidade nova (0.3.0, 0.4.0…) e o último, quando é só uma correção pequena
 (0.3.1). Cada versão tem uma etiqueta no GitHub, como `v0.3.0`.
 
+## 0.20.2 (30/10/2026)
+
+- A data de teste do app passa a ser sexta, 13/02/2026, meio-dia (a véspera do sábado de
+  carnaval), no lugar de 07/02/2026.
+
 ## 0.20.1 (30/10/2026)
 
 - Na aba Blocos, o nome do lugar fica no alto de cada cartão (como "Parque Ibirapuera"), e não mais

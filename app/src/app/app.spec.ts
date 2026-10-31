@@ -35,11 +35,11 @@ describe('App', () => {
   });
 
   it('põe a data de teste no mesmo aviso, quando "hoje" não vem do relógio do celular', async () => {
-    // Sem nada no endereço, vale a data de demonstração do app: sábado, 7/2/2026, meio-dia.
+    // Sem nada no endereço, vale a data de demonstração do app: sexta, 13/2/2026, meio-dia.
     const fixture = TestBed.createComponent(App);
     await fixture.whenStable();
     const aviso = (fixture.nativeElement as HTMLElement).querySelector('header app-aviso-de-teste');
-    expect(aviso?.textContent?.replace(/\s+/g, ' ').trim()).toBe('Teste Blocos de 2026 · hoje é sáb, 7/2/2026, 12h');
+    expect(aviso?.textContent?.replace(/\s+/g, ' ').trim()).toBe('Teste Blocos de 2026 · hoje é sex, 13/2/2026, 12h');
   });
 
   it('não põe a data de teste quando é o relógio de verdade', async () => {
