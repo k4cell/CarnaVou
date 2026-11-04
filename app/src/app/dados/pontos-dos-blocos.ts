@@ -8,7 +8,7 @@
  * trajeto é [linha, aproximado]: a linha no formato "encoded polyline" do Google, e 1 quando o
  * ponto ou a linha não são exatos (uma rua que o mapa não tem, uma rua sem os números, um
  * itinerário de duas ruas só).
- * Arquivo gerado por design/dados/gerar_dados.py: não mude à mão.
+ * Arquivo gerado por scripts/dados/gerar_dados.py: não mude à mão.
  */
 export const TRAJETOS: readonly (readonly [string, 0 | 1])[] = [
   ["vl}nCdnw{Gi@\\aMfFmAbA_AdBwFjO", 0],

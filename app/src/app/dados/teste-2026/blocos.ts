@@ -12,7 +12,7 @@ import { Bloco } from '../tipos';
  * estilo vêm de notícias, só nos blocos que elas citam, e os seguidores de cada
  * artista, de contadores públicos do Instagram. Entram os blocos que têm atração divulgada,
  * que desfilam num circuito de megabloco ou que as notícias chamam de destaque da região.
- * Arquivo gerado por design/dados/gerar_dados.py: não mude à mão.
+ * Arquivo gerado por scripts/dados/gerar_dados.py: não mude à mão.
  */
 export const BLOCOS: Bloco[] = [
   // Parque Ibirapuera

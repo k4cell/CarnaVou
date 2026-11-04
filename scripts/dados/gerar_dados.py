@@ -3,7 +3,7 @@
 Uso: python -I gerar_dados.py pasta_do_ano pasta_dos_dados_do_app
 (o atualizar.py roda este script junto com os outros; normalmente é só ele que se usa)
 
-Da pasta do ano (design/dados/2026, por exemplo) vêm:
+Da pasta do ano (scripts/dados/2026, por exemplo) vêm:
 - sobre.json: o ano e o nome da publicação oficial.
 - blocos-oficiais.json: a lista oficial lida do Diário Oficial (ler_tabela.py).
 - tracados.json: o ponto e a linha de cada itinerário (tracar.py).
@@ -11,7 +11,7 @@ Da pasta do ano (design/dados/2026, por exemplo) vêm:
   valem quando o bloco é o mesmo (mesmo nome e mesmo dia).
 - destaques-das-noticias.json (se tiver): blocos sem artista que as notícias chamam de destaque
   da região; valem em todos os dias do bloco (mesmo nome e mesma subprefeitura).
-E de design/dados vem seguidores.json: os seguidores no Instagram de cada artista, para ordenar
+E de scripts/dados vem seguidores.json: os seguidores no Instagram de cada artista, para ordenar
 por fama. Ele vale para todos os anos.
 
 Entram os blocos que têm atração divulgada, que desfilam num circuito de megabloco (os trajetos
@@ -41,7 +41,7 @@ ZONAS = {
 }
 # Os grandes pontos: os circuitos dos megablocos (os trajetos que a CET fecha). Quem desfila
 # neles entra mesmo sem atração divulgada, e cada um vira um lugar com o nome que o povo conhece
-# (decisão de 30/10/2026). Os ids são os mesmos de antes, para os links antigos continuarem valendo.
+# Os ids não mudam, para os links antigos continuarem valendo.
 GRANDES_PONTOS = [
     ("ibirapuera", "Parque Ibirapuera", "sul", r"Pedro [ÁA]lvares Cabral"),
     ("consolacao", "Rua da Consolação e Baixo Augusta", "centro", r"Consola[çc][ãa]o, 2101"),
@@ -185,7 +185,7 @@ linhas = [
     " * Os lugares: os grandes pontos do carnaval (os circuitos dos megablocos, como o Parque",
     " * Ibirapuera) e, para os outros blocos, a subprefeitura. Os que têm os artistas mais famosos",
     " * vêm primeiro.",
-    " * Arquivo gerado por design/dados/gerar_dados.py: não mude à mão.",
+    " * Arquivo gerado por scripts/dados/gerar_dados.py: não mude à mão.",
     " */",
     "export const LOCAIS: Local[] = [",
 ]
@@ -259,7 +259,7 @@ linhas = [
     " * estilo vêm de notícias, só nos blocos que elas citam, e os seguidores de cada",
     " * artista, de contadores públicos do Instagram. Entram os blocos que têm atração divulgada,",
     " * que desfilam num circuito de megabloco ou que as notícias chamam de destaque da região.",
-    " * Arquivo gerado por design/dados/gerar_dados.py: não mude à mão.",
+    " * Arquivo gerado por scripts/dados/gerar_dados.py: não mude à mão.",
     " */",
     "export const BLOCOS: Bloco[] = [",
 ]
@@ -316,7 +316,7 @@ linhas = [
     " * O itinerário de cada bloco, como a lista oficial escreve. Fica fora de blocos.ts para só ser",
     " * baixado na página do bloco e no mapa, sem pesar a primeira tela. Vários blocos dividem o mesmo",
     " * itinerário (os do Ibirapuera, por exemplo), então cada texto aparece uma vez só.",
-    " * Arquivo gerado por design/dados/gerar_dados.py: não mude à mão.",
+    " * Arquivo gerado por scripts/dados/gerar_dados.py: não mude à mão.",
     " */",
     "export const ITINERARIOS: readonly string[] = [",
 ]
@@ -341,7 +341,7 @@ linhas = [
     " * trajeto é [linha, aproximado]: a linha no formato \"encoded polyline\" do Google, e 1 quando o",
     " * ponto ou a linha não são exatos (uma rua que o mapa não tem, uma rua sem os números, um",
     " * itinerário de duas ruas só).",
-    " * Arquivo gerado por design/dados/gerar_dados.py: não mude à mão.",
+    " * Arquivo gerado por scripts/dados/gerar_dados.py: não mude à mão.",
     " */",
     "export const TRAJETOS: readonly (readonly [string, 0 | 1])[] = [",
 ]

@@ -1,8 +1,8 @@
 """Atualiza os dados do app para um ano: da lista oficial (o PDF) até os arquivos de app/src/app/dados.
 
-Uso, na pasta do projeto: python -I design/dados/atualizar.py 2027
+Uso, na pasta do projeto: python -I scripts/dados/atualizar.py 2027
 
-Antes, ponha na pasta design/dados/2027 (copie a de 2026 como modelo):
+Antes, ponha na pasta scripts/dados/2027 (copie a de 2026 como modelo):
 - lista-oficial.pdf: a lista dos blocos aprovados que a Prefeitura publica no Diário Oficial;
 - sobre.json: o ano e o nome da publicação oficial;
 - atracoes-das-noticias.json: os artistas que as notícias dão para os blocos (pode começar com []);
@@ -15,8 +15,8 @@ O que ele faz, em ordem:
    para todos os anos. Baixar tudo leva perto de uma hora.
 3. Acha o pino de cada bloco no mapa (a concentração) e a linha do trajeto (tracar.py), e grava
    tracados.json e relatorio.txt (os itinerários que não deram certo). É a etapa mais lenta:
-   passou de 8 minutos no meu computador. Os endereços e as rotas já procurados ficam em
-   design/dados/cache e não são pedidos de novo; cada endereço novo leva 15 segundos, a regra do
+   leva bem mais de 8 minutos. Os endereços e as rotas já procurados ficam em
+   scripts/dados/cache e não são pedidos de novo; cada endereço novo leva 15 segundos, a regra do
    Nominatim para scripts longos (veja tracar.py).
 4. Grava os arquivos do app (gerar_dados.py).
 5. Troca o ano na descrição do site (app/src/index.html).
@@ -52,14 +52,14 @@ def rodar(script, *argumentos, saida=None):
 
 
 if len(sys.argv) != 2 or not re.fullmatch(r"20\d\d", sys.argv[1]):
-    sys.exit("Uso: python -I design/dados/atualizar.py 2027")
+    sys.exit("Uso: python -I scripts/dados/atualizar.py 2027")
 ano = sys.argv[1]
 pasta_do_ano = os.path.join(AQUI, ano)
 faltam = [arquivo for arquivo in PRECISA if not os.path.exists(os.path.join(pasta_do_ano, arquivo))]
 if faltam:
-    sys.exit(f"Faltam na pasta design/dados/{ano}: {', '.join(faltam)}")
+    sys.exit(f"Faltam na pasta scripts/dados/{ano}: {', '.join(faltam)}")
 if json.load(open(os.path.join(pasta_do_ano, "sobre.json"), encoding="utf-8"))["ano"] != int(ano):
-    sys.exit(f"O sobre.json de design/dados/{ano} é de outro ano.")
+    sys.exit(f"O sobre.json de scripts/dados/{ano} é de outro ano.")
 pdftotext = shutil.which("pdftotext")
 if not pdftotext:
     sys.exit("Não achei o pdftotext (vem com o Git para Windows, em mingw64/bin, ou com o Poppler).")
