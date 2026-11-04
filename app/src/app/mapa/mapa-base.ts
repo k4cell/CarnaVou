@@ -27,6 +27,7 @@ import {
 } from './desenhos';
 import { LIMITES_DA_GRANDE_SP } from './limites';
 import { BibliotecaDeMapa, CARREGAR_MAPLIBRE, enderecoNoSite } from './maplibre';
+import { PROTOCOLO_DOS_PEDACOS, baixarPedaco, pedirPelaPagina } from './pedacos-do-mapa';
 
 /** Um ponto do mapa (onde um ou mais blocos se concentram): é só o que o mapa precisa saber. */
 export interface PontoNoMapa {
@@ -201,9 +202,11 @@ export class MapaBase {
       }
       this.biblioteca = biblioteca;
       biblioteca.setWorkerUrl(enderecoNoSite(WORKER_DO_MAPA));
+      biblioteca.addProtocol(PROTOCOLO_DOS_PEDACOS, baixarPedaco);
       this.mapa = new biblioteca.Map({
         container: this.area().nativeElement,
         style: enderecoNoSite(ESTILO_DO_MAPA),
+        transformRequest: pedirPelaPagina,
         center: CENTRO_DE_SAO_PAULO,
         zoom: 11,
         minZoom: 9,

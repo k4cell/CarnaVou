@@ -1,7 +1,7 @@
 import { DOCUMENT } from '@angular/common';
 import { Injectable, computed, inject, signal } from '@angular/core';
 
-import { BLOCOS } from '../dados/blocos';
+import { acharBlocoPeloId } from '../dados/consultas';
 
 const CHAVE = 'carnavou.favoritos';
 
@@ -21,8 +21,9 @@ export class Favoritos {
     try {
       const guardados: unknown = JSON.parse(this.janela?.localStorage.getItem(CHAVE) ?? '[]');
       if (Array.isArray(guardados)) {
-        // Os blocos que saíram da lista (de outro ano, por exemplo) não contam mais.
-        this.ids.set(new Set(BLOCOS.map((bloco) => bloco.id).filter((id) => guardados.includes(id))));
+        // Os blocos que saíram da lista não contam mais; os que mudaram de id continuam marcados.
+        const blocos = guardados.map((id) => (typeof id === 'string' ? acharBlocoPeloId(id) : undefined));
+        this.ids.set(new Set(blocos.flatMap((bloco) => (bloco ? [bloco.id] : []))));
       }
     } catch {
       // Sem acesso ao que fica guardado (navegação privada, por exemplo), a estrela vale só agora.

@@ -65,7 +65,7 @@ describe('App', () => {
       expect(seta?.getAttribute('aria-label')).toBe('Voltar para Rua da Consolação e Baixo Augusta');
     });
 
-    it('no lugar, volta para a Em alta', async () => {
+    it('no lugar, volta para o Descobrir', async () => {
       const seta = await abrir('/local/ibirapuera');
       expect(seta?.getAttribute('href')).toBe('/descobrir');
     });

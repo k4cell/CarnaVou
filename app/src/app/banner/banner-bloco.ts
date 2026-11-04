@@ -34,15 +34,18 @@ export class BannerBloco {
   );
   /**
    * A cor do horário diz em que pé o bloco está, sem ocupar mais uma linha: verde já começou, amarelo
-   * ainda vai começar hoje e cinza já acabou. Em outro dia (ou sem saber a hora), fica sem cor.
+   * ainda vai começar hoje e cinza já acabou. Num dia que ainda vem (ou sem saber a hora), fica sem cor.
    */
   protected readonly selo = computed<TipoDoSelo | null>(() => {
     const agora = this.relogio.agora();
-    if (agora === null || this.bloco().data !== diaIso(agora)) {
+    if (agora === null) {
       return null;
     }
     const momento = momentoDoBloco(this.bloco(), agora);
-    return momento === 'rolando' ? 'agora' : momento === 'antes' ? 'em-breve' : 'acabou';
+    if (momento === 'antes') {
+      return this.bloco().data === diaIso(agora) ? 'em-breve' : null;
+    }
+    return momento === 'rolando' ? 'agora' : 'acabou';
   });
   /** Os artistas, sem quem já está no nome do bloco. */
   protected readonly atracoes = computed(() =>

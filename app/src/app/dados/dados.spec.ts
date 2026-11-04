@@ -1,5 +1,5 @@
 import { BLOCOS } from './blocos';
-import { acharLocal, artistasDoLugar, blocosDoLocal, faixaDoLocal, famaDoBloco } from './consultas';
+import { acharBloco, acharLocal, artistasDoLugar, blocosDoLocal, faixaDoLocal, famaDoBloco } from './consultas';
 import { itinerarioDoBloco } from './itinerario';
 import { LOCAIS } from './locais';
 import { lerLinha, trajetoDoBloco } from './trajetos';
@@ -93,6 +93,22 @@ describe('dados', () => {
 
     it('cai na primeira cor para um lugar que não existe', () => {
       expect(faixaDoLocal('lugar-que-nao-existe')).toBe('rosa');
+    });
+  });
+
+  describe('acharBloco', () => {
+    it('acha pelo id', () => {
+      expect(acharBloco('ibirapuera', 'forrozin')?.nome).toBe('Forrozin');
+    });
+
+    it('abre um link com outra data, ou sem data, se o lugar tem um bloco com o mesmo nome', () => {
+      expect(acharBloco('ibirapuera', 'forrozin-09-09')?.nome).toBe('Forrozin');
+      expect(acharBloco('freguesia-brasilandia', 'bloco-urubo')?.id).toBe('bloco-urubo-08-02');
+    });
+
+    it('não acha um bloco de outro lugar nem um nome que não existe', () => {
+      expect(acharBloco('consolacao', 'forrozin')).toBeUndefined();
+      expect(acharBloco('ibirapuera', 'bloco-que-nao-existe')).toBeUndefined();
     });
   });
 

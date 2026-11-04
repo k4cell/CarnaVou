@@ -184,6 +184,7 @@ export function criarMapLibreFalso() {
       Marker: Marcador,
       LngLatBounds: LimitesFalsos,
       setWorkerUrl,
+      addProtocol: () => undefined,
     } as unknown as BibliotecaDeMapa,
     mapas,
     marcadores,

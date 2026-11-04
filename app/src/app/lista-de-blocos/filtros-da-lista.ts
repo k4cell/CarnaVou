@@ -1,6 +1,6 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 
-import { blocoCombinaComABusca } from '../dados/lista-de-blocos';
+import { criarBusca } from '../dados/busca';
 import { Bloco } from '../dados/tipos';
 import { Favoritos } from '../favoritos/favoritos';
 
@@ -22,13 +22,13 @@ export class FiltrosDaLista {
 
   /** Se o bloco entra na lista, com a busca e os filtros de agora. */
   readonly incluir = computed(() => {
-    const busca = this.busca();
+    const combinaComABusca = criarBusca(this.busca());
     const lugar = this.lugar();
     const soFavoritos = this.soFavoritos();
     return (bloco: Bloco) =>
       (lugar === '' || bloco.localId === lugar) &&
       (!soFavoritos || this.favoritos.tem(bloco.id)) &&
-      blocoCombinaComABusca(bloco, busca);
+      combinaComABusca(bloco);
   });
 
   limpar(): void {

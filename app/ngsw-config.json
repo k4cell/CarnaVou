@@ -22,7 +22,11 @@
       "installMode": "lazy",
       "updateMode": "prefetch",
       "resources": {
-        "files": ["/mapa/*.mjs", "/mapa/*.css", "/mapa/*.json"]
+        "files": [
+          "/mapa/*.mjs",
+          "/mapa/*.css",
+          "/mapa/*.json"
+        ]
       }
     },
     {
@@ -30,21 +34,13 @@
       "installMode": "lazy",
       "updateMode": "prefetch",
       "resources": {
-        "files": ["/**/*.(svg|cur|jpg|jpeg|png|apng|webp|avif|gif|otf|ttf|woff|woff2)"]
+        "files": [
+          "/**/*.(svg|cur|jpg|jpeg|png|apng|webp|avif|gif|otf|ttf|woff|woff2)"
+        ]
       }
     }
   ],
   "dataGroups": [
-    {
-      "name": "mapa-indice",
-      "urls": ["https://tiles.openfreemap.org/planet"],
-      "cacheConfig": {
-        "strategy": "freshness",
-        "timeout": "4s",
-        "maxSize": 1,
-        "maxAge": "30d"
-      }
-    },
     {
       "name": "mapa-pedacos",
       "urls": [
@@ -54,6 +50,18 @@
       "cacheConfig": {
         "strategy": "performance",
         "maxSize": 300,
+        "maxAge": "30d"
+      }
+    },
+    {
+      "name": "mapa-indice",
+      "urls": [
+        "https://tiles.openfreemap.org/planet"
+      ],
+      "cacheConfig": {
+        "strategy": "freshness",
+        "timeout": "4s",
+        "maxSize": 1,
         "maxAge": "30d"
       }
     }

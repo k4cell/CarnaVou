@@ -13,6 +13,13 @@ Para cada itinerário:
 - Um lugar só (uma praça, uma rua): só o ponto, sem linha.
 O ponto de concentração é o começo da linha (ou o ponto do lugar). Quando não dá para ter
 certeza, o bloco fica sem ponto, e o motivo vai para o relatório.
+
+Regras dos serviços (conferidas em 04/11/2026):
+- Nominatim: um pedido por vez, no máximo um por segundo, com identificação e guardando os
+  resultados. Em script longo, a regra pede no máximo 4 por minuto (PAUSA_DO_NOMINATIM).
+  O uso comercial não é proibido, mas o acesso pode ser retirado sem aviso.
+- routing.openstreetmap.de (FOSSGIS): um pedido por segundo, sem uso pesado. A página não diz se o
+  uso comercial pode: é preciso perguntar antes de gerar os dados de 2027.
 """
 
 import heapq
@@ -28,8 +35,9 @@ import urllib.request
 from difflib import SequenceMatcher
 
 NOMINATIM = "https://nominatim.openstreetmap.org/search"
+PAUSA_DO_NOMINATIM = 15  # segundos: no máximo 4 pedidos por minuto, a regra para scripts longos
 OSRM = "https://routing.openstreetmap.de/routed-{perfil}/route/v1/driving/{pontos}"
-QUEM_PEDE = {"User-Agent": "CarnaVou/0.11 (pesquisa de dados abertos)"}
+QUEM_PEDE = {"User-Agent": "CarnaVou (https://github.com/k4cell/CarnaVou)"}
 
 TIPOS = {
     "r": "rua", "rua": "rua", "av": "avenida", "avenida": "avenida", "al": "alameda",
@@ -339,7 +347,7 @@ class Enderecos:
                 {"street": pergunta, "city": "São Paulo", "state": "São Paulo", "country": "Brasil",
                  "format": "jsonv2", "addressdetails": 1, "limit": 3}
             )
-            time.sleep(1.1)  # regra do Nominatim: no máximo um pedido por segundo
+            time.sleep(PAUSA_DO_NOMINATIM)
             with urllib.request.urlopen(urllib.request.Request(f"{NOMINATIM}?{parametros}", headers=QUEM_PEDE), timeout=60) as r:
                 self.guardados[pergunta] = json.load(r)
             json.dump(self.guardados, open(self.arquivo, "w", encoding="utf-8"), ensure_ascii=False, indent=0)

@@ -10,8 +10,8 @@ describe('caminhoDeVolta', () => {
       });
     });
 
-    it('do lugar sobe para a Em alta', () => {
-      expect(caminhoDeVolta('/local/ibirapuera')).toEqual({ url: '/descobrir', nome: 'Em alta', peloHistorico: false });
+    it('do lugar sobe para o Descobrir', () => {
+      expect(caminhoDeVolta('/local/ibirapuera')).toEqual({ url: '/descobrir', nome: 'Descobrir', peloHistorico: false });
     });
 
     it('ignora a data de teste e o resto do endereço', () => {

@@ -5,7 +5,7 @@ import { BannerBloco } from '../banner/banner-bloco';
 import { Aba } from '../dados/agenda';
 import { acharLocal, faixaDoLocal } from '../dados/consultas';
 import { NOMES_DAS_ZONAS } from '../dados/formato';
-import { secoesDosBlocos } from '../dados/lista-de-blocos';
+import { SecaoDeBlocos, secaoDoQueJaAconteceu, secoesDosBlocos } from '../dados/lista-de-blocos';
 import { LOCAIS } from '../dados/locais';
 import { Bloco, Zona } from '../dados/tipos';
 import { Favoritos } from '../favoritos/favoritos';
@@ -166,13 +166,16 @@ export class PaginaBlocos {
 
   protected readonly zonas = LUGARES_POR_ZONA;
 
-  protected readonly secoes = computed(() =>
-    secoesDosBlocos(
-      this.filtros.buscando() ? 'geral' : this.filtro.ativa(),
-      this.relogio.agora(),
-      this.filtros.incluir(),
-    ),
-  );
+  protected readonly secoes = computed<SecaoDeBlocos[]>(() => {
+    const agora = this.relogio.agora();
+    const incluir = this.filtros.incluir();
+    if (!this.filtros.buscando()) {
+      return secoesDosBlocos(this.filtro.ativa(), agora, incluir);
+    }
+    // A busca olha tudo: o que ainda vai acontecer e, no fim, o que já aconteceu.
+    const jaAconteceu = secaoDoQueJaAconteceu(agora, incluir);
+    return [...secoesDosBlocos('geral', agora, incluir), ...(jaAconteceu ? [jaAconteceu] : [])];
+  });
 
   protected readonly mensagemVazia = computed(() => {
     if (this.filtros.buscando()) {

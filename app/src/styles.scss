@@ -134,8 +134,11 @@ a:focus-visible {
   background: var(--amarelo);
 }
 
+// A coluna tem a largura da tela: uma palavra comprida quebra, em vez de empurrar a página para fora
+// (foi o que deixava o Descobrir mais largo que o celular).
 .lista {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: 12px;
   margin: 16px 0 0;
   padding: 0;
@@ -280,10 +283,13 @@ a:focus-visible {
 .texto {
   display: flex;
   flex-direction: column;
+  min-width: 0;
 }
 
 .nome {
+  min-width: 0;
   font-size: 1.25rem;
+  overflow-wrap: anywhere;
 }
 
 .seta {
