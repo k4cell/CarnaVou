@@ -1,26 +1,53 @@
-import { acharLocal } from '../dados/consultas';
+import { acharBloco, acharLocal } from '../dados/consultas';
 
 /** Para onde a seta de voltar leva e o nome que o leitor de tela fala. */
 export interface CaminhoDeVolta {
-  link: string[];
+  /** O endereço de destino. */
+  url: string;
   nome: string;
+  /** Verdadeiro quando é a tela de onde a pessoa veio: aí a seta volta no histórico do navegador. */
+  peloHistorico: boolean;
+}
+
+const NOMES_DAS_ABAS: Record<string, string> = {
+  '': 'Blocos',
+  descobrir: 'Em alta',
+  after: 'After',
+  mapa: 'Mapa',
+};
+
+function partesDoEndereco(endereco: string): string[] {
+  return endereco.split(/[?#]/)[0].split('/').filter(Boolean).map(decodeURIComponent);
+}
+
+/** O nome de uma tela, para o leitor de tela falar "Voltar para…". */
+function nomeDaTela(endereco: string): string {
+  const [primeira = '', lugar, bloco] = partesDoEndereco(endereco);
+  if (primeira !== 'local') {
+    return NOMES_DAS_ABAS[primeira] ?? 'a tela anterior';
+  }
+  if (bloco) {
+    return acharBloco(lugar, bloco)?.nome ?? 'o bloco';
+  }
+  return acharLocal(lugar)?.nome ?? 'o lugar';
 }
 
 /**
- * Para onde a seta do cabeçalho volta: sempre um nível acima na árvore (bloco → lugar → Em alta),
- * e não para a página anterior do navegador, porque quem chega por um link compartilhado não tem
- * para onde voltar. Nas abas do menu (Blocos, Descobrir, After, Mapa) não tem seta.
+ * Para onde a seta do cabeçalho volta, nas telas de lugar e de bloco: para a tela de onde a pessoa
+ * veio e, para quem chegou direto por um link compartilhado (que não tem para onde voltar), um nível
+ * acima na árvore (bloco → lugar → Em alta). Nas abas do menu (Blocos, Descobrir, After, Mapa) não
+ * tem seta.
  */
-export function caminhoDeVolta(endereco: string): CaminhoDeVolta | null {
-  const partes = endereco.split(/[?#]/)[0].split('/').filter(Boolean).map(decodeURIComponent);
-  if (partes[0] !== 'local') {
+export function caminhoDeVolta(endereco: string, anterior?: string): CaminhoDeVolta | null {
+  const partes = partesDoEndereco(endereco);
+  if (partes[0] !== 'local' || partes.length < 2) {
     return null;
   }
+  if (anterior !== undefined) {
+    return { url: anterior, nome: nomeDaTela(anterior), peloHistorico: true };
+  }
   if (partes.length === 3) {
-    return { link: ['/local', partes[1]], nome: acharLocal(partes[1])?.nome ?? 'o lugar' };
+    return { url: `/local/${partes[1]}`, nome: acharLocal(partes[1])?.nome ?? 'o lugar', peloHistorico: false };
   }
-  if (partes.length === 2) {
-    return { link: ['/descobrir'], nome: 'Em alta' };
-  }
-  return null;
+  return { url: '/descobrir', nome: 'Em alta', peloHistorico: false };
 }

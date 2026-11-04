@@ -19,6 +19,7 @@ que a CET fecha) ou que as notícias chamam de destaque da região. Os outros fi
 """
 
 import json
+import math
 import os
 import re
 import sys
@@ -188,11 +189,9 @@ linhas = [
     " */",
     "export const LOCAIS: Local[] = [",
 ]
-circuitos = {ponto[0] for ponto in GRANDES_PONTOS}
 for l in lugares:
     identificador, nome, zona = dados_do_lugar[l]
-    circuito = ", circuito: true" if identificador in circuitos else ""
-    linhas.append(f"  {{ id: {ts(identificador)}, nome: {ts(nome)}, zona: {ts(zona)}{circuito} }},")
+    linhas.append(f"  {{ id: {ts(identificador)}, nome: {ts(nome)}, zona: {ts(zona)} }},")
 linhas += ["];", ""]
 open(f"{pasta}/locais.ts", "w", encoding="utf-8", newline="\n").write("\n".join(linhas))
 
@@ -213,6 +212,39 @@ def atracoes_em_ts(atracoes):
 
 
 ordem = sorted(oficiais, key=lambda b: (lugares.index(lugar_do(b)[0]), b["data"], b["concentracao"], sem_acento(b["nome"])))
+
+
+def tracado_do(bloco):
+    tracado = tracados.get(f"{bloco['subprefeitura']}|{bloco['itinerario']}")
+    if not tracado or not tracado.get("linha"):
+        # A lista às vezes põe o bloco numa subprefeitura vizinha (a Faria Lima 4100 aparece em
+        # Santo Amaro): vale o traçado do mesmo itinerário em outra subprefeitura.
+        tracado = next((v for k, v in tracados.items() if k.split("|", 1)[1] == bloco["itinerario"] and v.get("linha")), tracado)
+    return tracado if tracado and tracado.get("linha") else None
+
+
+def distancia_em_metros(a, b):
+    x = (a[0] - b[0]) * math.cos(math.radians(a[1])) * 111320
+    y = (a[1] - b[1]) * 110540
+    return math.hypot(x, y)
+
+
+# Os pontos de saída de cada lugar: quem sai a menos de PONTO_DE_SAIDA metros do primeiro bloco de um
+# ponto sai do mesmo ponto. É o que junta os blocos do mesmo dia num cartão só, na aba Blocos: o
+# circuito da República, por exemplo, tem saídas diferentes (Paissandu, República e Arouche).
+PONTO_DE_SAIDA = 300
+saidas_do_lugar, ponto_do_bloco = {}, {}
+for bloco in ordem:
+    tracado = tracado_do(bloco)
+    if not tracado:
+        continue
+    saidas = saidas_do_lugar.setdefault(lugar_do(bloco)[0], [])
+    inicio = tracado["linha"][0]
+    numero = next((i for i, saida in enumerate(saidas) if distancia_em_metros(inicio, saida) <= PONTO_DE_SAIDA), None)
+    if numero is None:
+        saidas.append(inicio)
+        numero = len(saidas) - 1
+    ponto_do_bloco[id(bloco)] = numero
 repetidos = {}
 for bloco in ordem:
     repetidos[slug(bloco["nome"])] = repetidos.get(slug(bloco["nome"]), 0) + 1
@@ -259,6 +291,7 @@ for bloco in ordem:
         f"desfile: {ts(bloco['desfile'])}",
         f"fim: {ts(bloco['termino'])}",
         f"localId: {ts(lugar_do(bloco)[0])}",
+        *([f"ponto: {ponto_do_bloco[id(bloco)]}"] if id(bloco) in ponto_do_bloco else []),
         f"atracoes: {atracoes_em_ts(atracoes_do(bloco))}",
     ]
     if antigo and antigo.get("estilo"):
@@ -269,12 +302,8 @@ for bloco in ordem:
         itinerarios.append(bloco["itinerario"])
     itinerario_do_bloco[identificador] = indice_do_itinerario[bloco["itinerario"]]
 
-    tracado = tracados.get(f"{bloco['subprefeitura']}|{bloco['itinerario']}")
-    if not tracado or not tracado.get("linha"):
-        # A lista às vezes põe o bloco numa subprefeitura vizinha (a Faria Lima 4100 aparece em
-        # Santo Amaro): vale o traçado do mesmo itinerário em outra subprefeitura.
-        tracado = next((v for k, v in tracados.items() if k.split("|", 1)[1] == bloco["itinerario"] and v.get("linha")), tracado)
-    if tracado and tracado.get("linha"):
+    tracado = tracado_do(bloco)
+    if tracado:
         codigo = codificar(tracado["linha"])
         aproximado = 1 if "aproximado" in tracado["jeito"] or tracado["jeito"] in ("na rua", "lugar", "cruzamento") else 0
         if (codigo, aproximado) not in indice_do_trajeto:

@@ -1,7 +1,7 @@
 <header class="topo">
   <div class="miolo linha-do-topo">
     @if (voltar(); as volta) {
-      <a class="voltar" [routerLink]="volta.link" [attr.aria-label]="'Voltar para ' + volta.nome">
+      <a class="voltar" [attr.href]="enderecoDe(volta)" [attr.aria-label]="'Voltar para ' + volta.nome" (click)="aoVoltar($event, volta)">
         <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M15 5l-7 7 7 7" /></svg>
       </a>
     }
@@ -19,9 +19,7 @@
       </a>
     </h1>
     <!-- Sempre na página, para o leitor de tela avisar quando o texto aparece. -->
-    <span class="sem-internet" role="status" [class.visivel]="!conexao.online()">{{
-      conexao.online() ? '' : 'Sem internet'
-    }}</span>
+    <span class="sem-internet" role="status" [class.visivel]="conexao.aviso()">{{ conexao.aviso() }}</span>
   </div>
   <div class="miolo">
     <app-aviso-de-teste />
@@ -33,4 +31,5 @@
 </main>
 
 <app-aviso-de-atualizacao />
+<app-aviso-de-navegacao />
 <app-menu-inferior />

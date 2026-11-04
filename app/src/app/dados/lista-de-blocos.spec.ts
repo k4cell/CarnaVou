@@ -72,6 +72,16 @@ describe('secoesDosBlocos (a aba Blocos)', () => {
     expect(ids(amanha.grupos[0])).toEqual(['sertanejinho-do-telo', 'bloco-da-pocah']);
   });
 
+  it('não junta blocos do mesmo lugar que saem de pontos diferentes', () => {
+    // Sábado, 14/02, no circuito da República: o Tarado Ni Você sai perto do Paissandu, e o Segura
+    // a Onça, do Largo do Arouche.
+    const [amanha] = secoesDosBlocos('amanha', new Date(2026, 1, 13, 12, 0));
+    const grupoDe = (id: string) => amanha.grupos.find((grupo) => ids(grupo).includes(id));
+    expect(grupoDe('tarado-ni-voce')).toBeDefined();
+    expect(grupoDe('tarado-ni-voce')).not.toBe(grupoDe('bloco-segura-a-onca'));
+    expect(Math.max(...amanha.grupos.map((grupo) => grupo.length))).toBeLessThanOrEqual(4);
+  });
+
   it('não junta blocos de ruas diferentes num lugar que é uma subprefeitura', () => {
     // Domingo, 08/02, em Santana/Tucuruvi: três blocos, cada um numa rua.
     const [amanha] = secoesDosBlocos('amanha', new Date(2026, 1, 7, 12, 0));

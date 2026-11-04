@@ -1,6 +1,6 @@
 import { Aba, diaIso, diaSeguinte, horaIso, jaAcabou } from './agenda';
 import { BLOCOS } from './blocos';
-import { acharLocal, famaDoBloco } from './consultas';
+import { famaDoBloco } from './consultas';
 import { dataPorExtenso } from './formato';
 import { Bloco } from './tipos';
 
@@ -23,11 +23,11 @@ function porHorario(blocos: Bloco[]): Bloco[] {
 }
 
 /**
- * Os blocos do mesmo dia num circuito de megabloco (como o Ibirapuera) saem do mesmo ponto, um
- * depois do outro: são do mesmo lugar. Num lugar que é uma subprefeitura inteira, cada bloco é um.
+ * Os blocos do mesmo dia que saem do mesmo ponto (a menos de 300 m, veja `gerar_dados.py`) são do
+ * mesmo lugar, para quem está ali. O bloco sem ponto conhecido fica sozinho.
  */
 function chaveDoLugar(bloco: Bloco): string {
-  return acharLocal(bloco.localId)?.circuito ? `${bloco.data}|${bloco.localId}` : bloco.id;
+  return bloco.ponto === undefined ? bloco.id : `${bloco.data}|${bloco.localId}|${bloco.ponto}`;
 }
 
 /**

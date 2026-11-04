@@ -1,3 +1,4 @@
+import { ApplicationRef } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { Router, provideRouter, withComponentInputBinding } from '@angular/router';
 import { App } from './app';
@@ -72,6 +73,27 @@ describe('App', () => {
     it('não aparece nas abas do menu', async () => {
       expect(await abrir('/')).toBeNull();
       expect(await abrir('/descobrir')).toBeNull();
+    });
+
+    it('volta para a aba Blocos, quando a pessoa abriu o bloco por ela', async () => {
+      const router = TestBed.inject(Router);
+      const fixture = TestBed.createComponent(App);
+      await router.navigateByUrl('/');
+      await router.navigateByUrl('/local/consolacao/bloco-skol');
+      await fixture.whenStable();
+      const seta = (fixture.nativeElement as HTMLElement).querySelector<HTMLAnchorElement>('header a.voltar');
+      expect(seta?.getAttribute('href')).toBe('/');
+      expect(seta?.getAttribute('aria-label')).toBe('Voltar para Blocos');
+    });
+
+    it('para quem chegou por um link, tocar na seta sobe um nível sem criar um passo no histórico', async () => {
+      const router = TestBed.inject(Router);
+      const seta = await abrir('/local/consolacao/bloco-skol');
+      seta?.click();
+      await new Promise((pronto) => setTimeout(pronto));
+      await TestBed.inject(ApplicationRef).whenStable();
+      expect(router.url).toBe('/local/consolacao');
+      expect(router.lastSuccessfulNavigation()?.extras.replaceUrl).toBe(true);
     });
   });
 
