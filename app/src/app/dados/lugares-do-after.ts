@@ -13,18 +13,15 @@ export interface LugarDoAfter {
 }
 
 /**
- * Os lugares da aba After: aonde o povo vai depois dos blocos. Lista feita à mão, só com o que
- * tem fonte (decisão de 30/10/2026):
- * - Beco do Batman e Meio Fio Bar foram indicados na decisão. Os endereços vêm da Wikipedia
- *   (Beco do Batman) e do guia BaresSP (Meio Fio Bar, baressp.com.br/bares/meio-fio-bar).
- * - Meretriz e Galo também foram indicados (30/10/2026). Os três bares indicados aparecem sem o
- *   "Bar" no nome (Meio Fio, Meretriz e Galo), como o povo chama. Os endereços vêm
- *   do TripAdvisor e do Bendito Guia (Bar Meretriz) e do guia BaresSP (Bar Galo,
- *   baressp.com.br/bares/bar-galo, página atualizada em 12/03/2026).
- * - Boteco Todos os Santos, Vila 567 e Praça A são bares da Rua Aspicuelta que fazem o "after"
- *   dos blocos, segundo o GPS Brasília (27/02/2025, endereços) e o ABC do ABC (10/02/2025). As
- *   baladas citadas ficaram de fora: o foco é o carnaval de rua.
- * As posições vêm do OpenStreetMap (Nominatim), pelo endereço.
+ * Os lugares da aba After: aonde o povo vai depois dos blocos. Lista feita à mão, só com o que tem
+ * fonte para o endereço:
+ * - Beco do Batman: Wikipedia.
+ * - Meio Fio e Galo: guia BaresSP (baressp.com.br/bares/meio-fio-bar e baressp.com.br/bares/bar-galo).
+ * - Meretriz: TripAdvisor e Bendito Guia.
+ * - Boteco Todos os Santos, Vila 567 e Praça A, bares da Rua Aspicuelta: GPS Brasília (27/02/2025) e
+ *   ABC do ABC (10/02/2025).
+ * Os bares aparecem com o nome que o povo usa, sem o "Bar". As posições vêm do OpenStreetMap
+ * (Nominatim), pelo endereço.
  */
 export const LUGARES_DO_AFTER: LugarDoAfter[] = [
   {

@@ -4,7 +4,7 @@ import { Local } from './tipos';
  * Os lugares: os grandes pontos do carnaval (os circuitos dos megablocos, como o Parque
  * Ibirapuera) e, para os outros blocos, a subprefeitura. Os que têm os artistas mais famosos
  * vêm primeiro.
- * Arquivo gerado por design/dados/gerar_dados.py: não mude à mão.
+ * Arquivo gerado por scripts/dados/gerar_dados.py: não mude à mão.
  */
 export const LOCAIS: Local[] = [
   { id: 'ibirapuera', nome: 'Parque Ibirapuera', zona: 'sul' },

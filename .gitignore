@@ -1,6 +1,7 @@
-# Cache do Python, criado quando os scripts de design/ rodam.
+# Cache do Python.
 __pycache__/
 
-# Coisas locais, que não vão para o repositório público.
+# Arquivos locais de trabalho.
 .claude/
-design/privado/
+/CLAUDE.md
+/privado/

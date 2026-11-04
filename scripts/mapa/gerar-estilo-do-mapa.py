@@ -4,12 +4,12 @@ Pinta o mapa de lilás (as cores da marca), tira o que uma cidade não precisa (
 países, aeroportos, geleiras), põe as estações de metrô e de trem e grava o resultado em
 app/public/mapa/estilo-carnavou.json.
 
-Para pesar menos (decisão de 30/10/2026), o mapa não usa o sprite (a imagem com os ícones, uns
+Para pesar menos, o mapa não usa o sprite (a imagem com os ícones, uns
 120 kB) e usa uma letra só, a normal: a itálica (uns 46 kB) e o negrito não são baixados.
 
 Como usar, a partir da raiz do projeto:
 
-    python design/mapa/gerar-estilo-do-mapa.py
+    python scripts/mapa/gerar-estilo-do-mapa.py
 
 As cores estão no dicionário COR, logo abaixo. Para mudar o visual do mapa, mude lá e rode de
 novo. O OpenFreeMap pede que o crédito do mapa apareça na tela (o MapLibre já faz isso).

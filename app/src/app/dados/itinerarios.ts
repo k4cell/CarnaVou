@@ -2,7 +2,7 @@
  * O itinerário de cada bloco, como a lista oficial escreve. Fica fora de blocos.ts para só ser
  * baixado na página do bloco e no mapa, sem pesar a primeira tela. Vários blocos dividem o mesmo
  * itinerário (os do Ibirapuera, por exemplo), então cada texto aparece uma vez só.
- * Arquivo gerado por design/dados/gerar_dados.py: não mude à mão.
+ * Arquivo gerado por scripts/dados/gerar_dados.py: não mude à mão.
  */
 export const ITINERARIOS: readonly string[] = [
   'Ibirapuera - Av. Pedro Álvares Cabral, entre Obelisco e Monumento às Bandeiras',
