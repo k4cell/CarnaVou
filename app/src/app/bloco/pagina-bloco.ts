@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, inject, input } from '@an
 import { RouterLink } from '@angular/router';
 
 import { CopiarLink } from '../copiar-link/copiar-link';
+import { DadosAtualizados } from '../correcoes/dados-atualizados';
 import { diaIso } from '../dados/agenda';
 import { acharBloco, acharLocal, faixaDoLocal } from '../dados/consultas';
 import { NOMES_DOS_ESTILOS, dataPorExtenso, formatarHora, horariosDoBloco } from '../dados/formato';
@@ -34,7 +35,7 @@ function atracoesPorHorario(atracoes: Atracao[]): { hora: string; nomes: string 
 
 @Component({
   selector: 'app-pagina-bloco',
-  imports: [BotaoFavorito, CopiarLink, RouterLink],
+  imports: [BotaoFavorito, CopiarLink, DadosAtualizados, RouterLink],
   templateUrl: './pagina-bloco.html',
   styleUrl: './pagina-bloco.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

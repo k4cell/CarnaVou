@@ -1,6 +1,6 @@
 import { Aba, diaIso, diaSeguinte, horaIso, jaAcabou } from './agenda';
-import { BLOCOS } from './blocos';
 import { famaDoBloco } from './consultas';
+import { todosOsBlocos } from './correcoes';
 import { dataPorExtenso } from './formato';
 import { Bloco } from './tipos';
 
@@ -86,6 +86,7 @@ function proximoDia(blocos: Bloco[], hoje: string, amanha: string): SecaoDeBloco
  * Os blocos do mesmo dia no mesmo lugar ficam juntos, num grupo só (veja `juntarPorLugar`): o que
  * começa mais tarde no lugar de um bloco que está rolando aparece junto com ele.
  * Sem saber o dia de hoje (a página pronta), a Geral traz todos os blocos.
+ * Os cancelados da aba vêm à parte, no fim: quem ia neles precisa saber, mas eles não são opção.
  * `incluir` é a busca e os filtros da tela: só entra o bloco que passar por ele.
  */
 export function secoesDosBlocos(
@@ -93,13 +94,21 @@ export function secoesDosBlocos(
   agora: Date | null,
   incluir: (bloco: Bloco) => boolean = () => true,
 ): SecaoDeBlocos[] {
-  const blocos = BLOCOS.filter(incluir);
+  const incluidos = todosOsBlocos().filter(incluir);
+  const blocos = incluidos.filter((bloco) => !bloco.cancelado);
   if (agora === null) {
     return aba === 'geral' ? porDia(blocos) : [];
   }
   const dia = diaIso(agora);
   const hora = horaIso(agora);
-  const deHoje = blocos.filter((bloco) => bloco.data === dia && !jaAcabou(bloco, hora));
+  const aindaHoje = (bloco: Bloco) => bloco.data === dia && !jaAcabou(bloco, hora);
+  const deHoje = blocos.filter(aindaHoje);
+  const naAba = (bloco: Bloco) => {
+    if (aba === 'hoje') {
+      return aindaHoje(bloco);
+    }
+    return aba === 'amanha' ? bloco.data === diaIso(diaSeguinte(agora)) : aindaHoje(bloco) || bloco.data > dia;
+  };
 
   const secoes: SecaoDeBlocos[] = [];
   if (aba === 'hoje') {
@@ -118,6 +127,8 @@ export function secoesDosBlocos(
   } else {
     secoes.push(...porDia([...deHoje, ...blocos.filter((bloco) => bloco.data > dia)]));
   }
+  const cancelados = porHorario(incluidos.filter((bloco) => bloco.cancelado && naAba(bloco)));
+  secoes.push({ titulo: 'Cancelados', grupos: cancelados.map((bloco) => [bloco]) });
   return secoes.filter((secao) => secao.grupos.length > 0);
 }
 
@@ -132,8 +143,8 @@ export function secaoDoQueJaAconteceu(agora: Date | null, incluir: (bloco: Bloco
   }
   const dia = diaIso(agora);
   const hora = horaIso(agora);
-  const passados = BLOCOS.filter(
-    (bloco) => incluir(bloco) && (bloco.data < dia || (bloco.data === dia && jaAcabou(bloco, hora))),
+  const passados = todosOsBlocos().filter(
+    (bloco) => !bloco.cancelado && incluir(bloco) && (bloco.data < dia || (bloco.data === dia && jaAcabou(bloco, hora))),
   );
   if (passados.length === 0) {
     return null;
@@ -154,7 +165,7 @@ export function eDaNoite(bloco: Bloco): boolean {
  * acabaram), os de amanhã ou, na Geral, os de hoje em diante. Sem saber o dia, a Geral traz todos.
  */
 export function blocosDaNoite(aba: Aba, agora: Date | null): Bloco[] {
-  const daNoite = porHorario(BLOCOS.filter(eDaNoite));
+  const daNoite = porHorario(todosOsBlocos().filter((bloco) => !bloco.cancelado && eDaNoite(bloco)));
   if (agora === null) {
     return aba === 'geral' ? daNoite : [];
   }

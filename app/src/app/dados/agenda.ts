@@ -1,4 +1,4 @@
-import { artistasDoLugar, artistasPorFama, blocosDoLocal, faixaDoLocal, famaDoBloco } from './consultas';
+import { artistasDoLugar, artistasPorFama, blocosAtivosDoLocal, blocosDoLocal, faixaDoLocal, famaDoBloco } from './consultas';
 import { formatarHora } from './formato';
 import { LOCAIS } from './locais';
 import { Bloco, Local, MomentoDoBloco } from './tipos';
@@ -8,9 +8,9 @@ export type Aba = 'hoje' | 'amanha' | 'geral';
 
 /**
  * O jeito do selo, que dá a cor dele (fundo forte e texto escuro, para ler no sol): rolando agora,
- * ainda vai começar (hoje ou amanhã), já acabou, ou só a conta dos blocos.
+ * ainda vai começar (hoje ou amanhã), já acabou, cancelado, ou só a conta dos blocos.
  */
-export type TipoDoSelo = 'agora' | 'em-breve' | 'acabou' | 'conta';
+export type TipoDoSelo = 'agora' | 'em-breve' | 'acabou' | 'cancelado' | 'conta';
 
 export function tipoDoSelo(selo: string): TipoDoSelo {
   if (selo === 'Já começou') {
@@ -179,7 +179,7 @@ export function cartoesDaAba(aba: Aba, agora: Date | null): CartaoDoLugar[] {
       return [];
     }
     return LOCAIS.map((local) => {
-      const blocos = blocosDoLocal(local.id);
+      const blocos = blocosAtivosDoLocal(local.id);
       return montar(local, seloDeContagem(blocos.length), artistasDoLugar(local.id), blocos);
     });
   }
@@ -190,7 +190,8 @@ export function cartoesDaAba(aba: Aba, agora: Date | null): CartaoDoLugar[] {
   const cartoes: { cartao: CartaoDoLugar; peso: Peso }[] = [];
 
   for (const local of LOCAIS) {
-    const blocos = blocosDoLocal(local.id);
+    // O cartão do lugar diz para onde ir: bloco cancelado não conta no selo nem nos artistas.
+    const blocos = blocosAtivosDoLocal(local.id);
     const deHoje = blocos.filter((bloco) => bloco.data === dia);
     const deAmanha = blocos.filter((bloco) => bloco.data === amanha);
 

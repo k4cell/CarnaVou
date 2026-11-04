@@ -1,4 +1,9 @@
-<a class="cartao banner" [attr.data-faixa]="faixa()" [routerLink]="['/local', bloco().localId, bloco().id]">
+<a
+  class="cartao banner"
+  [class.cancelado]="bloco().cancelado"
+  [attr.data-faixa]="faixa()"
+  [routerLink]="['/local', bloco().localId, bloco().id]"
+>
   @if (mostrarData()) {
     <time class="data" [attr.datetime]="bloco().data">
       <span class="semana">{{ data().semana }}</span>

@@ -24,8 +24,8 @@ export function idDoPonto([lng, lat]: [number, number]): string {
 
 /**
  * Onde se concentram os blocos da aba (Hoje, Amanhã ou Geral). Blocos que se concentram no mesmo
- * lugar (como os do Ibirapuera) dividem o ponto. Os que a gente não conseguiu pôr no mapa ficam
- * de fora.
+ * lugar (como os do Ibirapuera) dividem o ponto. Os que a gente não conseguiu pôr no mapa e os
+ * cancelados ficam de fora.
  *
  * Fica fora de consultas.ts porque usa os trajetos: assim só é baixado junto com o mapa.
  */
@@ -33,7 +33,7 @@ export function concentracoesDaAba(aba: Aba, agora: Date | null): Concentracao[]
   const porId = new Map<string, Concentracao>();
   for (const local of LOCAIS) {
     for (const bloco of blocosDaAba(aba, local.id, agora)) {
-      const trajeto = trajetoDoBloco(bloco.id);
+      const trajeto = bloco.cancelado ? undefined : trajetoDoBloco(bloco.id);
       if (!trajeto) {
         continue;
       }

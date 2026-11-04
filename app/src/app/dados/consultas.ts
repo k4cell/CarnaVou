@@ -1,4 +1,4 @@
-import { BLOCOS } from './blocos';
+import { todosOsBlocos } from './correcoes';
 import { LOCAIS } from './locais';
 import { Bloco, Local } from './tipos';
 
@@ -26,7 +26,14 @@ export function faixaDoLocal(localId: string): string {
 
 /** Os blocos de um lugar, em ordem de data e hora. */
 export function blocosDoLocal(localId: string): Bloco[] {
-  return BLOCOS.filter((bloco) => bloco.localId === localId).sort(porDataEHora);
+  return todosOsBlocos()
+    .filter((bloco) => bloco.localId === localId)
+    .sort(porDataEHora);
+}
+
+/** Os blocos de um lugar que continuam de pé: sem os cancelados. */
+export function blocosAtivosDoLocal(localId: string): Bloco[] {
+  return blocosDoLocal(localId).filter((bloco) => !bloco.cancelado);
 }
 
 /** A fama do bloco: a soma dos seguidores dos artistas dele. Bloco sem artista conhecido fica com 0. */
@@ -47,10 +54,10 @@ export function artistasPorFama(blocos: Bloco[]): string[] {
   return [...seguidores].sort(([, a], [, b]) => b - a).map(([nome]) => nome);
 }
 
-/** Os mais famosos entre os blocos (só os que têm artista conhecido), do mais para o menos. */
+/** Os mais famosos entre os blocos (só os que têm artista conhecido e sem os cancelados), do mais para o menos. */
 export function maisFamosos(blocos: Bloco[], quantos: number): Bloco[] {
   return blocos
-    .filter((bloco) => famaDoBloco(bloco) > 0)
+    .filter((bloco) => famaDoBloco(bloco) > 0 && !bloco.cancelado)
     .sort((a, b) => famaDoBloco(b) - famaDoBloco(a))
     .slice(0, quantos);
 }
@@ -77,14 +84,15 @@ export function acharBloco(localId: string, blocoId: string): Bloco | undefined 
 
 /** O mesmo, em qualquer lugar. Serve para o que ficou guardado no aparelho, como os favoritos. */
 export function acharBlocoPeloId(blocoId: string): Bloco | undefined {
-  return BLOCOS.find((bloco) => bloco.id === blocoId) ?? BLOCOS.find((bloco) => semAData(bloco.id) === semAData(blocoId));
+  const blocos = todosOsBlocos();
+  return blocos.find((bloco) => bloco.id === blocoId) ?? blocos.find((bloco) => semAData(bloco.id) === semAData(blocoId));
 }
 /**
  * Os artistas de um lugar, sem repetir, do mais famoso para o menos. Com "aPartirDe" (AAAA-MM-DD),
  * só os dos blocos desse dia em diante; se não sobrar nenhum, volta a valer a lista toda.
  */
 export function artistasDoLugar(localId: string, aPartirDe?: string): string[] {
-  const todos = blocosDoLocal(localId);
+  const todos = blocosAtivosDoLocal(localId);
   const dosProximos = aPartirDe ? todos.filter((bloco) => bloco.data >= aPartirDe) : todos;
   const blocos = dosProximos.some((bloco) => bloco.atracoes.length > 0) ? dosProximos : todos;
   return artistasPorFama(blocos);

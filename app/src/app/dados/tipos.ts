@@ -50,6 +50,12 @@ export interface Bloco {
   atracoes: Atracao[];
   /** Só quando alguma fonte diz o estilo. */
   estilo?: Estilo;
+  /** O bloco foi cancelado. Vem do arquivo de correções, como os dois campos abaixo. */
+  cancelado?: boolean;
+  /** A data ou um dos horários mudou depois da lista oficial. */
+  horarioMudou?: boolean;
+  /** Uma frase curta sobre a correção, para a página do bloco. */
+  nota?: string;
 }
 
 /** Em que pé o bloco está agora: ainda vai começar, já começou (está rolando) ou já acabou. */

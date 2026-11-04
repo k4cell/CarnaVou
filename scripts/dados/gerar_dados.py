@@ -41,22 +41,42 @@ ZONAS = {
 }
 # Os grandes pontos: os circuitos dos megablocos (os trajetos que a CET fecha). Quem desfila
 # neles entra mesmo sem atração divulgada, e cada um vira um lugar com o nome que o povo conhece
-# Os ids não mudam, para os links antigos continuarem valendo.
+# Os ids não mudam, para os links antigos continuarem valendo. Cada um é reconhecido pelo nome da rua
+# (sem acento e em minúsculas), e não pelos números, que mudam de um ano para o outro.
 GRANDES_PONTOS = [
-    ("ibirapuera", "Parque Ibirapuera", "sul", r"Pedro [ÁA]lvares Cabral"),
-    ("consolacao", "Rua da Consolação e Baixo Augusta", "centro", r"Consola[çc][ãa]o, 2101"),
-    ("faria-lima", "Avenida Faria Lima", "oeste", r"Faria Lima, 4100"),
-    ("ipiranga-sao-joao", "Av. Ipiranga, São João e República", "centro",
-     r"^Av\.? Ipiranga|Pça\.? ?da Rep[úu]blica|Av\. S[ãa]o Jo[ãa]o"),
-    ("paulo-vi", "Avenida Paulo VI", "oeste", r"Paulo VI"),
-    ("henrique-schaumann", "Rua Henrique Schaumann", "oeste", r"Henrique Schaumann"),
+    ("ibirapuera", "Parque Ibirapuera", "sul", "pedro alvares cabral"),
+    ("consolacao", "Rua da Consolação e Baixo Augusta", "centro", "consolacao"),
+    ("faria-lima", "Avenida Faria Lima", "oeste", "faria lima"),
+    ("paulo-vi", "Avenida Paulo VI", "oeste", "paulo vi"),
+    ("henrique-schaumann", "Rua Henrique Schaumann", "oeste", "henrique schaumann"),
 ]
+# O circuito do centro é o único de várias ruas: vale quem passa por qualquer uma delas.
+CIRCUITO_DO_CENTRO = ("ipiranga-sao-joao", "Av. Ipiranga, São João e República", "centro")
+RUAS_DO_CENTRO = r"\bav[.,]? ?ipiranga|\b(?:pca|praca)\.? ?da republica|\bav[.,]? ?sao joao"
+TIPO_DE_RUA = r"\b(?:r\.|rua|av\.?|avenida|al\.|alameda|pca\.?|praca|lgo\.?|largo|tv\.|travessa|viaduto|ponte)\s"
+# O que vem depois destas palavras só diz o trecho da rua; não é outra rua do trajeto.
+TRECHO_DA_RUA = r"\b(?:entre|altura|ate|esquina|proximo|frente|sentido)\b.*"
+
+
+def comeca_na_rua(itinerario, rua):
+    return re.search(rf"\b{rua}\b", sem_acento(itinerario).split(",")[0])
+
+
+def desfila_so_na_rua(itinerario, rua):
+    """Vale "R. da Consolação, 2101 ao 585", mas não "R. da Consolação, Al. Itu, R. Bela Cintra"."""
+    achou = comeca_na_rua(itinerario, rua)
+    if not achou:
+        return False
+    resto = re.sub(TRECHO_DA_RUA, "", sem_acento(itinerario)[achou.end():])
+    return not re.search(TIPO_DE_RUA, resto)
 
 
 def grande_ponto_do(bloco):
     for ponto in GRANDES_PONTOS:
-        if re.search(ponto[3], bloco["itinerario"], re.I):
+        if desfila_so_na_rua(bloco["itinerario"], ponto[3]):
             return ponto
+    if re.search(RUAS_DO_CENTRO, sem_acento(bloco["itinerario"])):
+        return CIRCUITO_DO_CENTRO
     return None
 
 
@@ -365,6 +385,10 @@ print("por zona:", ", ".join(f"{zona} {n}" for zona, n in sorted(por_zona.items(
 # Os testes do app usam uma cópia congelada dos dados de 2026 (app/src/app/dados/teste-2026), então
 # quem confere os dados novos é este script. Avisa o que parece errado, sem parar.
 avisos = []
+# Quem começa na rua de um circuito, mas segue por outras, fica fora dele: vale conferir à mão.
+for bloco in todos_os_oficiais:
+    if grande_ponto_do(bloco) is None and any(comeca_na_rua(bloco["itinerario"], ponto[3]) for ponto in GRANDES_PONTOS):
+        avisos.append(f"começa na rua de um circuito e segue por outras: {bloco['nome']} ({bloco['itinerario']})")
 for bloco in ordem:
     if not bloco["concentracao"] <= bloco["desfile"] or not (bloco["termino"] > bloco["desfile"] or bloco["termino"] == "00:00"):
         avisos.append(f"horários fora de ordem: {bloco['nome']} ({bloco['data']}, {bloco['concentracao']}, {bloco['desfile']}, {bloco['termino']})")

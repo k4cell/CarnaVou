@@ -77,6 +77,15 @@ app-botao-favorito {
   &[data-selo='acabou'] {
     background: var(--borda);
   }
+
+  &[data-selo='cancelado'] {
+    background: var(--vermelho);
+    color: var(--cartao);
+  }
+}
+
+.cancelado .nome {
+  text-decoration: line-through;
 }
 
 .lugar {

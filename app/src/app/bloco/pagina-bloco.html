@@ -1,5 +1,15 @@
 @if (achado(); as bloco) {
-  @if (jaPassou()) {
+  @if (bloco.cancelado) {
+    <p class="correcao cancelado"><strong>Bloco cancelado.</strong> {{ bloco.nota }}</p>
+  } @else if (bloco.horarioMudou || bloco.nota) {
+    <p class="correcao">
+      @if (bloco.horarioMudou) {
+        <strong>O horário mudou.</strong>
+      }
+      {{ bloco.nota }}
+    </p>
+  }
+  @if (jaPassou() && !bloco.cancelado) {
     <p class="ja-passou">Esse bloco já aconteceu.</p>
   }
   <h2 class="titulo">{{ bloco.nome }}</h2>
@@ -13,13 +23,16 @@
   }
 
   <div class="acoes-da-pagina">
-    <a class="botao-claro ver-no-mapa" routerLink="/mapa" [queryParams]="{ bloco: bloco.id }">
-      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-        <path d="M12 21s-6-5.6-6-10a6 6 0 1112 0c0 4.4-6 10-6 10z" />
-        <circle cx="12" cy="11" r="2" />
-      </svg>
-      Ver no mapa
-    </a>
+    <!-- O bloco cancelado sai do mapa. -->
+    @if (!bloco.cancelado) {
+      <a class="botao-claro ver-no-mapa" routerLink="/mapa" [queryParams]="{ bloco: bloco.id }">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M12 21s-6-5.6-6-10a6 6 0 1112 0c0 4.4-6 10-6 10z" />
+          <circle cx="12" cy="11" r="2" />
+        </svg>
+        Ver no mapa
+      </a>
+    }
     <app-copiar-link />
     <app-botao-favorito [bloco]="bloco" [comTexto]="true" />
   </div>
@@ -40,6 +53,7 @@
   } @else {
     <p class="sem-atracoes">Ainda não tem atrações divulgadas.</p>
   }
+  <app-dados-atualizados />
 } @else {
   <p>Não achei esse bloco. <a routerLink="/descobrir">Ver os principais lugares</a></p>
 }

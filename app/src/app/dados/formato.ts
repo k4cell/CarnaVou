@@ -7,6 +7,15 @@ const FORMATO_DATA_LONGA = new Intl.DateTimeFormat('pt-BR', {
   day: 'numeric',
   month: 'long',
 });
+const FORMATO_ATUALIZACAO = new Intl.DateTimeFormat('pt-BR', {
+  timeZone: 'America/Sao_Paulo',
+  day: '2-digit',
+  month: '2-digit',
+  year: 'numeric',
+  hour: '2-digit',
+  minute: '2-digit',
+  hourCycle: 'h23',
+});
 
 export const NOMES_DOS_ESTILOS: Record<Estilo, string> = {
   samba: 'Samba',
@@ -58,6 +67,13 @@ function semPonto(texto: string): string {
 export function formatarHora(hora: string): string {
   const [horas, minutos] = hora.split(':');
   return minutos === '00' ? `${Number(horas)}h` : `${Number(horas)}h${minutos}`;
+}
+
+/** "04/11/2026 às 18h55", sempre na hora de São Paulo, seja qual for o fuso do celular. */
+export function dataDaAtualizacao(iso: string): string {
+  const partes = FORMATO_ATUALIZACAO.formatToParts(new Date(iso));
+  const parte = (tipo: Intl.DateTimeFormatPartTypes) => partes.find(({ type }) => type === tipo)?.value ?? '';
+  return `${parte('day')}/${parte('month')}/${parte('year')} às ${formatarHora(`${parte('hour')}:${parte('minute')}`)}`;
 }
 
 /** Dia do banner: "sáb", "30", "jan". */

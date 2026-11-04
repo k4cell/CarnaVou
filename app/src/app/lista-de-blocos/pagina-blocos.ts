@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/c
 
 import { AbasDoDia } from '../abas/abas-do-dia';
 import { BannerBloco } from '../banner/banner-bloco';
+import { DadosAtualizados } from '../correcoes/dados-atualizados';
 import { Aba } from '../dados/agenda';
 import { acharLocal, faixaDoLocal } from '../dados/consultas';
 import { NOMES_DAS_ZONAS } from '../dados/formato';
@@ -35,7 +36,7 @@ const LUGARES_POR_ZONA = ORDEM_DAS_ZONAS.map((zona) => ({
  */
 @Component({
   selector: 'app-pagina-blocos',
-  imports: [AbasDoDia, BannerBloco],
+  imports: [AbasDoDia, BannerBloco, DadosAtualizados],
   template: `
     <h2 class="titulo">Blocos</h2>
     <input
@@ -91,6 +92,7 @@ const LUGARES_POR_ZONA = ORDEM_DAS_ZONAS.map((zona) => ({
         <button type="button" class="botao-claro limpar" (click)="filtros.limpar()">Limpar a busca e os filtros</button>
       }
     }
+    <app-dados-atualizados />
   `,
   styles: `
     // O título fica só para o leitor de tela: o menu de baixo já diz em que aba a pessoa está.
