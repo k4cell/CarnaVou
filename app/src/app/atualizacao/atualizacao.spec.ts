@@ -66,6 +66,29 @@ describe('Atualizacao', () => {
     expect(tela.querySelector('.aviso')?.textContent).toContain('Tem versão nova do CarnaVou.');
   });
 
+  describe('com o número da versão, que a publicação grava', () => {
+    const pronta = (atual: string, nova: string) =>
+      ({
+        type: 'VERSION_READY',
+        currentVersion: { hash: 'a', appData: { versao: atual } },
+        latestVersion: { hash: 'b', appData: { versao: nova } },
+      }) as VersionEvent;
+
+    it('uma correção de dados não mostra o aviso: o número é o mesmo', async () => {
+      const { fixture, tela, falso } = await montar();
+      falso.versoes.next(pronta('0.24.0', '0.24.0'));
+      await fixture.whenStable();
+      expect(tela.querySelector('.aviso')).toBeNull();
+    });
+
+    it('um app novo mostra o aviso: o número mudou', async () => {
+      const { fixture, tela, falso } = await montar();
+      falso.versoes.next(pronta('0.24.0', '0.25.0'));
+      await fixture.whenStable();
+      expect(tela.querySelector('.aviso')).not.toBeNull();
+    });
+  });
+
   it('"Atualizar" passa para a versão nova e recarrega a página', async () => {
     const { fixture, tela, falso, recarregar } = await montar();
     falso.versoes.next(versaoPronta);

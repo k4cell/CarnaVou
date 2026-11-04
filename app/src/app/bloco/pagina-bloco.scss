@@ -32,6 +32,20 @@
   color: var(--roxo);
 }
 
+// Fundo forte e texto escuro, para ler no sol. O vermelho aguenta texto branco.
+.correcao {
+  margin: 0 0 8px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: var(--amarelo);
+  font-weight: 700;
+}
+
+.cancelado {
+  background: var(--vermelho);
+  color: var(--cartao);
+}
+
 .ja-passou {
   margin: 0 0 8px;
   padding: 8px 12px;

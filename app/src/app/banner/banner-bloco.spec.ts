@@ -2,6 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 
 import { BLOCOS } from '../dados/blocos';
+import { Bloco } from '../dados/tipos';
 import { Relogio } from '../relogio/relogio';
 import { BannerBloco } from './banner-bloco';
 
@@ -75,6 +76,25 @@ describe('BannerBloco', () => {
       const tela = await renderizar('forrozin', null, { mostrarData: false });
       expect(tela.querySelector('time')).toBeNull();
       expect(tela.querySelector('.data')?.getAttribute('aria-hidden')).toBe('true');
+    });
+  });
+
+  describe('um bloco corrigido', () => {
+    async function comEntradas(correcao: Partial<Bloco>, agora: Date | null = null) {
+      const bloco = { ...BLOCOS.find(({ id }) => id === 'forrozin')!, ...correcao };
+      return renderizar('forrozin', agora, { bloco });
+    }
+
+    it('cancelado: diz isso no lugar do horário, em vermelho, e risca o nome', async () => {
+      const tela = await comEntradas({ cancelado: true }, new Date(2026, 1, 7, 13, 0));
+      expect(horario(tela)?.textContent).toBe('Cancelado');
+      expect(horario(tela)?.getAttribute('data-selo')).toBe('cancelado');
+      expect(tela.querySelector('a.cancelado')).not.toBeNull();
+    });
+
+    it('com horário mudado: diz que o horário é novo', async () => {
+      const tela = await comEntradas({ horarioMudou: true, inicio: '18:00', fim: '20:00' });
+      expect(horario(tela)?.textContent).toBe('Novo horário: começa às 18h · vai até 20h');
     });
   });
 

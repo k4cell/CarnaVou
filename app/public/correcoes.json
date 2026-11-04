@@ -1,0 +1,8 @@
+{
+  "_como_usar": "Cada linha da lista blocos corrige um bloco. O id é o fim do endereço da página do bloco. Copie um dos exemplos para a lista, troque os dados e ponha uma vírgula entre uma linha e outra. Horário como 14:30. Se algo estiver errado, a publicação para e o site continua como estava.",
+  "_exemplos": [
+    { "id": "monobloco-08-02", "cancelado": true, "nota": "Cancelado pela organização." },
+    { "id": "monobloco-08-02", "inicio": "10:00", "desfile": "11:00", "fim": "15:00", "nota": "A Prefeitura mudou o horário." }
+  ],
+  "blocos": []
+}

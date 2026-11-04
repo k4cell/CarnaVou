@@ -28,15 +28,27 @@ export class BannerBloco {
   protected readonly faixa = computed(() => faixaDoLocal(this.bloco().localId));
   protected readonly data = computed(() => partesDaData(this.bloco().data));
   protected readonly lugar = computed(() => (this.mostrarLugar() ? acharLocal(this.bloco().localId)?.nome : undefined));
-  /** "Começa às 9h", ou "Começou às 9h" quando o bloco já começou (só depois de saber a hora). */
-  protected readonly horario = computed(() =>
-    textoDoHorario(this.bloco(), momentoDoBloco(this.bloco(), this.relogio.agora())),
-  );
+  /**
+   * "Começa às 9h", ou "Começou às 9h" quando o bloco já começou (só depois de saber a hora). Um bloco
+   * corrigido diz o que mudou: "Cancelado" ou "Novo horário: começa às 9h".
+   */
+  protected readonly horario = computed(() => {
+    const bloco = this.bloco();
+    if (bloco.cancelado) {
+      return 'Cancelado';
+    }
+    const texto = textoDoHorario(bloco, momentoDoBloco(bloco, this.relogio.agora()));
+    return bloco.horarioMudou ? `Novo horário: ${texto.charAt(0).toLowerCase()}${texto.slice(1)}` : texto;
+  });
   /**
    * A cor do horário diz em que pé o bloco está, sem ocupar mais uma linha: verde já começou, amarelo
-   * ainda vai começar hoje e cinza já acabou. Num dia que ainda vem (ou sem saber a hora), fica sem cor.
+   * ainda vai começar hoje, cinza já acabou e vermelho cancelado. Num dia que ainda vem (ou sem saber a
+   * hora), fica sem cor.
    */
   protected readonly selo = computed<TipoDoSelo | null>(() => {
+    if (this.bloco().cancelado) {
+      return 'cancelado';
+    }
     const agora = this.relogio.agora();
     if (agora === null) {
       return null;

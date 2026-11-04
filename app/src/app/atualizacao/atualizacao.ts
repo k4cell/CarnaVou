@@ -1,5 +1,5 @@
 import { DestroyRef, Injectable, InjectionToken, inject, signal } from '@angular/core';
-import { SwUpdate } from '@angular/service-worker';
+import { SwUpdate, VersionReadyEvent } from '@angular/service-worker';
 import { filter } from 'rxjs';
 
 /** Recarrega a página. Nos testes, é trocado por um falso. */
@@ -11,11 +11,25 @@ export const RECARREGAR = new InjectionToken<() => void>('RECARREGAR', {
 /** De quanto em quanto tempo o app aberto procura versão nova. */
 const INTERVALO_DE_PROCURA = 15 * 60_000;
 
+const numeroDaVersao = ({ appData }: { appData?: object }) => (appData as { versao?: string } | undefined)?.versao;
+
+/**
+ * Publicar uma correção também gera uma "versão nova" para o service worker, mas o app é o mesmo e a
+ * correção chega sozinha (veja `Correcoes`). Por isso, só conta quando o número da versão mudou: a
+ * publicação grava esse número no `appData`. Na dúvida, sem o número, conta.
+ */
+function mudouOApp({ currentVersion, latestVersion }: VersionReadyEvent): boolean {
+  const atual = numeroDaVersao(currentVersion);
+  const nova = numeroDaVersao(latestVersion);
+  return !atual || !nova || atual !== nova;
+}
+
 /**
  * Cuida de trocar o app instalado pela versão nova do site. O celular quase nunca fecha o app de
  * verdade, então ele procura versão nova ao abrir, quando volta para a frente da tela e a cada
  * 15 minutos. Quando a versão nova termina de baixar, avisa (`temVersaoNova`); a pessoa toca em
- * "Atualizar" e a página recarrega já com ela.
+ * "Atualizar" e a página recarrega já com ela. Quando só os dados mudaram, não avisa: a versão nova
+ * passa a valer na próxima vez que o app abrir.
  */
 @Injectable({ providedIn: 'root' })
 export class Atualizacao {
@@ -37,7 +51,7 @@ export class Atualizacao {
     this.iniciado = true;
 
     sw.versionUpdates
-      .pipe(filter((evento) => evento.type === 'VERSION_READY'))
+      .pipe(filter((evento) => evento.type === 'VERSION_READY' && mudouOApp(evento)))
       .subscribe(() => this.versaoNova.set(true));
     // O que o app guardou se perdeu (o celular apagou parte do cache): só recarregando.
     sw.unrecoverable.subscribe(() => this.recarregar());

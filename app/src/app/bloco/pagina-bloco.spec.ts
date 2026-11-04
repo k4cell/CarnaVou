@@ -3,6 +3,7 @@ import { provideRouter } from '@angular/router';
 
 import { cartoesDaAba } from '../dados/agenda';
 import { BLOCOS } from '../dados/blocos';
+import { definirCorrecoes } from '../dados/correcoes';
 import { PaginaBloco } from './pagina-bloco';
 
 describe('PaginaBloco', () => {
@@ -96,6 +97,43 @@ describe('PaginaBloco', () => {
     TestBed.resetTestingModule();
     const semEstilo = await renderizar('ibirapuera', 'carna-lau');
     expect(semEstilo.textContent).not.toContain('Estilo:');
+  });
+
+  describe('um bloco corrigido', () => {
+    afterEach(() => definirCorrecoes([]));
+
+    it('cancelado: avisa, mostra a nota e tira o botão do mapa', async () => {
+      definirCorrecoes([{ id: 'agrada-gregos', cancelado: true, nota: 'Choveu demais.' }]);
+      const tela = await renderizar('ibirapuera', 'agrada-gregos');
+      expect(tela.querySelector('.correcao')?.textContent).toContain('Bloco cancelado. Choveu demais.');
+      expect(tela.querySelector('.ver-no-mapa')).toBeNull();
+    });
+
+    it('com horário mudado: avisa e mostra o horário novo', async () => {
+      definirCorrecoes([{ id: 'agrada-gregos', inicio: '07:00', desfile: '07:30', fim: '10:00' }]);
+      const tela = await renderizar('ibirapuera', 'agrada-gregos');
+      expect(tela.querySelector('.correcao')?.textContent).toContain('O horário mudou.');
+      expect(tela.querySelector('.horario')?.textContent).toContain('Concentração às 7h');
+      expect(tela.querySelector('.ver-no-mapa')).not.toBeNull();
+    });
+
+    it('a tela muda sozinha quando a correção chega com a página aberta', async () => {
+      await TestBed.configureTestingModule({ imports: [PaginaBloco], providers: [provideRouter([])] }).compileComponents();
+      const fixture = TestBed.createComponent(PaginaBloco);
+      fixture.componentRef.setInput('local', 'ibirapuera');
+      fixture.componentRef.setInput('bloco', 'agrada-gregos');
+      await fixture.whenStable();
+      const tela = fixture.nativeElement as HTMLElement;
+      expect(tela.querySelector('.correcao')).toBeNull();
+      definirCorrecoes([{ id: 'agrada-gregos', cancelado: true }]);
+      await fixture.whenStable();
+      expect(tela.querySelector('.correcao')?.textContent).toContain('Bloco cancelado.');
+    });
+
+    it('sem correção, não mostra aviso nenhum', async () => {
+      const tela = await renderizar('ibirapuera', 'agrada-gregos');
+      expect(tela.querySelector('.correcao')).toBeNull();
+    });
   });
 
   it('avisa quando o bloco não existe', async () => {

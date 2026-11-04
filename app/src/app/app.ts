@@ -9,6 +9,7 @@ import { AvisoDeAtualizacao } from './atualizacao/aviso-de-atualizacao';
 import { AvisoDePronto, ProntoSemInternet } from './atualizacao/aviso-de-pronto';
 import { AvisoDeTeste } from './aviso-de-teste/aviso-de-teste';
 import { Conexao } from './conexao/conexao';
+import { Correcoes } from './correcoes/correcoes';
 import { Favoritos } from './favoritos/favoritos';
 import { MenuInferior } from './menu/menu-inferior';
 import { AvisoDeNavegacao } from './navegacao/aviso-de-navegacao';
@@ -59,6 +60,7 @@ export class App {
   constructor() {
     const relogio = inject(Relogio);
     const atualizacao = inject(Atualizacao);
+    const correcoes = inject(Correcoes);
     const favoritos = inject(Favoritos);
     const pronto = inject(ProntoSemInternet);
     // Só no navegador, depois da primeira pintura: assim a página pronta que vem do servidor
@@ -67,6 +69,7 @@ export class App {
       relogio.iniciar(window.location.search);
       this.conexao.iniciar();
       atualizacao.iniciar();
+      correcoes.iniciar();
       favoritos.iniciar();
       pronto.iniciar();
     });

@@ -1,6 +1,8 @@
+import arquivoDeCorrecoes from '../../../public/correcoes.json';
 import { estaNaGrandeSP } from '../mapa/limites';
 import { BLOCOS } from './blocos';
 import { blocosDoLocal, famaDoBloco } from './consultas';
+import { problemasDoArquivo } from './correcoes';
 import { itinerarioDoBloco } from './itinerario';
 import { LOCAIS } from './locais';
 import { trajetoDoBloco } from './trajetos';
@@ -11,6 +13,10 @@ import { trajetoDoBloco } from './trajetos';
  * Roda com `ng test --no-watch --configuration dados-reais`.
  */
 describe('os dados que vão para o ar', () => {
+  it('o arquivo de correções está certo', () => {
+    expect(problemasDoArquivo(arquivoDeCorrecoes)).toEqual([]);
+  });
+
   describe('os lugares', () => {
     it('não repetem o id', () => {
       const ids = LOCAIS.map((local) => local.id);
