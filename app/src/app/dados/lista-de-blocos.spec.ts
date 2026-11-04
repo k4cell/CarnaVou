@@ -1,6 +1,6 @@
 import { BLOCOS } from './blocos';
 import { famaDoBloco } from './consultas';
-import { blocoCombinaComABusca, blocosDaNoite, eDaNoite, secoesDosBlocos } from './lista-de-blocos';
+import { blocosDaNoite, eDaNoite, secaoDoQueJaAconteceu, secoesDosBlocos } from './lista-de-blocos';
 import { Bloco } from './tipos';
 
 // Sábado de carnaval de 2026, duas da tarde.
@@ -121,29 +121,24 @@ describe('secoesDosBlocos (a aba Blocos)', () => {
   });
 });
 
-describe('a busca e os filtros da aba Blocos', () => {
-  const bloco = (id: string) => BLOCOS.find((candidato) => candidato.id === id)!;
-
-  it('sem nada escrito, todo bloco combina', () => {
-    expect(blocoCombinaComABusca(bloco('forrozin'), '   ')).toBe(true);
-  });
-
-  it('acha pelo nome do bloco, pelo artista e pelo lugar, sem ligar para acento nem maiúscula', () => {
-    expect(blocoCombinaComABusca(bloco('forrozin'), 'FORROZIN')).toBe(true);
-    expect(blocoCombinaComABusca(bloco('forrozin'), 'mariana aydar')).toBe(true);
-    expect(blocoCombinaComABusca(bloco('forrozin'), 'ibirapuera')).toBe(true);
-    expect(blocoCombinaComABusca(bloco('bloco-skol'), 'ze vaqueiro')).toBe(true);
-    expect(blocoCombinaComABusca(bloco('forrozin'), 'consolação')).toBe(false);
-  });
-
-  it('todas as palavras precisam aparecer, em qualquer ordem', () => {
-    expect(blocoCombinaComABusca(bloco('forrozin'), 'ibirapuera aydar')).toBe(true);
-    expect(blocoCombinaComABusca(bloco('forrozin'), 'ibirapuera anitta')).toBe(false);
-  });
-
+describe('os filtros da aba Blocos', () => {
   it('a lista só traz o que passa pelo filtro, e junta só entre eles', () => {
     const [geral] = secoesDosBlocos('geral', new Date(2026, 1, 7, 12, 0), (candidato) => candidato.id === 'forrozin');
     expect(geral.grupos.map((grupo) => grupo.map((candidato) => candidato.id))).toEqual([['forrozin']]);
+  });
+
+  it('o que já aconteceu vem à parte, do mais recente para o mais antigo', () => {
+    const agora = new Date(2026, 1, 13, 12, 0);
+    const secao = secaoDoQueJaAconteceu(agora, () => true)!;
+    expect(secao.titulo).toBe('Já aconteceu');
+    const datas = secao.grupos.flat().map((bloco) => bloco.data);
+    expect(datas.every((data) => data < '2026-02-13')).toBe(true);
+    expect(datas).toEqual([...datas].sort().reverse());
+  });
+
+  it('não tem o que já aconteceu quando nada passa pelo filtro, ou sem saber o dia', () => {
+    expect(secaoDoQueJaAconteceu(new Date(2026, 1, 13, 12, 0), () => false)).toBeNull();
+    expect(secaoDoQueJaAconteceu(null, () => true)).toBeNull();
   });
 });
 

@@ -68,6 +68,23 @@ describe('PaginaBlocos', () => {
       expect(nomes()).toEqual(['Bloco Skol']);
     });
 
+    it('acha o artista com erro de digitação', async () => {
+      const { nomes, buscar } = await renderizar(new Date(2026, 1, 7, 12, 0));
+      await buscar('ze vaqueiro');
+      const certo = nomes();
+      await buscar('ze vaqeuro');
+      expect(nomes()).toEqual(certo);
+    });
+
+    it('mostra à parte o bloco que já aconteceu, para quem procura um artista que já tocou', async () => {
+      // Sexta, 13/02: a Ivete Sangalo tocou no sábado, 07/02.
+      const { tela, nomes, buscar } = await renderizar(new Date(2026, 1, 13, 12, 0));
+      await buscar('ivete sangalo');
+      expect(nomes()).toEqual(['Carnafacul - Quem Pede, Pede']);
+      expect(tela.querySelector('.secao')?.textContent).toBe('Já aconteceu');
+      expect(tela.querySelector('.horario')?.getAttribute('data-selo')).toBe('acabou');
+    });
+
     it('esconde as abas de dia enquanto busca', async () => {
       const { tela, buscar } = await renderizar(new Date(2026, 1, 7, 12, 0));
       expect(tela.querySelector('app-abas-do-dia')).not.toBeNull();

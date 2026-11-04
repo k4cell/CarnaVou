@@ -1,7 +1,7 @@
 import { Aba, diaIso, diaSeguinte, horaIso, jaAcabou } from './agenda';
 import { BLOCOS } from './blocos';
-import { acharLocal, famaDoBloco } from './consultas';
-import { dataPorExtenso, semAcento } from './formato';
+import { famaDoBloco } from './consultas';
+import { dataPorExtenso } from './formato';
 import { Bloco } from './tipos';
 
 /** Um pedaço da lista da aba Blocos: "Rolando agora", "Mais tarde hoje", um dia… */
@@ -15,21 +15,6 @@ export interface SecaoDeBlocos {
 const POUCOS_BLOCOS_HOJE = 3;
 
 const quando = (bloco: Bloco) => bloco.data + bloco.inicio;
-
-/**
- * O bloco combina com a busca? Cada palavra precisa aparecer no nome do bloco, nos artistas ou no
- * nome do lugar, sem ligar para acento nem para maiúsculas.
- */
-export function blocoCombinaComABusca(bloco: Bloco, busca: string): boolean {
-  const palavras = semAcento(busca).split(/\s+/).filter(Boolean);
-  if (palavras.length === 0) {
-    return true;
-  }
-  const onde = semAcento(
-    [bloco.nome, ...bloco.atracoes.map((atracao) => atracao.nome), acharLocal(bloco.localId)?.nome ?? ''].join(' '),
-  );
-  return palavras.every((palavra) => onde.includes(palavra));
-}
 
 /** Os mais famosos primeiro; quem não tem artista conhecido vem depois, por horário. */
 function porFama(blocos: Bloco[]): Bloco[] {
@@ -134,6 +119,26 @@ export function secoesDosBlocos(
     secoes.push(...porDia([...deHoje, ...blocos.filter((bloco) => bloco.data > dia)]));
   }
   return secoes.filter((secao) => secao.grupos.length > 0);
+}
+
+/**
+ * Só para a busca: o que já aconteceu, do mais recente para o mais antigo. As listas mostram só o
+ * presente e o futuro, mas quem procura um artista que já tocou precisa saber disso, e não achar
+ * que o artista não está no app.
+ */
+export function secaoDoQueJaAconteceu(agora: Date | null, incluir: (bloco: Bloco) => boolean): SecaoDeBlocos | null {
+  if (agora === null) {
+    return null;
+  }
+  const dia = diaIso(agora);
+  const hora = horaIso(agora);
+  const passados = BLOCOS.filter(
+    (bloco) => incluir(bloco) && (bloco.data < dia || (bloco.data === dia && jaAcabou(bloco, hora))),
+  );
+  if (passados.length === 0) {
+    return null;
+  }
+  return { titulo: 'Já aconteceu', grupos: porHorario(passados).reverse().map((bloco) => [bloco]) };
 }
 
 /**

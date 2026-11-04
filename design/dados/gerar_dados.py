@@ -245,10 +245,6 @@ for bloco in ordem:
         saidas.append(inicio)
         numero = len(saidas) - 1
     ponto_do_bloco[id(bloco)] = numero
-repetidos = {}
-for bloco in ordem:
-    repetidos[slug(bloco["nome"])] = repetidos.get(slug(bloco["nome"]), 0) + 1
-
 trajetos, indice_do_trajeto, trajeto_do_bloco = [], {}, {}
 itinerarios, indice_do_itinerario, itinerario_do_bloco = [], {}, {}
 linhas = [
@@ -275,7 +271,8 @@ for bloco in ordem:
         linhas.append(f"  // {lugar_atual}")
     base = slug(bloco["nome"])
     dia, mes = bloco["data"][8:], bloco["data"][5:7]
-    identificador = base if repetidos[base] == 1 else f"{base}-{dia}-{mes}"
+    # O id sempre tem a data: assim ele não muda quando uma correção da lista dá outra data ao bloco.
+    identificador = f"{base}-{dia}-{mes}"
     n = 2
     while identificador in usados:
         identificador = f"{base}-{dia}-{mes}-{n}"

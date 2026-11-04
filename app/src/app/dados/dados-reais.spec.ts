@@ -36,6 +36,14 @@ describe('os dados que vão para o ar', () => {
       expect(new Set(ids).size).toBe(ids.length);
     });
 
+    it('têm a data no id, para o endereço não mudar quando a lista for corrigida', () => {
+      const semData = BLOCOS.filter((bloco) => {
+        const [, mes, dia] = bloco.data.split('-');
+        return !bloco.id.includes(`-${dia}-${mes}`);
+      });
+      expect(semData.map((bloco) => bloco.id)).toEqual([]);
+    });
+
     it('todo bloco aponta para um lugar que existe', () => {
       const ids = new Set(LOCAIS.map((local) => local.id));
       expect(BLOCOS.filter((bloco) => !ids.has(bloco.localId)).map((bloco) => bloco.id)).toEqual([]);

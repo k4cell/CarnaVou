@@ -36,6 +36,13 @@ describe('Favoritos', () => {
     expect(favoritos.quantos()).toBe(1);
   });
 
+  it('mantém marcado o bloco que mudou de id', () => {
+    localStorage.setItem(CHAVE, JSON.stringify(['agrada-gregos-14-02']));
+    const favoritos = TestBed.inject(Favoritos);
+    favoritos.iniciar();
+    expect(favoritos.tem('agrada-gregos')).toBe(true);
+  });
+
   it('não quebra quando o que está guardado não presta', () => {
     localStorage.setItem(CHAVE, 'isto não é uma lista');
     const favoritos = TestBed.inject(Favoritos);

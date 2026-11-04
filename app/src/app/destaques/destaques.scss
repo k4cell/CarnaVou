@@ -2,17 +2,6 @@
   margin-top: 20px;
 }
 
-.chama {
-  width: 1em;
-  height: 1em;
-  vertical-align: -0.1em;
-  fill: none;
-  stroke: currentcolor;
-  stroke-width: 2;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-
 .vazio {
   margin: 24px 0;
 }
@@ -20,6 +9,8 @@
 // Nome do lugar à esquerda e o selo no canto de cima, à direita. O selo ainda não tem cor.
 .cabeca {
   display: flex;
+  // Sem espaço para os dois na mesma linha, o selo desce para baixo do nome.
+  flex-wrap: wrap;
   gap: 8px;
   align-items: flex-start;
   justify-content: space-between;

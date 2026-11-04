@@ -29,7 +29,6 @@ O planejamento do mapa e das próximas fases, que junta todas estas ideias num r
   Geral. Por enquanto a cor continua sendo a da zona.
 - **Mais atrações:** buscar nas notícias os artistas dos blocos dos circuitos (hoje só 20 dos 74
   têm artista).
-- **Busca por artista ou bloco:** ainda não é o momento.
 - **Agrupar os pinos do mapa** quando ficam muito juntos: por enquanto não.
 
 ---
@@ -46,7 +45,10 @@ O planejamento do mapa e das próximas fases, que junta todas estas ideias num r
 | Distância como filtro importante | Não é o ponto principal; pode existir, sem ênfase |
 | Site que instala como app (PWA) | Aprovado: o formato é um site que se instala como app |
 | "Começando agora / Daqui a pouco / Mais tarde" na agenda | Fica pra depois. A primeira tela é um catálogo de banners |
-| "Vou", "Tô aqui" e "Como tá?" no beta | Ficam de fora do beta. A raiz é pra onde eu vou e a tendência de hoje |
+| "Tô aqui" e "Como tá?" | Descartados (30/10/2026): quem está no bloco quer curtir, e ninguém vai pegar o celular só para atualizar um aplicativo. Só voltam se forem automáticos |
+| Busca por artista ou bloco | Aprovada (04/11/2026), com pequenos erros de digitação |
+| Favoritos | Aprovados (04/11/2026): a estrela de cada bloco, só no aparelho |
+| "Vou" no beta | Fica de fora do beta. A raiz é pra onde eu vou e a tendência de hoje |
 | Como organizar as telas | Árvore de opções: Em destaque, depois um lugar, depois um bloco |
 | Quais lugares destacar | Os 10 lugares com mais megablocos no carnaval de 2026 em SP |
 | Paleta de cores | Aprovada: fundo claro, cabeçalho escuro da logo, roxo e amarelo. As cinco cores se revezam nas faixas |
@@ -94,8 +96,8 @@ O planejamento do mapa e das próximas fases, que junta todas estas ideias num r
 | Sinal | Quando | O que gera |
 |---|---|---|
 | "Vou" | antes | ranking "Mais esperados de hoje" |
-| "Tô aqui" | durante | "Bombando agora" |
-| "Como tá?" (vale a pena / lotado demais / fraco / já dispersou) | durante | informação ao vivo de quem está no lugar |
+| "Tô aqui" (descartado) | durante | "Bombando agora" |
+| "Como tá?" (descartado; vale a pena / lotado demais / fraco / já dispersou) | durante | informação ao vivo de quem está no lugar |
 
 O "Em alta" juntaria os três, com mais peso para o que é recente.
 
@@ -119,7 +121,7 @@ Um desenho de como o app poderia ficar trouxe estas ideias. Nenhuma está aprova
 - Filtros de um toque: "Agora", "Gratuito", "Perto de mim", infantil, pet friendly e estilo
   musical.
 - Abas "Hoje", "Amanhã" e "Esta semana".
-- Favoritos (um coração no banner). Tirei as abas Amigos e Favoritos do menu, e ainda não
+- Favoritos: aprovados, com uma estrela no banner. Tirei a aba Amigos do menu, e ainda não
   decidi o que eles serão.
 - Um mapa da folia com pins, o botão "Como chegar" e um jeito de alternar entre lista e mapa.
 - Etiquetas "Bombando agora", "Ao vivo" e "Muito lotado". Dependem de sinal de quem está no
@@ -159,6 +161,6 @@ o que está em alta na cidade.
 3. Mapa com local e percurso
 4. Página do bloco e botão de compartilhar
 5. "Vou" e o ranking dos mais esperados (fora do beta)
-6. "Tô aqui" e "Como tá?" simples (fora do beta)
+6. "Tô aqui" e "Como tá?" simples (descartados)
 7. Agenda do dia funcionando offline
 8. Ver tudo sem cadastro; login rápido só pra interagir

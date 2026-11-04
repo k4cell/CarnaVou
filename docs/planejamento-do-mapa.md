@@ -127,10 +127,8 @@ Tudo o que ficou para depois, num lugar só. Quando eu resolver um item, ele sai
 
 **Mapa e dados:**
 
-1. **Os pedaços do mapa ficam no cache normal do navegador**, não no service worker, porque
-   quem pede os pedaços é o worker do MapLibre, que não passa pelo service worker. A OpenFreeMap
-   manda guardar cada pedaço por 10 anos, mas o celular pode apagar esse cache se faltar
-   espaço. Sem internet, as áreas que a pessoa não viu ficam em branco.
+1. Sem internet, as áreas do mapa que a pessoa não viu ficam em branco. O service worker guarda até
+   300 pedaços das áreas vistas.
 2. O trajeto é do lugar, não de cada bloco: um bloco pode ter feito um caminho um pouco
    diferente.
 3. Quatro lugares ficam sem trajeto, porque as fontes não dão começo e fim: Santo Amaro,
@@ -139,7 +137,7 @@ Tudo o que ficou para depois, num lugar só. Quando eu resolver um item, ele sai
 5. Conferir à mão se cada pino cai no ponto de encontro certo (as coordenadas vieram do
    OpenStreetMap).
 6. No Centro, três pinos ficam um em cima do outro quando o mapa está afastado.
-7. O Uber ficou fora do "Como chegar", porque não confirmei como o link dele funciona.
+7. O Uber já está no cartão do mapa e no After, e testei os links num celular de verdade.
 8. "Onde o bloco deve estar às 16h" precisa do horário em cada trecho do trajeto.
 
 **Testes:**
@@ -168,16 +166,10 @@ Tudo o que ficou para depois, num lugar só. Quando eu resolver um item, ele sai
    Se mandar como texto, o mapa não abre. Foi o que aconteceu no primeiro teste da 0.9.0, com o
    servidor do Python no Windows. As hospedagens comuns já mandam certo, mas vale conferir
    abrindo o mapa logo depois de publicar.
-2. **O servidor Node do Angular só aceita os endereços que estão na lista dele**
-   (`allowedHosts`), uma proteção contra um tipo de ataque. Hoje a lista está vazia no
-   `angular.json`, então ele recusa as páginas. É preciso pôr ali o endereço do site, ou passar o
-   endereço na variável `NG_ALLOWED_HOSTS` ao ligar o servidor. Como todas as páginas do
-   CarnaVou são geradas prontas, também dá para publicar só os arquivos de
-   `app/dist/app/browser` numa hospedagem de arquivos, sem o servidor Node. Aí este cuidado não
-   vale, mas o primeiro continua valendo.
+2. **O site é só de arquivos, sem servidor.** Publico o que sai em `app/dist/app/browser`, numa
+   hospedagem de arquivos.
 
-**Na 0.10.0** o beta foi para o GitHub Pages, que é uma hospedagem de arquivos: o segundo
-cuidado não vale lá. O primeiro eu confiro abrindo o mapa no ar, logo depois da primeira
+**Na 0.10.0** o beta foi para o GitHub Pages. O primeiro cuidado eu confiro abrindo o mapa no ar, logo depois da primeira
 publicação.
 
 ## 1. O que eu quero do mapa
@@ -428,8 +420,6 @@ Usar raspagem (copiar telas de redes sociais) **viola os termos** e arrisca bloq
 - Antes de publicar para valer: **termos de uso e política de privacidade**.
 - A logo foi gerada por IA: conferir os termos da ferramenta e se existe marca parecida
   registrada (INPI).
-- "Como tá?" precisa de regras contra informação falsa, como já levantei (valer só perto do
-  lugar e expirar rápido).
 
 ## 9. Tudo que está em "ideias em aberto" e onde entra
 
@@ -450,7 +440,7 @@ Usar raspagem (copiar telas de redes sociais) **viola os termos** e arrisca bloq
 | "Possíveis próximos blocos" | depois | dados reais |
 | **Offline** | **0.9.0, feito** (com o que já foi aberto) | testar num celular de verdade |
 | **Favoritos** | depois que eu decidir o que são | decisão (só no aparelho?) |
-| "Vou", "Tô aqui" e "Como tá?" | depois do beta | **backend**, regras contra informação falsa |
+| "Vou" | depois do beta | **backend** ("Tô aqui" e "Como tá?" eu descartei) |
 | "Em alta" calculado | depois do beta | sinais e, talvez, APIs pagas |
 | Notificações | depois do beta | backend; no iPhone só funcionam com o site instalado na tela inicial |
 | Cadastro de blocos por organizadores | depois do beta | backend e aprovação |
@@ -488,7 +478,7 @@ As versões são **sugestões**. Cada uma é pequena e termina com o site funcio
 
 **Já decidi (28 e 29/10/2026):**
 
-1. O Macadam é o app que eu citei (os prints estão em `design/referencias`).
+1. O Macadam é o app que eu citei (os prints ficam só no meu computador, em `design/privado`).
 2. **Os dados de teste são o carnaval de 2026 de verdade, com nomes reais,** como se hoje fosse
    07/02/2026 (eu tinha começado com 30/01 e mudei, para as abas Hoje e Amanhã terem blocos).
 3. **Um ponto por lugar** no primeiro mapa.

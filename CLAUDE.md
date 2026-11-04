@@ -34,7 +34,7 @@ calendário e o que eu ainda não pensei.
   atrações). Embaixo fica o menu fixo: Blocos, Descobrir, After e Mapa. A aba Amigos saiu até eu
   decidir o que ela será: não crie páginas vazias. Os favoritos são a estrela de cada bloco, com um
   botão na aba Blocos, sem aba própria. Os dados de teste são o carnaval
-  de rua de 2026 **de verdade, com nomes reais** (ver `docs/dados-carnaval-2026.md`). Fica de fora, por enquanto, o "Vou", o "Tô aqui" e o "Como tá?".
+  de rua de 2026 **de verdade, com nomes reais** (ver `docs/dados-carnaval-2026.md`). Fica de fora, por enquanto, o "Vou". O "Tô aqui" e o "Como tá?" eu descartei: só voltam se forem automáticos.
 - O visual tem só a **primeira camada de cor**. A paleta fica em variáveis no topo de
   `app/src/styles.scss`: use sempre essas variáveis, nunca uma cor solta. Fundo claro (pra
   ler no sol); o cabeçalho usa o fundo escuro da logo (`--noite`). Roxo nos títulos e
@@ -60,7 +60,7 @@ calendário e o que eu ainda não pensei.
 ## Código
 
 - O site é um Angular na pasta `app/`: instala como app (PWA), páginas geradas prontas
-  (SSR com prerender) e sem `zone.js`.
+  (site estático, com prerender, sem servidor) e sem `zone.js`.
 - Comandos, rodando dentro de `app/`:
   - `ng serve`: abre o site em `http://localhost:4200`;
   - `ng test --no-watch`: roda os testes;
@@ -79,7 +79,9 @@ calendário e o que eu ainda não pensei.
   de 300 m, calculado pelo `gerar_dados.py`) ficam num cartão só, um embaixo do outro, para quem está
   ali ver que o próximo é no mesmo lugar. A seta de voltar e o menu seguem a `Trilha`
   (`voltar/trilha.ts`): a seta volta para a tela de onde eu vim e, para quem chegou por um link,
-  sobe pela árvore (bloco, lugar, Em alta). A busca e os filtros da aba Blocos ficam em
+  sobe pela árvore (bloco, lugar, Descobrir). O id de um bloco sempre tem a data (`monobloco-08-02`), e
+  `acharBloco` também abre um link antigo, pelo nome. A busca (`dados/busca.ts`, que aceita erros de digitação e
+  também mostra o que já aconteceu) e os filtros da aba Blocos ficam em
   `lista-de-blocos/filtros-da-lista.ts`, para continuarem valendo quando abro um bloco e volto. Os
   favoritos (`favoritos/`) ficam só no aparelho, no `localStorage`.
 - As páginas prontas não sabem o dia de hoje. O que depende da data (as abas Hoje e Amanhã
@@ -110,7 +112,9 @@ calendário e o que eu ainda não pensei.
 - **Sem internet:** o service worker (`ngsw-config.json`) entrega a casca vazia
   `index.csr.html` para qualquer endereço (nunca a tela inicial pronta) e guarda o mapa: o grupo
   `mapa` (MapLibre, worker, estilo) e os `dataGroups` da OpenFreeMap (índice, letras, ícones).
-  Os pedaços do mapa ficam no cache do navegador. Os avisos "Sem internet" (sem sinal) e "Internet
+  Os pedaços do mapa saem do worker do MapLibre pela página (`mapa/pedacos-do-mapa.ts`), senão o service
+  worker não os vê, e ficam no grupo `mapa-pedacos`. Esse grupo tem que vir antes do `mapa-indice` no
+  `ngsw-config.json`, porque o endereço do índice também combina com os pedaços. Os avisos "Sem internet" (sem sinal) e "Internet
   fraca" (tem sinal, mas os dados não passam) vêm do serviço `Conexao` (`conexao/`), que faz um pedido
   bem pequeno de vez em quando, só com a tela à vista. Para testar o build como no ar, use um servidor de arquivos que mande
   `.mjs` como JavaScript (o `http.server` do Python no Windows manda como texto, e o mapa não
@@ -129,6 +133,7 @@ calendário e o que eu ainda não pensei.
   usando o mapa. O navegador do computador não tem GPS: para ver a tela funcionando, troque
   `navigator.geolocation.getCurrentPosition` e `navigator.permissions.query` pelo console.
   Nos testes, `geolocalizacao-falsa.ts` faz o papel do celular.
+- O repositório é público: o que não pode aparecer fica em `design/privado/`, que o Git ignora.
 - A logo e as imagens de referência ficam em `design/`, cada uma com legenda no
   `design/README.md`. O que o site usa fica em `app/public/logo/` e `app/public/icons/`:
   se a logo mudar, gere de novo a partir de `design/logo/`.

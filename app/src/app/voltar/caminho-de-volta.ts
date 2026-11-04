@@ -11,7 +11,7 @@ export interface CaminhoDeVolta {
 
 const NOMES_DAS_ABAS: Record<string, string> = {
   '': 'Blocos',
-  descobrir: 'Em alta',
+  descobrir: 'Descobrir',
   after: 'After',
   mapa: 'Mapa',
 };
@@ -35,7 +35,7 @@ function nomeDaTela(endereco: string): string {
 /**
  * Para onde a seta do cabeçalho volta, nas telas de lugar e de bloco: para a tela de onde a pessoa
  * veio e, para quem chegou direto por um link compartilhado (que não tem para onde voltar), um nível
- * acima na árvore (bloco → lugar → Em alta). Nas abas do menu (Blocos, Descobrir, After, Mapa) não
+ * acima na árvore (bloco → lugar → Descobrir). Nas abas do menu (Blocos, Descobrir, After, Mapa) não
  * tem seta.
  */
 export function caminhoDeVolta(endereco: string, anterior?: string): CaminhoDeVolta | null {
@@ -49,5 +49,5 @@ export function caminhoDeVolta(endereco: string, anterior?: string): CaminhoDeVo
   if (partes.length === 3) {
     return { url: `/local/${partes[1]}`, nome: acharLocal(partes[1])?.nome ?? 'o lugar', peloHistorico: false };
   }
-  return { url: '/descobrir', nome: 'Em alta', peloHistorico: false };
+  return { url: '/descobrir', nome: 'Descobrir', peloHistorico: false };
 }

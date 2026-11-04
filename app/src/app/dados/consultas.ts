@@ -60,8 +60,24 @@ export function destaquesDoLocal(localId: string, quantos: number): Bloco[] {
   return maisFamosos(blocosDoLocal(localId), quantos);
 }
 
+/** O id sem a data do fim: "monobloco-08-02" vira "monobloco". */
+function semAData(id: string): string {
+  return id.replace(/-\d{2}-\d{2}(-\d+)?$/, '');
+}
+
+/**
+ * O bloco de um lugar, pelo id do endereço. Um link antigo continua abrindo, mesmo que a data do
+ * bloco tenha mudado ou que o link seja de antes de o id ter data: vale o primeiro bloco com o mesmo
+ * nome naquele lugar.
+ */
 export function acharBloco(localId: string, blocoId: string): Bloco | undefined {
-  return BLOCOS.find((bloco) => bloco.localId === localId && bloco.id === blocoId);
+  const blocos = blocosDoLocal(localId);
+  return blocos.find((bloco) => bloco.id === blocoId) ?? blocos.find((bloco) => semAData(bloco.id) === semAData(blocoId));
+}
+
+/** O mesmo, em qualquer lugar. Serve para o que ficou guardado no aparelho, como os favoritos. */
+export function acharBlocoPeloId(blocoId: string): Bloco | undefined {
+  return BLOCOS.find((bloco) => bloco.id === blocoId) ?? BLOCOS.find((bloco) => semAData(bloco.id) === semAData(blocoId));
 }
 /**
  * Os artistas de um lugar, sem repetir, do mais famoso para o menos. Com "aPartirDe" (AAAA-MM-DD),

@@ -7,6 +7,19 @@ Enquanto o app está em beta, o número é `0.MEIO.FINAL`. O número do meio sob
 uma tela ou funcionalidade nova (0.3.0, 0.4.0…) e o último, quando é só uma correção pequena
 (0.3.1). Cada versão tem uma etiqueta no GitHub, como `v0.3.0`.
 
+## 0.23.0 (04/11/2026)
+
+- A tela Descobrir ficou do tamanho certo no celular: um nome comprido empurrava a página para fora
+  da tela.
+- A busca ficou mais ampla: aceita pequenos erros de digitação, procura também na zona e no estilo e
+  mostra à parte o que já aconteceu.
+- O mapa guardado sem internet funciona de verdade: os pedaços agora ficam no service worker.
+- O nome "Em alta" virou "Principais lugares".
+- O endereço de cada bloco sempre tem a data, e os links antigos continuam abrindo.
+- O site passou a ser só de arquivos: saiu o servidor Express. Limite de peso mais apertado, `vite` e
+  Angular atualizados, e identificador dos scripts corrigido.
+- As fotos de outro app saíram do repositório, e o README está em dia.
+
 ## 0.22.0 (04/11/2026)
 
 - Na aba Blocos: busca por bloco, artista ou lugar, filtro por lugar e botão de favoritos. O título

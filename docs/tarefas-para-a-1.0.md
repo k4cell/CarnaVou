@@ -16,6 +16,7 @@ definitivo e páginas legais. Por isso, ela não sai antes da lista oficial de 2
 - [x] Testar os dados reais antes de publicar
 - [x] Avisar também quando tem sinal, mas a internet não passa
 - [x] Travar o tema claro e fazer o ícone certo para o Android
+- [x] Descobrir do tamanho certo no celular, sem nada empurrando a página para fora
 
 ## 2. Nome e marca
 
@@ -70,7 +71,9 @@ definitivo e páginas legais. Por isso, ela não sai antes da lista oficial de 2
 - [ ] Página de Privacidade (LGPD)
 - [ ] Página Sobre, com contato
 - [ ] Deixar claro que o app não é oficial e que os horários podem mudar
-- [ ] Créditos das fontes (Diário Oficial, OpenStreetMap, OpenFreeMap, MapLibre)
+- [ ] Créditos das fontes (Diário Oficial, OpenStreetMap, OpenFreeMap, MapLibre), dizendo que os dados do OpenStreetMap estão sob a licença ODbL e com o link para corrigir o mapa
+- [ ] Perguntar à FOSSGIS (fossgis-routing-server@openstreetmap.de) se posso usar o serviço de rotas num projeto comercial, antes de gerar os dados de 2027
+- [ ] Se o repositório ficar privado, publicar à parte os pontos e as linhas dos blocos, porque a licença ODbL pede que dados derivados continuem abertos
 
 ## 8. Testes
 
@@ -84,7 +87,7 @@ definitivo e páginas legais. Por isso, ela não sai antes da lista oficial de 2
 
 ## 9. O que melhorar
 
-- [x] Busca por artista, bloco ou lugar
+- [x] Busca por artista, bloco, lugar, zona ou estilo, aceitando erros de digitação e mostrando o que já aconteceu
 - [x] Favoritos no aparelho
 - [x] Filtro por lugar, junto por zona (os dados têm o lugar, e não o bairro de cada bloco)
 - [x] Tirar a data repetida em cada linha do mesmo cartão
@@ -105,21 +108,22 @@ definitivo e páginas legais. Por isso, ela não sai antes da lista oficial de 2
 
 ## 11. O que retirar
 
-- [ ] O servidor Express, que o site publicado não usa
-- [ ] As fotos do Macadam do repositório público
-- [ ] O nome "Em alta", que promete tendência e mostra fama
-- [ ] As menções a "Tô aqui" e "Como tá?", que eu descartei
-- [ ] A pasta `.claude/` do Git
+- [x] O servidor Express, que o site publicado não usa
+- [x] As fotos do Macadam do repositório público (ficaram só no meu computador, em `design/privado/`)
+- [ ] Esconder o que continua público: as fotos nos commits antigos e os documentos com a minha estratégia (depende de o repositório ficar privado)
+- [x] O nome "Em alta", que promete tendência e mostra fama (agora é "Principais lugares")
+- [x] As menções a "Tô aqui" e "Como tá?", que eu descartei
+- [x] A pasta `.claude/` do Git
 
 ## 12. Arrumar no código
 
-- [ ] Publicar como site estático, sem a parte de servidor
-- [ ] Apertar o limite de peso do build
-- [ ] Rever a parte que deveria guardar o mapa para usar sem internet
-- [ ] Endereço dos blocos que não muda quando a lista oficial é corrigida
-- [ ] Corrigir o identificador nos scripts de dados e conferir as regras de uso do OpenStreetMap
-- [ ] Atualizar o `vite` (falha só no ambiente de desenvolvimento)
-- [ ] Colocar o README em dia, porque ele ainda fala da versão 0.12.3
+- [x] Publicar como site estático, sem a parte de servidor
+- [x] Apertar o limite de peso do build
+- [x] Fazer o service worker guardar os pedaços do mapa de verdade
+- [x] Endereço dos blocos que não muda quando a lista oficial é corrigida, e link antigo continua abrindo
+- [x] Corrigir o identificador nos scripts de dados e conferir as regras de uso do OpenStreetMap
+- [x] Atualizar o `vite` (falha só no ambiente de desenvolvimento)
+- [x] Colocar o README em dia
 
 ## 13. Operação no carnaval
 
@@ -135,7 +139,7 @@ definitivo e páginas legais. Por isso, ela não sai antes da lista oficial de 2
 
 - [ ] Fico com o nome depois da pesquisa no INPI?
 - [x] Busca e favoritos entram na 1.0? Sim
-- [ ] Qual nome fica no lugar de "Em alta"?
+- [x] Qual nome fica no lugar de "Em alta"? "Principais lugares" (posso trocar)
 - [ ] Qual é o critério de blocos em 2027, inclusive na Leste e na Norte?
 - [ ] O app cobre só a capital? O README ainda diz "Grande SP"
 - [ ] Como vou ganhar dinheiro e o que preciso medir desde o primeiro dia?

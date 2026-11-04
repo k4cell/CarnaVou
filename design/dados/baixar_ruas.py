@@ -15,7 +15,7 @@ import urllib.parse
 import urllib.request
 
 SERVIDOR = "https://overpass-api.de/api/interpreter"
-QUEM_PEDE = {"User-Agent": "CarnaVou/0.11 (pesquisa de dados abertos)"}
+QUEM_PEDE = {"User-Agent": "CarnaVou (https://github.com/k4cell/CarnaVou)"}
 FOLGA = 0.01  # graus, ~1 km
 
 DISTRITOS = {
