@@ -1,3 +1,26 @@
+// A estrela e a seta ficam numa coluna à direita do cartão.
+:host {
+  position: relative;
+  display: block;
+}
+
+.banner {
+  position: relative;
+  padding-right: 52px;
+}
+
+.seta {
+  position: absolute;
+  right: 18px;
+  bottom: 6px;
+}
+
+app-botao-favorito {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+}
+
 .data {
   display: flex;
   flex: none;
@@ -34,6 +57,25 @@
 
 .horario {
   font-weight: 700;
+
+  // Fundo forte e texto escuro, para ler no sol.
+  &[data-selo] {
+    align-self: flex-start;
+    padding: 2px 8px;
+    border-radius: 6px;
+  }
+
+  &[data-selo='agora'] {
+    background: var(--verde);
+  }
+
+  &[data-selo='em-breve'] {
+    background: var(--amarelo);
+  }
+
+  &[data-selo='acabou'] {
+    background: var(--borda);
+  }
 }
 
 .lugar {

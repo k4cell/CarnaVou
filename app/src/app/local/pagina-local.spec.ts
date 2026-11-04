@@ -108,13 +108,14 @@ describe('PaginaLocal', () => {
       expect(nomes).toEqual(['Forrozin', 'Bicho Maluco Beleza, com Alceu Valença']);
     });
 
-    it('cada bloco do cartão continua com o dia, o horário e o link dele', async () => {
+    it('o dia aparece uma vez em cada cartão, e cada bloco continua com o horário e o link dele', async () => {
       const tela = await renderizar('ibirapuera');
       const primeiroDia = tela.querySelector('li.dia')!;
       const banners = Array.from(primeiroDia.querySelectorAll('app-banner-bloco'));
       expect(banners.length).toBeGreaterThan(1);
+      expect(primeiroDia.querySelectorAll('time').length).toBe(1);
+      expect(banners[0].querySelector('time')).not.toBeNull();
       for (const banner of banners) {
-        expect(banner.querySelector('time')).not.toBeNull();
         expect(banner.querySelector('.horario')?.textContent).toContain('Começa às');
         expect(banner.querySelector('a')?.getAttribute('href')).toMatch(/^\/local\/ibirapuera\//);
       }
@@ -161,7 +162,10 @@ describe('PaginaLocal', () => {
       geral.click();
       await fixture.whenStable();
       expect(TestBed.inject(FiltroDeDia).ativa()).toBe('geral');
-      expect(datas().length).toBe(BLOCOS.filter((b) => b.localId === 'ibirapuera' && b.data >= '2026-02-14').length);
+      expect(tela.querySelectorAll('app-banner-bloco').length).toBe(
+        BLOCOS.filter((b) => b.localId === 'ibirapuera' && b.data >= '2026-02-14').length,
+      );
+      expect(datas().length).toBeGreaterThan(0);
     });
 
     it('na Geral, os dias que já passaram somem', async () => {

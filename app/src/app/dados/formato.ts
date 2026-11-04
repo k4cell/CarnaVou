@@ -30,6 +30,19 @@ export const NOMES_DAS_ZONAS: Record<Zona, string> = {
   norte: 'Zona Norte',
 };
 
+/** Sem acento e em minúsculas, para comparar textos. */
+export function semAcento(texto: string): string {
+  return texto
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase();
+}
+
+/** O artista já está no nome do bloco ("Monobloco", "Bicho Maluco Beleza, com Alceu Valença")? */
+export function artistaEstaNoNome(bloco: Bloco, artista: string): boolean {
+  return semAcento(bloco.nome).includes(semAcento(artista));
+}
+
 /** Cria a data a partir de "AAAA-MM-DD" sem mudar de dia por causa do fuso horário. */
 function criarData(iso: string): Date {
   const [ano, mes, dia] = iso.split('-').map(Number);

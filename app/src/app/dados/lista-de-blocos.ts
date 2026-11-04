@@ -1,7 +1,7 @@
 import { Aba, diaIso, diaSeguinte, horaIso, jaAcabou } from './agenda';
 import { BLOCOS } from './blocos';
-import { famaDoBloco } from './consultas';
-import { dataPorExtenso } from './formato';
+import { acharLocal, famaDoBloco } from './consultas';
+import { dataPorExtenso, semAcento } from './formato';
 import { Bloco } from './tipos';
 
 /** Um pedaço da lista da aba Blocos: "Rolando agora", "Mais tarde hoje", um dia… */
@@ -11,7 +11,25 @@ export interface SecaoDeBlocos {
   grupos: Bloco[][];
 }
 
+/** Com até tantos blocos em Hoje, a lista mostra também o próximo dia. */
+const POUCOS_BLOCOS_HOJE = 3;
+
 const quando = (bloco: Bloco) => bloco.data + bloco.inicio;
+
+/**
+ * O bloco combina com a busca? Cada palavra precisa aparecer no nome do bloco, nos artistas ou no
+ * nome do lugar, sem ligar para acento nem para maiúsculas.
+ */
+export function blocoCombinaComABusca(bloco: Bloco, busca: string): boolean {
+  const palavras = semAcento(busca).split(/\s+/).filter(Boolean);
+  if (palavras.length === 0) {
+    return true;
+  }
+  const onde = semAcento(
+    [bloco.nome, ...bloco.atracoes.map((atracao) => atracao.nome), acharLocal(bloco.localId)?.nome ?? ''].join(' '),
+  );
+  return palavras.every((palavra) => onde.includes(palavra));
+}
 
 /** Os mais famosos primeiro; quem não tem artista conhecido vem depois, por horário. */
 function porFama(blocos: Bloco[]): Bloco[] {
@@ -58,22 +76,45 @@ function porDia(blocos: Bloco[]): SecaoDeBlocos[] {
   });
 }
 
+/** O próximo dia com bloco depois de hoje, com o título dizendo que dia é. */
+function proximoDia(blocos: Bloco[], hoje: string, amanha: string): SecaoDeBlocos[] {
+  const dias = blocos.map((bloco) => bloco.data).filter((data) => data > hoje);
+  if (dias.length === 0) {
+    return [];
+  }
+  const dia = dias.reduce((menor, data) => (data < menor ? data : menor));
+  const doDia = blocos.filter((bloco) => bloco.data === dia);
+  return [
+    {
+      titulo: `${dia === amanha ? 'Amanhã' : 'Próximo dia'}: ${dataPorExtenso(dia)}`,
+      grupos: juntarPorLugar(porFama(doDia), new Set(doDia)),
+    },
+  ];
+}
+
 /**
  * A lista da aba Blocos. O foco é o presente e o futuro: o que já acabou não aparece.
- * - Hoje: "Rolando agora" (os mais famosos primeiro) e "Mais tarde hoje" (por horário).
+ * - Hoje: "Rolando agora" (os mais famosos primeiro) e "Mais tarde hoje" (por horário). Quando hoje
+ *   tem pouco bloco, vem também o próximo dia com bloco, para a lista não ficar quase vazia.
  * - Amanhã: os blocos de amanhã, os mais famosos primeiro.
  * - Geral: de hoje em diante, um pedaço por dia.
  * Os blocos do mesmo dia no mesmo lugar ficam juntos, num grupo só (veja `juntarPorLugar`): o que
  * começa mais tarde no lugar de um bloco que está rolando aparece junto com ele.
  * Sem saber o dia de hoje (a página pronta), a Geral traz todos os blocos.
+ * `incluir` é a busca e os filtros da tela: só entra o bloco que passar por ele.
  */
-export function secoesDosBlocos(aba: Aba, agora: Date | null): SecaoDeBlocos[] {
+export function secoesDosBlocos(
+  aba: Aba,
+  agora: Date | null,
+  incluir: (bloco: Bloco) => boolean = () => true,
+): SecaoDeBlocos[] {
+  const blocos = BLOCOS.filter(incluir);
   if (agora === null) {
-    return aba === 'geral' ? porDia(BLOCOS) : [];
+    return aba === 'geral' ? porDia(blocos) : [];
   }
   const dia = diaIso(agora);
   const hora = horaIso(agora);
-  const deHoje = BLOCOS.filter((bloco) => bloco.data === dia && !jaAcabou(bloco, hora));
+  const deHoje = blocos.filter((bloco) => bloco.data === dia && !jaAcabou(bloco, hora));
 
   const secoes: SecaoDeBlocos[] = [];
   if (aba === 'hoje') {
@@ -82,12 +123,15 @@ export function secoesDosBlocos(aba: Aba, agora: Date | null): SecaoDeBlocos[] {
     const maisTarde = deHoje.filter((bloco) => bloco.inicio > hora);
     secoes.push({ titulo: 'Rolando agora', grupos: juntarPorLugar(porFama(rolando), restantes) });
     secoes.push({ titulo: 'Mais tarde hoje', grupos: juntarPorLugar(porHorario(maisTarde), restantes) });
+    if (deHoje.length <= POUCOS_BLOCOS_HOJE) {
+      secoes.push(...proximoDia(blocos, dia, diaIso(diaSeguinte(agora))));
+    }
   } else if (aba === 'amanha') {
     const amanha = diaIso(diaSeguinte(agora));
-    const deAmanha = BLOCOS.filter((bloco) => bloco.data === amanha);
+    const deAmanha = blocos.filter((bloco) => bloco.data === amanha);
     secoes.push({ titulo: 'Amanhã', grupos: juntarPorLugar(porFama(deAmanha), new Set(deAmanha)) });
   } else {
-    secoes.push(...porDia([...deHoje, ...BLOCOS.filter((bloco) => bloco.data > dia)]));
+    secoes.push(...porDia([...deHoje, ...blocos.filter((bloco) => bloco.data > dia)]));
   }
   return secoes.filter((secao) => secao.grupos.length > 0);
 }

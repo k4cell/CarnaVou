@@ -16,7 +16,7 @@ import { AbasDoDia } from '../abas/abas-do-dia';
 import { momentoDoBloco } from '../dados/agenda';
 import { concentracoesDaAba } from '../dados/concentracoes';
 import { artistasPorFama } from '../dados/consultas';
-import { formatarHora, partesDaData, textoDoHorario } from '../dados/formato';
+import { artistaEstaNoNome, formatarHora, partesDaData, textoDoHorario } from '../dados/formato';
 import { itinerarioDoBloco } from '../dados/itinerario';
 import { Bloco } from '../dados/tipos';
 import { FiltroDeDia } from '../filtro/filtro-de-dia';
@@ -154,7 +154,9 @@ export class PaginaMapa {
     const linha = (bloco: Bloco) => {
       const { semana, dia, mes } = partesDaData(bloco.data);
       const noDia = aba === 'geral' ? `${semana} ${dia} ${mes} · ` : '';
-      const artistas = artistasPorFama([bloco]).join(', ');
+      const artistas = artistasPorFama([bloco])
+        .filter((nome) => !artistaEstaNoNome(bloco, nome))
+        .join(', ');
       return {
         id: bloco.id,
         nome: bloco.nome,

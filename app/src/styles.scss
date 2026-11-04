@@ -179,6 +179,20 @@ a:focus-visible {
   }
 }
 
+// A tela de abertura, enquanto o app carrega. Ela só existe na casca do app (index.csr.html), que é o
+// que o celular abre quando volta: as páginas prontas já chegam com o conteúdo.
+.abertura {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: center;
+  justify-content: center;
+  background: var(--noite);
+}
+
 // O aviso que flutua logo acima do menu de baixo (versão nova, tela que não abriu).
 .aviso-flutuante {
   position: fixed;

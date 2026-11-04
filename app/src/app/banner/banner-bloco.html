@@ -1,16 +1,21 @@
 <a class="cartao banner" [attr.data-faixa]="faixa()" [routerLink]="['/local', bloco().localId, bloco().id]">
-  <time class="data" [attr.datetime]="bloco().data">
-    <span class="semana">{{ data().semana }}</span>
-    <span class="dia">{{ data().dia }}</span>
-    <span class="mes">{{ data().mes }}</span>
-  </time>
+  @if (mostrarData()) {
+    <time class="data" [attr.datetime]="bloco().data">
+      <span class="semana">{{ data().semana }}</span>
+      <span class="dia">{{ data().dia }}</span>
+      <span class="mes">{{ data().mes }}</span>
+    </time>
+  } @else {
+    <!-- O dia já está na linha de cima: o espaço fica, para os nomes continuarem alinhados. -->
+    <span class="data" aria-hidden="true"></span>
+  }
 
   <span class="info">
     <strong class="nome">{{ bloco().nome }}</strong>
     @if (atracoes()) {
       <span class="atracoes">{{ atracoes() }}</span>
     }
-    <span class="horario">{{ horario() }}</span>
+    <span class="horario" [attr.data-selo]="selo()">{{ horario() }}</span>
     @if (lugar(); as onde) {
       <span class="lugar">{{ onde }}</span>
     }
@@ -18,3 +23,5 @@
 
   <span class="seta" aria-hidden="true">›</span>
 </a>
+<!-- Fora do link: tocar na estrela marca o bloco, sem abrir a página dele. -->
+<app-botao-favorito [bloco]="bloco()" />

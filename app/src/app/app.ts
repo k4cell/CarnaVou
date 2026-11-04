@@ -6,8 +6,10 @@ import { filter, map } from 'rxjs';
 
 import { Atualizacao } from './atualizacao/atualizacao';
 import { AvisoDeAtualizacao } from './atualizacao/aviso-de-atualizacao';
+import { AvisoDePronto, ProntoSemInternet } from './atualizacao/aviso-de-pronto';
 import { AvisoDeTeste } from './aviso-de-teste/aviso-de-teste';
 import { Conexao } from './conexao/conexao';
+import { Favoritos } from './favoritos/favoritos';
 import { MenuInferior } from './menu/menu-inferior';
 import { AvisoDeNavegacao } from './navegacao/aviso-de-navegacao';
 import { Relogio } from './relogio/relogio';
@@ -16,7 +18,7 @@ import { Trilha } from './voltar/trilha';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, RouterLink, MenuInferior, AvisoDeTeste, AvisoDeAtualizacao, AvisoDeNavegacao],
+  imports: [RouterOutlet, RouterLink, MenuInferior, AvisoDeTeste, AvisoDeAtualizacao, AvisoDeNavegacao, AvisoDePronto],
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })
@@ -57,12 +59,16 @@ export class App {
   constructor() {
     const relogio = inject(Relogio);
     const atualizacao = inject(Atualizacao);
+    const favoritos = inject(Favoritos);
+    const pronto = inject(ProntoSemInternet);
     // Só no navegador, depois da primeira pintura: assim a página pronta que vem do servidor
     // (que não sabe o dia de hoje nem se há internet) e a primeira pintura do navegador saem iguais.
     afterNextRender(() => {
       relogio.iniciar(window.location.search);
       this.conexao.iniciar();
       atualizacao.iniciar();
+      favoritos.iniciar();
+      pronto.iniciar();
     });
   }
 }

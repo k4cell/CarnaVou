@@ -35,8 +35,8 @@
   <ul class="lista">
     @for (dia of dias(); track dia.data) {
       <li class="dia" [attr.aria-label]="dia.nome">
-        @for (bloco of dia.blocos; track bloco.id) {
-          <app-banner-bloco [bloco]="bloco" />
+        @for (bloco of dia.blocos; track bloco.id; let primeiro = $first) {
+          <app-banner-bloco [bloco]="bloco" [mostrarData]="primeiro" />
         }
       </li>
     }

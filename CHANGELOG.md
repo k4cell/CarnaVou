@@ -7,6 +7,18 @@ Enquanto o app está em beta, o número é `0.MEIO.FINAL`. O número do meio sob
 uma tela ou funcionalidade nova (0.3.0, 0.4.0…) e o último, quando é só uma correção pequena
 (0.3.1). Cada versão tem uma etiqueta no GitHub, como `v0.3.0`.
 
+## 0.22.0 (04/11/2026)
+
+- Na aba Blocos: busca por bloco, artista ou lugar, filtro por lugar e botão de favoritos. O título
+  "Blocos" saiu da tela, para sobrar espaço.
+- Estrela em cada bloco: os favoritos ficam só no aparelho, sem conta.
+- Cartão mais limpo: a data aparece só no primeiro bloco de cada cartão, e o artista que já está no
+  nome do bloco não se repete.
+- O horário tem cor: verde já começou, amarelo ainda vai começar hoje e cinza já acabou.
+- Quando hoje tem até 3 blocos, a lista mostra também o próximo dia.
+- Aviso, uma vez em cada aparelho, de que a lista já abre sem internet.
+- Tela de abertura com a logo enquanto o app carrega.
+
 ## 0.21.0 (04/11/2026)
 
 - A página nova abre no topo, e voltar devolve a lista no mesmo ponto.

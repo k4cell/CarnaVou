@@ -31,8 +31,9 @@ calendário e o que eu ainda não pensei.
 - Já pode programar. A tela principal é a aba **Blocos** (o que está rolando agora e o que vem,
   com o filtro Hoje / Amanhã / Geral). O Descobrir é uma **árvore de opções**: Em alta (os
   lugares), um lugar (os dias de festa e os principais artistas) e um bloco (a lista detalhada de
-  atrações). Embaixo fica o menu fixo: Blocos, Descobrir, After e Mapa. As abas Amigos e
-  Favoritos saíram até eu decidir o que serão: não crie páginas vazias. Os dados de teste são o carnaval
+  atrações). Embaixo fica o menu fixo: Blocos, Descobrir, After e Mapa. A aba Amigos saiu até eu
+  decidir o que ela será: não crie páginas vazias. Os favoritos são a estrela de cada bloco, com um
+  botão na aba Blocos, sem aba própria. Os dados de teste são o carnaval
   de rua de 2026 **de verdade, com nomes reais** (ver `docs/dados-carnaval-2026.md`). Fica de fora, por enquanto, o "Vou", o "Tô aqui" e o "Como tá?".
 - O visual tem só a **primeira camada de cor**. A paleta fica em variáveis no topo de
   `app/src/styles.scss`: use sempre essas variáveis, nunca uma cor solta. Fundo claro (pra
@@ -78,7 +79,9 @@ calendário e o que eu ainda não pensei.
   de 300 m, calculado pelo `gerar_dados.py`) ficam num cartão só, um embaixo do outro, para quem está
   ali ver que o próximo é no mesmo lugar. A seta de voltar e o menu seguem a `Trilha`
   (`voltar/trilha.ts`): a seta volta para a tela de onde eu vim e, para quem chegou por um link,
-  sobe pela árvore (bloco, lugar, Em alta).
+  sobe pela árvore (bloco, lugar, Em alta). A busca e os filtros da aba Blocos ficam em
+  `lista-de-blocos/filtros-da-lista.ts`, para continuarem valendo quando abro um bloco e volto. Os
+  favoritos (`favoritos/`) ficam só no aparelho, no `localStorage`.
 - As páginas prontas não sabem o dia de hoje. O que depende da data (as abas Hoje e Amanhã
   e os selos) é calculado no navegador, depois da primeira pintura, pelo serviço em
   `relogio/`. Pra testar, abra o site com `?hoje=2027-02-06T14:00` no endereço: aí "hoje" fica

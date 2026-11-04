@@ -1,6 +1,6 @@
 import { BLOCOS } from './blocos';
 import { famaDoBloco } from './consultas';
-import { blocosDaNoite, eDaNoite, secoesDosBlocos } from './lista-de-blocos';
+import { blocoCombinaComABusca, blocosDaNoite, eDaNoite, secoesDosBlocos } from './lista-de-blocos';
 import { Bloco } from './tipos';
 
 // Sábado de carnaval de 2026, duas da tarde.
@@ -59,8 +59,27 @@ describe('secoesDosBlocos (a aba Blocos)', () => {
       expect(new Set(lista).size).toBe(lista.length);
     });
 
-    it('fica vazia num dia sem bloco', () => {
-      expect(secoesDosBlocos('hoje', new Date(2026, 0, 30, 12, 0))).toEqual([]);
+    it('num dia sem bloco, mostra o próximo dia com bloco', () => {
+      const [proximo, ...resto] = secoesDosBlocos('hoje', new Date(2026, 0, 30, 12, 0));
+      expect(proximo.titulo).toBe('Próximo dia: Sábado, 7 de fevereiro');
+      expect(resto).toEqual([]);
+    });
+
+    it('com pouco bloco hoje, mostra também o dia seguinte', () => {
+      // Sexta, 13/02: só o Ilú Obá De Min, às 19h. Amanhã é o sábado de carnaval.
+      const secoes = secoesDosBlocos('hoje', new Date(2026, 1, 13, 12, 0));
+      expect(secoes.map((secao) => secao.titulo)).toEqual(['Mais tarde hoje', 'Amanhã: Sábado, 14 de fevereiro']);
+      expect(secoes[0].grupos.flat().length).toBe(1);
+      expect(secoes[1].grupos.flat().every((bloco) => bloco.data === '2026-02-14')).toBe(true);
+    });
+
+    it('com bastante bloco hoje, não mostra o dia seguinte', () => {
+      const secoes = secoesDosBlocos('hoje', new Date(2026, 1, 7, 10, 0));
+      expect(secoes.every((secao) => !secao.titulo.startsWith('Amanhã'))).toBe(true);
+    });
+
+    it('depois do último bloco do carnaval, fica vazia', () => {
+      expect(secoesDosBlocos('hoje', new Date(2026, 2, 1, 12, 0))).toEqual([]);
     });
   });
 
@@ -99,6 +118,32 @@ describe('secoesDosBlocos (a aba Blocos)', () => {
   it('sem saber o dia de hoje (a página pronta), a Geral traz todos os blocos', () => {
     expect(todos('geral', null).length).toBe(BLOCOS.length);
     expect(secoesDosBlocos('hoje', null)).toEqual([]);
+  });
+});
+
+describe('a busca e os filtros da aba Blocos', () => {
+  const bloco = (id: string) => BLOCOS.find((candidato) => candidato.id === id)!;
+
+  it('sem nada escrito, todo bloco combina', () => {
+    expect(blocoCombinaComABusca(bloco('forrozin'), '   ')).toBe(true);
+  });
+
+  it('acha pelo nome do bloco, pelo artista e pelo lugar, sem ligar para acento nem maiúscula', () => {
+    expect(blocoCombinaComABusca(bloco('forrozin'), 'FORROZIN')).toBe(true);
+    expect(blocoCombinaComABusca(bloco('forrozin'), 'mariana aydar')).toBe(true);
+    expect(blocoCombinaComABusca(bloco('forrozin'), 'ibirapuera')).toBe(true);
+    expect(blocoCombinaComABusca(bloco('bloco-skol'), 'ze vaqueiro')).toBe(true);
+    expect(blocoCombinaComABusca(bloco('forrozin'), 'consolação')).toBe(false);
+  });
+
+  it('todas as palavras precisam aparecer, em qualquer ordem', () => {
+    expect(blocoCombinaComABusca(bloco('forrozin'), 'ibirapuera aydar')).toBe(true);
+    expect(blocoCombinaComABusca(bloco('forrozin'), 'ibirapuera anitta')).toBe(false);
+  });
+
+  it('a lista só traz o que passa pelo filtro, e junta só entre eles', () => {
+    const [geral] = secoesDosBlocos('geral', new Date(2026, 1, 7, 12, 0), (candidato) => candidato.id === 'forrozin');
+    expect(geral.grupos.map((grupo) => grupo.map((candidato) => candidato.id))).toEqual([['forrozin']]);
   });
 });
 

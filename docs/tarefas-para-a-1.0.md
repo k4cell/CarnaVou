@@ -82,17 +82,17 @@ definitivo e páginas legais. Por isso, ela não sai antes da lista oficial de 2
 - [ ] Leitor de tela: TalkBack e VoiceOver
 - [ ] Teste automático em navegador real antes de publicar
 
-## 9. Melhorias no app
+## 9. O que melhorar
 
-- [ ] Busca por artista ou bloco
-- [ ] Favoritos no aparelho
-- [ ] Filtro por bairro
-- [ ] Tirar a data repetida em cada linha do mesmo cartão
-- [ ] Tirar o artista repetido no nome do bloco
-- [ ] Mostrar em cada linha do cartão se o bloco já começou
-- [ ] Mostrar o dia seguinte quando "Hoje" tiver pouco bloco
-- [ ] Avisar "pronto para usar sem internet"
-- [ ] Tela de abertura no lugar da tela vazia
+- [x] Busca por artista, bloco ou lugar
+- [x] Favoritos no aparelho
+- [x] Filtro por lugar, junto por zona (os dados têm o lugar, e não o bairro de cada bloco)
+- [x] Tirar a data repetida em cada linha do mesmo cartão
+- [x] Tirar o artista repetido no nome do bloco
+- [x] Mostrar em cada linha do cartão se o bloco já começou
+- [x] Mostrar o próximo dia quando "Hoje" tiver pouco bloco
+- [x] Avisar "pronto para usar sem internet"
+- [x] Tela de abertura no lugar da tela vazia
 
 ## 10. Divulgação
 
@@ -134,7 +134,7 @@ definitivo e páginas legais. Por isso, ela não sai antes da lista oficial de 2
 ## 14. Decisões minhas
 
 - [ ] Fico com o nome depois da pesquisa no INPI?
-- [ ] Busca e favoritos entram na 1.0?
+- [x] Busca e favoritos entram na 1.0? Sim
 - [ ] Qual nome fica no lugar de "Em alta"?
 - [ ] Qual é o critério de blocos em 2027, inclusive na Leste e na Norte?
 - [ ] O app cobre só a capital? O README ainda diz "Grande SP"
