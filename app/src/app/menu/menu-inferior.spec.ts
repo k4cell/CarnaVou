@@ -79,10 +79,28 @@ describe('MenuInferior', () => {
     expect(abaAtual(fixture.nativeElement)).toBe('Mapa');
   });
 
-  it('continua marcando o Descobrir dentro de um lugar', async () => {
+  it('marca o Descobrir num lugar aberto direto por um link', async () => {
     const fixture = await montar();
     await TestBed.inject(Router).navigateByUrl('/local/consolacao');
     await fixture.whenStable();
     expect(abaAtual(fixture.nativeElement)).toBe('Descobrir');
+  });
+
+  it('continua marcando a aba Blocos no bloco aberto por ela', async () => {
+    const fixture = await montar();
+    const router = TestBed.inject(Router);
+    await router.navigateByUrl('/');
+    await router.navigateByUrl('/local/consolacao/bloco-skol');
+    await fixture.whenStable();
+    expect(abaAtual(fixture.nativeElement)).toBe('Blocos');
+  });
+
+  it('continua marcando o Mapa no lugar aberto por ele', async () => {
+    const fixture = await montar();
+    const router = TestBed.inject(Router);
+    await router.navigateByUrl('/mapa?bloco=bloco-skol');
+    await router.navigateByUrl('/local/consolacao');
+    await fixture.whenStable();
+    expect(abaAtual(fixture.nativeElement)).toBe('Mapa');
   });
 });

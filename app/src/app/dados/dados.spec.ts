@@ -1,4 +1,3 @@
-import { estaNaGrandeSP } from '../mapa/limites';
 import { BLOCOS } from './blocos';
 import { acharLocal, artistasDoLugar, blocosDoLocal, faixaDoLocal, famaDoBloco } from './consultas';
 import { itinerarioDoBloco } from './itinerario';
@@ -8,14 +7,10 @@ import { lerLinha, trajetoDoBloco } from './trajetos';
 /** As sete cores das faixas, do rosa ao azul. Com mais de sete lugares, elas recomeçam. */
 const SETE_CORES = ['rosa', 'amarelo', 'verde', 'laranja', 'roxo', 'vermelho', 'azul'];
 
+// Aqui, as regras e os dados conhecidos de 2026 (a cópia congelada). Quem confere os dados que vão
+// para o ar é o dados-reais.spec.ts.
 describe('dados', () => {
   describe('os lugares', () => {
-    it('não repetem o id', () => {
-      const ids = LOCAIS.map((local) => local.id);
-      expect(ids.length).toBeGreaterThan(3);
-      expect(new Set(ids).size).toBe(ids.length);
-    });
-
     it('cobrem as cinco zonas da cidade', () => {
       expect(new Set(LOCAIS.map((local) => local.zona))).toEqual(new Set(['centro', 'sul', 'oeste', 'leste', 'norte']));
     });
@@ -33,19 +28,9 @@ describe('dados', () => {
       expect(LOCAIS[0].id).toBe('ibirapuera');
     });
 
-    it('todo lugar tem pelo menos um bloco', () => {
-      const comBloco = new Set(BLOCOS.map((bloco) => bloco.localId));
-      expect(LOCAIS.every((local) => comBloco.has(local.id))).toBe(true);
-    });
   });
 
   describe('os blocos', () => {
-    it('vêm da lista oficial, sem repetir o id', () => {
-      const ids = BLOCOS.map((bloco) => bloco.id);
-      expect(ids.length).toBeGreaterThan(50);
-      expect(new Set(ids).size).toBe(ids.length);
-    });
-
     it('só ficam os que têm atração, desfilam num circuito de megabloco ou são destaque na Leste ou na Norte', () => {
       const circuito = /Pedro [ÁA]lvares Cabral|Consola[çc][ãa]o, 2101|Faria Lima, 4100|^Av\.? Ipiranga|Pça\.? ?da Rep[úu]blica|Av\. S[ãa]o Jo[ãa]o|Paulo VI|Henrique Schaumann/i;
       for (const bloco of BLOCOS) {
@@ -57,35 +42,8 @@ describe('dados', () => {
       }
     });
 
-    it('todo bloco aponta para um lugar que existe', () => {
-      const ids = new Set(LOCAIS.map((local) => local.id));
-      expect(BLOCOS.every((bloco) => ids.has(bloco.localId))).toBe(true);
-    });
-
     it('ficam entre o pré-carnaval e o pós-carnaval de 2026', () => {
       expect(BLOCOS.every((bloco) => bloco.data >= '2026-02-06' && bloco.data <= '2026-02-22')).toBe(true);
-    });
-
-    it('escreve toda hora no formato HH:mm', () => {
-      const formato = /^\d{2}:\d{2}$/;
-      const horas = BLOCOS.flatMap((bloco) => [
-        bloco.inicio,
-        ...(bloco.desfile ? [bloco.desfile] : []),
-        ...(bloco.fim ? [bloco.fim] : []),
-        ...bloco.atracoes.flatMap((atracao) => (atracao.inicio ? [atracao.inicio] : [])),
-      ]);
-      expect(horas.every((hora) => formato.test(hora))).toBe(true);
-    });
-
-    it('concentra, desfila e termina nessa ordem (ou termina à meia-noite)', () => {
-      for (const bloco of BLOCOS) {
-        expect(bloco.desfile! >= bloco.inicio, bloco.id).toBe(true);
-        expect(bloco.fim! > bloco.desfile! || bloco.fim === '00:00', bloco.id).toBe(true);
-      }
-    });
-
-    it('todo bloco tem o itinerário oficial em texto', () => {
-      expect(BLOCOS.every((bloco) => (itinerarioDoBloco(bloco.id) ?? '').length > 2)).toBe(true);
     });
 
     it('só marca artistas e estilo em alguns blocos, quando as notícias dizem', () => {
@@ -98,29 +56,6 @@ describe('dados', () => {
 
   describe('os pontos e as linhas', () => {
     const comPonto = BLOCOS.filter((bloco) => trajetoDoBloco(bloco.id));
-
-    it('põem a grande maioria dos blocos no mapa', () => {
-      expect(comPonto.length / BLOCOS.length).toBeGreaterThan(0.8);
-    });
-
-    it('ficam todos na Grande São Paulo', () => {
-      for (const bloco of comPonto) {
-        const trajeto = trajetoDoBloco(bloco.id)!;
-        for (const [lng, lat] of [trajeto.inicio, ...(trajeto.linha ?? [])]) {
-          expect(estaNaGrandeSP(lat, lng), bloco.id).toBe(true);
-        }
-      }
-    });
-
-    it('começam a linha no ponto da concentração', () => {
-      for (const bloco of comPonto) {
-        const { inicio, linha } = trajetoDoBloco(bloco.id)!;
-        if (linha) {
-          expect(linha[0], bloco.id).toEqual(inicio);
-          expect(linha.length, bloco.id).toBeGreaterThanOrEqual(2);
-        }
-      }
-    });
 
     it('têm blocos que andam (com linha) e blocos parados (só o ponto)', () => {
       expect(comPonto.some((bloco) => trajetoDoBloco(bloco.id)!.linha)).toBe(true);

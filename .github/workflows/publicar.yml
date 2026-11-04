@@ -38,6 +38,10 @@ jobs:
       - name: Testes
         run: npx ng test --no-watch
 
+      # Os testes acima usam a cópia congelada de 2026; este confere os dados que vão para o ar.
+      - name: Conferir os dados que vão para o ar
+        run: npx ng test --no-watch --configuration dados-reais
+
       # O site mora em /CarnaVou/ (veja a configuração github-pages no angular.json).
       - name: Montar o site
         run: npx ng build --configuration production,github-pages

@@ -1,6 +1,8 @@
 // Paleta do CarnaVou. Para trocar uma cor, troque aqui e só aqui.
 // As cores da logo (noite, amarelo, rosa e laranja) vêm da imagem da logo.
 :root {
+  // Só o tema claro, para ler no sol: o modo escuro forçado de alguns celulares não mexe nas cores.
+  color-scheme: only light;
   // Fundo da logo. Usado no cabeçalho e na moldura de fora da página.
   --noite: #130a29;
   // Títulos e o dia do banner.
@@ -174,6 +176,46 @@ a:focus-visible {
   app-banner-bloco:last-child .cartao {
     border-bottom-left-radius: 8px;
     border-bottom-right-radius: 8px;
+  }
+}
+
+// O aviso que flutua logo acima do menu de baixo (versão nova, tela que não abriu).
+.aviso-flutuante {
+  position: fixed;
+  right: 12px;
+  bottom: calc(var(--altura-menu) + 12px);
+  left: 12px;
+  z-index: 30;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 8px 8px 8px 16px;
+  border-radius: 12px;
+  background: var(--noite);
+  box-shadow: 0 2px 12px rgb(0 0 0 / 30%);
+  color: #fff;
+  font-weight: 600;
+
+  // Amarelo só como fundo, com texto escuro.
+  button {
+    flex: none;
+    min-height: 44px;
+    padding: 0 16px;
+    border: 0;
+    border-radius: 999px;
+    background: var(--amarelo);
+    color: var(--texto);
+    font: inherit;
+    font-weight: 800;
+    cursor: pointer;
+
+    &:focus-visible {
+      outline: 3px solid #fff;
+      outline-offset: 2px;
+    }
   }
 }
 

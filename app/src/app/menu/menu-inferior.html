@@ -4,8 +4,8 @@
       <a
         class="item"
         routerLink="/"
-        [class.ativo]="blocosAtivo()"
-        [attr.aria-current]="blocosAtivo() ? 'page' : null"
+        [class.ativo]="ativo('/')"
+        [attr.aria-current]="ativo('/') ? 'page' : null"
       >
         <svg viewBox="0 0 24 24" aria-hidden="true">
           <path d="M9 18V6l11-2v12" />
@@ -19,8 +19,8 @@
       <a
         class="item"
         routerLink="/descobrir"
-        [class.ativo]="descobrirAtivo()"
-        [attr.aria-current]="descobrirAtivo() ? 'page' : null"
+        [class.ativo]="ativo('/descobrir')"
+        [attr.aria-current]="ativo('/descobrir') ? 'page' : null"
       >
         <svg viewBox="0 0 24 24" aria-hidden="true">
           <circle cx="12" cy="12" r="9" />

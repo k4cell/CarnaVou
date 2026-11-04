@@ -155,5 +155,7 @@ o visual.
   scripts que geram os dados do app a partir da lista oficial.
 - [`CHANGELOG.md`](CHANGELOG.md): o que mudou em cada versão.
 - [`CLAUDE.md`](CLAUDE.md): minhas regras de trabalho para o Claude Code neste projeto.
+- [`docs/tarefas-para-a-1.0.md`](docs/tarefas-para-a-1.0.md): a lista de tudo o que falta para a
+  versão 1.0.0, com o que já está pronto marcado.
 - [`docs/ideias-em-aberto.md`](docs/ideias-em-aberto.md): ideias que surgiram e que eu
   **ainda não aprovei**.

@@ -107,7 +107,15 @@
         "test": {
           "builder": "@angular/build:unit-test",
           "options": {
-            "buildTarget": "::development,testes"
+            "buildTarget": "::development,testes",
+            "exclude": ["**/dados-reais.spec.ts"]
+          },
+          "configurations": {
+            "dados-reais": {
+              "buildTarget": "::development",
+              "include": ["**/dados-reais.spec.ts"],
+              "exclude": []
+            }
           }
         }
       }

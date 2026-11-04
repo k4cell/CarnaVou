@@ -19,11 +19,6 @@ export interface Local {
   id: string;
   nome: string;
   zona: Zona;
-  /**
-   * É um circuito de megabloco (como o Parque Ibirapuera): os blocos saem todos do mesmo ponto, um
-   * depois do outro. Os outros lugares são uma subprefeitura inteira, com blocos em ruas diferentes.
-   */
-  circuito?: boolean;
 }
 
 export interface Atracao {
@@ -46,6 +41,11 @@ export interface Bloco {
   /** Hora do término, no formato HH:mm. Só quando a gente souber. */
   fim?: string;
   localId: string;
+  /**
+   * De qual ponto de saída do lugar o bloco sai. Blocos do mesmo lugar com o mesmo número saem
+   * juntos (a menos de 300 m). Não existe quando a gente não sabe onde o bloco se concentra.
+   */
+  ponto?: number;
   /** Os artistas que as fontes citam. Pode ficar vazio. */
   atracoes: Atracao[];
   /** Só quando alguma fonte diz o estilo. */

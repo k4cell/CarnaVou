@@ -7,6 +7,19 @@ Enquanto o app está em beta, o número é `0.MEIO.FINAL`. O número do meio sob
 uma tela ou funcionalidade nova (0.3.0, 0.4.0…) e o último, quando é só uma correção pequena
 (0.3.1). Cada versão tem uma etiqueta no GitHub, como `v0.3.0`.
 
+## 0.21.0 (04/11/2026)
+
+- A página nova abre no topo, e voltar devolve a lista no mesmo ponto.
+- As telas são baixadas com antecedência. Se uma demorar aparece "Carregando", e se não abrir aparece
+  um aviso com o botão "Tentar de novo".
+- A seta de voltar e o menu seguem de onde a pessoa veio: um bloco aberto pela aba Blocos continua
+  nela, e a seta volta para ela.
+- Na aba Blocos, o cartão junta os blocos do mesmo dia que saem do mesmo ponto (até 300 m), e não mais
+  o circuito inteiro. A República deixou de ter um cartão com 11 blocos: agora são no máximo 4.
+- O cabeçalho avisa "Internet fraca" quando tem sinal, mas os dados não passam.
+- A publicação confere os dados que vão para o ar.
+- Só o tema claro, mesmo com o modo escuro forçado de alguns celulares, e ícone certo para o Android.
+
 ## 0.20.2 (30/10/2026)
 
 - A data de teste do app passa a ser sexta, 13/02/2026, meio-dia (a véspera do sábado de

@@ -3,11 +3,10 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterLink } from '@angular/router';
 import { filter, map } from 'rxjs';
 
-/**
- * As abas que têm endereço próprio. Os lugares e os blocos (/local/…) são galhos do Descobrir. Tudo
- * que não for delas é a aba Blocos, a tela principal.
- */
-const OUTRAS_ABAS = ['/descobrir', '/local', '/after', '/mapa'];
+import { Trilha, soOCaminho } from '../voltar/trilha';
+
+/** Abrir um lugar ou um bloco por um link compartilhado cai na árvore do Descobrir. */
+const ABA_DE_QUEM_VEIO_DE_FORA = '/descobrir';
 
 @Component({
   selector: 'app-menu-inferior',
@@ -18,6 +17,7 @@ const OUTRAS_ABAS = ['/descobrir', '/local', '/after', '/mapa'];
 })
 export class MenuInferior {
   private readonly router = inject(Router);
+  private readonly trilha = inject(Trilha);
 
   private readonly endereco = toSignal(
     this.router.events.pipe(
@@ -27,13 +27,13 @@ export class MenuInferior {
     { initialValue: this.router.url },
   );
 
-  protected readonly blocosAtivo = computed(
-    () => !OUTRAS_ABAS.some((aba) => this.endereco().startsWith(aba)),
-  );
-
-  protected readonly descobrirAtivo = computed(() => this.ativo('/descobrir') || this.ativo('/local'));
+  /** A aba marcada: dentro de um lugar ou de um bloco, continua sendo a aba de onde a pessoa saiu. */
+  private readonly abaAtual = computed(() => {
+    const caminho = soOCaminho(this.endereco());
+    return caminho.startsWith('/local') ? (this.trilha.ultimaAba() ?? ABA_DE_QUEM_VEIO_DE_FORA) : caminho;
+  });
 
   protected ativo(aba: string): boolean {
-    return this.endereco().startsWith(aba);
+    return this.abaAtual() === aba;
   }
 }

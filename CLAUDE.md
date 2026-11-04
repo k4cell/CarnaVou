@@ -14,6 +14,8 @@ calendário e o que eu ainda não pensei.
   "concordo / não concordo" depois que eu decidi.
 - Às vezes eu dito por voz e saem palavras trocadas. Entenda pelo sentido e, se ficar
   ambíguo, pergunte.
+- A lista do que falta para a 1.0.0 fica em [`docs/tarefas-para-a-1.0.md`](docs/tarefas-para-a-1.0.md):
+  marque o que ficar pronto, no mesmo commit, e me mostre as tarefas em forma de lista.
 - Use o [`docs/planejamento-do-mapa.md`](docs/planejamento-do-mapa.md) para me dizer, a cada
   passo, **o que foi feito, o que falta e quais são os próximos passos**. Mantenha a seção
   "Andamento" dele em dia.
@@ -61,6 +63,7 @@ calendário e o que eu ainda não pensei.
 - Comandos, rodando dentro de `app/`:
   - `ng serve`: abre o site em `http://localhost:4200`;
   - `ng test --no-watch`: roda os testes;
+  - `ng test --no-watch --configuration dados-reais`: confere os dados que vão para o ar;
   - `ng build`: gera a versão de produção.
 - **Tem que ser leve.** O povo vai usar no celular fraco, com internet ruim no meio da
   multidão. Sem fontes da internet nem bibliotecas pesadas, e o que não for da primeira
@@ -71,9 +74,11 @@ calendário e o que eu ainda não pensei.
   o Descobrir, o mapa e a página do lugar: o estado fica em `filtro/` e os botões em `abas/`.
   Os endereços são `/` (a aba Blocos), `/descobrir`, `/local/:local`, `/local/:local/:bloco`,
   `/after` e `/mapa` (o antigo `/blocos` leva para `/`), e cada um vira uma página pronta no
-  `ng build`. Na aba Blocos, os blocos do mesmo dia no mesmo circuito de megabloco
-  (`Local.circuito`) ficam num cartão só, um embaixo do outro, para quem está ali ver que o
-  próximo é no mesmo lugar.
+  `ng build`. Na aba Blocos, os blocos do mesmo dia que saem do mesmo ponto (`Bloco.ponto`, a menos
+  de 300 m, calculado pelo `gerar_dados.py`) ficam num cartão só, um embaixo do outro, para quem está
+  ali ver que o próximo é no mesmo lugar. A seta de voltar e o menu seguem a `Trilha`
+  (`voltar/trilha.ts`): a seta volta para a tela de onde eu vim e, para quem chegou por um link,
+  sobe pela árvore (bloco, lugar, Em alta).
 - As páginas prontas não sabem o dia de hoje. O que depende da data (as abas Hoje e Amanhã
   e os selos) é calculado no navegador, depois da primeira pintura, pelo serviço em
   `relogio/`. Pra testar, abra o site com `?hoje=2027-02-06T14:00` no endereço: aí "hoje" fica
@@ -92,8 +97,9 @@ calendário e o que eu ainda não pensei.
   edite à mão. Cada ano tem a sua pasta (`design/dados/2026/`: o PDF oficial, as notícias e o
   que sai dos scripts), e um comando só refaz tudo: `python -I design/dados/atualizar.py 2027`. Os
   testes usam uma cópia congelada dos dados de 2026 (`dados/teste-2026/`, trocada pela configuração
-  `testes` do `angular.json`): não atualize essa cópia ao mudar de ano. Quem confere os dados novos é
-  o `gerar_dados.py`, que avisa o que parece errado. O ponto da concentração e a linha de cada bloco vêm do itinerário oficial casado
+  `testes` do `angular.json`): não atualize essa cópia ao mudar de ano, só quando o formato dos dados
+  mudar. Quem confere os dados novos é o `dados/dados-reais.spec.ts`, que roda na publicação e a
+  impede se algo estiver errado, e o `gerar_dados.py`, que avisa o que parece errado. O ponto da concentração e a linha de cada bloco vêm do itinerário oficial casado
   com as ruas do OpenStreetMap; quando não dá certeza, o ponto fica marcado como aproximado ou o
   bloco fica sem ponto. `trajetoDoBloco` (`dados/trajetos.ts`) e `itinerarioDoBloco`
   (`dados/itinerario.ts`) ficam separados das outras consultas, para só serem baixados com o
@@ -101,8 +107,9 @@ calendário e o que eu ainda não pensei.
 - **Sem internet:** o service worker (`ngsw-config.json`) entrega a casca vazia
   `index.csr.html` para qualquer endereço (nunca a tela inicial pronta) e guarda o mapa: o grupo
   `mapa` (MapLibre, worker, estilo) e os `dataGroups` da OpenFreeMap (índice, letras, ícones).
-  Os pedaços do mapa ficam no cache do navegador. O aviso "Sem internet" vem do serviço
-  `Conexao` (`conexao/`). Para testar o build como no ar, use um servidor de arquivos que mande
+  Os pedaços do mapa ficam no cache do navegador. Os avisos "Sem internet" (sem sinal) e "Internet
+  fraca" (tem sinal, mas os dados não passam) vêm do serviço `Conexao` (`conexao/`), que faz um pedido
+  bem pequeno de vez em quando, só com a tela à vista. Para testar o build como no ar, use um servidor de arquivos que mande
   `.mjs` como JavaScript (o `http.server` do Python no Windows manda como texto, e o mapa não
   abre).
 - **A cor de cada lugar** vem de `faixaDoLocal`, em `dados/consultas.ts`, e é uma só para a
