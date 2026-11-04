@@ -7,6 +7,7 @@ import { acharBloco, acharLocal, faixaDoLocal } from '../dados/consultas';
 import { NOMES_DOS_ESTILOS, dataPorExtenso, formatarHora, horariosDoBloco } from '../dados/formato';
 import { itinerarioDoBloco } from '../dados/itinerario';
 import { Atracao } from '../dados/tipos';
+import { BotaoFavorito } from '../favoritos/botao-favorito';
 import { Relogio } from '../relogio/relogio';
 
 /** "A, B e C" */
@@ -33,7 +34,7 @@ function atracoesPorHorario(atracoes: Atracao[]): { hora: string; nomes: string 
 
 @Component({
   selector: 'app-pagina-bloco',
-  imports: [CopiarLink, RouterLink],
+  imports: [BotaoFavorito, CopiarLink, RouterLink],
   templateUrl: './pagina-bloco.html',
   styleUrl: './pagina-bloco.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
