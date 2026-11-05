@@ -1,6 +1,7 @@
-# Publica o CarnaVou no GitHub Pages (https://k4cell.github.io/CarnaVou/) a cada push na main.
-# Roda os testes antes: se algum falhar, o site no ar continua o anterior.
-name: Publicar no GitHub Pages
+# Publica o CarnaVou a cada push na main, no GitHub Pages (https://k4cell.github.io/CarnaVou/) e na
+# Cloudflare Pages (https://carnavou-teste.pages.dev/).
+# Roda os testes antes: se algum falhar, os sites no ar continuam os anteriores.
+name: Publicar o site
 
 on:
   push:
@@ -64,6 +65,48 @@ jobs:
       - uses: actions/upload-pages-artifact@v3
         with:
           path: app/dist/app/browser
+
+      # Na Cloudflare o site mora na raiz do endereço, então a montagem é outra.
+      # 404.html: endereço que não existe abre o site, que manda para o início.
+      # _headers: o endereço .pages.dev fica fora dos buscadores.
+      - name: Montar o site para a Cloudflare
+        run: |
+          npx ng build --configuration production
+          cp dist/app/browser/index.csr.html dist/app/browser/404.html
+          printf '/*\n  X-Robots-Tag: noindex\n' > dist/app/browser/_headers
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: site-cloudflare
+          path: app/dist/app/browser
+
+  publicar-na-cloudflare:
+    needs: montar
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      PROJETO: carnavou-teste
+      WRANGLER: wrangler@4.151.3
+    steps:
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: site-cloudflare
+          path: site
+
+      # Cria o projeto na primeira vez. Depois ele já existe, e esse erro não importa:
+      # se o projeto faltar de verdade, a publicação abaixo falha.
+      - name: Criar o projeto na Cloudflare
+        run: npx --yes "$WRANGLER" pages project create "$PROJETO" --production-branch main || true
+
+      - name: Publicar na Cloudflare
+        run: npx --yes "$WRANGLER" pages deploy site --project-name "$PROJETO" --branch main --commit-dirty=true
 
   publicar:
     needs: montar
