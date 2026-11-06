@@ -68,12 +68,17 @@ jobs:
 
       # Na Cloudflare o site mora na raiz do endereço, então a montagem é outra.
       # 404.html: endereço que não existe abre o site, que manda para o início.
-      # _headers: o endereço .pages.dev fica fora dos buscadores.
+      # _headers: o endereço .pages.dev fica fora dos buscadores, e os pedaços e as letras do mapa vão
+      # com o tipo de protobuf, que a Cloudflare comprime (como application/octet-stream, não comprime).
       - name: Montar o site para a Cloudflare
         run: |
           npx ng build --configuration production
           cp dist/app/browser/index.csr.html dist/app/browser/404.html
-          printf '/*\n  X-Robots-Tag: noindex\n' > dist/app/browser/_headers
+          printf '%s\n' \
+            '/*' '  X-Robots-Tag: noindex' \
+            '/mapa/pedacos/*' '  Content-Type: application/x-protobuf' \
+            '/mapa/letras/*' '  Content-Type: application/x-protobuf' \
+            > dist/app/browser/_headers
 
       - uses: actions/upload-artifact@v4
         with:
