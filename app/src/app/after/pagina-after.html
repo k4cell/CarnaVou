@@ -30,7 +30,8 @@
   @for (lugar of lugares(); track lugar.id) {
     <li class="cartao lugar-do-after" [attr.data-faixa]="lugar.faixa">
       <span class="texto">
-        <strong class="nome">{{ lugar.nome }}</strong>
+        <!-- O link do nome cobre o cartão todo: tocar em qualquer parte dele abre o lugar no mapa. -->
+        <a class="nome" routerLink="/mapa" [queryParams]="{ after: lugar.id }">{{ lugar.nome }}</a>
         <app-zona-tag [zona]="lugar.zona" />
         <span class="endereco">{{ lugar.tipo }} · {{ lugar.endereco }}</span>
         @if (lugar.distancia) {

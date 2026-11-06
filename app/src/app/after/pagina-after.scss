@@ -12,10 +12,42 @@
   margin: 8px 0 0;
 }
 
-.lugar-do-after .texto {
-  flex: 1;
-  gap: 4px;
-  min-width: 0;
+.lugar-do-after {
+  position: relative;
+
+  .texto {
+    flex: 1;
+    gap: 4px;
+    min-width: 0;
+  }
+
+  // Tocar em qualquer parte do cartão abre o lugar no mapa: o link do nome se estica por cima do
+  // cartão todo, e os botões de ir ficam por cima dele.
+  .nome {
+    font-weight: 700;
+    text-decoration: none;
+
+    &::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 8px;
+    }
+
+    &:focus-visible {
+      outline: none;
+
+      &::after {
+        outline: 3px solid var(--texto);
+        outline-offset: 2px;
+      }
+    }
+  }
+
+  .acoes {
+    position: relative;
+    z-index: 1;
+  }
 }
 
 .endereco,
