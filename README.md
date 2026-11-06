@@ -39,5 +39,7 @@ npx ng serve
 
 - **Blocos:** lista oficial publicada no Diário Oficial da Cidade de São Paulo. O CarnaVou é independente e
   não tem vínculo com a Prefeitura. Horários e atrações podem mudar.
-- **Mapa:** [OpenFreeMap](https://openfreemap.org), [OpenMapTiles](https://openmaptiles.org) e dados do
-  [OpenStreetMap](https://www.openstreetmap.org/copyright), sob a licença ODbL.
+- **Mapa:** dados do [OpenStreetMap](https://www.openstreetmap.org/copyright), sob a licença ODbL, no
+  formato do [OpenMapTiles](https://openmaptiles.org), gerados com o [Planetiler](https://github.com/onthegomap/planetiler)
+  e guardados no próprio site. Estilo a partir do Positron, da [OpenFreeMap](https://openfreemap.org).
+  Letras: Noto Sans (SIL Open Font License), pelo [Protomaps](https://github.com/protomaps/basemaps-assets).

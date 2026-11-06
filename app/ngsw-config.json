@@ -25,7 +25,8 @@
         "files": [
           "/mapa/*.mjs",
           "/mapa/*.css",
-          "/mapa/*.json"
+          "/mapa/*.json",
+          "/mapa/letras/**"
         ]
       }
     },
@@ -43,25 +44,13 @@
   "dataGroups": [
     {
       "name": "mapa-pedacos",
+      "version": 1,
       "urls": [
-        "https://tiles.openfreemap.org/planet/**",
-        "https://tiles.openfreemap.org/fonts/**"
+        "/mapa/pedacos/**"
       ],
       "cacheConfig": {
         "strategy": "performance",
         "maxSize": 300,
-        "maxAge": "30d"
-      }
-    },
-    {
-      "name": "mapa-indice",
-      "urls": [
-        "https://tiles.openfreemap.org/planet"
-      ],
-      "cacheConfig": {
-        "strategy": "freshness",
-        "timeout": "4s",
-        "maxSize": 1,
         "maxAge": "30d"
       }
     }
