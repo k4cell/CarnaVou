@@ -1,35 +1,42 @@
-import { baixarPedaco, pedirPelaPagina } from './pedacos-do-mapa';
+import { baixarPedaco } from './pedacos-do-mapa';
 
-describe('os pedaços do mapa', () => {
-  const PEDACO = 'https://tiles.openfreemap.org/planet/20261101_001001_pt/14/6068/9286.pbf';
-
+describe('os arquivos do mapa', () => {
   afterEach(() => vi.unstubAllGlobals());
 
-  it('troca só o endereço dos pedaços, para o pedido passar pela página', () => {
-    expect(pedirPelaPagina(PEDACO, 'Tile' as never)).toEqual({
-      url: 'guardado://tiles.openfreemap.org/planet/20261101_001001_pt/14/6068/9286.pbf',
-    });
-    expect(pedirPelaPagina('https://tiles.openfreemap.org/fonts/a/0-255.pbf', 'Glyphs' as never)).toBeUndefined();
-    expect(pedirPelaPagina('https://tiles.openfreemap.org/planet', 'Source' as never)).toBeUndefined();
-  });
-
-  it('a página baixa o pedaço do endereço de verdade', async () => {
-    const dados = new ArrayBuffer(4);
-    const baixar = vi.fn(() => Promise.resolve(new Response(dados)));
+  const baixarCom = (resposta: Response) => {
+    const baixar = vi.fn(() => Promise.resolve(resposta));
     vi.stubGlobal('fetch', baixar);
+    return baixar;
+  };
+
+  it('a página baixa o pedaço do próprio site, a partir da base dela', async () => {
+    const baixar = baixarCom(new Response(new ArrayBuffer(4)));
     const controle = new AbortController();
-    const resposta = await baixarPedaco({ url: 'guardado://tiles.openfreemap.org/planet/14/1/2.pbf' }, controle);
-    expect(baixar).toHaveBeenCalledWith('https://tiles.openfreemap.org/planet/14/1/2.pbf', { signal: controle.signal });
+    const resposta = await baixarPedaco({ url: 'guardado://mapa/pedacos/14/6068/9286.pbf' }, controle);
+    expect(baixar).toHaveBeenCalledWith(new URL('mapa/pedacos/14/6068/9286.pbf', document.baseURI).href, {
+      signal: controle.signal,
+    });
     expect((resposta.data as ArrayBuffer).byteLength).toBe(4);
   });
 
-  it('avisa o mapa quando o pedaço não vem', async () => {
-    vi.stubGlobal(
-      'fetch',
-      vi.fn(() => Promise.resolve(new Response('', { status: 500 }))),
-    );
-    await expect(baixarPedaco({ url: 'guardado://tiles.openfreemap.org/planet/1/1/1.pbf' }, new AbortController())).rejects.toThrow(
-      '500',
+  it('as letras também vêm do site', async () => {
+    const baixar = baixarCom(new Response(new ArrayBuffer(2)));
+    await baixarPedaco({ url: 'guardado://mapa/letras/noto-sans/0-255.pbf' }, new AbortController());
+    expect(baixar.mock.calls[0]).toEqual([new URL('mapa/letras/noto-sans/0-255.pbf', document.baseURI).href, expect.anything()]);
+  });
+
+  it('um pedaço que não existe é um pedaço vazio', async () => {
+    baixarCom(new Response('', { status: 404 }));
+    const resposta = await baixarPedaco({ url: 'guardado://mapa/pedacos/14/1/2.pbf' }, new AbortController());
+    expect((resposta.data as ArrayBuffer).byteLength).toBe(0);
+  });
+
+  it('avisa o mapa quando o arquivo não vem', async () => {
+    baixarCom(new Response('', { status: 500 }));
+    await expect(baixarPedaco({ url: 'guardado://mapa/pedacos/1/1/1.pbf' }, new AbortController())).rejects.toThrow('500');
+    baixarCom(new Response('', { status: 404 }));
+    await expect(baixarPedaco({ url: 'guardado://mapa/letras/noto-sans/0-255.pbf' }, new AbortController())).rejects.toThrow(
+      '404',
     );
   });
 });

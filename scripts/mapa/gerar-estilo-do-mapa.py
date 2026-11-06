@@ -1,5 +1,9 @@
 """Gera o estilo do mapa do CarnaVou a partir do estilo "positron" do OpenFreeMap.
 
+O estilo é só o desenho: os pedaços do mapa e as letras são nossos e ficam no próprio site
+(scripts/mapa/gerar-pedacos-do-mapa.py gera os dois). Se a OpenFreeMap sair do ar, o mesmo estilo
+"positron" está em https://github.com/openmaptiles/positron-gl-style.
+
 Pinta o mapa de lilás (as cores da marca), tira o que uma cidade não precisa (fronteiras,
 países, aeroportos, geleiras), põe as estações de metrô e de trem e grava o resultado em
 app/public/mapa/estilo-carnavou.json.
@@ -12,15 +16,18 @@ Como usar, a partir da raiz do projeto:
     python scripts/mapa/gerar-estilo-do-mapa.py
 
 As cores estão no dicionário COR, logo abaixo. Para mudar o visual do mapa, mude lá e rode de
-novo. O OpenFreeMap pede que o crédito do mapa apareça na tela (o MapLibre já faz isso).
+novo. O crédito do mapa (OpenMapTiles e OpenStreetMap) aparece na tela: o MapLibre o tira da
+fonte dos pedaços.
 """
 
 import json
 import os
+import re
 import urllib.request
 
 ORIGEM = "https://tiles.openfreemap.org/styles/positron"
 DESTINO = os.path.join("app", "public", "mapa", "estilo-carnavou.json")
+LIMITES_DO_APP = os.path.join("app", "src", "app", "mapa", "limites.ts")
 
 COR = {
     "fundo": "#ebe4f6",
@@ -86,6 +93,8 @@ PINTURA = {
 
 # Camadas que uma cidade não usa.
 TIRAR = {
+    # Os prédios eram quase 40% do peso do mapa: os pedaços nem os têm (gerar-pedacos-do-mapa.py).
+    "building",
     "landcover_ice_shelf",
     "landcover_glacier",
     "aeroway-taxiway",
@@ -106,7 +115,51 @@ TIRAR = {
 }
 
 # A única letra do mapa: só ela é baixada.
-LETRA = ["Noto Sans Regular"]
+LETRA = ["noto-sans"]
+
+# O "guardado://" é um endereço de mentira: o app o troca pelo arquivo do próprio site
+# (app/src/app/mapa/pedacos-do-mapa.ts), que fica em app/public/mapa/pedacos e app/public/mapa/letras.
+PEDACOS = "guardado://mapa/pedacos/{z}/{x}/{y}.pbf"
+LETRAS = "guardado://mapa/letras/{fontstack}/{range}.pbf"
+CREDITO = (
+    '<a href="https://openmaptiles.org/" target="_blank">&copy; OpenMapTiles</a> '
+    '<a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a>'
+)
+
+
+def limites_do_mapa() -> list[float]:
+    """O retângulo da Grande SP, [oeste, sul, leste, norte], o mesmo do app (limites.ts)."""
+    with open(LIMITES_DO_APP, encoding="utf-8") as arquivo:
+        achado = re.search(r"\[\s*\[(-?[\d.]+),\s*(-?[\d.]+)\],\s*\[(-?[\d.]+),\s*(-?[\d.]+)\]", arquivo.read())
+    if not achado:
+        raise SystemExit(f"Não achei o retângulo do mapa em {LIMITES_DO_APP}.")
+    return [float(numero) for numero in achado.groups()]
+
+
+def nome_em_letras_latinas(campo):
+    """Os nomes só em letras latinas: as letras do mapa não têm as de outras escritas (japonês etc.)."""
+    if isinstance(campo, list) and campo[:1] == ["case"] and "name:nonlatin" in json.dumps(campo[1]):
+        return campo[-1]
+    return campo
+
+
+def usar_o_nosso_mapa(estilo: dict) -> None:
+    """Troca os pedaços e as letras da OpenFreeMap pelos do nosso site."""
+    estilo["sources"]["openmaptiles"] = {
+        "type": "vector",
+        "tiles": [PEDACOS],
+        "minzoom": 0,
+        "maxzoom": 14,
+        "bounds": limites_do_mapa(),
+        "attribution": CREDITO,
+    }
+    estilo["glyphs"] = LETRAS
+    for camada in estilo["layers"]:
+        layout = camada.get("layout", {})
+        if "text-font" in layout:
+            layout["text-font"] = LETRA
+        if "text-field" in layout:
+            layout["text-field"] = nome_em_letras_latinas(layout["text-field"])
 
 # As estações de metrô e de trem (CPTM), de perto (zoom 13 em diante): uma bolinha escura com "M"
 # (metrô) ou "T" (trem) e o nome embaixo. Vêm do próprio mapa da OpenFreeMap (camada "poi"), sem
@@ -183,6 +236,7 @@ def main() -> None:
     # Só os mapas de relevo antigos usavam esta fonte de imagem; nenhuma camada daqui a usa.
     estilo["sources"].pop("ne2_shaded", None)
     estilo.pop("sprite", None)
+    usar_o_nosso_mapa(estilo)
 
     os.makedirs(os.path.dirname(DESTINO), exist_ok=True)
     with open(DESTINO, "w", encoding="utf-8") as arquivo:
