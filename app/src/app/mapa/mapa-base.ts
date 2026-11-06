@@ -37,7 +37,7 @@ export interface PontoNoMapa {
   lat: number;
   lng: number;
   zona: Zona;
-  /** Um bar ou ponto de encontro do After: tem cor própria, para não se confundir com os blocos. */
+  /** Um bar ou ponto de encontro do After: tem o desenho próprio, para não se confundir com os blocos. */
   after?: boolean;
 }
 
@@ -324,8 +324,8 @@ export class MapaBase {
           'circle-color': ['get', 'cor'],
           // De longe ficam pequenas, para a cidade toda caber sem virar uma mancha.
           'circle-radius': ['interpolate', ['linear'], ['zoom'], 10, 4, 14, 8, 17, 11],
-          'circle-stroke-color': corDoTema('--cartao', '#fff'),
-          'circle-stroke-width': 2,
+          'circle-stroke-color': ['get', 'borda'],
+          'circle-stroke-width': ['case', ['get', 'after'], 3, 2],
         },
       },
       embaixoDe,

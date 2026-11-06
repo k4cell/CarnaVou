@@ -30,6 +30,7 @@ import { estaNaGrandeSP } from './limites';
 import { linksDeIr } from './links';
 import { MapaBase, PontoNoMapa, TrajetoNoMapa } from './mapa-base';
 import { blocosPertoDeVoce } from './perto-de-voce';
+import { PONTOS_DO_AFTER, pontoDoLugarDoAfter } from './pontos-do-after';
 
 /** Até quantos blocos o cartão pequeno mostra todos; com mais, mostra só os do horário de agora. */
 const TODOS_NO_CARTAO_ATE = 3;
@@ -40,9 +41,6 @@ const BLOCOS_NO_CARTAO = 3;
 
 /** Quantos lugares a lista "Perto de você" mostra no mapa do After. */
 const PERTO_NO_AFTER = 4;
-
-/** Os bares e pontos de encontro do After, cada um com o id do ponto dele no mapa. */
-const LUGARES_DO_AFTER_NO_MAPA = LUGARES_DO_AFTER.map((lugar) => ({ ...lugar, ponto: `after:${lugar.id}` }));
 
 /** Quanto puxar a alça do cartão (em pixels) para ele abrir, encolher ou fechar. */
 const PUXAO = 30;
@@ -136,13 +134,13 @@ export class PaginaMapa {
       zona: local.zona,
     })),
     ...(this.modoAfter()
-      ? LUGARES_DO_AFTER_NO_MAPA.map(({ ponto, nome, lat, lng, zona }) => ({ id: ponto, nome, lat, lng, zona, after: true }))
+      ? PONTOS_DO_AFTER.map(({ ponto, nome, lat, lng, zona }) => ({ id: ponto, nome, lat, lng, zona, after: true }))
       : []),
   ]);
 
-  /** O bar ou ponto de encontro escolhido, no mapa do After. */
-  protected readonly lugarDoAfter = computed(() =>
-    this.modoAfter() ? LUGARES_DO_AFTER_NO_MAPA.find((lugar) => lugar.ponto === this.escolhido()) : undefined,
+  /** O ponto do After escolhido: um bar ou ponto de encontro, ou alguns, pertinho um do outro. */
+  protected readonly pontoDoAfter = computed(() =>
+    this.modoAfter() ? PONTOS_DO_AFTER.find((ponto) => ponto.ponto === this.escolhido()) : undefined,
   );
 
   /** O ponto escolhido, se ele ainda está na aba de agora (trocar de aba pode tirá-lo). */
@@ -217,14 +215,14 @@ export class PaginaMapa {
     if (ponto) {
       return linksDeIr(ponto.lat, ponto.lng, ponto.titulo);
     }
-    const lugar = this.lugarDoAfter();
-    return lugar ? linksDeIr(lugar.lat, lugar.lng, lugar.nome) : undefined;
+    const doAfter = this.pontoDoAfter();
+    return doAfter ? linksDeIr(doAfter.lat, doAfter.lng, doAfter.nome) : undefined;
   });
 
   /** "1,2 km", se a pessoa já mostrou onde está. Em linha reta, sem ênfase. */
   protected readonly distancia = computed(() => {
     const voce = this.voce();
-    const alvo = this.cartao() ?? this.lugarDoAfter();
+    const alvo = this.cartao() ?? this.pontoDoAfter();
     return voce && alvo ? textoDaDistancia(distanciaEmMetros(voce, alvo)) : null;
   });
 
@@ -237,7 +235,7 @@ export class PaginaMapa {
     const voce = this.voce();
     const agora = this.relogio.agora();
     const achou = this.localizacao.estado() === 'ligada' && voce && estaNaGrandeSP(voce.lat, voce.lng);
-    if (!achou || !agora || this.pertoFechado() || this.cartao() || this.lugarDoAfter()) {
+    if (!achou || !agora || this.pertoFechado() || this.cartao() || this.pontoDoAfter()) {
       return null;
     }
     if (this.modoAfter()) {
@@ -311,8 +309,7 @@ export class PaginaMapa {
       pedidoJaAberto = pedido;
       untracked(() => {
         if (!bloco && !lugar) {
-          const ponto = `after:${after}`;
-          this.escolhido.set(LUGARES_DO_AFTER_NO_MAPA.some((candidato) => candidato.ponto === ponto) ? ponto : null);
+          this.escolhido.set(pontoDoLugarDoAfter(after ?? '')?.ponto ?? null);
           this.aberto.set(false);
           if (this.localizacao.veioDeUmToque()) {
             void this.ondeEstou();
@@ -463,11 +460,11 @@ export class PaginaMapa {
         };
       }),
     );
-    const lugares = LUGARES_DO_AFTER_NO_MAPA.map((lugar) => {
+    const lugares = LUGARES_DO_AFTER.map((lugar) => {
       const metros = distanciaEmMetros(voce, lugar);
       return {
-        id: lugar.ponto,
-        ponto: lugar.ponto,
+        id: `after:${lugar.id}`,
+        ponto: pontoDoLugarDoAfter(lugar.id)?.ponto ?? '',
         nome: lugar.nome,
         metros,
         detalhe: `${textoDaDistancia(metros)} · ${lugar.tipo}`,

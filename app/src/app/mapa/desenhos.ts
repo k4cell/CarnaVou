@@ -71,12 +71,11 @@ export function linhasDosTrajetos(trajetos: TrajetoNoMapa[], selecionado: string
   return { type: 'FeatureCollection', features: [...linhas, ...fins] };
 }
 
-/** A cor do ponto: a da zona e, num lugar do After, a da noite (a do cabeçalho). */
-function corDoPonto(ponto: PontoNoMapa): string {
-  return ponto.after ? corDoTema('--noite', '#130a29') : corDaZona(ponto.zona);
-}
-
-/** As bolinhas dos pontos, na cor da zona. O ponto escolhido vira o pino, então sai daqui. */
+/**
+ * As bolinhas dos pontos. A de um bloco é cheia, na cor da zona, com a borda branca. A de um lugar do
+ * After é ao contrário, para não se confundir: o fundo verde-claro e a borda verde, mais grossa. O
+ * ponto escolhido vira o pino, então sai daqui.
+ */
 export function bolinhasDosPontos(pontos: PontoNoMapa[], selecionado: string | null): Desenho {
   return {
     type: 'FeatureCollection',
@@ -84,7 +83,9 @@ export function bolinhasDosPontos(pontos: PontoNoMapa[], selecionado: string | n
       .filter((ponto) => ponto.id !== selecionado)
       .map((ponto) => ({
         type: 'Feature',
-        properties: { id: ponto.id, cor: corDoPonto(ponto) },
+        properties: ponto.after
+          ? { id: ponto.id, cor: corDoTema('--verde-claro', '#e3fcee'), borda: corDoTema('--verde', '#00e676'), after: true }
+          : { id: ponto.id, cor: corDaZona(ponto.zona), borda: corDoTema('--cartao', '#fff'), after: false },
         geometry: { type: 'Point', coordinates: [ponto.lng, ponto.lat] },
       })),
   };
