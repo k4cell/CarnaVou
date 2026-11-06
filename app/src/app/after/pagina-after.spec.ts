@@ -80,8 +80,10 @@ describe('PaginaAfter', () => {
     for (const [posicao, cartao] of Array.from(tela.querySelectorAll('.lugar-do-after')).entries()) {
       const links = Array.from(cartao.querySelectorAll<HTMLAnchorElement>('.acoes a'));
       expect(links.map((link) => link.textContent?.trim())).toEqual(['Ir a pé', 'Uber', 'Metrô', 'Mapa']);
-      // O Mapa abre o mapa do After já no lugar, sem sair do site.
-      expect(links[3].getAttribute('href')).toBe(`/mapa?after=${LUGARES_DO_AFTER[posicao].id}`);
+      // O Mapa, e também o nome (que cobre o cartão todo), abrem o mapa do After já no lugar.
+      const noMapa = `/mapa?after=${LUGARES_DO_AFTER[posicao].id}`;
+      expect(links[3].getAttribute('href')).toBe(noMapa);
+      expect(cartao.querySelector('a.nome')?.getAttribute('href')).toBe(noMapa);
       expect(links[3].getAttribute('target')).toBeNull();
       links.pop();
       expect(links[0].getAttribute('href')).toContain('travelmode=walking');
