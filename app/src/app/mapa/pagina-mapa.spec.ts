@@ -17,6 +17,7 @@ import { Relogio } from '../relogio/relogio';
 import { CARREGAR_MAPLIBRE } from './maplibre';
 import { criarMapLibreFalso, esperarOMapa } from './maplibre-falso';
 import { PaginaMapa } from './pagina-mapa';
+import { PONTOS_DO_AFTER } from './pontos-do-after';
 import { blocosPertoDeVoce } from './perto-de-voce';
 
 // Sábado de carnaval de 2026, duas da tarde: tem bloco hoje e amanhã.
@@ -731,16 +732,12 @@ describe('PaginaMapa', () => {
         return trajeto ? [comoTexto(trajeto.inicio)] : [];
       });
       expect(daNoite.length).toBeGreaterThan(0);
-      const esperados = [...new Set([...daNoite, ...LUGARES_DO_AFTER.map(noMapa)])].sort();
+      const esperados = [...new Set([...daNoite, ...PONTOS_DO_AFTER.map(noMapa)])].sort();
       expect(posicoes()).toEqual(esperados);
-      // Os bares têm a cor da noite, diferente da cor das zonas.
-      const corDosBares = new Set(
-        falso.mapas[0]
-          .pontos()
-          .filter((ponto) => ponto.id.startsWith('after:'))
-          .map((ponto) => ponto.cor),
-      );
-      expect(corDosBares).toEqual(new Set(['#130a29']));
+      // Os lugares do After têm o fundo verde-claro, diferente das bolinhas cheias dos blocos.
+      const doAfter = falso.mapas[0].pontos().filter((ponto) => ponto.id.startsWith('after:'));
+      expect(doAfter.length).toBe(PONTOS_DO_AFTER.length);
+      expect(new Set(doAfter.map((ponto) => ponto.cor))).toEqual(new Set(['#e3fcee']));
     });
 
     it('abre já no lugar pedido, com o que ele é e os botões de ir', async () => {
@@ -753,6 +750,15 @@ describe('PaginaMapa', () => {
       const [pino] = falso.pinos();
       expect(comoTexto(pino.posicao!)).toBe(noMapa(lugar));
       expect(pino.elemento.classList.contains('pino-after')).toBe(true);
+    });
+
+    it('junta num pino só os lugares vizinhos, como o Galo e o Meretriz', async () => {
+      expect(PONTOS_DO_AFTER.length).toBeLessThan(LUGARES_DO_AFTER.length);
+      const { cartao, falso } = await renderizar(SABADO_14H, {}, { after: 'galo' });
+      const nomes = Array.from(cartao()!.querySelectorAll('.nome')).map((nome) => nome.textContent);
+      expect(nomes).toEqual(['Meretriz', 'Galo']);
+      const [pino] = falso.pinos();
+      expect(pino.elemento.getAttribute('aria-label')).toBe('Meretriz e Galo');
     });
 
     it('sem o toque em "Onde estou", não procura a pessoa', async () => {

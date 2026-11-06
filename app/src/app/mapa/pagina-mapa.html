@@ -1,6 +1,6 @@
 <app-mapa-base
   [pontos]="pontos()"
-  [selecionado]="cartao()?.id ?? lugarDoAfter()?.ponto ?? null"
+  [selecionado]="cartao()?.id ?? pontoDoAfter()?.ponto ?? null"
   [voce]="voce()"
   [trajetos]="trajetos()"
   (escolher)="escolher($event)"
@@ -155,16 +155,20 @@
         }
       }
     </section>
-  } @else if (lugarDoAfter(); as lugar) {
+  } @else if (pontoDoAfter(); as doAfter) {
     <section class="cartao-do-ponto cartao-do-after" aria-label="Lugar escolhido">
       <button type="button" class="fechar" aria-label="Fechar" (click)="fechar()">×</button>
-      <!-- O nome e, embaixo, o que é e onde fica, no mesmo jeito dos blocos de um ponto. -->
-      <p class="blocos-do-ponto">
-        <strong class="nome">{{ lugar.nome }}</strong>
-        <span class="sobre">{{ lugar.tipo }} · {{ lugar.endereco }}</span>
-      </p>
+      <!-- Cada lugar do ponto: o nome e, embaixo, o que é e onde fica, como os blocos de um ponto. -->
+      <ul class="blocos-do-ponto">
+        @for (lugar of doAfter.lugares; track lugar.id) {
+          <li>
+            <strong class="nome">{{ lugar.nome }}</strong>
+            <span class="sobre">{{ lugar.tipo }} · {{ lugar.endereco }}</span>
+          </li>
+        }
+      </ul>
       <div class="linha">
-        <app-zona-tag [zona]="lugar.zona" />
+        <app-zona-tag [zona]="doAfter.zona" />
       </div>
 
       @if (distancia(); as perto) {
