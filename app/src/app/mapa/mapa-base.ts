@@ -37,6 +37,8 @@ export interface PontoNoMapa {
   lat: number;
   lng: number;
   zona: Zona;
+  /** Um bar ou ponto de encontro do After: tem cor própria, para não se confundir com os blocos. */
+  after?: boolean;
 }
 
 /** Por onde um bloco passa: a linha, na cor da zona, da concentração (o ponto) até o fim. */

@@ -20,7 +20,7 @@ describe('secoesDosBlocos (a aba Blocos)', () => {
       // Sábado, 07/02, às 10h: só o Ibirapuera já começou; os outros circuitos abrem às 11h.
       const dezDaManha = new Date(2026, 1, 7, 10, 0);
       const [agora, depois] = secoesDosBlocos('hoje', dezDaManha);
-      expect(titulos('hoje', dezDaManha)).toEqual(['Rolando agora', 'Mais tarde hoje']);
+      expect(titulos('hoje', dezDaManha)).toEqual(['Rolando agora', 'Hoje']);
       expect(agora.grupos.every((grupo) => grupo[0].inicio <= '10:00')).toBe(true);
       expect(depois.grupos.flat().every((bloco) => bloco.inicio > '10:00')).toBe(true);
       expect(todos('hoje', dezDaManha).every((bloco) => bloco.data === '2026-02-07')).toBe(true);
@@ -68,7 +68,7 @@ describe('secoesDosBlocos (a aba Blocos)', () => {
     it('com pouco bloco hoje, mostra também o dia seguinte', () => {
       // Sexta, 13/02: só o Ilú Obá De Min, às 19h. Amanhã é o sábado de carnaval.
       const secoes = secoesDosBlocos('hoje', new Date(2026, 1, 13, 12, 0));
-      expect(secoes.map((secao) => secao.titulo)).toEqual(['Mais tarde hoje', 'Amanhã: Sábado, 14 de fevereiro']);
+      expect(secoes.map((secao) => secao.titulo)).toEqual(['Hoje', 'Amanhã: Sábado, 14 de fevereiro']);
       expect(secoes[0].grupos.flat().length).toBe(1);
       expect(secoes[1].grupos.flat().every((bloco) => bloco.data === '2026-02-14')).toBe(true);
     });

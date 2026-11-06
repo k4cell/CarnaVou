@@ -14,13 +14,14 @@ import { RouterLink } from '@angular/router';
 
 import { AbasDoDia } from '../abas/abas-do-dia';
 import { momentoDoBloco } from '../dados/agenda';
-import { concentracoesDaAba } from '../dados/concentracoes';
+import { concentracoesDaAba, concentracoesDaNoite } from '../dados/concentracoes';
 import { artistasPorFama } from '../dados/consultas';
 import { artistaEstaNoNome, formatarHora, partesDaData, textoDoHorario } from '../dados/formato';
 import { itinerarioDoBloco } from '../dados/itinerario';
+import { LUGARES_DO_AFTER } from '../dados/lugares-do-after';
 import { Bloco } from '../dados/tipos';
 import { FiltroDeDia } from '../filtro/filtro-de-dia';
-import { distanciaEmMetros, textoDaDistancia } from '../localizacao/distancia';
+import { Ponto, distanciaEmMetros, textoDaDistancia } from '../localizacao/distancia';
 import { ExplicacaoDaLocalizacao } from '../localizacao/explicacao-da-localizacao';
 import { Localizacao } from '../localizacao/localizacao';
 import { Relogio } from '../relogio/relogio';
@@ -36,6 +37,12 @@ const TODOS_NO_CARTAO_ATE = 3;
 const BLOCOS_EM_DESTAQUE = 2;
 /** Quantos dos outros blocos aparecem ao abrir o cartão; o resto fica na página do lugar. */
 const BLOCOS_NO_CARTAO = 3;
+
+/** Quantos lugares a lista "Perto de você" mostra no mapa do After. */
+const PERTO_NO_AFTER = 4;
+
+/** Os bares e pontos de encontro do After, cada um com o id do ponto dele no mapa. */
+const LUGARES_DO_AFTER_NO_MAPA = LUGARES_DO_AFTER.map((lugar) => ({ ...lugar, ponto: `after:${lugar.id}` }));
 
 /** Quanto puxar a alça do cartão (em pixels) para ele abrir, encolher ou fechar. */
 const PUXAO = 30;
@@ -57,6 +64,8 @@ const AVISOS = {
  * no mapa, e o botão "onde estou". Tocando num ponto, aparece a linha por onde o bloco passa e
  * um cartão com os blocos dali. A localização só é pedida quando a pessoa toca em "onde estou";
  * achando a pessoa, aparecem os blocos rolando perto dela.
+ *
+ * Vindo do After, o mapa mostra o After de hoje: os bares e pontos de encontro e os blocos da noite.
  */
 @Component({
   selector: 'app-pagina-mapa',
@@ -70,6 +79,11 @@ export class PaginaMapa {
   readonly lugar = input<string | undefined>();
   /** Vem do endereço (`/mapa?bloco=pipoca-da-rainha`): abre o mapa já nesse bloco. */
   readonly bloco = input<string | undefined>();
+  /**
+   * Vem do endereço: `/mapa?after=sim` mostra o After de hoje (os bares e os blocos da noite), e
+   * `/mapa?after=beco-do-batman` abre o mapa já nesse lugar.
+   */
+  readonly after = input<string | undefined>();
 
   private readonly filtro = inject(FiltroDeDia);
   private readonly localizacao = inject(Localizacao);
@@ -94,23 +108,41 @@ export class PaginaMapa {
   /** A lista "Perto de você" foi fechada no ×? Ela volta no próximo "onde estou". */
   private readonly pertoFechado = signal(false);
 
-  protected readonly vazio = computed(() => this.filtro.cartoes().length === 0);
+  /** O mapa está mostrando o After de hoje, e não os blocos da aba? */
+  protected readonly modoAfter = computed(() => this.after() !== undefined);
+
+  protected readonly vazio = computed(() => !this.modoAfter() && this.filtro.cartoes().length === 0);
   protected readonly mensagemVazia = this.filtro.mensagemVazia;
 
   protected readonly voce = this.localizacao.posicao;
   protected readonly procurando = computed(() => this.localizacao.estado() === 'procurando');
 
-  /** Onde se concentram os blocos da aba: blocos que se concentram no mesmo lugar dividem o ponto. */
-  private readonly concentracoes = computed(() => concentracoesDaAba(this.filtro.ativa(), this.relogio.agora()));
+  /**
+   * Onde se concentram os blocos da aba (ou, no After, os da noite de hoje): blocos que se
+   * concentram no mesmo lugar dividem o ponto.
+   */
+  private readonly concentracoes = computed(() =>
+    this.modoAfter()
+      ? concentracoesDaNoite(this.relogio.agora())
+      : concentracoesDaAba(this.filtro.ativa(), this.relogio.agora()),
+  );
 
-  protected readonly pontos = computed<PontoNoMapa[]>(() =>
-    this.concentracoes().map(({ id, local, blocos, lat, lng }) => ({
+  protected readonly pontos = computed<PontoNoMapa[]>(() => [
+    ...this.concentracoes().map(({ id, local, blocos, lat, lng }) => ({
       id,
       nome: blocos.length === 1 ? blocos[0].nome : `${blocos[0].nome} e mais ${blocos.length - 1}`,
       lat,
       lng,
       zona: local.zona,
     })),
+    ...(this.modoAfter()
+      ? LUGARES_DO_AFTER_NO_MAPA.map(({ ponto, nome, lat, lng, zona }) => ({ id: ponto, nome, lat, lng, zona, after: true }))
+      : []),
+  ]);
+
+  /** O bar ou ponto de encontro escolhido, no mapa do After. */
+  protected readonly lugarDoAfter = computed(() =>
+    this.modoAfter() ? LUGARES_DO_AFTER_NO_MAPA.find((lugar) => lugar.ponto === this.escolhido()) : undefined,
   );
 
   /** O ponto escolhido, se ele ainda está na aba de agora (trocar de aba pode tirá-lo). */
@@ -150,7 +182,7 @@ export class PaginaMapa {
       return { destaque: [], outros: [], escondidos: 0, mais: 0 };
     }
     const agora = this.relogio.agora();
-    const aba = this.filtro.ativa();
+    const aba = this.modoAfter() ? 'hoje' : this.filtro.ativa();
     const linha = (bloco: Bloco) => {
       const { semana, dia, mes } = partesDaData(bloco.data);
       const noDia = aba === 'geral' ? `${semana} ${dia} ${mes} · ` : '';
@@ -182,26 +214,34 @@ export class PaginaMapa {
 
   protected readonly links = computed(() => {
     const ponto = this.cartao();
-    return ponto ? linksDeIr(ponto.lat, ponto.lng, ponto.titulo) : undefined;
+    if (ponto) {
+      return linksDeIr(ponto.lat, ponto.lng, ponto.titulo);
+    }
+    const lugar = this.lugarDoAfter();
+    return lugar ? linksDeIr(lugar.lat, lugar.lng, lugar.nome) : undefined;
   });
 
   /** "1,2 km", se a pessoa já mostrou onde está. Em linha reta, sem ênfase. */
   protected readonly distancia = computed(() => {
     const voce = this.voce();
-    const ponto = this.cartao();
-    return voce && ponto ? textoDaDistancia(distanciaEmMetros(voce, ponto)) : null;
+    const alvo = this.cartao() ?? this.lugarDoAfter();
+    return voce && alvo ? textoDaDistancia(distanciaEmMetros(voce, alvo)) : null;
   });
 
   /**
    * Depois do "onde estou", os blocos que o CarnaVou recomenda: os que estão rolando perto da
-   * pessoa (os grandes ganham peso). A lista some enquanto o cartão de um ponto está aberto.
+   * pessoa (os grandes ganham peso). No After, os lugares e os blocos da noite mais perto. A lista
+   * some enquanto o cartão de um ponto está aberto.
    */
   protected readonly perto = computed(() => {
     const voce = this.voce();
     const agora = this.relogio.agora();
     const achou = this.localizacao.estado() === 'ligada' && voce && estaNaGrandeSP(voce.lat, voce.lng);
-    if (!achou || !agora || this.pertoFechado() || this.cartao()) {
+    if (!achou || !agora || this.pertoFechado() || this.cartao() || this.lugarDoAfter()) {
       return null;
+    }
+    if (this.modoAfter()) {
+      return this.pertoNoAfter(voce, agora);
     }
     const blocos = blocosPertoDeVoce(voce, agora);
     const titulo =
@@ -250,18 +290,35 @@ export class PaginaMapa {
   constructor() {
     // Quem chega por "Ver no mapa" já vê o ponto do bloco (ou o do próximo bloco do lugar). Se ele
     // não está na aba de agora (não tem bloco hoje, por exemplo), o mapa passa para a Geral.
+    // Quem chega pelo After vê o lugar pedido e, se tocou em "Onde estou", é procurado aqui.
     // Espera saber o dia de hoje (ele só chega depois da primeira pintura) e faz isso uma vez por
     // pedido, para não brigar com a aba que a pessoa escolher depois.
     let pedidoJaAberto: string | undefined;
     effect(() => {
       const bloco = this.bloco();
       const lugar = this.lugar();
-      const pedido = bloco ? `bloco:${bloco}` : lugar ? `lugar:${lugar}` : undefined;
+      const after = this.after();
+      const pedido = bloco
+        ? `bloco:${bloco}`
+        : lugar
+          ? `lugar:${lugar}`
+          : after !== undefined
+            ? `after:${after}`
+            : undefined;
       if (!pedido || !this.relogio.agora() || pedido === pedidoJaAberto) {
         return;
       }
       pedidoJaAberto = pedido;
       untracked(() => {
+        if (!bloco && !lugar) {
+          const ponto = `after:${after}`;
+          this.escolhido.set(LUGARES_DO_AFTER_NO_MAPA.some((candidato) => candidato.ponto === ponto) ? ponto : null);
+          this.aberto.set(false);
+          if (this.localizacao.veioDeUmToque()) {
+            void this.ondeEstou();
+          }
+          return;
+        }
         const acharOPonto = () =>
           this.concentracoes().find((ponto) =>
             bloco ? ponto.blocos.some((candidato) => candidato.id === bloco) : ponto.local.id === lugar,
@@ -291,7 +348,9 @@ export class PaginaMapa {
 
   /** Um bloco da lista "Perto de você": abre o cartão dele, na aba Hoje (a lista é de hoje). */
   protected escolherPerto(ponto: string): void {
-    this.filtro.escolher('hoje');
+    if (!this.modoAfter()) {
+      this.filtro.escolher('hoje');
+    }
     this.escolher(ponto);
   }
 
@@ -382,6 +441,42 @@ export class PaginaMapa {
   private fecharAExplicacao(): void {
     this.explicando.set(false);
     this.botaoOndeEstou().nativeElement.focus();
+  }
+
+  /** No After: os lugares e os blocos da noite mais perto da pessoa, do mais perto para o mais longe. */
+  private pertoNoAfter(voce: Ponto, agora: Date) {
+    const blocos = this.concentracoes().flatMap((ponto) =>
+      ponto.blocos.map((bloco) => {
+        const metros = distanciaEmMetros(voce, ponto);
+        const rolando = momentoDoBloco(bloco, agora) === 'rolando';
+        return {
+          id: bloco.id,
+          ponto: ponto.id,
+          nome: bloco.nome,
+          metros,
+          // "1,2 km · Hoje às 18h · Gloria Groove"
+          detalhe: [
+            textoDaDistancia(metros),
+            rolando ? 'Já começou' : `Hoje às ${formatarHora(bloco.inicio)}`,
+            ...artistasPorFama([bloco]).slice(0, 1),
+          ].join(' · '),
+        };
+      }),
+    );
+    const lugares = LUGARES_DO_AFTER_NO_MAPA.map((lugar) => {
+      const metros = distanciaEmMetros(voce, lugar);
+      return {
+        id: lugar.ponto,
+        ponto: lugar.ponto,
+        nome: lugar.nome,
+        metros,
+        detalhe: `${textoDaDistancia(metros)} · ${lugar.tipo}`,
+      };
+    });
+    return {
+      titulo: 'Perto de você',
+      blocos: [...blocos, ...lugares].sort((a, b) => a.metros - b.metros).slice(0, PERTO_NO_AFTER),
+    };
   }
 
   /** Procura a pessoa e, achando dentro da Grande São Paulo, leva o mapa até ela. */

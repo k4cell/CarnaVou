@@ -73,6 +73,11 @@ app-mapa-base {
   --cor-do-pino: var(--azul);
 }
 
+// Os bares e pontos de encontro do After ficam na cor da noite.
+.pino-after {
+  --cor-do-pino: var(--noite);
+}
+
 // A bolinha de quem está vendo o mapa: rosa com borda branca, para não se confundir com os pinos.
 .voce {
   width: 22px;

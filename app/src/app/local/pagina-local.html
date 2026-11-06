@@ -34,10 +34,13 @@
   <!-- Os blocos do mesmo dia ficam juntos num cartão só, um embaixo do outro. -->
   <ul class="lista">
     @for (dia of dias(); track dia.data) {
-      <li class="dia" [attr.aria-label]="dia.nome">
-        @for (bloco of dia.blocos; track bloco.id; let primeiro = $first) {
-          <app-banner-bloco [bloco]="bloco" [mostrarData]="primeiro" />
-        }
+      <li class="grupo" [attr.aria-label]="dia.nome" [attr.data-faixa]="faixa()">
+        <app-data-do-dia class="data-do-grupo" [data]="dia.data" />
+        <div class="blocos-do-grupo">
+          @for (bloco of dia.blocos; track bloco.id) {
+            <app-banner-bloco [bloco]="bloco" [mostrarData]="false" />
+          }
+        </div>
       </li>
     }
   </ul>

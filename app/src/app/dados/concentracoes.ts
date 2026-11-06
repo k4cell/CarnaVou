@@ -1,4 +1,6 @@
 import { Aba, blocosDaAba } from './agenda';
+import { acharLocal } from './consultas';
+import { blocosDaNoite } from './lista-de-blocos';
 import { LOCAIS } from './locais';
 import { Bloco, Local, Trajeto } from './tipos';
 import { trajetoDoBloco } from './trajetos';
@@ -55,4 +57,22 @@ export function concentracoesDaAba(aba: Aba, agora: Date | null): Concentracao[]
     ponto.blocos.sort((a, b) => (a.data + a.inicio).localeCompare(b.data + b.inicio));
   }
   return pontos;
+}
+
+/**
+ * Os pontos dos blocos da noite de hoje, para o mapa do After: só os blocos da noite que ainda não
+ * acabaram, e só os trajetos deles.
+ */
+export function concentracoesDaNoite(agora: Date | null): Concentracao[] {
+  const daNoite = new Set(blocosDaNoite('hoje', agora).map((bloco) => bloco.id));
+  return concentracoesDaAba('hoje', agora).flatMap((ponto) => {
+    const blocos = ponto.blocos.filter((bloco) => daNoite.has(bloco.id));
+    if (blocos.length === 0) {
+      return [];
+    }
+    const trajetos = [...new Set(blocos.map((bloco) => trajetoDoBloco(bloco.id)))].filter(
+      (trajeto): trajeto is Trajeto => trajeto !== undefined,
+    );
+    return [{ ...ponto, local: acharLocal(blocos[0].localId) ?? ponto.local, blocos, trajetos }];
+  });
 }

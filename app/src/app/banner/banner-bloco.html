@@ -4,15 +4,9 @@
   [attr.data-faixa]="faixa()"
   [routerLink]="['/local', bloco().localId, bloco().id]"
 >
+  <!-- No cartão de um dia, a data fica uma vez só, na coluna da esquerda do cartão. -->
   @if (mostrarData()) {
-    <time class="data" [attr.datetime]="bloco().data">
-      <span class="semana">{{ data().semana }}</span>
-      <span class="dia">{{ data().dia }}</span>
-      <span class="mes">{{ data().mes }}</span>
-    </time>
-  } @else {
-    <!-- O dia já está na linha de cima: o espaço fica, para os nomes continuarem alinhados. -->
-    <span class="data" aria-hidden="true"></span>
+    <app-data-do-dia [data]="bloco().data" />
   }
 
   <span class="info">

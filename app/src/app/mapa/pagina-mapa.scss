@@ -37,6 +37,20 @@ app-mapa-base {
   margin: 12px 0 0;
 }
 
+// No After, no lugar das abas: o que o mapa mostra e o botão de voltar a ver todos os blocos.
+.titulo-do-after {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 12px;
+
+  strong {
+    display: block;
+    color: var(--roxo);
+  }
+}
+
 // Embaixo ficam, de cima para baixo: o botão "onde estou", o aviso, a lista "Perto de você" e o
 // cartão do ponto. Ficam um
 // pouco acima do fundo para o crédito do mapa (canto de baixo) continuar à vista. O espaço vazio
@@ -126,6 +140,11 @@ app-mapa-base {
   &.arrastando {
     transition: none;
   }
+}
+
+// O cartão de um bar ou ponto de encontro do After não tem a alça: o espaço de cima é do "×".
+.cartao-do-after {
+  padding-top: 14px;
 }
 
 // Os blocos do ponto no cartão pequeno: o nome em destaque e, embaixo, os artistas ou o horário.

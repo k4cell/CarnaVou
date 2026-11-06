@@ -1,23 +1,15 @@
 <h2 class="titulo">After</h2>
 <p class="subtitulo">Para onde ir hoje, depois dos blocos.</p>
 
-<button
-  #botaoOndeEstou
-  type="button"
-  class="botao-claro onde-estou"
-  [attr.aria-busy]="procurando()"
-  (click)="ondeEstou()"
->
+<!-- Leva ao mapa do After, que mostra os lugares e os blocos da noite e procura a pessoa lá. -->
+<button type="button" class="botao-claro onde-estou" (click)="ondeEstou()">
   <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
     <circle cx="12" cy="12" r="6.5" />
     <circle cx="12" cy="12" r="1.5" />
     <path d="M12 2v3M12 19v3M2 12h3M19 12h3" />
   </svg>
-  {{ procurando() ? 'Procurando você…' : 'Onde estou' }}
+  Onde estou
 </button>
-@if (aviso(); as texto) {
-  <p class="aviso" role="status">{{ texto }}</p>
-}
 
 <h3 class="secao">Blocos da noite</h3>
 <!-- Na página pronta ainda não se sabe o dia: a lista só aparece depois. -->
@@ -48,12 +40,16 @@
           <a class="botao botao-principal" [href]="lugar.links.aPe" target="_blank" rel="noopener">Ir a pé</a>
           <a class="botao" [href]="lugar.links.uber" target="_blank" rel="noopener">Uber</a>
           <a class="botao" [href]="lugar.links.metro" target="_blank" rel="noopener">Metrô</a>
+          <a
+            class="botao"
+            routerLink="/mapa"
+            [queryParams]="{ after: lugar.id }"
+            [attr.aria-label]="'Ver ' + lugar.nome + ' no mapa'"
+          >
+            Mapa
+          </a>
         </span>
       </span>
     </li>
   }
 </ul>
-
-@if (explicando()) {
-  <app-explicacao-da-localizacao (continuar)="continuar()" (agoraNao)="agoraNao()" />
-}

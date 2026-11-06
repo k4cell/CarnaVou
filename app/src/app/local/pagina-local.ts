@@ -3,9 +3,10 @@ import { RouterLink } from '@angular/router';
 
 import { AbasDoDia } from '../abas/abas-do-dia';
 import { BannerBloco } from '../banner/banner-bloco';
+import { DataDoDia } from '../banner/data-do-dia';
 import { CopiarLink } from '../copiar-link/copiar-link';
 import { Aba, blocosDaAba } from '../dados/agenda';
-import { acharLocal, maisFamosos } from '../dados/consultas';
+import { acharLocal, faixaDoLocal, maisFamosos } from '../dados/consultas';
 import { dataPorExtenso } from '../dados/formato';
 import { Bloco } from '../dados/tipos';
 import { FiltroDeDia } from '../filtro/filtro-de-dia';
@@ -23,7 +24,7 @@ const NADA_NA_ABA: Record<Aba, string> = {
 
 @Component({
   selector: 'app-pagina-local',
-  imports: [RouterLink, AbasDoDia, BannerBloco, CopiarLink, ZonaTag],
+  imports: [RouterLink, AbasDoDia, BannerBloco, CopiarLink, DataDoDia, ZonaTag],
   templateUrl: './pagina-local.html',
   styles: `
     .titulo {
@@ -44,6 +45,8 @@ export class PaginaLocal {
   private readonly relogio = inject(Relogio);
 
   protected readonly lugar = computed(() => acharLocal(this.local()));
+  /** A cor do lugar, a mesma da lista e dos banners dele. */
+  protected readonly faixa = computed(() => faixaDoLocal(this.local()));
 
   /**
    * A aba escolhida (Hoje, Amanhã ou Geral), a mesma da tela inicial, da aba Blocos e do mapa,
