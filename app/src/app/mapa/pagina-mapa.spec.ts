@@ -5,12 +5,14 @@ import { Aba, blocosDaAba, cartoesDaAba, momentoDoBloco } from '../dados/agenda'
 import { BLOCOS } from '../dados/blocos';
 import { formatarHora, textoDoHorario } from '../dados/formato';
 import { itinerarioDoBloco } from '../dados/itinerario';
+import { blocosDaNoite } from '../dados/lista-de-blocos';
+import { LUGARES_DO_AFTER } from '../dados/lugares-do-after';
 import { Bloco } from '../dados/tipos';
 import { trajetoDoBloco } from '../dados/trajetos';
 import { MENSAGENS_DA_ABA_VAZIA } from '../filtro/filtro-de-dia';
 import { distanciaEmMetros, textoDaDistancia } from '../localizacao/distancia';
 import { criarGeolocalizacaoFalsa, Resposta } from '../localizacao/geolocalizacao-falsa';
-import { CONSULTAR_PERMISSAO, GEOLOCALIZACAO, PermissaoDoCelular } from '../localizacao/localizacao';
+import { CONSULTAR_PERMISSAO, GEOLOCALIZACAO, Localizacao, PermissaoDoCelular } from '../localizacao/localizacao';
 import { Relogio } from '../relogio/relogio';
 import { CARREGAR_MAPLIBRE } from './maplibre';
 import { criarMapLibreFalso, esperarOMapa } from './maplibre-falso';
@@ -61,7 +63,12 @@ function acharPonto(aba: Aba, condicao: (blocos: Bloco[]) => boolean): Bloco[] {
 }
 
 describe('PaginaMapa', () => {
-  async function renderizar(agora?: Date, celular: Celular = {}, endereco: { lugar?: string; bloco?: string } = {}) {
+  async function renderizar(
+    agora?: Date,
+    celular: Celular = {},
+    endereco: { lugar?: string; bloco?: string; after?: string } = {},
+    antesDeAbrir?: () => void,
+  ) {
     const falso = criarMapLibreFalso();
     const geo = criarGeolocalizacaoFalsa(celular.resposta ?? NA_PAULISTA);
     let consultas = 0;
@@ -83,6 +90,7 @@ describe('PaginaMapa', () => {
     if (agora) {
       TestBed.inject(Relogio).definir(agora);
     }
+    antesDeAbrir?.();
     const fixture = TestBed.createComponent(PaginaMapa);
     for (const [nome, valor] of Object.entries(endereco)) {
       fixture.componentRef.setInput(nome, valor);
@@ -702,6 +710,70 @@ describe('PaginaMapa', () => {
       await tocarNaAba('Hoje');
       expect(posicoes()).toEqual([]);
       expect(tela.querySelector('.vazio')?.textContent).toContain(MENSAGENS_DA_ABA_VAZIA.hoje);
+    });
+  });
+
+  describe('vindo do After', () => {
+    const noMapa = (lugar: { lat: number; lng: number }) => comoTexto([lugar.lng, lugar.lat]);
+    // O primeiro dia, ao meio-dia, que tem bloco da noite com ponto no mapa.
+    const DIA_COM_NOITE = [...new Set(BLOCOS.map((bloco) => bloco.data))]
+      .sort()
+      .map((dia) => new Date(`${dia}T12:00:00`))
+      .find((agora) => blocosDaNoite('hoje', agora).some((bloco) => trajetoDoBloco(bloco.id)))!;
+
+    it('mostra os bares e os blocos da noite de hoje, sem as abas de dia', async () => {
+      const { tela, posicoes, falso } = await renderizar(DIA_COM_NOITE, {}, { after: 'sim' });
+      expect(tela.querySelector('app-abas-do-dia')).toBeNull();
+      expect(tela.querySelector('.titulo-do-after')?.textContent).toContain('After de hoje');
+      expect(tela.querySelector('.titulo-do-after a')?.getAttribute('href')).toBe('/mapa');
+      const daNoite = blocosDaNoite('hoje', DIA_COM_NOITE).flatMap((bloco) => {
+        const trajeto = trajetoDoBloco(bloco.id);
+        return trajeto ? [comoTexto(trajeto.inicio)] : [];
+      });
+      expect(daNoite.length).toBeGreaterThan(0);
+      const esperados = [...new Set([...daNoite, ...LUGARES_DO_AFTER.map(noMapa)])].sort();
+      expect(posicoes()).toEqual(esperados);
+      // Os bares têm a cor da noite, diferente da cor das zonas.
+      const corDosBares = new Set(
+        falso.mapas[0]
+          .pontos()
+          .filter((ponto) => ponto.id.startsWith('after:'))
+          .map((ponto) => ponto.cor),
+      );
+      expect(corDosBares).toEqual(new Set(['#130a29']));
+    });
+
+    it('abre já no lugar pedido, com o que ele é e os botões de ir', async () => {
+      const lugar = LUGARES_DO_AFTER[0];
+      const { cartao, falso } = await renderizar(SABADO_14H, {}, { after: lugar.id });
+      expect(cartao()?.querySelector('.nome')?.textContent).toBe(lugar.nome);
+      expect(cartao()?.querySelector('.sobre')?.textContent).toBe(`${lugar.tipo} · ${lugar.endereco}`);
+      const links = Array.from(cartao()!.querySelectorAll<HTMLAnchorElement>('.acoes a'));
+      expect(links.map((link) => link.textContent?.trim())).toEqual(['Ir a pé', 'Uber', 'Metrô']);
+      const [pino] = falso.pinos();
+      expect(comoTexto(pino.posicao!)).toBe(noMapa(lugar));
+      expect(pino.elemento.classList.contains('pino-after')).toBe(true);
+    });
+
+    it('sem o toque em "Onde estou", não procura a pessoa', async () => {
+      const { geo } = await renderizar(SABADO_14H, { permissao: 'granted' }, { after: 'sim' });
+      expect(geo.chamadas.length).toBe(0);
+    });
+
+    it('chegando pelo "Onde estou", procura a pessoa uma vez e mostra o After mais perto dela', async () => {
+      const { fixture, tela, geo } = await renderizar(SABADO_14H, { permissao: 'granted' }, { after: 'sim' }, () =>
+        TestBed.inject(Localizacao).procurarAoAbrirOMapa(),
+      );
+      await esperarOMapa(fixture);
+      expect(geo.chamadas.length).toBe(1);
+      const lista = tela.querySelector('.perto-de-voce');
+      expect(lista?.querySelector('h2')?.textContent).toBe('Perto de você');
+      const itens = Array.from(lista!.querySelectorAll('.bloco-perto'));
+      expect(itens.length).toBe(4);
+      const voce = { lat: -23.5614, lng: -46.6559 };
+      const maisPerto = [...LUGARES_DO_AFTER].sort((a, b) => distanciaEmMetros(voce, a) - distanciaEmMetros(voce, b))[0];
+      const distancias = itens.map((item) => item.querySelector('span')?.textContent ?? '');
+      expect(distancias.some((texto) => texto.startsWith(textoDaDistancia(distanciaEmMetros(voce, maisPerto))))).toBe(true);
     });
   });
 });

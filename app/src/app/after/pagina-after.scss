@@ -8,11 +8,6 @@
   font-weight: 700;
 }
 
-.aviso {
-  margin: 8px 0 0;
-  color: var(--texto-suave);
-}
-
 .vazio {
   margin: 8px 0 0;
 }
@@ -28,15 +23,10 @@
   color: var(--texto-suave);
 }
 
+// Os quatro botões numa linha; num celular estreito, eles quebram em duas.
 .acoes {
   display: flex;
+  flex-wrap: wrap;
   gap: 8px;
   margin-top: 8px;
-}
-
-// No mapa a explicação cobre só o mapa; aqui ela cobre a tela entre o cabeçalho e o menu.
-app-explicacao-da-localizacao {
-  position: fixed;
-  top: var(--altura-topo);
-  bottom: var(--altura-menu);
 }

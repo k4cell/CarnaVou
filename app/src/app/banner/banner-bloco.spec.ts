@@ -72,10 +72,9 @@ describe('BannerBloco', () => {
       expect((await renderizar('forrozin', null)).querySelector('time')).not.toBeNull();
     });
 
-    it('some sem desalinhar o bloco, quando já está na linha de cima', async () => {
+    it('some quando o cartão do dia já mostra a data', async () => {
       const tela = await renderizar('forrozin', null, { mostrarData: false });
       expect(tela.querySelector('time')).toBeNull();
-      expect(tela.querySelector('.data')?.getAttribute('aria-hidden')).toBe('true');
     });
   });
 

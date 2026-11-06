@@ -4,7 +4,7 @@ import { todosOsBlocos } from './correcoes';
 import { dataPorExtenso } from './formato';
 import { Bloco } from './tipos';
 
-/** Um pedaço da lista da aba Blocos: "Rolando agora", "Mais tarde hoje", um dia… */
+/** Um pedaço da lista da aba Blocos: "Rolando agora", "Hoje" (o que começa mais tarde), um dia… */
 export interface SecaoDeBlocos {
   titulo: string;
   /** Cada grupo vira um cartão: os blocos do mesmo dia no mesmo lugar, um embaixo do outro. */
@@ -79,7 +79,7 @@ function proximoDia(blocos: Bloco[], hoje: string, amanha: string): SecaoDeBloco
 
 /**
  * A lista da aba Blocos. O foco é o presente e o futuro: o que já acabou não aparece.
- * - Hoje: "Rolando agora" (os mais famosos primeiro) e "Mais tarde hoje" (por horário). Quando hoje
+ * - Hoje: "Rolando agora" (os mais famosos primeiro) e "Hoje", o que começa mais tarde (por horário). Quando hoje
  *   tem pouco bloco, vem também o próximo dia com bloco, para a lista não ficar quase vazia.
  * - Amanhã: os blocos de amanhã, os mais famosos primeiro.
  * - Geral: de hoje em diante, um pedaço por dia.
@@ -116,7 +116,7 @@ export function secoesDosBlocos(
     const rolando = deHoje.filter((bloco) => bloco.inicio <= hora);
     const maisTarde = deHoje.filter((bloco) => bloco.inicio > hora);
     secoes.push({ titulo: 'Rolando agora', grupos: juntarPorLugar(porFama(rolando), restantes) });
-    secoes.push({ titulo: 'Mais tarde hoje', grupos: juntarPorLugar(porHorario(maisTarde), restantes) });
+    secoes.push({ titulo: 'Hoje', grupos: juntarPorLugar(porHorario(maisTarde), restantes) });
     if (deHoje.length <= POUCOS_BLOCOS_HOJE) {
       secoes.push(...proximoDia(blocos, dia, diaIso(diaSeguinte(agora))));
     }

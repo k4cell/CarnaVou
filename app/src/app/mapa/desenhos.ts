@@ -71,6 +71,11 @@ export function linhasDosTrajetos(trajetos: TrajetoNoMapa[], selecionado: string
   return { type: 'FeatureCollection', features: [...linhas, ...fins] };
 }
 
+/** A cor do ponto: a da zona e, num lugar do After, a da noite (a do cabeçalho). */
+function corDoPonto(ponto: PontoNoMapa): string {
+  return ponto.after ? corDoTema('--noite', '#130a29') : corDaZona(ponto.zona);
+}
+
 /** As bolinhas dos pontos, na cor da zona. O ponto escolhido vira o pino, então sai daqui. */
 export function bolinhasDosPontos(pontos: PontoNoMapa[], selecionado: string | null): Desenho {
   return {
@@ -79,7 +84,7 @@ export function bolinhasDosPontos(pontos: PontoNoMapa[], selecionado: string | n
       .filter((ponto) => ponto.id !== selecionado)
       .map((ponto) => ({
         type: 'Feature',
-        properties: { id: ponto.id, cor: corDaZona(ponto.zona) },
+        properties: { id: ponto.id, cor: corDoPonto(ponto) },
         geometry: { type: 'Point', coordinates: [ponto.lng, ponto.lat] },
       })),
   };
@@ -102,7 +107,7 @@ const PINO_SVG =
 export function criarPino(ponto: PontoNoMapa, aoEscolher: (id: string) => void): HTMLButtonElement {
   const botao = document.createElement('button');
   botao.type = 'button';
-  botao.className = `pino pino-${ponto.zona} selecionado`;
+  botao.className = `pino pino-${ponto.after ? 'after' : ponto.zona} selecionado`;
   botao.setAttribute('aria-label', ponto.nome);
   botao.setAttribute('aria-pressed', 'true');
   botao.innerHTML = PINO_SVG;

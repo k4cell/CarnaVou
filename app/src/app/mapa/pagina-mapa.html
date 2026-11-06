@@ -1,6 +1,6 @@
 <app-mapa-base
   [pontos]="pontos()"
-  [selecionado]="cartao()?.id ?? null"
+  [selecionado]="cartao()?.id ?? lugarDoAfter()?.ponto ?? null"
   [voce]="voce()"
   [trajetos]="trajetos()"
   (escolher)="escolher($event)"
@@ -8,9 +8,20 @@
 />
 
 <div class="topo-do-mapa">
-  <app-abas-do-dia />
-  @if (vazio()) {
-    <p class="vazio">{{ mensagemVazia() }}</p>
+  @if (modoAfter()) {
+    <!-- O After vale sempre o hoje: no lugar das abas, o que o mapa mostra e o jeito de voltar. -->
+    <div class="titulo-do-after">
+      <div>
+        <strong>After de hoje</strong>
+        Bares e blocos da noite
+      </div>
+      <a class="botao-claro" routerLink="/mapa">Todos os blocos</a>
+    </div>
+  } @else {
+    <app-abas-do-dia />
+    @if (vazio()) {
+      <p class="vazio">{{ mensagemVazia() }}</p>
+    }
   }
 </div>
 
@@ -143,6 +154,28 @@
           }
         }
       }
+    </section>
+  } @else if (lugarDoAfter(); as lugar) {
+    <section class="cartao-do-ponto cartao-do-after" aria-label="Lugar escolhido">
+      <button type="button" class="fechar" aria-label="Fechar" (click)="fechar()">×</button>
+      <!-- O nome e, embaixo, o que é e onde fica, no mesmo jeito dos blocos de um ponto. -->
+      <p class="blocos-do-ponto">
+        <strong class="nome">{{ lugar.nome }}</strong>
+        <span class="sobre">{{ lugar.tipo }} · {{ lugar.endereco }}</span>
+      </p>
+      <div class="linha">
+        <app-zona-tag [zona]="lugar.zona" />
+      </div>
+
+      @if (distancia(); as perto) {
+        <p class="distancia">A {{ perto }} de você, em linha reta.</p>
+      }
+
+      <div class="acoes">
+        <a class="botao botao-principal" [href]="links()?.aPe" target="_blank" rel="noopener">Ir a pé</a>
+        <a class="botao" [href]="links()?.uber" target="_blank" rel="noopener">Uber</a>
+        <a class="botao" [href]="links()?.metro" target="_blank" rel="noopener">Metrô</a>
+      </div>
     </section>
   }
 </div>

@@ -66,7 +66,7 @@ describe('as correções', () => {
       definirCorrecoes([{ id: bloco.id, inicio: '23:00', desfile: '23:10', fim: '23:50' }]);
       expect(acharBlocoPeloId(bloco.id)).toMatchObject({ inicio: '23:00', horarioMudou: true });
       expect(ids(secoesDosBlocos('hoje', rolando).find(({ titulo }) => titulo === 'Rolando agora'))).not.toContain(bloco.id);
-      expect(ids(secoesDosBlocos('hoje', rolando).find(({ titulo }) => titulo === 'Mais tarde hoje'))).toContain(bloco.id);
+      expect(ids(secoesDosBlocos('hoje', rolando).find(({ titulo }) => titulo === 'Hoje'))).toContain(bloco.id);
     });
 
     it('uma nota sozinha não diz que o horário mudou', () => {

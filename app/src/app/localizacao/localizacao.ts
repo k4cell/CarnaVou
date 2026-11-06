@@ -65,6 +65,24 @@ export class Localizacao {
   readonly estado = signal<EstadoDaLocalizacao>('desligada');
   readonly posicao = signal<Posicao | null>(null);
 
+  /** A pessoa tocou em "Onde estou" fora do mapa (no After) e foi levada até ele. */
+  private tocouAntesDoMapa = false;
+
+  /** O "Onde estou" do After leva ao mapa: é lá que a pessoa é procurada, por causa desse toque. */
+  procurarAoAbrirOMapa(): void {
+    this.tocouAntesDoMapa = true;
+  }
+
+  /**
+   * O mapa pergunta, ao abrir, se chegou por um toque em "Onde estou". Vale uma vez: abrir o mapa de
+   * novo (ou recarregar a página) não procura a pessoa sem outro toque.
+   */
+  veioDeUmToque(): boolean {
+    const tocou = this.tocouAntesDoMapa;
+    this.tocouAntesDoMapa = false;
+    return tocou;
+  }
+
   /**
    * Decide o que fazer ao tocar em "onde estou": explicar para que serve (quando o celular
    * ainda vai perguntar), ir direto procurar (quando a pessoa já deixou) ou avisar.

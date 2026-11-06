@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/c
 
 import { AbasDoDia } from '../abas/abas-do-dia';
 import { BannerBloco } from '../banner/banner-bloco';
+import { DataDoDia } from '../banner/data-do-dia';
 import { DadosAtualizados } from '../correcoes/dados-atualizados';
 import { Aba } from '../dados/agenda';
 import { acharLocal, faixaDoLocal } from '../dados/consultas';
@@ -36,53 +37,83 @@ const LUGARES_POR_ZONA = ORDEM_DAS_ZONAS.map((zona) => ({
  */
 @Component({
   selector: 'app-pagina-blocos',
-  imports: [AbasDoDia, BannerBloco, DadosAtualizados],
+  imports: [AbasDoDia, BannerBloco, DadosAtualizados, DataDoDia],
   template: `
     <h2 class="titulo">Blocos</h2>
-    <input
-      class="busca"
-      type="search"
-      placeholder="Buscar bloco, artista ou lugar"
-      aria-label="Buscar bloco, artista ou lugar"
-      autocomplete="off"
-      enterkeyhint="search"
-      [value]="filtros.busca()"
-      (input)="aoBuscar($event)"
-    />
+    <!-- A busca e os filtros numa linha só: o campo e dois botões redondos, o do lugar e o da estrela. -->
+    <div class="busca-e-filtros">
+      <label class="campo">
+        <!-- Lupa: Lucide (licença ISC). -->
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <circle cx="11" cy="11" r="7" />
+          <path d="M21 21l-4.3-4.3" />
+        </svg>
+        <input
+          class="busca"
+          type="search"
+          placeholder="Buscar bloco, artista ou lugar"
+          aria-label="Buscar bloco, artista ou lugar"
+          autocomplete="off"
+          enterkeyhint="search"
+          [value]="filtros.busca()"
+          (input)="aoBuscar($event)"
+        />
+      </label>
+      <!-- A lista de lugares fica invisível por cima do botão: tocar nele abre a lista do celular. -->
+      <label class="redondo" [class.ligado]="filtros.lugar() !== ''">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M12 21s-6-5.6-6-10a6 6 0 1112 0c0 4.4-6 10-6 10z" />
+          <circle cx="12" cy="11" r="2" />
+        </svg>
+        <select class="lugar" aria-label="Filtrar por lugar" (change)="aoEscolherLugar($event)">
+          <option value="" [selected]="filtros.lugar() === ''">Todos os lugares</option>
+          @for (zona of zonas; track zona.nome) {
+            <optgroup [label]="zona.nome">
+              @for (lugar of zona.lugares; track lugar.id) {
+                <option [value]="lugar.id" [selected]="filtros.lugar() === lugar.id">{{ lugar.nome }}</option>
+              }
+            </optgroup>
+          }
+        </select>
+      </label>
+      <button
+        type="button"
+        class="redondo so-favoritos"
+        [class.ligado]="filtros.soFavoritos()"
+        [attr.aria-pressed]="filtros.soFavoritos()"
+        [attr.aria-label]="'Só os favoritos (' + favoritos.quantos() + ')'"
+        (click)="filtros.soFavoritos.set(!filtros.soFavoritos())"
+      >
+        <!-- Estrela: Lucide (licença ISC). -->
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z" />
+        </svg>
+        @if (favoritos.quantos() > 0) {
+          <span class="conta" aria-hidden="true">{{ favoritos.quantos() }}</span>
+        }
+      </button>
+    </div>
+    @if (lugarEscolhido(); as nome) {
+      <button type="button" class="etiqueta" [attr.aria-label]="'Tirar o filtro: ' + nome" (click)="filtros.lugar.set('')">
+        {{ nome }} <span aria-hidden="true">×</span>
+      </button>
+    }
     @if (!filtros.buscando()) {
       <app-abas-do-dia />
     }
-    <div class="filtros">
-      <select class="lugar" aria-label="Filtrar por lugar" (change)="aoEscolherLugar($event)">
-        <option value="" [selected]="filtros.lugar() === ''">Todos os lugares</option>
-        @for (zona of zonas; track zona.nome) {
-          <optgroup [label]="zona.nome">
-            @for (lugar of zona.lugares; track lugar.id) {
-              <option [value]="lugar.id" [selected]="filtros.lugar() === lugar.id">{{ lugar.nome }}</option>
-            }
-          </optgroup>
-        }
-      </select>
-      <button
-        type="button"
-        class="so-favoritos"
-        [class.ligado]="filtros.soFavoritos()"
-        [attr.aria-pressed]="filtros.soFavoritos()"
-        (click)="filtros.soFavoritos.set(!filtros.soFavoritos())"
-      >
-        Favoritos ({{ favoritos.quantos() }})
-      </button>
-    </div>
     @for (secao of secoes(); track secao.titulo) {
       <h3 class="secao">{{ secao.titulo }}</h3>
       <ul class="lista">
         <!-- Os blocos do mesmo dia no mesmo lugar ficam num cartão só, com o nome do lugar no alto. -->
         @for (grupo of secao.grupos; track grupo[0].id) {
-          <li class="dia" [attr.data-faixa]="faixaDo(grupo[0])">
+          <li class="grupo" [attr.data-faixa]="faixaDo(grupo[0])">
             <span class="lugar-do-grupo">{{ lugarDo(grupo[0]) }}</span>
-            @for (bloco of grupo; track bloco.id; let primeiro = $first) {
-              <app-banner-bloco [bloco]="bloco" [mostrarData]="primeiro" />
-            }
+            <app-data-do-dia class="data-do-grupo" [data]="grupo[0].data" />
+            <div class="blocos-do-grupo">
+              @for (bloco of grupo; track bloco.id) {
+                <app-banner-bloco [bloco]="bloco" [mostrarData]="false" />
+              }
+            </div>
           </li>
         }
       </ul>
@@ -105,47 +136,136 @@ const LUGARES_POR_ZONA = ORDEM_DAS_ZONAS.map((zona) => ({
       white-space: nowrap;
     }
 
-    .busca,
-    .lugar,
-    .so-favoritos {
+    .busca-e-filtros {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .campo,
+    .redondo {
+      display: flex;
+      align-items: center;
       min-height: 44px;
       border: 1px solid var(--borda);
-      border-radius: 8px;
+      border-radius: 999px;
       background: var(--cartao);
       color: var(--texto);
-      font: inherit;
+
+      &:focus-within {
+        outline: 3px solid var(--texto);
+        outline-offset: 2px;
+      }
+    }
+
+    svg {
+      flex: none;
+      width: 20px;
+      height: 20px;
+      fill: none;
+      stroke: currentcolor;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .campo {
+      flex: 1;
+      gap: 8px;
+      min-width: 0;
+      padding-left: 14px;
+
+      svg {
+        color: var(--texto-suave);
+      }
     }
 
     .busca {
-      display: block;
-      width: 100%;
-      margin-top: 12px;
-      padding: 0 12px;
-    }
-
-    .filtros {
-      display: flex;
-      gap: 8px;
-      margin-top: 8px;
-    }
-
-    .lugar {
       flex: 1;
       min-width: 0;
-      padding: 0 8px;
+      height: 42px;
+      padding: 0 14px 0 0;
+      border: 0;
+      border-radius: 0 999px 999px 0;
+      background: none;
+      color: inherit;
+      font: inherit;
+      outline: none;
     }
 
-    .so-favoritos {
+    .redondo {
+      position: relative;
       flex: none;
-      padding: 0 12px;
-      font-weight: 700;
+      justify-content: center;
+      width: 44px;
+      padding: 0;
       cursor: pointer;
     }
 
-    // Amarelo só como fundo, com texto escuro.
+    // A lista do celular abre ao tocar no botão; a lista em si não aparece.
+    .lugar {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    button.redondo {
+      font: inherit;
+    }
+
+    // Ligado: fundo amarelo e texto escuro (amarelo só como fundo). A estrela fica cheia.
     .ligado {
       border-color: var(--amarelo);
       background: var(--amarelo);
+
+      &.so-favoritos svg {
+        fill: currentcolor;
+      }
+    }
+
+    // Quantos favoritos a pessoa tem, num número pequeno no canto da estrela.
+    .conta {
+      position: absolute;
+      top: -4px;
+      right: -4px;
+      min-width: 20px;
+      padding: 0 5px;
+      border-radius: 999px;
+      background: var(--roxo);
+      color: var(--cartao);
+      font-size: 0.75rem;
+      font-weight: 800;
+      line-height: 20px;
+      text-align: center;
+    }
+
+    // O lugar escolhido, numa etiqueta: o "×" tira o filtro.
+    .etiqueta {
+      display: inline-flex;
+      gap: 6px;
+      align-items: center;
+      min-height: 36px;
+      margin-top: 8px;
+      padding: 0 12px;
+      border: 0;
+      border-radius: 999px;
+      background: var(--amarelo);
+      color: var(--texto);
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+
+      span {
+        font-size: 1.25rem;
+        line-height: 1;
+      }
+
+      &:focus-visible {
+        outline: 3px solid var(--texto);
+        outline-offset: 2px;
+      }
     }
 
     .vazio {
@@ -167,6 +287,9 @@ export class PaginaBlocos {
   protected readonly favoritos = inject(Favoritos);
 
   protected readonly zonas = LUGARES_POR_ZONA;
+
+  /** O nome do lugar escolhido no filtro, para a etiqueta que tira o filtro. */
+  protected readonly lugarEscolhido = computed(() => acharLocal(this.filtros.lugar())?.nome ?? null);
 
   protected readonly secoes = computed<SecaoDeBlocos[]>(() => {
     const agora = this.relogio.agora();

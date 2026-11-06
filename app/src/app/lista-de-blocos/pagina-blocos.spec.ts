@@ -36,7 +36,7 @@ describe('PaginaBlocos', () => {
   it('põe num cartão só os blocos do mesmo dia no mesmo lugar, com o nome do lugar no alto', async () => {
     // Sábado, 07/02, meio-dia: no Ibirapuera, Quem Pede, Pede e Forrozin rolando e Bicho Maluco às 14h.
     const { tela } = await renderizar(new Date(2026, 1, 7, 12, 0));
-    const cartao = Array.from(tela.querySelectorAll('li.dia')).find((li) =>
+    const cartao = Array.from(tela.querySelectorAll('li.grupo')).find((li) =>
       li.textContent?.includes('Quem Pede, Pede'),
     )!;
     const nomes = Array.from(cartao.querySelectorAll('.nome')).map((nome) => nome.textContent?.trim());
@@ -46,8 +46,10 @@ describe('PaginaBlocos', () => {
     expect(cartao.getAttribute('data-faixa')).toBe('rosa');
     // O lugar fica só no alto, e não repete dentro dos blocos.
     expect(cartao.querySelectorAll('app-banner-bloco .lugar').length).toBe(0);
-    // A data também aparece uma vez só, no primeiro bloco.
+    // A data aparece uma vez só, no cartão, e não em cada bloco.
     expect(cartao.querySelectorAll('time').length).toBe(1);
+    expect(cartao.querySelectorAll('app-banner-bloco time').length).toBe(0);
+    expect(cartao.querySelector('.data-do-grupo time')?.getAttribute('datetime')).toBe('2026-02-07');
   });
 
   it('deixa sozinho o bloco que não tem outro no mesmo lugar e dia, também com o lugar no alto', async () => {
@@ -130,16 +132,31 @@ describe('PaginaBlocos', () => {
       await escolherLugar('perus');
       expect(tela.querySelector('.vazio')?.textContent).toContain('Nenhum bloco com esses filtros');
     });
+
+    it('mostra o lugar escolhido numa etiqueta, e tocar nela tira o filtro', async () => {
+      const { fixture, tela, escolherLugar } = await renderizar(new Date(2026, 1, 7, 12, 0));
+      expect(tela.querySelector('.etiqueta')).toBeNull();
+      await escolherLugar('ibirapuera');
+      const etiqueta = tela.querySelector<HTMLButtonElement>('.etiqueta')!;
+      expect(etiqueta.textContent).toContain('Parque Ibirapuera');
+      expect(tela.querySelector('.redondo.ligado .lugar')).not.toBeNull();
+      etiqueta.click();
+      await fixture.whenStable();
+      expect(tela.querySelector('.etiqueta')).toBeNull();
+      expect(tela.querySelector('.redondo.ligado .lugar')).toBeNull();
+    });
   });
 
   describe('os favoritos', () => {
     it('mostra só os blocos marcados, com a conta no botão', async () => {
       const { fixture, tela, nomes } = await renderizar(new Date(2026, 1, 7, 12, 0));
       const botao = tela.querySelector<HTMLButtonElement>('.so-favoritos')!;
-      expect(botao.textContent).toContain('Favoritos (0)');
+      expect(botao.getAttribute('aria-label')).toBe('Só os favoritos (0)');
+      expect(botao.querySelector('.conta')).toBeNull();
       TestBed.inject(Favoritos).trocar('forrozin');
       await fixture.whenStable();
-      expect(botao.textContent).toContain('Favoritos (1)');
+      expect(botao.getAttribute('aria-label')).toBe('Só os favoritos (1)');
+      expect(botao.querySelector('.conta')?.textContent).toBe('1');
       botao.click();
       await fixture.whenStable();
       expect(botao.getAttribute('aria-pressed')).toBe('true');

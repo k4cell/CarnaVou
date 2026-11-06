@@ -29,7 +29,7 @@ describe('PaginaLocal', () => {
 
   it('põe os blocos de cada dia em ordem de data', async () => {
     const tela = await renderizar('ibirapuera');
-    const datas = Array.from(tela.querySelectorAll('.dia time')).map((t) => t.getAttribute('datetime') ?? '');
+    const datas = Array.from(tela.querySelectorAll('.grupo time')).map((t) => t.getAttribute('datetime') ?? '');
     expect(datas.length).toBeGreaterThan(1);
     expect(datas).toEqual([...datas].sort());
   });
@@ -92,7 +92,7 @@ describe('PaginaLocal', () => {
       const datas = BLOCOS.filter((bloco) => bloco.localId === 'ibirapuera' && !emDestaque.has(bloco.id)).map(
         (bloco) => bloco.data,
       );
-      const dias = Array.from(tela.querySelectorAll('li.dia'));
+      const dias = Array.from(tela.querySelectorAll('li.grupo'));
       expect(dias.length).toBe(new Set(datas).size);
       const datasDosDias = dias.map((dia) => dia.querySelector('time')?.getAttribute('datetime'));
       expect(datasDosDias).toEqual([...datasDosDias].sort());
@@ -100,7 +100,7 @@ describe('PaginaLocal', () => {
 
     it('juntam os blocos do sábado, 7 de fevereiro, no Ibirapuera, sem perder nenhum', async () => {
       const tela = await renderizar('ibirapuera');
-      const sabado = Array.from(tela.querySelectorAll('li.dia')).find(
+      const sabado = Array.from(tela.querySelectorAll('li.grupo')).find(
         (dia) => dia.getAttribute('aria-label') === 'Sábado, 7 de fevereiro',
       );
       const nomes = Array.from(sabado?.querySelectorAll('.nome') ?? []).map((nome) => nome.textContent);
@@ -110,11 +110,13 @@ describe('PaginaLocal', () => {
 
     it('o dia aparece uma vez em cada cartão, e cada bloco continua com o horário e o link dele', async () => {
       const tela = await renderizar('ibirapuera');
-      const primeiroDia = tela.querySelector('li.dia')!;
+      const primeiroDia = tela.querySelector('li.grupo')!;
       const banners = Array.from(primeiroDia.querySelectorAll('app-banner-bloco'));
       expect(banners.length).toBeGreaterThan(1);
+      // A data fica no cartão, na coluna da esquerda, e não dentro dos blocos.
       expect(primeiroDia.querySelectorAll('time').length).toBe(1);
-      expect(banners[0].querySelector('time')).not.toBeNull();
+      expect(primeiroDia.querySelector('.data-do-grupo time')).not.toBeNull();
+      expect(banners.some((banner) => banner.querySelector('time'))).toBe(false);
       for (const banner of banners) {
         expect(banner.querySelector('.horario')?.textContent).toContain('Começa às');
         expect(banner.querySelector('a')?.getAttribute('href')).toMatch(/^\/local\/ibirapuera\//);
@@ -205,7 +207,7 @@ describe('PaginaLocal', () => {
 
     it('não repete nos dias o bloco que está nos destaques', async () => {
       const tela = await renderizar('ibirapuera');
-      const nosDias = Array.from(tela.querySelectorAll('.dia .nome')).map((nome) => nome.textContent);
+      const nosDias = Array.from(tela.querySelectorAll('.grupo .nome')).map((nome) => nome.textContent);
       expect(nosDias).not.toContain('Carnafacul - Quem Pede, Pede');
       expect(nosDias).toContain('Forrozin');
     });
