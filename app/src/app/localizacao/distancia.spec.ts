@@ -1,4 +1,4 @@
-import { distanciaEmMetros, textoDaDistancia } from './distancia';
+import { distanciaEmMetros, fraseDaDistancia, tempoAPe, textoDaDistancia } from './distancia';
 
 describe('distanciaEmMetros', () => {
   it('dá zero para o mesmo ponto', () => {
@@ -53,5 +53,34 @@ describe('textoDaDistancia', () => {
   it('escreve os km inteiros a partir de 10 km', () => {
     expect(textoDaDistancia(10_000)).toBe('10 km');
     expect(textoDaDistancia(23_400)).toBe('23 km');
+  });
+});
+
+describe('tempoAPe', () => {
+  it('diz "1 min a pé" para quem está do lado', () => {
+    expect(tempoAPe(0)).toBe('1 min a pé');
+    expect(tempoAPe(40)).toBe('1 min a pé');
+  });
+
+  it('conta os minutos um a um até 10, com as ruas e o passo lento da festa', () => {
+    // 300 m em linha reta viram uns 390 m pelas ruas: a 4 km/h, uns 6 minutos.
+    expect(tempoAPe(300)).toBe('uns 6 min a pé');
+  });
+
+  it('arredonda de 5 em 5 minutos até uma hora', () => {
+    expect(tempoAPe(1234)).toBe('uns 25 min a pé');
+    expect(tempoAPe(2000)).toBe('uns 40 min a pé');
+  });
+
+  it('passando de uma hora, fala em horas, de 15 em 15 minutos', () => {
+    // Da Sé ao Ibirapuera, uns 4,4 km em linha reta.
+    expect(tempoAPe(4_400)).toBe('uns 1 h 30 min a pé');
+    expect(tempoAPe(6_150)).toBe('uns 2 h a pé');
+  });
+});
+
+describe('fraseDaDistancia', () => {
+  it('junta a distância e o tempo a pé numa frase só', () => {
+    expect(fraseDaDistancia(1234)).toBe('A 1,2 km de você, uns 25 min a pé.');
   });
 });

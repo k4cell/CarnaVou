@@ -35,7 +35,7 @@
         <app-zona-tag [zona]="lugar.zona" />
         <span class="endereco">{{ lugar.tipo }} · {{ lugar.endereco }}</span>
         @if (lugar.distancia) {
-          <span class="distancia">A {{ lugar.distancia }} de você, em linha reta.</span>
+          <span class="distancia">{{ lugar.distancia }}</span>
         }
         <span class="acoes">
           <a class="botao botao-principal" [href]="lugar.links.aPe" target="_blank" rel="noopener">Ir a pé</a>

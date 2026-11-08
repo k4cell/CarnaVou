@@ -5,7 +5,7 @@ import { BannerBloco } from '../banner/banner-bloco';
 import { FAIXAS } from '../dados/consultas';
 import { blocosDaNoite } from '../dados/lista-de-blocos';
 import { LUGARES_DO_AFTER } from '../dados/lugares-do-after';
-import { distanciaEmMetros, textoDaDistancia } from '../localizacao/distancia';
+import { distanciaEmMetros, fraseDaDistancia } from '../localizacao/distancia';
 import { Localizacao } from '../localizacao/localizacao';
 import { linksDeIr } from '../mapa/links';
 import { Relogio } from '../relogio/relogio';
@@ -50,7 +50,7 @@ export class PaginaAfter {
     }
     return LUGARES.map((lugar) => ({ lugar, metros: distanciaEmMetros(voce, lugar) }))
       .sort((a, b) => a.metros - b.metros)
-      .map(({ lugar, metros }) => ({ ...lugar, distancia: textoDaDistancia(metros) }));
+      .map(({ lugar, metros }) => ({ ...lugar, distancia: fraseDaDistancia(metros) }));
   });
 
   /** "Onde estou": abre o mapa do After, que procura a pessoa por causa deste toque. */

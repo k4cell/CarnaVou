@@ -24,9 +24,13 @@
   font-weight: 600;
   cursor: pointer;
 
+  // A aba escolhida tem fundo amarelo cheio, para se ver de relance no sol (amarelo só como fundo,
+  // com texto escuro). O traço escuro embaixo ajuda quem não distingue bem as cores.
   &[aria-pressed='true'] {
-    border-bottom-color: var(--amarelo);
-    color: var(--roxo);
+    border-radius: 8px 8px 0 0;
+    border-bottom-color: var(--texto);
+    background: var(--amarelo);
+    color: var(--texto);
     font-weight: 800;
   }
 

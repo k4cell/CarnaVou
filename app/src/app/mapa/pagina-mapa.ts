@@ -21,7 +21,7 @@ import { itinerarioDoBloco } from '../dados/itinerario';
 import { LUGARES_DO_AFTER } from '../dados/lugares-do-after';
 import { Bloco } from '../dados/tipos';
 import { FiltroDeDia } from '../filtro/filtro-de-dia';
-import { Ponto, distanciaEmMetros, textoDaDistancia } from '../localizacao/distancia';
+import { Ponto, distanciaEmMetros, fraseDaDistancia, textoDaDistancia } from '../localizacao/distancia';
 import { ExplicacaoDaLocalizacao } from '../localizacao/explicacao-da-localizacao';
 import { Localizacao } from '../localizacao/localizacao';
 import { Relogio } from '../relogio/relogio';
@@ -219,11 +219,11 @@ export class PaginaMapa {
     return doAfter ? linksDeIr(doAfter.lat, doAfter.lng, doAfter.nome) : undefined;
   });
 
-  /** "1,2 km", se a pessoa já mostrou onde está. Em linha reta, sem ênfase. */
+  /** "A 1,2 km de você, uns 25 min a pé.", se a pessoa já mostrou onde está. */
   protected readonly distancia = computed(() => {
     const voce = this.voce();
     const alvo = this.cartao() ?? this.pontoDoAfter();
-    return voce && alvo ? textoDaDistancia(distanciaEmMetros(voce, alvo)) : null;
+    return voce && alvo ? fraseDaDistancia(distanciaEmMetros(voce, alvo)) : null;
   });
 
   /**

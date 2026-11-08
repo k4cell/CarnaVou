@@ -16,11 +16,13 @@ import { ZonaTag } from '../zona/zona-tag';
 /** Quantos blocos ficam no quadro de destaques do lugar. */
 const DESTAQUES = 4;
 
-const NADA_NA_ABA: Record<Aba, string> = {
-  hoje: 'Nenhum bloco aqui hoje. Veja a aba Geral.',
-  amanha: 'Nenhum bloco aqui amanhã. Veja a aba Geral.',
-  geral: 'Não tem mais blocos aqui.',
+/** Sem bloco no dia escolhido: a página já mostra os outros dias do lugar, sem pedir outro toque. */
+const NADA_NO_DIA: Record<Exclude<Aba, 'geral'>, string> = {
+  hoje: 'Nenhum bloco aqui hoje. Estes são os próximos dias:',
+  amanha: 'Nenhum bloco aqui amanhã. Estes são os outros dias:',
 };
+
+const NADA_MAIS = 'Não tem mais blocos aqui.';
 
 @Component({
   selector: 'app-pagina-local',
@@ -55,15 +57,26 @@ export class PaginaLocal {
    */
   protected readonly aba = computed<Aba | null>(() => (this.relogio.agora() ? this.filtro.ativa() : null));
 
+  /** Os blocos da aba escolhida. Na Geral, os de hoje em diante: os dias que já passaram somem. */
+  private readonly daAba = computed(() => blocosDaAba(this.aba() ?? 'geral', this.local(), this.relogio.agora()));
+
   /**
-   * Os blocos que valem agora: os da aba escolhida. Na Geral, os de hoje em diante: os dias que
-   * já passaram somem.
+   * Os blocos que a página mostra: os da aba escolhida e, se nela não tiver nenhum, os de todos os
+   * dias que ainda vêm, para a pessoa não ter que tocar em Geral para descobrir.
    */
-  private readonly blocos = computed(() => blocosDaAba(this.aba() ?? 'geral', this.local(), this.relogio.agora()));
+  private readonly blocos = computed(() => {
+    const daAba = this.daAba();
+    return daAba.length > 0 || this.aba() === 'geral'
+      ? daAba
+      : blocosDaAba('geral', this.local(), this.relogio.agora());
+  });
 
   protected readonly nadaNaAba = computed(() => {
     const aba = this.aba();
-    return aba && this.blocos().length === 0 ? NADA_NA_ABA[aba] : '';
+    if (!aba || this.daAba().length > 0) {
+      return '';
+    }
+    return aba === 'geral' || this.blocos().length === 0 ? NADA_MAIS : NADA_NO_DIA[aba];
   });
 
   /** Os blocos mais famosos, em destaque no topo (só os que têm artista conhecido). */

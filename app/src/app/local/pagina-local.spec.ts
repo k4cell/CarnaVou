@@ -184,9 +184,27 @@ describe('PaginaLocal', () => {
       expect(horario('agrada-gregos')).toBe('Começou às 13h · vai até 18h');
     });
 
-    it('avisa quando o lugar não tem bloco no dia da aba', async () => {
-      const { tela } = await renderizarNoDia('consolacao', 'hoje');
-      expect(tela.querySelector('.vazio')?.textContent).toContain('Nenhum bloco aqui hoje. Veja a aba Geral.');
+    it('sem bloco no dia da aba, avisa e já mostra os próximos dias do lugar', async () => {
+      // A Consolação não tem bloco no sábado, 14/02, mas tem no domingo, 22/02.
+      const { tela, datas } = await renderizarNoDia('consolacao', 'hoje');
+      expect(tela.querySelector('.vazio')?.textContent).toContain('Nenhum bloco aqui hoje. Estes são os próximos dias:');
+      expect(tela.querySelectorAll('app-banner-bloco').length).toBe(
+        BLOCOS.filter((b) => b.localId === 'consolacao' && b.data >= '2026-02-14').length,
+      );
+      expect(datas()).toContain('2026-02-22');
+      expect(TestBed.inject(FiltroDeDia).ativa()).toBe('hoje');
+    });
+
+    it('sem bloco amanhã, mostra os outros dias do lugar', async () => {
+      const { tela } = await renderizarNoDia('consolacao', 'amanha');
+      expect(tela.querySelector('.vazio')?.textContent).toContain('Nenhum bloco aqui amanhã. Estes são os outros dias:');
+      expect(tela.querySelectorAll('app-banner-bloco').length).toBeGreaterThan(0);
+    });
+
+    it('avisa quando o lugar não tem mais nenhum bloco pela frente', async () => {
+      // Santo Amaro só teve blocos antes de 14/02.
+      const { tela } = await renderizarNoDia('santo-amaro', 'hoje');
+      expect(tela.querySelector('.vazio')?.textContent).toContain('Não tem mais blocos aqui.');
       expect(tela.querySelectorAll('app-banner-bloco').length).toBe(0);
     });
   });

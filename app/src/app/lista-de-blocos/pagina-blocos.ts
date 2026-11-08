@@ -9,10 +9,11 @@ import { acharLocal, faixaDoLocal } from '../dados/consultas';
 import { NOMES_DAS_ZONAS } from '../dados/formato';
 import { SecaoDeBlocos, secaoDoQueJaAconteceu, secoesDosBlocos } from '../dados/lista-de-blocos';
 import { LOCAIS } from '../dados/locais';
-import { Bloco, Zona } from '../dados/tipos';
+import { Bloco, Local, Zona } from '../dados/tipos';
 import { Favoritos } from '../favoritos/favoritos';
 import { FiltroDeDia } from '../filtro/filtro-de-dia';
 import { Relogio } from '../relogio/relogio';
+import { ZonaTag } from '../zona/zona-tag';
 import { FiltrosDaLista } from './filtros-da-lista';
 
 const NADA_NA_ABA: Record<Aba, string> = {
@@ -37,7 +38,7 @@ const LUGARES_POR_ZONA = ORDEM_DAS_ZONAS.map((zona) => ({
  */
 @Component({
   selector: 'app-pagina-blocos',
-  imports: [AbasDoDia, BannerBloco, DadosAtualizados, DataDoDia],
+  imports: [AbasDoDia, BannerBloco, DadosAtualizados, DataDoDia, ZonaTag],
   template: `
     <h2 class="titulo">Blocos</h2>
     <!-- A busca e os filtros numa linha só: o campo e dois botões redondos, o do lugar e o da estrela. -->
@@ -107,7 +108,12 @@ const LUGARES_POR_ZONA = ORDEM_DAS_ZONAS.map((zona) => ({
         <!-- Os blocos do mesmo dia no mesmo lugar ficam num cartão só, com o nome do lugar no alto. -->
         @for (grupo of secao.grupos; track grupo[0].id) {
           <li class="grupo" [attr.data-faixa]="faixaDo(grupo[0])">
-            <span class="lugar-do-grupo">{{ lugarDo(grupo[0]) }}</span>
+            <span class="lugar-do-grupo">
+              @if (localDo(grupo[0]); as local) {
+                <span class="nome-do-lugar">{{ local.nome }}</span>
+                <app-zona-tag [zona]="local.zona" />
+              }
+            </span>
             <app-data-do-dia class="data-do-grupo" [data]="grupo[0].data" />
             <div class="blocos-do-grupo">
               @for (bloco of grupo; track bloco.id) {
@@ -322,8 +328,8 @@ export class PaginaBlocos {
     this.filtros.lugar.set((evento.target as HTMLSelectElement).value);
   }
 
-  protected lugarDo(bloco: Bloco): string {
-    return acharLocal(bloco.localId)?.nome ?? '';
+  protected localDo(bloco: Bloco): Local | undefined {
+    return acharLocal(bloco.localId);
   }
 
   protected faixaDo(bloco: Bloco): string {

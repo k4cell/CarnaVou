@@ -10,7 +10,7 @@ import { LUGARES_DO_AFTER } from '../dados/lugares-do-after';
 import { Bloco } from '../dados/tipos';
 import { trajetoDoBloco } from '../dados/trajetos';
 import { MENSAGENS_DA_ABA_VAZIA } from '../filtro/filtro-de-dia';
-import { distanciaEmMetros, textoDaDistancia } from '../localizacao/distancia';
+import { distanciaEmMetros, fraseDaDistancia, textoDaDistancia } from '../localizacao/distancia';
 import { criarGeolocalizacaoFalsa, Resposta } from '../localizacao/geolocalizacao-falsa';
 import { CONSULTAR_PERMISSAO, GEOLOCALIZACAO, Localizacao, PermissaoDoCelular } from '../localizacao/localizacao';
 import { Relogio } from '../relogio/relogio';
@@ -685,16 +685,14 @@ describe('PaginaMapa', () => {
         expect(cartao()?.querySelector('.distancia')).toBeNull();
       });
 
-      it('aparece, em linha reta até a concentração, depois que a pessoa mostrou onde está', async () => {
+      it('aparece, com o tempo a pé até a concentração, depois que a pessoa mostrou onde está', async () => {
         const { cartao, tocarNoBloco, tocarEmOndeEstou } = await renderizar(SABADO_14H, { permissao: 'granted' });
         await tocarEmOndeEstou();
         const [bloco] = acharPonto('hoje', umBloco);
         await tocarNoBloco(bloco);
         const [lng, lat] = trajetoDoBloco(bloco.id)!.inicio;
         const metros = distanciaEmMetros({ lat: -23.5614, lng: -46.6559 }, { lat, lng });
-        expect(cartao()?.querySelector('.distancia')?.textContent).toBe(
-          `A ${textoDaDistancia(metros)} de você, em linha reta.`,
-        );
+        expect(cartao()?.querySelector('.distancia')?.textContent).toBe(fraseDaDistancia(metros));
       });
     });
   });

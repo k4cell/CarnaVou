@@ -36,3 +36,36 @@ export function textoDaDistancia(metros: number): string {
   }
   return `${Math.round(metros / 1000)} km`;
 }
+
+/** As ruas fazem a gente andar mais que a linha reta: em média, uns 30% a mais. */
+const DESVIO_DAS_RUAS = 1.3;
+/** O passo de quem anda no meio da festa, mais lento que o normal: 4 km/h. */
+const METROS_POR_MINUTO = 4000 / 60;
+
+/**
+ * Quanto tempo leva andando, a partir da distância em linha reta: "1 min a pé", "uns 7 min a pé",
+ * "uns 25 min a pé", "uns 1 h 30 min a pé". É uma estimativa, sem calcular a rota: arredonda de 5
+ * em 5 minutos e, passando de uma hora, de 15 em 15.
+ */
+export function tempoAPe(metros: number): string {
+  const minutos = Math.round((metros * DESVIO_DAS_RUAS) / METROS_POR_MINUTO);
+  if (minutos <= 1) {
+    return '1 min a pé';
+  }
+  if (minutos < 10) {
+    return `uns ${minutos} min a pé`;
+  }
+  const arredondado = Math.round(minutos / 5) * 5;
+  if (arredondado < 60) {
+    return `uns ${arredondado} min a pé`;
+  }
+  const emQuartos = Math.round(minutos / 15) * 15;
+  const horas = Math.floor(emQuartos / 60);
+  const resto = emQuartos % 60;
+  return `uns ${horas} h${resto ? ` ${resto} min` : ''} a pé`;
+}
+
+/** A frase dos cartões do mapa e do After: "A 1,2 km de você, uns 25 min a pé." */
+export function fraseDaDistancia(metros: number): string {
+  return `A ${textoDaDistancia(metros)} de você, ${tempoAPe(metros)}.`;
+}

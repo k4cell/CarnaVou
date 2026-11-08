@@ -189,12 +189,22 @@ a:focus-visible {
   }
 }
 
+// O nome do lugar e, na aba Blocos, a etiqueta da zona ao lado (desce para baixo se não couber).
 .lugar-do-grupo {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 8px;
+  align-items: center;
   grid-column: 1 / -1;
   padding: 12px 16px 0;
   color: var(--texto-suave);
   font-size: 0.9375rem;
   font-weight: 700;
+
+  app-zona-tag {
+    align-self: center;
+    margin: 0;
+  }
 
   // O primeiro bloco fica mais perto do nome do lugar.
   ~ .blocos-do-grupo app-banner-bloco:first-child .cartao {

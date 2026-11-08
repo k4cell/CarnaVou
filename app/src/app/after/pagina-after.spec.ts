@@ -4,7 +4,7 @@ import { Router, provideRouter } from '@angular/router';
 import { blocosDaNoite } from '../dados/lista-de-blocos';
 import { LUGARES_DO_AFTER } from '../dados/lugares-do-after';
 import { FiltroDeDia } from '../filtro/filtro-de-dia';
-import { distanciaEmMetros, textoDaDistancia } from '../localizacao/distancia';
+import { distanciaEmMetros, fraseDaDistancia } from '../localizacao/distancia';
 import { criarGeolocalizacaoFalsa } from '../localizacao/geolocalizacao-falsa';
 import { CONSULTAR_PERMISSAO, GEOLOCALIZACAO, Localizacao, PermissaoDoCelular } from '../localizacao/localizacao';
 import { estaNaGrandeSP } from '../mapa/limites';
@@ -135,8 +135,9 @@ describe('PaginaAfter', () => {
         (a, b) => distanciaEmMetros(NO_LARGO_DA_BATATA, a) - distanciaEmMetros(NO_LARGO_DA_BATATA, b),
       );
       expect(nomesDosLugares(tela)).toEqual(esperados.map((lugar) => lugar.nome));
-      const maisPerto = textoDaDistancia(distanciaEmMetros(NO_LARGO_DA_BATATA, esperados[0]));
-      expect(tela.querySelector('.lugar-do-after .distancia')?.textContent).toBe(`A ${maisPerto} de você, em linha reta.`);
+      const maisPerto = fraseDaDistancia(distanciaEmMetros(NO_LARGO_DA_BATATA, esperados[0]));
+      expect(tela.querySelector('.lugar-do-after .distancia')?.textContent).toBe(maisPerto);
+      expect(maisPerto).toMatch(/^A .+ de você, (uns )?\d.* a pé\.$/);
       // A cor de cada lugar não muda quando a ordem muda.
       expect(cores()).toEqual(coresAntes);
     });
