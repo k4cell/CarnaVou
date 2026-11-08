@@ -1,34 +1,34 @@
-// Presas no alto da tela quando a lista rola (no mapa, ficam dentro da caixa de cima).
+// Presas no alto da tela quando a lista rola (no mapa, ficam dentro da caixa de cima). O espaço em
+// cima separa as abas da busca; o de baixo, da lista que passa por baixo delas.
 :host {
   position: sticky;
   top: 0;
   z-index: 10;
   display: block;
+  padding: 12px 0 4px;
   background: var(--fundo);
 }
 
 .abas {
   display: flex;
-  border-bottom: 1px solid var(--borda);
+  gap: 8px;
 }
 
+// Cada aba é uma pílula, como a busca e os botões redondos. A escolhida tem fundo amarelo cheio,
+// para se ver de relance no sol (amarelo só como fundo, com texto escuro).
 .aba {
   flex: 1;
-  min-height: 48px;
+  min-height: 44px;
   padding: 0 8px;
   border: 0;
-  border-bottom: 3px solid transparent;
+  border-radius: 999px;
   background: none;
   color: var(--texto-suave);
   font: inherit;
   font-weight: 600;
   cursor: pointer;
 
-  // A aba escolhida tem fundo amarelo cheio, para se ver de relance no sol (amarelo só como fundo,
-  // com texto escuro). O traço escuro embaixo ajuda quem não distingue bem as cores.
   &[aria-pressed='true'] {
-    border-radius: 8px 8px 0 0;
-    border-bottom-color: var(--texto);
     background: var(--amarelo);
     color: var(--texto);
     font-weight: 800;
@@ -36,6 +36,6 @@
 
   &:focus-visible {
     outline: 3px solid var(--texto);
-    outline-offset: -3px;
+    outline-offset: 2px;
   }
 }
