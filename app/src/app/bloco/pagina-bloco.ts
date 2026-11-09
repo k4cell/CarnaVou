@@ -77,4 +77,14 @@ export class PaginaBloco {
       atracoes: atracoesPorHorario(bloco.atracoes),
     };
   });
+
+  /**
+   * Os artistas do bloco que têm o perfil do Instagram nos dados, do mais famoso para o menos: é lá
+   * que costumam sair as novidades de quem toca. Só o link, sem copiar nada de lá.
+   */
+  protected readonly instagram = computed(() =>
+    (this.achado()?.atracoes ?? [])
+      .filter((atracao): atracao is Atracao & { perfil: string } => !!atracao.perfil)
+      .map((atracao) => ({ nome: atracao.nome, endereco: `https://www.instagram.com/${atracao.perfil}/` })),
+  );
 }

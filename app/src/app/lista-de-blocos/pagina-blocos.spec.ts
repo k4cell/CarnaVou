@@ -89,6 +89,20 @@ describe('PaginaBlocos', () => {
       expect(tela.querySelector('.horario')?.getAttribute('data-selo')).toBe('acabou');
     });
 
+    it('entende o dia escrito na busca e mostra numa etiqueta, que tira o dia com um toque', async () => {
+      // Sábado, 14/02, às 14h: a Gloria Groove toca hoje no Agrada Gregos.
+      const { tela, nomes, buscar, fixture } = await renderizar(new Date(2026, 1, 14, 14, 0));
+      await buscar('Gloria Groove hoje');
+      expect(nomes()).toEqual(['Agrada Gregos']);
+      const etiqueta = tela.querySelector<HTMLButtonElement>('.etiqueta.quando')!;
+      expect(etiqueta.textContent).toContain('Hoje');
+      etiqueta.click();
+      await fixture.whenStable();
+      expect(tela.querySelector<HTMLInputElement>('.busca')?.value).toBe('Gloria Groove');
+      expect(tela.querySelector('.etiqueta.quando')).toBeNull();
+      expect(nomes()).toEqual(['Agrada Gregos']);
+    });
+
     it('esconde as abas de dia enquanto busca', async () => {
       const { tela, buscar } = await renderizar(new Date(2026, 1, 7, 12, 0));
       expect(tela.querySelector('app-abas-do-dia')).not.toBeNull();

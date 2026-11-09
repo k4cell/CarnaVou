@@ -39,6 +39,8 @@ export interface PontoNoMapa {
   zona: Zona;
   /** Um bar ou ponto de encontro do After: tem o desenho próprio, para não se confundir com os blocos. */
   after?: boolean;
+  /** Quantos blocos (ou bares) o ponto junta. Com dois ou mais, o número aparece no ponto. */
+  quantos?: number;
 }
 
 /** Por onde um bloco passa: a linha, na cor da zona, da concentração (o ponto) até o fim. */
@@ -100,6 +102,10 @@ const FONTE_DOS_TRAJETOS = 'trajetos';
  */
 const FONTE_DOS_PONTOS = 'pontos';
 const CAMADA_DOS_PONTOS = 'pontos-bolinhas';
+/** O número de blocos, dentro da bolinha do ponto que junta dois ou mais. */
+const CAMADA_DOS_NUMEROS = 'pontos-numeros';
+/** As letras guardadas no site (a mesma do estilo do mapa, em `public/mapa/letras`). */
+const LETRA_DO_MAPA = 'noto-sans';
 /** Quanto em volta do dedo conta como tocar num ponto, em pixels. */
 const RAIO_DO_TOQUE = 14;
 const ZOOM_AO_ACHAR_A_PESSOA = 15;
@@ -321,11 +327,40 @@ export class MapaBase {
         source: FONTE_DOS_PONTOS,
         paint: {
           'circle-color': ['get', 'cor'],
-          // De longe ficam pequenas, para a cidade toda caber sem virar uma mancha.
-          'circle-radius': ['interpolate', ['linear'], ['zoom'], 10, 4, 14, 8, 17, 11],
+          // De longe ficam pequenas, para a cidade toda caber sem virar uma mancha. A que tem número
+          // fica maior, para ele caber dentro.
+          'circle-radius': [
+            'interpolate',
+            ['linear'],
+            ['zoom'],
+            10,
+            ['case', ['!=', ['get', 'numero'], ''], 8, 4],
+            14,
+            ['case', ['!=', ['get', 'numero'], ''], 11, 8],
+            17,
+            ['case', ['!=', ['get', 'numero'], ''], 13, 11],
+          ],
           'circle-stroke-color': ['get', 'borda'],
           'circle-stroke-width': ['case', ['get', 'after'], 3, 2],
         },
+      },
+      embaixoDe,
+    );
+    // O número fica sempre à vista, mesmo quando as bolinhas se encostam.
+    mapa.addLayer(
+      {
+        id: CAMADA_DOS_NUMEROS,
+        type: 'symbol',
+        source: FONTE_DOS_PONTOS,
+        filter: ['!=', ['get', 'numero'], ''],
+        layout: {
+          'text-field': ['get', 'numero'],
+          'text-font': [LETRA_DO_MAPA],
+          'text-size': ['interpolate', ['linear'], ['zoom'], 10, 10, 14, 12, 17, 13],
+          'text-allow-overlap': true,
+          'text-ignore-placement': true,
+        },
+        paint: { 'text-color': ['get', 'corDoNumero'] },
       },
       embaixoDe,
     );

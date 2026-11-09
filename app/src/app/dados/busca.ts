@@ -1,3 +1,4 @@
+import { diaIso, diaSeguinte, momentoDoBloco } from './agenda';
 import { BLOCOS } from './blocos';
 import { acharLocal } from './consultas';
 import { NOMES_DAS_ZONAS, NOMES_DOS_ESTILOS, semAcento } from './formato';
@@ -80,13 +81,11 @@ function palavrasDoBloco(bloco: Bloco): string[] {
 }
 
 /**
- * Monta a busca: devolve quem decide se um bloco combina com o que a pessoa digitou. Cada palavra
- * digitada precisa aparecer no bloco, em qualquer ordem. Se algum bloco tem as palavras certinhas,
- * ficam só esses; os erros de digitação só contam quando a busca exata não acha nada, para um nome
- * parecido não atrapalhar quem digitou certo.
+ * Quem decide se um bloco combina com as palavras. Cada palavra precisa aparecer no bloco, em
+ * qualquer ordem. Se algum bloco tem as palavras certinhas, ficam só esses; os erros de digitação só
+ * contam quando a busca exata não acha nada, para um nome parecido não atrapalhar quem digitou certo.
  */
-export function criarBusca(texto: string): (bloco: Bloco) => boolean {
-  const digitadas = palavrasDaBusca(texto);
+function combinarPalavras(digitadas: string[]): (bloco: Bloco) => boolean {
   if (digitadas.length === 0) {
     return () => true;
   }
@@ -99,4 +98,90 @@ export function criarBusca(texto: string): (bloco: Bloco) => boolean {
     digitadas.every((digitada) =>
       palavrasDoBloco(bloco).some((palavra) => palavra.includes(digitada) || parecida(digitada, palavra)),
     );
+}
+
+/** O "quando" que a busca entendeu: um dia ou o que está rolando agora. */
+export type QuandoDaBusca = { tipo: 'agora' } | { tipo: 'dia'; dia: string };
+
+/** Palavras que só ligam as outras ("bloco de axé no centro"): a busca não procura por elas. */
+const DE_LIGACAO = new Set(
+  palavrasDaBusca('de do da dos das no na nos nas em e o a os as com pra para um uma que ta tem bloco blocos bloquinho bloquinhos feira'),
+);
+
+/** Os dias da semana, na ordem do `getDay()` (domingo é o 0). */
+const DIAS_DA_SEMANA = palavrasDaBusca('domingo segunda terca quarta quinta sexta sabado');
+
+/** O "quando" de uma palavra, se ela for de tempo: hoje, amanhã, agora ou um dia da semana. */
+function quandoDaPalavra(palavra: string, agora: Date): QuandoDaBusca | null {
+  if (palavra === 'agora' || palavra === 'rolando') {
+    return { tipo: 'agora' };
+  }
+  if (palavra === 'hoje') {
+    return { tipo: 'dia', dia: diaIso(agora) };
+  }
+  if (palavra === 'amanha') {
+    return { tipo: 'dia', dia: diaIso(diaSeguinte(agora)) };
+  }
+  const diaDaSemana = DIAS_DA_SEMANA.indexOf(palavra);
+  if (diaDaSemana < 0) {
+    return null;
+  }
+  // O próximo dia com esse nome, a contar de hoje.
+  let data = agora;
+  while (data.getDay() !== diaDaSemana) {
+    data = diaSeguinte(data);
+  }
+  return { tipo: 'dia', dia: diaIso(data) };
+}
+
+function ePalavraDeTempo(palavra: string): boolean {
+  return ['agora', 'rolando', 'hoje', 'amanha', 'feira', ...DIAS_DA_SEMANA].includes(palavra);
+}
+
+/** A busca montada: quem decide se um bloco combina e o "quando" que ela entendeu e usou. */
+export interface Busca {
+  combina: (bloco: Bloco) => boolean;
+  quando: QuandoDaBusca | null;
+}
+
+/**
+ * Monta a busca do jeito que a pessoa fala: "samba hoje", "axé amanhã na zona sul", "agora no
+ * centro". As palavras de tempo viram o filtro do dia (ou do que está rolando agora), e as de
+ * ligação ("de", "no", "bloco") não precisam aparecer no bloco. Se assim não achar nada (um bloco
+ * chamado "Domingo Ela não Vai", por exemplo), a busca volta a procurar todas as palavras no bloco.
+ * Sem saber o dia de hoje (a página pronta), não tem filtro do dia. Com mais de uma palavra de tempo,
+ * vale a última.
+ */
+export function montarBusca(texto: string, agora: Date | null = null): Busca {
+  const todas = palavrasDaBusca(texto);
+  const resto = todas.filter((palavra) => !ePalavraDeTempo(palavra) && !DE_LIGACAO.has(palavra));
+  const quando = agora
+    ? todas.reduce<QuandoDaBusca | null>((achado, palavra) => quandoDaPalavra(palavra, agora) ?? achado, null)
+    : null;
+  // Só com palavras de ligação ("bloco"), elas valem como palavras do nome.
+  const combinaComAsPalavras = combinarPalavras(resto.length > 0 || quando ? resto : todas);
+  if (!quando || !agora) {
+    return { combina: combinaComAsPalavras, quando: null };
+  }
+  const combina = (bloco: Bloco) =>
+    (quando.tipo === 'agora' ? momentoDoBloco(bloco, agora) === 'rolando' : bloco.data === quando.dia) &&
+    combinaComAsPalavras(bloco);
+  return BLOCOS.some(combina) ? { combina, quando } : { combina: combinarPalavras(todas), quando: null };
+}
+
+/** Só quem decide se o bloco combina, para quem não precisa do "quando". */
+export function criarBusca(texto: string, agora: Date | null = null): (bloco: Bloco) => boolean {
+  return montarBusca(texto, agora).combina;
+}
+
+/** O texto da busca sem as palavras de tempo: é o que fica quando a pessoa tira o filtro do dia. */
+export function textoSemOQuando(texto: string): string {
+  return texto
+    .split(/\s+/)
+    .filter((pedaco) => {
+      const palavras = palavrasDaBusca(pedaco);
+      return palavras.length === 0 || !palavras.every(ePalavraDeTempo);
+    })
+    .join(' ')
+    .trim();
 }

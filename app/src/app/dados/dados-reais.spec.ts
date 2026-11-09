@@ -87,6 +87,11 @@ describe('os dados que vão para o ar', () => {
     it('têm artista divulgado em pelo menos alguns', () => {
       expect(BLOCOS.filter((bloco) => bloco.atracoes.length > 0).length).toBeGreaterThan(10);
     });
+
+    it('escrevem o perfil do Instagram dos artistas só com letras, números, ponto e sublinhado', () => {
+      const perfis = BLOCOS.flatMap((bloco) => bloco.atracoes.map((atracao) => atracao.perfil ?? ''));
+      expect(perfis.filter((perfil) => perfil !== '' && !/^[A-Za-z0-9._]{1,30}$/.test(perfil))).toEqual([]);
+    });
   });
 
   describe('os pontos e as linhas', () => {

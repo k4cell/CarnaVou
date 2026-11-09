@@ -91,6 +91,25 @@ describe('PaginaBloco', () => {
     expect(tela.textContent).toContain('Ainda não tem atrações divulgadas.');
   });
 
+  describe('o Instagram dos artistas', () => {
+    it('leva ao perfil de cada artista que tem o perfil nos dados, numa aba nova', async () => {
+      // No Agrada Gregos tocam Gloria Groove (com perfil) e Gretchen (sem).
+      const tela = await renderizar('ibirapuera', 'agrada-gregos');
+      const links = Array.from(tela.querySelectorAll<HTMLAnchorElement>('.instagram a'));
+      expect(links.map((link) => link.textContent?.trim())).toEqual(['Gloria Groove']);
+      expect(links[0].getAttribute('href')).toBe('https://www.instagram.com/gloriagroove/');
+      expect(links[0].getAttribute('target')).toBe('_blank');
+      expect(links[0].getAttribute('rel')).toBe('noopener');
+      expect(links[0].getAttribute('aria-label')).toBe('Gloria Groove no Instagram');
+    });
+
+    it('não aparece quando nenhum artista do bloco tem o perfil', async () => {
+      const tela = await renderizar('ibirapuera', 'galo-da-madrugada');
+      expect(tela.querySelector('.instagram')).toBeNull();
+      expect(tela.textContent).not.toContain('No Instagram');
+    });
+  });
+
   it('mostra o estilo só quando alguma fonte diz', async () => {
     const comEstilo = await renderizar('ibirapuera', 'galo-da-madrugada');
     expect(comEstilo.textContent).toContain('Estilo: Frevo');

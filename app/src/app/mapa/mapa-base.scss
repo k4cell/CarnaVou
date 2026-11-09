@@ -41,6 +41,12 @@ app-mapa-base {
     fill: #fff;
   }
 
+  // Quantos blocos o ponto junta, na bolinha do meio.
+  .numero {
+    fill: var(--texto);
+    font: 700 12px system-ui, sans-serif;
+  }
+
   // A escala fica no desenho e não no botão, porque o MapLibre move o botão com transform.
   &.selecionado svg {
     transform: scale(1.3);

@@ -140,7 +140,10 @@ antigos = ler(f"{pasta_do_ano}/atracoes-das-noticias.json")
 for antigo in antigos:
     antigo["nome"] = OUTROS_NOMES.get(antigo["nome"], antigo["nome"])
 destaques = {(d["nome"], d["subprefeitura"]) for d in ler(f"{pasta_do_ano}/destaques-das-noticias.json", {"blocos": []})["blocos"]}
-seguidores = {nome: dados["seguidores"] for nome, dados in ler(f"{design}/seguidores.json").items() if not nome.startswith("_")}
+artistas = {nome: dados for nome, dados in ler(f"{design}/seguidores.json").items() if not nome.startswith("_")}
+seguidores = {nome: dados["seguidores"] for nome, dados in artistas.items()}
+# O perfil de cada artista no Instagram (sem o @), para a página do bloco levar até ele.
+perfis = {nome: dados["perfil"] for nome, dados in artistas.items() if dados.get("perfil")}
 
 
 def antigo_do(bloco):
@@ -219,7 +222,7 @@ open(f"{pasta}/locais.ts", "w", encoding="utf-8", newline="\n").write("\n".join(
 
 
 def atracoes_em_ts(atracoes):
-    """As atrações, da mais famosa para a menos, com os seguidores quando a gente sabe."""
+    """As atrações, da mais famosa para a menos, com os seguidores e o perfil quando a gente sabe."""
     itens = []
     for a in sorted(atracoes, key=lambda a: -seguidores.get(a["nome"], 0)):
         partes = [f"nome: {ts(a['nome'])}"]
@@ -227,6 +230,8 @@ def atracoes_em_ts(atracoes):
             partes.append(f"inicio: {ts(a['inicio'])}")
         if a["nome"] in seguidores:
             partes.append(f"seguidores: {seguidores[a['nome']]}")
+        if a["nome"] in perfis:
+            partes.append(f"perfil: {ts(perfis[a['nome']])}")
         itens.append("{ " + ", ".join(partes) + " }")
     return "[" + ", ".join(itens) + "]"
 
@@ -276,7 +281,7 @@ linhas = [
     " * Vêm da lista oficial dos blocos aprovados, publicada pela SPTuris e pela Secretaria de",
     f" * Cultura no Diário Oficial ({sobre['lista_oficial']}): nome, dia, subprefeitura,",
     " * itinerário e os horários de concentração (inicio), desfile e término (fim). Os artistas e o",
-    " * estilo vêm de notícias, só nos blocos que elas citam, e os seguidores de cada",
+    " * estilo vêm de notícias, só nos blocos que elas citam, e os seguidores e o perfil de cada",
     " * artista, de contadores públicos do Instagram. Entram os blocos que têm atração divulgada,",
     " * que desfilam num circuito de megabloco ou que as notícias chamam de destaque da região.",
     " * Arquivo gerado por scripts/dados/gerar_dados.py: não mude à mão.",

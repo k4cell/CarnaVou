@@ -94,10 +94,20 @@ const LUGARES_POR_ZONA = ORDEM_DAS_ZONAS.map((zona) => ({
         }
       </button>
     </div>
-    @if (lugarEscolhido(); as nome) {
-      <button type="button" class="etiqueta" [attr.aria-label]="'Tirar o filtro: ' + nome" (click)="filtros.lugar.set('')">
-        {{ nome }} <span aria-hidden="true">×</span>
-      </button>
+    <!-- O lugar escolhido e o dia que a busca entendeu ("samba hoje"), cada um numa etiqueta: o "×" tira. -->
+    @if (lugarEscolhido() || filtros.quando()) {
+      <div class="etiquetas">
+        @if (lugarEscolhido(); as nome) {
+          <button type="button" class="etiqueta" [attr.aria-label]="'Tirar o filtro: ' + nome" (click)="filtros.lugar.set('')">
+            {{ nome }} <span aria-hidden="true">×</span>
+          </button>
+        }
+        @if (filtros.quando(); as quando) {
+          <button type="button" class="etiqueta quando" [attr.aria-label]="'Tirar o filtro: ' + quando" (click)="filtros.tirarOQuando()">
+            {{ quando }} <span aria-hidden="true">×</span>
+          </button>
+        }
+      </div>
     }
     @if (!filtros.buscando()) {
       <app-abas-do-dia />
@@ -247,13 +257,19 @@ const LUGARES_POR_ZONA = ORDEM_DAS_ZONAS.map((zona) => ({
       text-align: center;
     }
 
-    // O lugar escolhido, numa etiqueta: o "×" tira o filtro.
+    // O lugar escolhido e o dia da busca, em etiquetas: o "×" tira o filtro.
+    .etiquetas {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
     .etiqueta {
       display: inline-flex;
       gap: 6px;
       align-items: center;
       min-height: 36px;
-      margin-top: 8px;
       padding: 0 12px;
       border: 0;
       border-radius: 999px;

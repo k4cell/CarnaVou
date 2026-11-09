@@ -132,9 +132,18 @@ export class PaginaMapa {
       lat,
       lng,
       zona: local.zona,
+      quantos: blocos.length,
     })),
     ...(this.modoAfter()
-      ? PONTOS_DO_AFTER.map(({ ponto, nome, lat, lng, zona }) => ({ id: ponto, nome, lat, lng, zona, after: true }))
+      ? PONTOS_DO_AFTER.map(({ ponto, nome, lat, lng, zona, lugares }) => ({
+          id: ponto,
+          nome,
+          lat,
+          lng,
+          zona,
+          after: true,
+          quantos: lugares.length,
+        }))
       : []),
   ]);
 

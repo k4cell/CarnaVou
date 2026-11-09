@@ -27,6 +27,8 @@ export interface Atracao {
   inicio?: string;
   /** Seguidores no Instagram, para saber quem é mais famoso. Só quando a gente souber. */
   seguidores?: number;
+  /** O perfil do artista no Instagram, sem o @. Só quando a gente souber. */
+  perfil?: string;
 }
 
 export interface Bloco {

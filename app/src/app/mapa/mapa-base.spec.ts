@@ -169,6 +169,49 @@ describe('MapaBase', () => {
     expect(falso.mapas[0].enquadramentos.length).toBe(1);
   });
 
+  describe('o número de blocos no ponto', () => {
+    const COM_TRES: PontoNoMapa = { ...SE, quantos: 3 };
+    const COM_DOIS_NO_SUL: PontoNoMapa = { ...SANTO_AMARO, quantos: 2 };
+    const bolinhas = (falso: ReturnType<typeof criarMapLibreFalso>) =>
+      (falso.mapas[0].fontes.get('pontos')?.dados as { features: { properties: Record<string, unknown> }[] }).features.map(
+        (bolinha) => bolinha.properties,
+      );
+
+    it('aparece na bolinha que junta dois ou mais blocos, e não na de um bloco só', async () => {
+      const { falso, fixture } = await renderizar([COM_TRES, COM_DOIS_NO_SUL, PINHEIROS]);
+      falso.mapas[0].carregar();
+      await esperarOMapa(fixture);
+      expect(bolinhas(falso).map((bolinha) => bolinha['numero'])).toEqual(['3', '2', '']);
+    });
+
+    it('é branco no roxo, no vermelho e no azul, e escuro no verde e no amarelo', async () => {
+      const NO_LESTE: PontoNoMapa = { id: 'leste', nome: 'Leste', lat: -23.54, lng: -46.48, zona: 'leste', quantos: 4 };
+      const { falso, fixture } = await renderizar([COM_TRES, COM_DOIS_NO_SUL, NO_LESTE, { ...PINHEIROS, quantos: 2 }]);
+      falso.mapas[0].carregar();
+      await esperarOMapa(fixture);
+      expect(bolinhas(falso).map((bolinha) => bolinha['corDoNumero'])).toEqual(['#fff', '#121214', '#121214', '#fff']);
+    });
+
+    it('fica numa camada por cima das bolinhas, só nas que têm número', async () => {
+      const { falso, fixture } = await renderizar([COM_TRES]);
+      falso.mapas[0].carregar();
+      await esperarOMapa(fixture);
+      const ids = falso.mapas[0].camadas.map((camada) => camada['id']);
+      expect(ids.indexOf('pontos-bolinhas')).toBeLessThan(ids.indexOf('pontos-numeros'));
+      const numeros = falso.mapas[0].camadas.find((camada) => camada['id'] === 'pontos-numeros');
+      expect(numeros?.['filter']).toEqual(['!=', ['get', 'numero'], '']);
+      expect((numeros?.['layout'] as Record<string, unknown>)['text-font']).toEqual(['noto-sans']);
+    });
+
+    it('vai também no pino do ponto escolhido', async () => {
+      const { falso, mudar } = await renderizar([COM_TRES, PINHEIROS]);
+      await mudar({ selecionado: 'se' });
+      expect(falso.pinos()[0].elemento.querySelector('.numero')?.textContent).toBe('3');
+      await mudar({ selecionado: 'pinheiros' });
+      expect(falso.pinos()[0].elemento.querySelector('.numero')).toBeNull();
+    });
+  });
+
   describe('os trajetos', () => {
     const NA_SE: TrajetoNoMapa = { id: 'se', zona: 'centro', linha: [[-46.63, -23.55], [-46.632, -23.552]] };
     const EM_SANTO_AMARO: TrajetoNoMapa = {

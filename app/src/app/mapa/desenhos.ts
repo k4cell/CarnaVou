@@ -71,10 +71,22 @@ export function linhasDosTrajetos(trajetos: TrajetoNoMapa[], selecionado: string
   return { type: 'FeatureCollection', features: [...linhas, ...fins] };
 }
 
+/** O número que vai no ponto: quantos blocos (ou bares) ele junta, só quando são dois ou mais. */
+export function numeroDoPonto(ponto: PontoNoMapa): string {
+  return (ponto.quantos ?? 1) >= 2 ? String(ponto.quantos) : '';
+}
+
+/** Verde e amarelo (Sul e Leste) e o verde-claro do After pedem número escuro; as outras, branco. */
+function corDoNumero(ponto: PontoNoMapa): string {
+  return ponto.after || ponto.zona === 'sul' || ponto.zona === 'leste'
+    ? corDoTema('--texto', '#121214')
+    : corDoTema('--cartao', '#fff');
+}
+
 /**
  * As bolinhas dos pontos. A de um bloco é cheia, na cor da zona, com a borda branca. A de um lugar do
- * After é ao contrário, para não se confundir: o fundo verde-claro e a borda verde, mais grossa. O
- * ponto escolhido vira o pino, então sai daqui.
+ * After é ao contrário, para não se confundir: o fundo verde-claro e a borda verde, mais grossa. A
+ * que junta dois ou mais leva o número dentro. O ponto escolhido vira o pino, então sai daqui.
  */
 export function bolinhasDosPontos(pontos: PontoNoMapa[], selecionado: string | null): Desenho {
   return {
@@ -83,9 +95,14 @@ export function bolinhasDosPontos(pontos: PontoNoMapa[], selecionado: string | n
       .filter((ponto) => ponto.id !== selecionado)
       .map((ponto) => ({
         type: 'Feature',
-        properties: ponto.after
-          ? { id: ponto.id, cor: corDoTema('--verde-claro', '#e3fcee'), borda: corDoTema('--verde', '#00e676'), after: true }
-          : { id: ponto.id, cor: corDaZona(ponto.zona), borda: corDoTema('--cartao', '#fff'), after: false },
+        properties: {
+          id: ponto.id,
+          ...(ponto.after
+            ? { cor: corDoTema('--verde-claro', '#e3fcee'), borda: corDoTema('--verde', '#00e676'), after: true }
+            : { cor: corDaZona(ponto.zona), borda: corDoTema('--cartao', '#fff'), after: false }),
+          numero: numeroDoPonto(ponto),
+          corDoNumero: corDoNumero(ponto),
+        },
         geometry: { type: 'Point', coordinates: [ponto.lng, ponto.lat] },
       })),
   };
@@ -99,10 +116,16 @@ export function criarBolinhaDaPessoa(): HTMLDivElement {
   return bolinha;
 }
 
-const PINO_SVG =
-  '<svg viewBox="0 0 32 44" aria-hidden="true" focusable="false">' +
-  '<path d="M16 1C8 1 2 7.2 2 15c0 10.5 14 28 14 28s14-17.5 14-28C30 7.2 24 1 16 1z"/>' +
-  '<circle cx="16" cy="15" r="5.5"/></svg>';
+/** A gota do pino com a bolinha branca no meio; com número, a bolinha cresce e leva o número. */
+function desenhoDoPino(numero: string): string {
+  const meio = numero
+    ? `<circle cx="16" cy="15" r="9"/><text class="numero" x="16" y="19.5" text-anchor="middle">${numero}</text>`
+    : '<circle cx="16" cy="15" r="5.5"/>';
+  return (
+    '<svg viewBox="0 0 32 44" aria-hidden="true" focusable="false">' +
+    `<path d="M16 1C8 1 2 7.2 2 15c0 10.5 14 28 14 28s14-17.5 14-28C30 7.2 24 1 16 1z"/>${meio}</svg>`
+  );
+}
 
 /** O pino do ponto escolhido: um botão com o nome, para o leitor de tela. */
 export function criarPino(ponto: PontoNoMapa, aoEscolher: (id: string) => void): HTMLButtonElement {
@@ -111,7 +134,7 @@ export function criarPino(ponto: PontoNoMapa, aoEscolher: (id: string) => void):
   botao.className = `pino pino-${ponto.after ? 'after' : ponto.zona} selecionado`;
   botao.setAttribute('aria-label', ponto.nome);
   botao.setAttribute('aria-pressed', 'true');
-  botao.innerHTML = PINO_SVG;
+  botao.innerHTML = desenhoDoPino(numeroDoPonto(ponto));
   botao.addEventListener('click', (evento) => {
     evento.stopPropagation();
     aoEscolher(ponto.id);
