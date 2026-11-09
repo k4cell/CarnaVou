@@ -14,12 +14,22 @@ import { Favoritos } from './favoritos/favoritos';
 import { MenuInferior } from './menu/menu-inferior';
 import { AvisoDeNavegacao } from './navegacao/aviso-de-navegacao';
 import { Relogio } from './relogio/relogio';
+import { Rodape } from './rodape/rodape';
 import { CaminhoDeVolta, caminhoDeVolta } from './voltar/caminho-de-volta';
-import { Trilha } from './voltar/trilha';
+import { Trilha, soOCaminho } from './voltar/trilha';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, RouterLink, MenuInferior, AvisoDeTeste, AvisoDeAtualizacao, AvisoDeNavegacao, AvisoDePronto],
+  imports: [
+    RouterOutlet,
+    RouterLink,
+    MenuInferior,
+    AvisoDeTeste,
+    AvisoDeAtualizacao,
+    AvisoDeNavegacao,
+    AvisoDePronto,
+    Rodape,
+  ],
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })
@@ -36,6 +46,9 @@ export class App {
     ),
     { initialValue: this.router.url },
   );
+
+  /** Na aba Mapa, que ocupa a tela toda. */
+  protected readonly noMapa = computed(() => soOCaminho(this.endereco()) === '/mapa');
 
   /** A seta do canto do cabeçalho: para a tela de onde a pessoa veio ou, sem ela, um nível acima. */
   protected readonly voltar = computed(() => caminhoDeVolta(this.endereco(), this.trilha.anterior()));

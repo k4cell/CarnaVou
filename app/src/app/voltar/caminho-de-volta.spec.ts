@@ -43,6 +43,18 @@ describe('caminhoDeVolta', () => {
     });
   });
 
+  describe('nas páginas Sobre, Privacidade e Termos', () => {
+    it('sem ter de onde voltar, leva para a aba Blocos', () => {
+      expect(caminhoDeVolta('/sobre')).toEqual({ url: '/', nome: 'Blocos', peloHistorico: false });
+      expect(caminhoDeVolta('/termos?hoje=2026-02-14T14:00')).toEqual({ url: '/', nome: 'Blocos', peloHistorico: false });
+    });
+
+    it('volta para a tela de onde a pessoa veio, com o nome dela', () => {
+      expect(caminhoDeVolta('/privacidade', '/sobre')).toEqual({ url: '/sobre', nome: 'Sobre', peloHistorico: true });
+      expect(caminhoDeVolta('/sobre', '/mapa')).toEqual({ url: '/mapa', nome: 'Mapa', peloHistorico: true });
+    });
+  });
+
   it('não tem seta nas abas do menu', () => {
     expect(caminhoDeVolta('/')).toBeNull();
     expect(caminhoDeVolta('/mapa?bloco=agrada-gregos')).toBeNull();

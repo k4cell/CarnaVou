@@ -16,6 +16,13 @@ const NOMES_DAS_ABAS: Record<string, string> = {
   mapa: 'Mapa',
 };
 
+/** As páginas sobre o próprio app, que ficam fora das abas e ganham a seta de voltar. */
+const PAGINAS_DO_APP: Record<string, string> = {
+  sobre: 'Sobre',
+  privacidade: 'Privacidade',
+  termos: 'Termos de uso',
+};
+
 function partesDoEndereco(endereco: string): string[] {
   return endereco.split(/[?#]/)[0].split('/').filter(Boolean).map(decodeURIComponent);
 }
@@ -24,7 +31,7 @@ function partesDoEndereco(endereco: string): string[] {
 function nomeDaTela(endereco: string): string {
   const [primeira = '', lugar, bloco] = partesDoEndereco(endereco);
   if (primeira !== 'local') {
-    return NOMES_DAS_ABAS[primeira] ?? 'a tela anterior';
+    return NOMES_DAS_ABAS[primeira] ?? PAGINAS_DO_APP[primeira] ?? 'a tela anterior';
   }
   if (bloco) {
     return acharBloco(lugar, bloco)?.nome ?? 'o bloco';
@@ -35,11 +42,17 @@ function nomeDaTela(endereco: string): string {
 /**
  * Para onde a seta do cabeçalho volta, nas telas de lugar e de bloco: para a tela de onde a pessoa
  * veio e, para quem chegou direto por um link compartilhado (que não tem para onde voltar), um nível
- * acima na árvore (bloco → lugar → Descobrir). Nas abas do menu (Blocos, Descobrir, After, Mapa) não
+ * acima na árvore (bloco → lugar → Descobrir). Nas páginas Sobre, Privacidade e Termos, sem ter de
+ * onde voltar, a seta leva para a aba Blocos. Nas abas do menu (Blocos, Descobrir, After, Mapa) não
  * tem seta.
  */
 export function caminhoDeVolta(endereco: string, anterior?: string): CaminhoDeVolta | null {
   const partes = partesDoEndereco(endereco);
+  if (partes.length === 1 && partes[0] in PAGINAS_DO_APP) {
+    return anterior !== undefined
+      ? { url: anterior, nome: nomeDaTela(anterior), peloHistorico: true }
+      : { url: '/', nome: 'Blocos', peloHistorico: false };
+  }
   if (partes[0] !== 'local' || partes.length < 2) {
     return null;
   }

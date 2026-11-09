@@ -3,7 +3,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterLink } from '@angular/router';
 import { filter, map } from 'rxjs';
 
-import { Trilha, soOCaminho } from '../voltar/trilha';
+import { Trilha, eAbaDoMenu, soOCaminho } from '../voltar/trilha';
 
 /** Abrir um lugar ou um bloco por um link compartilhado cai na árvore do Descobrir. */
 const ABA_DE_QUEM_VEIO_DE_FORA = '/descobrir';
@@ -27,10 +27,17 @@ export class MenuInferior {
     { initialValue: this.router.url },
   );
 
-  /** A aba marcada: dentro de um lugar ou de um bloco, continua sendo a aba de onde a pessoa saiu. */
+  /**
+   * A aba marcada: dentro de um lugar, de um bloco ou das páginas Sobre, Privacidade e Termos,
+   * continua sendo a aba de onde a pessoa saiu. Quem chega por um link num lugar ou num bloco vê o
+   * Descobrir marcado; nas outras páginas, nenhuma.
+   */
   private readonly abaAtual = computed(() => {
     const caminho = soOCaminho(this.endereco());
-    return caminho.startsWith('/local') ? (this.trilha.ultimaAba() ?? ABA_DE_QUEM_VEIO_DE_FORA) : caminho;
+    if (eAbaDoMenu(caminho)) {
+      return caminho;
+    }
+    return this.trilha.ultimaAba() ?? (caminho.startsWith('/local') ? ABA_DE_QUEM_VEIO_DE_FORA : '');
   });
 
   protected ativo(aba: string): boolean {

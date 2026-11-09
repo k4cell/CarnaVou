@@ -28,6 +28,10 @@
 
 <main class="miolo corpo">
   <router-outlet />
+  <!-- O mapa ocupa a tela toda e já tem os créditos dele: lá o rodapé não aparece. -->
+  @if (!noMapa()) {
+    <app-rodape />
+  }
 </main>
 
 <app-aviso-de-atualizacao />

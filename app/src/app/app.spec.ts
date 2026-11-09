@@ -97,6 +97,61 @@ describe('App', () => {
     });
   });
 
+  describe('as páginas Sobre, Privacidade e Termos', () => {
+    async function abrir(endereco: string) {
+      const fixture = TestBed.createComponent(App);
+      await TestBed.inject(Router).navigateByUrl(endereco);
+      await fixture.whenStable();
+      return fixture.nativeElement as HTMLElement;
+    }
+
+    it('abrem pelos endereços /sobre, /privacidade e /termos, com o título certo', async () => {
+      const tela = await abrir('/sobre');
+      expect(tela.querySelector('main h2')?.textContent).toBe('Sobre o CarnaVou');
+      expect((await abrir('/privacidade')).querySelector('main h2')?.textContent).toBe('Privacidade');
+      expect((await abrir('/termos')).querySelector('main h2')?.textContent).toBe('Termos de uso');
+    });
+
+    it('têm a seta de voltar, que leva para a aba Blocos quem chegou por um link', async () => {
+      const seta = (await abrir('/privacidade')).querySelector<HTMLAnchorElement>('header a.voltar');
+      expect(seta?.getAttribute('href')).toBe('/');
+      expect(seta?.getAttribute('aria-label')).toBe('Voltar para Blocos');
+    });
+
+    it('voltam para a tela de onde a pessoa veio', async () => {
+      const router = TestBed.inject(Router);
+      const fixture = TestBed.createComponent(App);
+      await router.navigateByUrl('/after');
+      await router.navigateByUrl('/sobre');
+      await fixture.whenStable();
+      const seta = (fixture.nativeElement as HTMLElement).querySelector<HTMLAnchorElement>('header a.voltar');
+      expect(seta?.getAttribute('aria-label')).toBe('Voltar para After');
+    });
+  });
+
+  describe('o rodapé', () => {
+    async function rodapeEm(endereco: string) {
+      const fixture = TestBed.createComponent(App);
+      await TestBed.inject(Router).navigateByUrl(endereco);
+      await fixture.whenStable();
+      return (fixture.nativeElement as HTMLElement).querySelector('app-rodape');
+    }
+
+    it('fica no fim das telas, com o aviso de que o app não é oficial e os links das páginas', async () => {
+      const rodape = await rodapeEm('/');
+      expect(rodape?.textContent).toContain('não é oficial');
+      expect(Array.from(rodape?.querySelectorAll('a') ?? []).map((link) => link.getAttribute('href'))).toEqual([
+        '/sobre',
+        '/privacidade',
+        '/termos',
+      ]);
+    });
+
+    it('não aparece no mapa, que ocupa a tela toda e já tem os créditos dele', async () => {
+      expect(await rodapeEm('/mapa')).toBeNull();
+    });
+  });
+
   it('oferece a logo em WebP, que é mais leve, com o PNG de reserva', async () => {
     const fixture = TestBed.createComponent(App);
     await fixture.whenStable();

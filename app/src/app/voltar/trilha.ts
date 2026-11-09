@@ -4,6 +4,11 @@ import { NavigationEnd, Router } from '@angular/router';
 /** O endereço sem a data de teste e sem o resto do que vem depois do caminho. */
 export const soOCaminho = (endereco: string): string => endereco.split(/[?#]/)[0];
 
+/** As abas do menu de baixo. Os lugares, os blocos e as páginas Sobre, Privacidade e Termos não são abas. */
+const ABAS_DO_MENU = ['/', '/descobrir', '/after', '/mapa'];
+
+export const eAbaDoMenu = (endereco: string): boolean => ABAS_DO_MENU.includes(soOCaminho(endereco));
+
 /**
  * Por onde a pessoa passou desde que abriu o app, na mesma ordem do histórico do navegador. É o que
  * faz a seta voltar para a tela de onde ela veio e o menu continuar marcando a aba de onde ela saiu.
@@ -17,9 +22,9 @@ export class Trilha {
   /** O endereço de onde a pessoa veio, se ela veio de alguma tela do app. */
   readonly anterior = computed<string | undefined>(() => this.pilha().at(-2));
 
-  /** A última aba do menu por onde ela passou. Os lugares e os blocos não são abas. */
+  /** A última aba do menu por onde ela passou. */
   readonly ultimaAba = computed<string | undefined>(() => {
-    const aba = [...this.pilha()].reverse().find((endereco) => !soOCaminho(endereco).startsWith('/local'));
+    const aba = [...this.pilha()].reverse().find(eAbaDoMenu);
     return aba === undefined ? undefined : soOCaminho(aba);
   });
 

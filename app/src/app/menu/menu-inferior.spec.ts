@@ -103,4 +103,21 @@ describe('MenuInferior', () => {
     await fixture.whenStable();
     expect(abaAtual(fixture.nativeElement)).toBe('Mapa');
   });
+
+  it('continua marcando a aba de onde a pessoa saiu nas páginas Sobre, Privacidade e Termos', async () => {
+    const fixture = await montar();
+    const router = TestBed.inject(Router);
+    await router.navigateByUrl('/after');
+    await router.navigateByUrl('/sobre');
+    await router.navigateByUrl('/privacidade');
+    await fixture.whenStable();
+    expect(abaAtual(fixture.nativeElement)).toBe('After');
+  });
+
+  it('não marca nenhuma aba numa dessas páginas aberta direto por um link', async () => {
+    const fixture = await montar();
+    await TestBed.inject(Router).navigateByUrl('/termos');
+    await fixture.whenStable();
+    expect(abaAtual(fixture.nativeElement)).toBeUndefined();
+  });
 });

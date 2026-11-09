@@ -45,6 +45,22 @@ export const routes: Routes = [
     loadComponent: () => import('./mapa/pagina-mapa').then((modulo) => modulo.PaginaMapa),
     title: `Mapa · ${NOME_DO_SITE}`,
   },
+  // As páginas sobre o próprio app: o que ele é, a privacidade e os termos de uso.
+  {
+    path: 'sobre',
+    loadComponent: () => import('./sobre/pagina-sobre').then((modulo) => modulo.PaginaSobre),
+    title: `Sobre · ${NOME_DO_SITE}`,
+  },
+  {
+    path: 'privacidade',
+    loadComponent: () => import('./sobre/pagina-privacidade').then((modulo) => modulo.PaginaPrivacidade),
+    title: `Privacidade · ${NOME_DO_SITE}`,
+  },
+  {
+    path: 'termos',
+    loadComponent: () => import('./sobre/pagina-termos').then((modulo) => modulo.PaginaTermos),
+    title: `Termos de uso · ${NOME_DO_SITE}`,
+  },
   // Endereços que não existem (inclusive os antigos /amigos e /favoritos) voltam para o início.
   { path: '**', redirectTo: '' },
 ];
