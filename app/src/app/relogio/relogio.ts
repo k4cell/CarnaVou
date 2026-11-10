@@ -28,14 +28,14 @@ export function horaDeSaoPaulo(instante: Date): Date {
 }
 
 /**
- * O "hoje" de mentira usado enquanto o app só tem os dados de teste do carnaval de 2026: sexta,
- * 13/02/2026 (a véspera do sábado de carnaval), meio-dia. Ao trocar os dados de ano, troque esta
+ * O "hoje" de mentira usado enquanto o app só tem os dados de teste do carnaval de 2026: sábado,
+ * 14/02/2026 (o sábado de carnaval), meio-dia. Ao trocar os dados de ano, troque esta
  * data também. Para usar o relógio de verdade, troque por nulo
  * (provedor `{ provide: DATA_DE_DEMONSTRACAO, useValue: null }`).
  */
 export const DATA_DE_DEMONSTRACAO = new InjectionToken<Date | null>('DATA_DE_DEMONSTRACAO', {
   providedIn: 'root',
-  factory: () => new Date(2026, 1, 13, 12, 0),
+  factory: () => new Date(2026, 1, 14, 12, 0),
 });
 
 /**
@@ -62,7 +62,7 @@ export function lerDataDeTeste(texto: string | null): Date | undefined {
 /**
  * Sabe que dia e hora são "agora".
  * Ordem: 1) a data do endereço, como `?hoje=2026-02-14T14:00`; 2) o "hoje" de demonstração
- * (13/02/2026), enquanto os dados forem os de teste; 3) o relógio do celular, na hora de São Paulo.
+ * (14/02/2026), enquanto os dados forem os de teste; 3) o relógio do celular, na hora de São Paulo.
  * Nos dois primeiros casos "agora" fica parado e a tela avisa que é uma data de teste. A data de teste
  * já é a hora de São Paulo.
  */

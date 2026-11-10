@@ -9,6 +9,18 @@
   background: var(--fundo);
 }
 
+// A linha roxa embaixo das abas, só enquanto elas estão presas e a lista passa por baixo. Ela sai
+// pelos 16px de espaço dos lados da página: no celular, vai de uma borda à outra da tela.
+:host(.presa)::after {
+  content: '';
+  position: absolute;
+  right: -16px;
+  bottom: 0;
+  left: -16px;
+  height: 2px;
+  background: var(--roxo);
+}
+
 .abas {
   display: flex;
   gap: 8px;
