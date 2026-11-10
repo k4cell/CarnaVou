@@ -25,16 +25,14 @@
   color: var(--texto-suave);
 }
 
-// Um cartão só na cor do lugar, com uma linha por horário. É um cartão adesivo, como os das listas.
+// Um cartão só na cor do lugar, com uma linha por horário, no mesmo jeito dos cartões das listas.
 .atracoes {
   margin: 0;
   padding: 4px 16px 4px 20px;
   border: var(--borda-do-cartao);
   border-radius: var(--canto-do-cartao);
   background: var(--cartao);
-  box-shadow:
-    inset 6px 0 0 var(--cor-da-faixa, var(--rosa)),
-    var(--sombra-do-cartao);
+  box-shadow: inset 6px 0 0 var(--cor-da-faixa, var(--rosa));
   list-style: none;
 }
 
