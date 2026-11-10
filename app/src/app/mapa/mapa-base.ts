@@ -32,6 +32,7 @@ import {
   criarPino,
   linhasDosTrajetos,
 } from './desenhos';
+import { pontosParaEnquadrar } from './enquadramento';
 import { LIMITES_DA_GRANDE_SP } from './limites';
 import { BibliotecaDeMapa, CARREGAR_MAPLIBRE, enderecoNoSite } from './maplibre';
 import { PROTOCOLO_DOS_PEDACOS, baixarPedaco } from './pedacos-do-mapa';
@@ -539,13 +540,17 @@ export class MapaBase {
     mapa.addLayer(fim, embaixoDe);
   }
 
-  /** Mostra todos os pontos de uma vez. Com um só, chega perto dele. */
-  private enquadrar(pontos: PontoNoMapa[], duracao: number): void {
+  /**
+   * Mostra os pontos de uma vez: todos ou, com um ou outro bem longe, só onde os blocos se concentram
+   * (veja `pontosParaEnquadrar`). Com um só, chega perto dele.
+   */
+  private enquadrar(todos: PontoNoMapa[], duracao: number): void {
     const mapa = this.mapa;
     const biblioteca = this.biblioteca;
-    if (!mapa || !biblioteca || pontos.length === 0) {
+    if (!mapa || !biblioteca || todos.length === 0) {
       return;
     }
+    const pontos = pontosParaEnquadrar(todos);
     if (pontos.length === 1) {
       mapa.easeTo({ center: [pontos[0].lng, pontos[0].lat], zoom: 14, duration: duracao });
       return;

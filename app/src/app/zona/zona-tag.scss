@@ -5,7 +5,7 @@
 }
 
 // A etiqueta é neutra (branca, de borda fina e texto escuro), para não disputar com a faixa e o selo
-// do cartão. A cor da zona fica só na bolinha.
+// do cartão. A cor da zona fica só na bolinha; ela vem do `data-zona` (veja `styles.scss`).
 .zona {
   display: inline-flex;
   gap: 6px;
@@ -26,24 +26,4 @@
     border-radius: 50%;
     background: var(--cor-da-zona);
   }
-}
-
-.centro {
-  --cor-da-zona: var(--roxo);
-}
-
-.sul {
-  --cor-da-zona: var(--verde);
-}
-
-.leste {
-  --cor-da-zona: var(--amarelo);
-}
-
-.oeste {
-  --cor-da-zona: var(--vermelho);
-}
-
-.norte {
-  --cor-da-zona: var(--azul);
 }

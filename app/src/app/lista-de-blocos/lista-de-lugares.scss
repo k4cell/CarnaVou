@@ -1,0 +1,79 @@
+// A lista flutua embaixo da linha da busca, por cima das abas e dos cartões. Ela rola por dentro
+// quando não cabe na tela.
+:host {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  left: 0;
+  z-index: 15;
+  max-height: min(420px, calc(100vh - var(--altura-menu) - 80px));
+  max-height: min(420px, calc(100dvh - var(--altura-menu) - 80px));
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  // O espaço que o scrollIntoView deixa embaixo, para a lista não ficar atrás do menu.
+  scroll-margin-bottom: calc(var(--altura-menu) + 12px);
+  border: 1px solid var(--borda);
+  border-radius: var(--canto-do-cartao);
+  background: var(--cartao);
+  box-shadow: 0 2px 12px rgb(0 0 0 / 30%);
+}
+
+.opcoes {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+// Cada opção tem a altura de um toque (44px). Os lugares ficam recuados, embaixo da zona deles.
+.opcao {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  width: 100%;
+  min-height: 44px;
+  padding: 0 16px 0 28px;
+  border: 0;
+  background: var(--cartao);
+  color: var(--texto);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+
+  &:active {
+    filter: brightness(0.92);
+  }
+
+  &:focus-visible {
+    outline: 3px solid var(--texto);
+    outline-offset: -3px;
+  }
+}
+
+.todos,
+.da-zona {
+  padding-left: 16px;
+  font-weight: 800;
+}
+
+// A zona tem o fundo da cor dela, bem clara, com texto escuro: a cor cheia fica para os pinos do mapa
+// e a bolinha da etiqueta.
+.da-zona {
+  background: color-mix(in srgb, var(--cor-da-zona) 20%, var(--cartao));
+}
+
+.toda {
+  margin-left: auto;
+  color: var(--texto-suave);
+  font-size: 0.8125rem;
+  font-weight: 400;
+}
+
+// A opção escolhida: fundo amarelo cheio, como a aba do dia (amarelo só como fundo, com texto escuro).
+.opcao[aria-pressed='true'] {
+  background: var(--amarelo);
+  font-weight: 800;
+
+  .toda {
+    color: var(--texto);
+  }
+}

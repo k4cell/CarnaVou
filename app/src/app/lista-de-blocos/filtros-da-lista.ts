@@ -2,8 +2,9 @@ import { Injectable, computed, inject, signal } from '@angular/core';
 
 import { diaIso, diaSeguinte } from '../dados/agenda';
 import { montarBusca, textoSemOQuando } from '../dados/busca';
+import { acharLocal } from '../dados/consultas';
 import { dataPorExtenso } from '../dados/formato';
-import { Bloco } from '../dados/tipos';
+import { Bloco, Zona } from '../dados/tipos';
 import { Favoritos } from '../favoritos/favoritos';
 import { Relogio } from '../relogio/relogio';
 
@@ -19,10 +20,20 @@ export class FiltrosDaLista {
   readonly busca = signal('');
   /** O id do lugar escolhido. Vazio: todos os lugares. */
   readonly lugar = signal('');
+  /** A zona escolhida, quando o filtro é por uma zona inteira e não por um lugar só. */
+  readonly zona = signal<Zona | ''>('');
   readonly soFavoritos = signal(false);
 
   readonly buscando = computed(() => this.busca().trim() !== '');
-  readonly algumFiltro = computed(() => this.buscando() || this.lugar() !== '' || this.soFavoritos());
+  /** Verdade quando o filtro é por um lugar ou por uma zona. */
+  readonly temOnde = computed(() => this.lugar() !== '' || this.zona() !== '');
+  readonly algumFiltro = computed(() => this.buscando() || this.temOnde() || this.soFavoritos());
+
+  /** Filtra por um lugar ou por uma zona inteira: um tira o outro. Sem nada, valem todos os lugares. */
+  escolherOnde(onde: { lugar?: string; zona?: Zona } = {}): void {
+    this.lugar.set(onde.lugar ?? '');
+    this.zona.set(onde.zona ?? '');
+  }
 
   /** A busca entendida: as palavras e o dia (ou o "agora") que ela tirou do texto. */
   private readonly buscaMontada = computed(() => montarBusca(this.busca(), this.relogio.agora()));
@@ -52,16 +63,18 @@ export class FiltrosDaLista {
   readonly incluir = computed(() => {
     const combinaComABusca = this.buscaMontada().combina;
     const lugar = this.lugar();
+    const zona = this.zona();
     const soFavoritos = this.soFavoritos();
     return (bloco: Bloco) =>
       (lugar === '' || bloco.localId === lugar) &&
+      (zona === '' || acharLocal(bloco.localId)?.zona === zona) &&
       (!soFavoritos || this.favoritos.tem(bloco.id)) &&
       combinaComABusca(bloco);
   });
 
   limpar(): void {
     this.busca.set('');
-    this.lugar.set('');
+    this.escolherOnde();
     this.soFavoritos.set(false);
   }
 }

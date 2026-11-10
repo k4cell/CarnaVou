@@ -1,0 +1,35 @@
+<ul class="opcoes" aria-label="Filtrar por lugar ou zona">
+  <li>
+    <button type="button" class="opcao todos" [attr.aria-pressed]="!filtros.temOnde()" (click)="escolher()">
+      Todos os lugares
+    </button>
+  </li>
+  @for (zona of zonas; track zona.id) {
+    <!-- A zona inteira também é uma opção, com o fundo da cor dela. -->
+    <li>
+      <button
+        type="button"
+        class="opcao da-zona"
+        [attr.data-zona]="zona.id"
+        [attr.aria-pressed]="filtros.zona() === zona.id"
+        (click)="escolher({ zona: zona.id })"
+      >
+        <span class="nome-da-zona">{{ zona.nome }}</span>
+        <span class="toda">toda a zona</span>
+      </button>
+    </li>
+    @for (lugar of zona.lugares; track lugar.id) {
+      <li>
+        <button
+          type="button"
+          class="opcao"
+          [attr.data-lugar]="lugar.id"
+          [attr.aria-pressed]="filtros.lugar() === lugar.id"
+          (click)="escolher({ lugar: lugar.id })"
+        >
+          {{ lugar.nome }}
+        </button>
+      </li>
+    }
+  }
+</ul>

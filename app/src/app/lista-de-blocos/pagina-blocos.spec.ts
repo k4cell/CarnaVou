@@ -24,13 +24,19 @@ describe('PaginaBlocos', () => {
       campo.dispatchEvent(new Event('input'));
       await fixture.whenStable();
     };
-    const escolherLugar = async (id: string) => {
-      const lista = tela.querySelector<HTMLSelectElement>('.lugar')!;
-      lista.value = id;
-      lista.dispatchEvent(new Event('change'));
+    const abrirLugares = async () => {
+      tela.querySelector<HTMLButtonElement>('.redondo.lugar')!.click();
       await fixture.whenStable();
     };
-    return { fixture, tela, nomes, buscar, escolherLugar };
+    // Abre a lista e toca numa opção: um lugar (pelo id) ou uma zona inteira.
+    const escolher = async (opcao: string) => {
+      await abrirLugares();
+      tela.querySelector<HTMLButtonElement>(`app-lista-de-lugares ${opcao}`)!.click();
+      await fixture.whenStable();
+    };
+    const escolherLugar = (id: string) => escolher(`[data-lugar="${id}"]`);
+    const escolherZona = (zona: string) => escolher(`[data-zona="${zona}"]`);
+    return { fixture, tela, nomes, buscar, abrirLugares, escolherLugar, escolherZona };
   }
 
   it('põe num cartão só os blocos do mesmo dia no mesmo lugar, com o nome do lugar e a zona no alto', async () => {
@@ -145,10 +151,18 @@ describe('PaginaBlocos', () => {
 
   describe('o filtro de lugar', () => {
     it('mostra os lugares juntos por zona e filtra a lista', async () => {
-      const { tela, nomes, escolherLugar } = await renderizar(new Date(2026, 1, 7, 12, 0));
-      const zonas = Array.from(tela.querySelectorAll('optgroup')).map((zona) => zona.label);
+      const { tela, nomes, abrirLugares, escolherLugar } = await renderizar(new Date(2026, 1, 7, 12, 0));
+      const botao = tela.querySelector<HTMLButtonElement>('.redondo.lugar')!;
+      expect(tela.querySelector('app-lista-de-lugares')).toBeNull();
+      expect(botao.getAttribute('aria-expanded')).toBe('false');
+      await abrirLugares();
+      expect(botao.getAttribute('aria-expanded')).toBe('true');
+      const zonas = Array.from(tela.querySelectorAll('app-lista-de-lugares .nome-da-zona')).map((zona) => zona.textContent);
       expect(zonas).toEqual(['Centro', 'Zona Sul', 'Zona Oeste', 'Zona Leste', 'Zona Norte']);
+      // Fecha (o botão abre e fecha) e escolhe um lugar: a lista some sozinha.
+      await abrirLugares();
       await escolherLugar('ibirapuera');
+      expect(tela.querySelector('app-lista-de-lugares')).toBeNull();
       // Os três de hoje e, como é pouco, os dois de amanhã ali mesmo.
       expect(nomes()).toEqual([
         'Carnafacul - Quem Pede, Pede',
@@ -175,11 +189,43 @@ describe('PaginaBlocos', () => {
       await escolherLugar('ibirapuera');
       const etiqueta = tela.querySelector<HTMLButtonElement>('.etiqueta')!;
       expect(etiqueta.textContent).toContain('Parque Ibirapuera');
-      expect(tela.querySelector('.redondo.ligado .lugar')).not.toBeNull();
+      expect(tela.querySelector('.redondo.lugar.ligado')).not.toBeNull();
       etiqueta.click();
       await fixture.whenStable();
       expect(tela.querySelector('.etiqueta')).toBeNull();
-      expect(tela.querySelector('.redondo.ligado .lugar')).toBeNull();
+      expect(tela.querySelector('.redondo.lugar.ligado')).toBeNull();
+    });
+
+    it('filtra por uma zona inteira, com a etiqueta da zona, e um lugar tira a zona', async () => {
+      const { fixture, tela, abrirLugares, escolherLugar, escolherZona } = await renderizar(new Date(2026, 1, 7, 12, 0));
+      tela.querySelectorAll<HTMLButtonElement>('.aba')[2].click();
+      await fixture.whenStable();
+      const zonasDosCartoes = () => Array.from(tela.querySelectorAll('.lugar-do-grupo .zona')).map((zona) => zona.textContent);
+      await escolherZona('oeste');
+      expect(zonasDosCartoes().length).toBeGreaterThan(1);
+      expect(new Set(zonasDosCartoes())).toEqual(new Set(['Zona Oeste']));
+      expect(tela.querySelector('.etiqueta')?.textContent).toContain('Zona Oeste');
+      // Na lista, a zona escolhida fica marcada.
+      await abrirLugares();
+      const marcadas = Array.from(tela.querySelectorAll('app-lista-de-lugares [aria-pressed="true"]'));
+      expect(marcadas.map((opcao) => opcao.getAttribute('data-zona'))).toEqual(['oeste']);
+      await abrirLugares();
+      await escolherLugar('ibirapuera');
+      expect(new Set(zonasDosCartoes())).toEqual(new Set(['Zona Sul']));
+      expect(tela.querySelector('.etiqueta')?.textContent).toContain('Parque Ibirapuera');
+    });
+
+    it('fecha a lista com o Esc e com um toque fora dela, sem mudar o filtro', async () => {
+      const { fixture, tela, abrirLugares } = await renderizar(new Date(2026, 1, 7, 12, 0));
+      await abrirLugares();
+      document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
+      await fixture.whenStable();
+      expect(tela.querySelector('app-lista-de-lugares')).toBeNull();
+      await abrirLugares();
+      document.body.click();
+      await fixture.whenStable();
+      expect(tela.querySelector('app-lista-de-lugares')).toBeNull();
+      expect(tela.querySelector('.etiqueta')).toBeNull();
     });
   });
 

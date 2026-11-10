@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, computed, inject, signal, viewChild } from '@angular/core';
 
 import { AbasDoDia } from '../abas/abas-do-dia';
 import { BannerBloco } from '../banner/banner-bloco';
@@ -9,28 +9,20 @@ import { Aba } from '../dados/agenda';
 import { acharLocal, faixaDoLocal } from '../dados/consultas';
 import { NOMES_DAS_ZONAS } from '../dados/formato';
 import { SecaoDeBlocos, secaoDoQueJaAconteceu, secoesDosBlocos } from '../dados/lista-de-blocos';
-import { LOCAIS } from '../dados/locais';
-import { Bloco, Local, Zona } from '../dados/tipos';
+import { Bloco, Local } from '../dados/tipos';
 import { CartaoDaFase } from '../fase-do-carnaval/cartao-da-fase';
 import { Favoritos } from '../favoritos/favoritos';
 import { FiltroDeDia } from '../filtro/filtro-de-dia';
 import { Relogio } from '../relogio/relogio';
 import { ZonaTag } from '../zona/zona-tag';
 import { FiltrosDaLista } from './filtros-da-lista';
+import { ListaDeLugares } from './lista-de-lugares';
 
 const NADA_NA_ABA: Record<Aba, string> = {
   hoje: 'Nenhum bloco rolando nem mais tarde hoje. Veja a aba Amanhã ou a Geral.',
   amanha: 'Nenhum bloco amanhã. Veja a aba Geral.',
   geral: 'Não tem mais blocos pela frente.',
 };
-
-const ORDEM_DAS_ZONAS: Zona[] = ['centro', 'sul', 'oeste', 'leste', 'norte'];
-
-/** Os lugares do filtro, juntos por zona. */
-const LUGARES_POR_ZONA = ORDEM_DAS_ZONAS.map((zona) => ({
-  nome: NOMES_DAS_ZONAS[zona],
-  lugares: LOCAIS.filter((local) => local.zona === zona),
-})).filter((zona) => zona.lugares.length > 0);
 
 /**
  * A aba Blocos, a tela principal: os blocos (e não os lugares), com o filtro Hoje | Amanhã | Geral,
@@ -40,7 +32,7 @@ const LUGARES_POR_ZONA = ORDEM_DAS_ZONAS.map((zona) => ({
  */
 @Component({
   selector: 'app-pagina-blocos',
-  imports: [AbasDoDia, BannerBloco, CartaoDaFase, DadosAtualizados, DataDoDia, ZonaTag],
+  imports: [AbasDoDia, BannerBloco, CartaoDaFase, DadosAtualizados, DataDoDia, ListaDeLugares, ZonaTag],
   template: `
     <h2 class="titulo">Blocos</h2>
     <!-- A busca e os filtros numa linha só: o campo e dois botões redondos, o do lugar e o da estrela. -->
@@ -62,23 +54,24 @@ const LUGARES_POR_ZONA = ORDEM_DAS_ZONAS.map((zona) => ({
           (input)="aoBuscar($event)"
         />
       </label>
-      <!-- A lista de lugares fica invisível por cima do botão: tocar nele abre a lista do celular. -->
-      <label class="redondo" [class.ligado]="filtros.lugar() !== ''">
+      <!-- O botão abre a lista de lugares e zonas, que flutua embaixo desta linha. -->
+      <button
+        #botaoDoLugar
+        type="button"
+        class="redondo lugar"
+        [class.ligado]="filtros.temOnde()"
+        aria-label="Filtrar por lugar ou zona"
+        [attr.aria-expanded]="lugaresAbertos()"
+        (click)="lugaresAbertos.set(!lugaresAbertos())"
+      >
         <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
           <path d="M12 21s-6-5.6-6-10a6 6 0 1112 0c0 4.4-6 10-6 10z" />
           <circle cx="12" cy="11" r="2" />
         </svg>
-        <select class="lugar" aria-label="Filtrar por lugar" (change)="aoEscolherLugar($event)">
-          <option value="" [selected]="filtros.lugar() === ''">Todos os lugares</option>
-          @for (zona of zonas; track zona.nome) {
-            <optgroup [label]="zona.nome">
-              @for (lugar of zona.lugares; track lugar.id) {
-                <option [value]="lugar.id" [selected]="filtros.lugar() === lugar.id">{{ lugar.nome }}</option>
-              }
-            </optgroup>
-          }
-        </select>
-      </label>
+      </button>
+      @if (lugaresAbertos()) {
+        <app-lista-de-lugares (fechar)="fecharLugares()" />
+      }
       <button
         type="button"
         class="redondo so-favoritos"
@@ -96,11 +89,11 @@ const LUGARES_POR_ZONA = ORDEM_DAS_ZONAS.map((zona) => ({
         }
       </button>
     </div>
-    <!-- O lugar escolhido e o dia que a busca entendeu ("samba hoje"), cada um numa etiqueta: o "×" tira. -->
+    <!-- O lugar (ou a zona) escolhido e o dia que a busca entendeu ("samba hoje"), cada um numa etiqueta: o "×" tira. -->
     @if (lugarEscolhido() || filtros.quando()) {
       <div class="etiquetas">
         @if (lugarEscolhido(); as nome) {
-          <button type="button" class="etiqueta" [attr.aria-label]="'Tirar o filtro: ' + nome" (click)="filtros.lugar.set('')">
+          <button type="button" class="etiqueta" [attr.aria-label]="'Tirar o filtro: ' + nome" (click)="filtros.escolherOnde()">
             {{ nome }} <span aria-hidden="true">×</span>
           </button>
         }
@@ -166,7 +159,9 @@ const LUGARES_POR_ZONA = ORDEM_DAS_ZONAS.map((zona) => ({
       margin-top: 12px;
     }
 
+    // A lista de lugares flutua a partir desta linha.
     .busca-e-filtros {
+      position: relative;
       display: flex;
       gap: 8px;
       margin-top: 12px;
@@ -188,12 +183,6 @@ const LUGARES_POR_ZONA = ORDEM_DAS_ZONAS.map((zona) => ({
     // de busca, aparece sempre, porque ali o foco é a pessoa digitando.
     .campo:focus-within,
     .redondo:focus-visible {
-      outline: 3px solid var(--texto);
-      outline-offset: 2px;
-    }
-
-    // Separado: um navegador que não entende o :has ignora só esta regra.
-    .redondo:has(:focus-visible) {
       outline: 3px solid var(--texto);
       outline-offset: 2px;
     }
@@ -239,15 +228,6 @@ const LUGARES_POR_ZONA = ORDEM_DAS_ZONAS.map((zona) => ({
       justify-content: center;
       width: 44px;
       padding: 0;
-      cursor: pointer;
-    }
-
-    // A lista do celular abre ao tocar no botão; a lista em si não aparece.
-    .lugar {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      opacity: 0;
       cursor: pointer;
     }
 
@@ -335,10 +315,17 @@ export class PaginaBlocos {
   protected readonly filtros = inject(FiltrosDaLista);
   protected readonly favoritos = inject(Favoritos);
 
-  protected readonly zonas = LUGARES_POR_ZONA;
+  private readonly botaoDoLugar = viewChild.required<ElementRef<HTMLButtonElement>>('botaoDoLugar');
+  private readonly listaDeLugares = viewChild(ListaDeLugares, { read: ElementRef });
 
-  /** O nome do lugar escolhido no filtro, para a etiqueta que tira o filtro. */
-  protected readonly lugarEscolhido = computed(() => acharLocal(this.filtros.lugar())?.nome ?? null);
+  /** Verdade enquanto a lista de lugares e zonas está aberta. */
+  protected readonly lugaresAbertos = signal(false);
+
+  /** O nome do lugar ou da zona do filtro, para a etiqueta que tira o filtro. */
+  protected readonly lugarEscolhido = computed(() => {
+    const zona = this.filtros.zona();
+    return zona ? NOMES_DAS_ZONAS[zona] : (acharLocal(this.filtros.lugar())?.nome ?? null);
+  });
 
   protected readonly secoes = computed<SecaoDeBlocos[]>(() => {
     const agora = this.relogio.agora();
@@ -369,8 +356,14 @@ export class PaginaBlocos {
     this.filtros.busca.set((evento.target as HTMLInputElement).value);
   }
 
-  protected aoEscolherLugar(evento: Event): void {
-    this.filtros.lugar.set((evento.target as HTMLSelectElement).value);
+  /** Fecha a lista de lugares. Se o foco estava nela (teclado), volta para o botão, em vez de se perder. */
+  protected fecharLugares(): void {
+    const lista: HTMLElement | undefined = this.listaDeLugares()?.nativeElement;
+    const focoNaLista = lista?.contains(document.activeElement) ?? false;
+    this.lugaresAbertos.set(false);
+    if (focoNaLista) {
+      this.botaoDoLugar().nativeElement.focus();
+    }
   }
 
   protected localDo(bloco: Bloco): Local | undefined {

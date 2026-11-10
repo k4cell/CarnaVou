@@ -211,6 +211,15 @@ describe('MapaBase', () => {
     ]);
   });
 
+  it('não afasta o mapa por causa de um ponto sozinho lá longe: enquadra onde os blocos se concentram', async () => {
+    const SAO_MIGUEL: PontoNoMapa = { id: 'sao-miguel', nome: 'São Miguel', lat: -23.5, lng: -46.44, zona: 'leste' };
+    const { falso } = await renderizar([{ ...SE, quantos: 9 }, PINHEIROS, SAO_MIGUEL]);
+    expect(falso.mapas[0].enquadramentos[0].limites.pontos).toEqual([
+      [SE.lng, SE.lat],
+      [PINHEIROS.lng, PINHEIROS.lat],
+    ]);
+  });
+
   it('chega perto quando só tem um ponto', async () => {
     const { falso } = await renderizar([SE]);
     expect(falso.mapas[0].enquadramentos.length).toBe(0);

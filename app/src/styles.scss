@@ -359,6 +359,14 @@ a:focus-visible {
   }
 }
 
+// A cor de cada zona. Quem tem `data-zona` recebe a cor (`--cor-da-zona`): a bolinha da etiqueta da
+// zona e o fundo da zona no filtro de lugar.
+@each $zona, $cor in (centro: roxo, sul: verde, leste: amarelo, oeste: vermelho, norte: azul) {
+  [data-zona='#{$zona}'] {
+    --cor-da-zona: var(--#{$cor});
+  }
+}
+
 // O texto do cartão ocupa a largura toda: assim o selo do Descobrir fica sempre no canto direito, e
 // não colado no nome quando a linha dos artistas é curta.
 .texto {
