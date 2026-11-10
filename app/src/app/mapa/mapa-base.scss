@@ -31,9 +31,10 @@ app-mapa-base {
     transform-origin: 50% 100%;
   }
 
+  // A borda na cor da noite, como a dos cartões: a gota do ponto escolhido se destaca no lilás.
   path {
     fill: var(--cor-do-pino);
-    stroke: #fff;
+    stroke: var(--noite);
     stroke-width: 2.5;
   }
 
