@@ -32,7 +32,6 @@ function diaNaFrase(dia: string): string {
     .cartao-da-fase {
       margin: 12px 0 4px;
       padding: 12px 16px 12px 20px;
-      border: var(--borda-do-cartao);
       border-radius: var(--canto-do-cartao);
       background: var(--cartao);
       box-shadow: inset 6px 0 0 var(--roxo);

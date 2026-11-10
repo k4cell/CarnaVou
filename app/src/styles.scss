@@ -18,15 +18,15 @@
   // Vermelho e azul: aguentam texto branco. Entram nas faixas dos cartões e nas zonas.
   --vermelho: #d62828;
   --azul: #2563eb;
-  // Base: fundo claro e texto escuro, para ler no sol.
-  --fundo: #f8f9fa;
+  // Base: fundo claro e texto escuro, para ler no sol. O fundo é um cinza bem claro, para os cartões
+  // brancos se destacarem dele sem precisar de borda.
+  --fundo: #eaecf0;
   --cartao: #fff;
   --borda: #dcdce2;
   --texto: #121214;
   --texto-suave: #55556a;
-  // Os cartões têm a borda escura, na cor da noite, e o canto redondo, sem sombra. Para mudar o jeito
-  // de todos os cartões, mude aqui.
-  --borda-do-cartao: 2px solid var(--noite);
+  // O canto redondo dos cartões. Eles não têm borda nem sombra: o branco do cartão se destaca no fundo
+  // cinza da página.
   --canto-do-cartao: 12px;
   // Alturas do cabeçalho e do menu de baixo: o mapa ocupa o espaço entre os dois.
   --altura-topo: 86px;
@@ -180,10 +180,9 @@ a:focus-visible {
 .grupo {
   display: grid;
   grid-template-columns: 76px minmax(0, 1fr);
-  border: var(--borda-do-cartao);
   border-radius: var(--canto-do-cartao);
   background: var(--cartao);
-  // A faixa da cor do lugar, por dentro da borda, na esquerda (veja o .cartao).
+  // A faixa da cor do lugar, na esquerda (veja o .cartao).
   box-shadow: inset 6px 0 0 var(--cor-da-faixa, var(--rosa));
 
   app-banner-bloco {
@@ -200,9 +199,7 @@ a:focus-visible {
 
   // Num celular, o :hover fica preso depois do toque: o contorno só aparece com mouse.
   @media (hover: hover) {
-    // A linha entre os blocos continua cinza: só o bloco ganha o contorno roxo por dentro.
     .cartao:hover {
-      border-color: var(--borda);
       box-shadow: inset 0 0 0 2px var(--roxo);
     }
   }
@@ -211,13 +208,13 @@ a:focus-visible {
     border-top: 1px solid var(--borda);
   }
 
-  // O bloco que encosta no canto do cartão acompanha a curva dele: o fundo do toque não cobre a borda.
+  // O bloco que encosta no canto do cartão acompanha a curva dele: o fundo do toque não passa do canto.
   .blocos-do-grupo app-banner-bloco:last-child .cartao {
-    border-bottom-right-radius: calc(var(--canto-do-cartao) - 2px);
+    border-bottom-right-radius: var(--canto-do-cartao);
   }
 
   .data-do-grupo:first-child + .blocos-do-grupo app-banner-bloco:first-child .cartao {
-    border-top-right-radius: calc(var(--canto-do-cartao) - 2px);
+    border-top-right-radius: var(--canto-do-cartao);
   }
 }
 
@@ -310,23 +307,24 @@ a:focus-visible {
 }
 
 
-// O cartão: a faixa da cor do lugar fica por dentro da borda, na esquerda. É uma sombra de dentro,
-// sem desfoque, para a borda escura dar a volta inteira no cartão.
+// O cartão: branco no fundo cinza, sem borda. A faixa da cor do lugar fica na esquerda; é uma sombra
+// de dentro, sem desfoque, para acompanhar o canto redondo.
 .cartao {
   display: flex;
   gap: 16px;
   align-items: center;
   padding: 16px 16px 16px 20px;
-  border: var(--borda-do-cartao);
   border-radius: var(--canto-do-cartao);
   background: var(--cartao);
   box-shadow: inset 6px 0 0 var(--cor-da-faixa, var(--rosa));
   text-decoration: none;
 
-  // Com mouse, a borda fica roxa. No celular o :hover fica preso depois do toque, então não.
+  // Com mouse, ganha um contorno roxo. No celular o :hover fica preso depois do toque, então não.
   @media (hover: hover) {
     &:hover {
-      border-color: var(--roxo);
+      box-shadow:
+        inset 6px 0 0 var(--cor-da-faixa, var(--rosa)),
+        0 0 0 2px var(--roxo);
     }
   }
 }
@@ -342,7 +340,8 @@ a:focus-visible {
 .caixa-vazia {
   margin: 16px 0;
   padding: 20px 16px;
-  border: 2px dashed var(--borda);
+  // Um pouco mais escura que o cinza do fundo, para a caixa aparecer.
+  border: 2px dashed color-mix(in srgb, var(--texto-suave) 35%, var(--fundo));
   border-radius: var(--canto-do-cartao);
   text-align: center;
 }
