@@ -86,7 +86,8 @@ function corDoNumero(ponto: PontoNoMapa): string {
 /**
  * As bolinhas dos pontos. A de um bloco é cheia, na cor da zona, com a borda branca. A de um lugar do
  * After é ao contrário, para não se confundir: o fundo verde-claro e a borda verde, mais grossa. A
- * que junta dois ou mais leva o número dentro. O ponto escolhido vira o pino, então sai daqui.
+ * que junta dois ou mais leva o número dentro. O ponto escolhido vira o pino, então sai daqui. Os
+ * pontos muito perto um do outro o próprio mapa junta num grupo (veja `MapaBase`).
  */
 export function bolinhasDosPontos(pontos: PontoNoMapa[], selecionado: string | null): Desenho {
   return {
@@ -102,6 +103,8 @@ export function bolinhasDosPontos(pontos: PontoNoMapa[], selecionado: string | n
             : { cor: corDaZona(ponto.zona), borda: corDoTema('--cartao', '#fff'), after: false }),
           numero: numeroDoPonto(ponto),
           corDoNumero: corDoNumero(ponto),
+          // Para o mapa somar, quando o ponto entra num grupo.
+          quantos: ponto.quantos ?? 1,
         },
         geometry: { type: 'Point', coordinates: [ponto.lng, ponto.lat] },
       })),

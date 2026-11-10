@@ -117,7 +117,8 @@ const LUGARES_POR_ZONA = ORDEM_DAS_ZONAS.map((zona) => ({
       <app-cartao-da-fase />
     }
     @for (secao of secoes(); track secao.titulo) {
-      <h3 class="secao">{{ secao.titulo }}</h3>
+      <!-- Na Geral, o título de cada dia é só para o leitor de tela: a coluna de cada cartão já diz o dia. -->
+      <h3 class="secao" [class.so-para-o-leitor]="secao.diaNoCartao">{{ secao.titulo }}</h3>
       <ul class="lista">
         <!-- Os blocos do mesmo dia no mesmo lugar ficam num cartão só, com o nome do lugar no alto. -->
         @for (grupo of secao.grupos; track grupo[0].id) {
@@ -148,14 +149,21 @@ const LUGARES_POR_ZONA = ORDEM_DAS_ZONAS.map((zona) => ({
     <app-dados-atualizados />
   `,
   styles: `
-    // O título fica só para o leitor de tela: o menu de baixo já diz em que aba a pessoa está.
-    .titulo {
+    // O título fica só para o leitor de tela: o menu de baixo já diz em que aba a pessoa está. O mesmo
+    // vale para o título de cada dia da Geral.
+    .titulo,
+    .so-para-o-leitor {
       position: absolute;
       width: 1px;
       height: 1px;
       overflow: hidden;
       clip-path: inset(50%);
       white-space: nowrap;
+    }
+
+    // Sem o título à vista, um dia fica do anterior à mesma distância que os cartões de um dia.
+    .so-para-o-leitor + .lista {
+      margin-top: 12px;
     }
 
     .busca-e-filtros {

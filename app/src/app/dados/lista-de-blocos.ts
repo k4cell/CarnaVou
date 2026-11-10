@@ -7,6 +7,11 @@ import { Bloco } from './tipos';
 /** Um pedaço da lista da aba Blocos: "Rolando agora", "Hoje" (o que começa mais tarde), um dia… */
 export interface SecaoDeBlocos {
   titulo: string;
+  /**
+   * O título é só o dia, que a coluna da data de cada cartão já mostra: a tela esconde o título dos
+   * olhos e deixa só para o leitor de tela.
+   */
+  diaNoCartao?: true;
   /** Cada grupo vira um cartão: os blocos do mesmo dia no mesmo lugar, um embaixo do outro. */
   grupos: Bloco[][];
 }
@@ -57,7 +62,11 @@ function porDia(blocos: Bloco[]): SecaoDeBlocos[] {
   const dias = [...new Set(blocos.map((bloco) => bloco.data))].sort();
   return dias.map((dia) => {
     const doDia = blocos.filter((bloco) => bloco.data === dia);
-    return { titulo: dataPorExtenso(dia), grupos: juntarPorLugar(porFama(doDia), new Set(doDia)) };
+    return {
+      titulo: dataPorExtenso(dia),
+      diaNoCartao: true,
+      grupos: juntarPorLugar(porFama(doDia), new Set(doDia)),
+    };
   });
 }
 

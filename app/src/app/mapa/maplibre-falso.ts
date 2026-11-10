@@ -16,6 +16,12 @@ export class LimitesFalsos {
   }
 }
 
+/** Um ponto ou um grupo de pontos do mapa, como o `queryRenderedFeatures` devolve. */
+interface CoisaNoMapa {
+  properties: Record<string, unknown>;
+  geometry?: { type: string; coordinates: unknown };
+}
+
 export class MapaFalso {
   removido = false;
   rotacaoDesligada = false;
@@ -30,8 +36,11 @@ export class MapaFalso {
     },
   };
 
+  /** O zoom em que um grupo de pontos se separa (o que o `getClusterExpansionZoom` devolve). */
+  zoomQueSeparaOGrupo = 16;
+
   /** O que está embaixo do dedo no próximo toque (o que o `queryRenderedFeatures` devolve). */
-  private tocados: { properties: Record<string, unknown> }[] = [];
+  private tocados: CoisaNoMapa[] = [];
   readonly consultas: { caixa: unknown; opcoes: unknown }[] = [];
   private readonly ouvintes = new Map<string, (evento: unknown) => void>();
 
@@ -59,7 +68,18 @@ export class MapaFalso {
     this.disparar('click', { point: { x: 100, y: 200 } });
   }
 
-  queryRenderedFeatures(caixa: unknown, opcoes: unknown): { properties: Record<string, unknown> }[] {
+  /** Faz de conta que a pessoa tocou num grupo de pontos, que o mapa juntou. */
+  tocarNoGrupo(id: number, posicao: [number, number]): void {
+    this.tocados = [
+      {
+        properties: { cluster: true, cluster_id: id, point_count: 2 },
+        geometry: { type: 'Point', coordinates: posicao },
+      },
+    ];
+    this.disparar('click', { point: { x: 100, y: 200 } });
+  }
+
+  queryRenderedFeatures(caixa: unknown, opcoes: unknown): CoisaNoMapa[] {
     this.consultas.push({ caixa, opcoes });
     return this.tocados;
   }
@@ -90,7 +110,9 @@ export class MapaFalso {
     return this;
   }
 
-  getSource(id: string): { setData: (dados: unknown) => void } | undefined {
+  getSource(
+    id: string,
+  ): { setData: (dados: unknown) => void; getClusterExpansionZoom: (grupo: number) => Promise<number> } | undefined {
     const fonte = this.fontes.get(id);
     return fonte
       ? {
@@ -98,6 +120,7 @@ export class MapaFalso {
             fonte.dados = dados;
             fonte.atualizacoes++;
           },
+          getClusterExpansionZoom: () => Promise.resolve(this.zoomQueSeparaOGrupo),
         }
       : undefined;
   }

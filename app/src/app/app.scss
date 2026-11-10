@@ -9,12 +9,35 @@
 }
 
 // O cabeçalho é baixo, para sobrar tela para os cartões: a linha da logo (com a seta de voltar,
-// quando tem) e, embaixo, a faixa fina do aviso de teste. A altura total é a --altura-topo.
+// quando tem), a linha fina do aviso de teste e, embaixo de tudo, a faixa das sete cores. A altura
+// total é a --altura-topo.
 .topo {
+  position: relative;
   height: var(--altura-topo);
-  padding-bottom: 6px;
+  padding-bottom: 10px;
   background: var(--noite);
   color: #fff;
+
+  // A faixa das sete cores, em sete blocos do mesmo tamanho, na ordem das faixas dos cartões (do rosa
+  // ao azul). Cada cor começa onde a outra termina: são blocos, sem degradê.
+  &::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    height: 4px;
+    background: linear-gradient(
+      to right,
+      var(--rosa) 0 calc(100% / 7),
+      var(--amarelo) 0 calc(200% / 7),
+      var(--verde) 0 calc(300% / 7),
+      var(--laranja) 0 calc(400% / 7),
+      var(--roxo) 0 calc(500% / 7),
+      var(--vermelho) 0 calc(600% / 7),
+      var(--azul) 0
+    );
+  }
 }
 
 .linha-do-topo {

@@ -14,7 +14,14 @@ import {
   viewChild,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import type { AddLayerObject, FilterSpecification, GeoJSONSource, Map as MapaDoMapLibre, Marker } from 'maplibre-gl';
+import type {
+  AddLayerObject,
+  ExpressionSpecification,
+  FilterSpecification,
+  GeoJSONSource,
+  Map as MapaDoMapLibre,
+  Marker,
+} from 'maplibre-gl';
 
 import { Zona } from '../dados/tipos';
 import {
@@ -108,6 +115,15 @@ const CAMADA_DOS_NUMEROS = 'pontos-numeros';
 const LETRA_DO_MAPA = 'noto-sans';
 /** Quanto em volta do dedo conta como tocar num ponto, em pixels. */
 const RAIO_DO_TOQUE = 14;
+/** O mais perto que o mapa chega. */
+const ZOOM_MAXIMO = 18;
+/**
+ * Pontos a menos disto, em pixels na tela, viram um grupo: é um pouco mais que o tamanho de duas
+ * bolinhas lado a lado, para elas nunca se cobrirem.
+ */
+const RAIO_DO_GRUPO = 28;
+/** No mapa, um grupo de pontos tem o `point_count` (quantos pontos ele junta). */
+const E_GRUPO: ExpressionSpecification = ['has', 'point_count'];
 const ZOOM_AO_ACHAR_A_PESSOA = 15;
 
 interface Pino {
@@ -217,7 +233,7 @@ export class MapaBase {
         center: CENTRO_DE_SAO_PAULO,
         zoom: 11,
         minZoom: 9,
-        maxZoom: 18,
+        maxZoom: ZOOM_MAXIMO,
         maxBounds: LIMITES_DA_GRANDE_SP,
         // O mapa fica sempre com o norte para cima: sem girar e sem inclinar.
         dragRotate: false,
@@ -298,11 +314,33 @@ export class MapaBase {
           { layers: [CAMADA_DOS_PONTOS] },
         )
       : [];
-    const id = tocados[0]?.properties?.['id'];
+    const [tocado] = tocados;
+    const grupo = tocado?.properties?.['cluster_id'];
+    if (typeof grupo === 'number' && tocado.geometry.type === 'Point') {
+      void this.abrirOGrupo(grupo, tocado.geometry.coordinates as [number, number]);
+      return;
+    }
+    const id = tocado?.properties?.['id'];
     if (typeof id === 'string') {
       this.escolher.emit(id);
     } else {
       this.fundoTocado.emit();
+    }
+  }
+
+  /** Tocar num grupo aproxima o mapa, em volta dele, até os pontos se separarem. */
+  private async abrirOGrupo(grupo: number, centro: [number, number]): Promise<void> {
+    const fonte = this.mapa?.getSource(FONTE_DOS_PONTOS) as GeoJSONSource | undefined;
+    if (!fonte) {
+      return;
+    }
+    try {
+      const zoom = await fonte.getClusterExpansionZoom(grupo);
+      if (this.mapa && !this.destruido) {
+        this.mapa.easeTo({ center: centro, zoom: Math.min(zoom, ZOOM_MAXIMO), duration: 500 });
+      }
+    } catch {
+      // Os pontos mudaram (outra aba) entre o toque e a resposta, e o grupo não existe mais.
     }
   }
 
@@ -317,7 +355,22 @@ export class MapaBase {
       fonte.setData(dados);
       return;
     }
-    mapa.addSource(FONTE_DOS_PONTOS, { type: 'geojson', data: dados });
+    // Os pontos que ficariam um em cima do outro viram um grupo, que se separa quando o mapa chega
+    // perto. O número do grupo é a soma dos blocos (ou bares) dos pontos dele. No zoom máximo, nenhum
+    // ponto fica em grupo.
+    mapa.addSource(FONTE_DOS_PONTOS, {
+      type: 'geojson',
+      data: dados,
+      cluster: true,
+      clusterRadius: RAIO_DO_GRUPO,
+      clusterMaxZoom: ZOOM_MAXIMO - 1,
+      clusterProperties: { quantos: ['+', ['get', 'quantos']] },
+    });
+    // O grupo é uma bolinha branca, com a borda e o número na cor da noite: não se confunde com a cor
+    // de nenhuma zona, e um grupo pode juntar pontos de duas zonas.
+    const branco = corDoTema('--cartao', '#fff');
+    const noite = corDoTema('--noite', '#130a29');
+    const temNumero: ExpressionSpecification = ['!=', ['get', 'numero'], ''];
     // As bolinhas ficam por cima das linhas dos trajetos (a bolinha do fim de um trajeto não cobre
     // outro ponto) e embaixo do círculo da pessoa, se ele já estiver no mapa.
     const embaixoDe = mapa.getLayer(`${FONTE_DA_PRECISAO}-area`) ? `${FONTE_DA_PRECISAO}-area` : undefined;
@@ -327,22 +380,22 @@ export class MapaBase {
         type: 'circle',
         source: FONTE_DOS_PONTOS,
         paint: {
-          'circle-color': ['get', 'cor'],
+          'circle-color': ['case', E_GRUPO, branco, ['get', 'cor']],
           // De longe ficam pequenas, para a cidade toda caber sem virar uma mancha. A que tem número
-          // fica maior, para ele caber dentro.
+          // fica maior, para ele caber dentro, e a do grupo, maior ainda.
           'circle-radius': [
             'interpolate',
             ['linear'],
             ['zoom'],
             10,
-            ['case', ['!=', ['get', 'numero'], ''], 8, 4],
+            ['case', E_GRUPO, 11, temNumero, 8, 4],
             14,
-            ['case', ['!=', ['get', 'numero'], ''], 11, 8],
+            ['case', E_GRUPO, 14, temNumero, 11, 8],
             17,
-            ['case', ['!=', ['get', 'numero'], ''], 13, 11],
+            ['case', E_GRUPO, 16, temNumero, 13, 11],
           ],
-          'circle-stroke-color': ['get', 'borda'],
-          'circle-stroke-width': ['case', ['get', 'after'], 3, 2],
+          'circle-stroke-color': ['case', E_GRUPO, noite, ['get', 'borda']],
+          'circle-stroke-width': ['case', E_GRUPO, 3, ['==', ['get', 'after'], true], 3, 2],
         },
       },
       embaixoDe,
@@ -353,15 +406,15 @@ export class MapaBase {
         id: CAMADA_DOS_NUMEROS,
         type: 'symbol',
         source: FONTE_DOS_PONTOS,
-        filter: ['!=', ['get', 'numero'], ''],
+        filter: ['any', E_GRUPO, temNumero],
         layout: {
-          'text-field': ['get', 'numero'],
+          'text-field': ['case', E_GRUPO, ['to-string', ['get', 'quantos']], ['get', 'numero']],
           'text-font': [LETRA_DO_MAPA],
           'text-size': ['interpolate', ['linear'], ['zoom'], 10, 10, 14, 12, 17, 13],
           'text-allow-overlap': true,
           'text-ignore-placement': true,
         },
-        paint: { 'text-color': ['get', 'corDoNumero'] },
+        paint: { 'text-color': ['case', E_GRUPO, noite, ['get', 'corDoNumero']] },
       },
       embaixoDe,
     );

@@ -24,8 +24,13 @@
   --borda: #dcdce2;
   --texto: #121214;
   --texto-suave: #55556a;
+  // Os cartões são "adesivos": borda escura, canto redondo e uma sombra dura, sem desfoque, na cor da
+  // noite. Para mudar o jeito de todos os cartões, mude aqui.
+  --borda-do-cartao: 2px solid var(--noite);
+  --sombra-do-cartao: 3px 3px 0 var(--noite);
+  --canto-do-cartao: 12px;
   // Alturas do cabeçalho e do menu de baixo: o mapa ocupa o espaço entre os dois.
-  --altura-topo: 82px;
+  --altura-topo: 86px;
   --altura-menu: calc(62px + env(safe-area-inset-bottom));
 }
 
@@ -172,34 +177,48 @@ a:focus-visible {
 // Os blocos de um dia num cartão só, com a faixa de cor inteira na esquerda. No alto pode vir o nome
 // do lugar (na aba Blocos); embaixo, a data fica numa coluna, no meio da altura dos blocos, e os
 // blocos vêm um embaixo do outro. A linha fina entre eles fica só na coluna dos blocos: não encosta
-// na faixa nem na data.
+// na faixa nem na data. O cartão é o grupo: os blocos dentro dele não têm borda nem sombra.
 .grupo {
   display: grid;
-  grid-template-columns: 72px minmax(0, 1fr);
-  border: 1px solid var(--borda);
-  border-left: 6px solid var(--cor-da-faixa, var(--rosa));
-  border-radius: 8px;
+  grid-template-columns: 76px minmax(0, 1fr);
+  border: var(--borda-do-cartao);
+  border-radius: var(--canto-do-cartao);
   background: var(--cartao);
+  box-shadow:
+    inset 6px 0 0 var(--cor-da-faixa, var(--rosa)),
+    var(--sombra-do-cartao);
 
   app-banner-bloco {
     display: block;
   }
 
   .cartao {
+    padding-left: 16px;
     border: 0;
     border-radius: 0;
     background: none;
+    box-shadow: none;
   }
 
   // Num celular, o :hover fica preso depois do toque: o contorno só aparece com mouse.
   @media (hover: hover) {
     .cartao:hover {
       box-shadow: inset 0 0 0 2px var(--roxo);
+      transform: none;
     }
   }
 
   app-banner-bloco + app-banner-bloco .cartao {
     border-top: 1px solid var(--borda);
+  }
+
+  // O bloco que encosta no canto do cartão acompanha a curva dele: o fundo do toque não cobre a borda.
+  .blocos-do-grupo app-banner-bloco:last-child .cartao {
+    border-bottom-right-radius: calc(var(--canto-do-cartao) - 2px);
+  }
+
+  .data-do-grupo:first-child + .blocos-do-grupo app-banner-bloco:first-child .cartao {
+    border-top-right-radius: calc(var(--canto-do-cartao) - 2px);
   }
 }
 
@@ -210,7 +229,7 @@ a:focus-visible {
   gap: 4px 8px;
   align-items: center;
   grid-column: 1 / -1;
-  padding: 12px 16px 0;
+  padding: 12px 16px 0 20px;
   color: var(--texto-suave);
   font-size: 0.9375rem;
   font-weight: 700;
@@ -229,7 +248,7 @@ a:focus-visible {
 .data-do-grupo {
   grid-column: 1;
   align-self: center;
-  padding-left: 16px;
+  padding-left: 20px;
 }
 
 .blocos-do-grupo {
@@ -292,29 +311,50 @@ a:focus-visible {
 }
 
 
+// O cartão adesivo: a faixa da cor do lugar fica por dentro da borda, na esquerda (é uma sombra de
+// dentro, para a borda escura dar a volta inteira), e a sombra dura fica embaixo e à direita.
 .cartao {
   display: flex;
   gap: 16px;
   align-items: center;
-  padding: 16px;
-  border: 1px solid var(--borda);
-  border-left: 6px solid var(--cor-da-faixa, var(--rosa));
-  border-radius: 8px;
+  padding: 16px 16px 16px 20px;
+  border: var(--borda-do-cartao);
+  border-radius: var(--canto-do-cartao);
   background: var(--cartao);
+  box-shadow:
+    inset 6px 0 0 var(--cor-da-faixa, var(--rosa)),
+    var(--sombra-do-cartao);
   text-decoration: none;
 
+  // Com mouse, o cartão "levanta" um pouco. No celular o :hover fica preso depois do toque, então não.
   @media (hover: hover) {
     &:hover {
-      box-shadow: 0 0 0 2px var(--roxo);
+      box-shadow:
+        inset 6px 0 0 var(--cor-da-faixa, var(--rosa)),
+        5px 5px 0 var(--noite);
+      transform: translate(-1px, -1px);
     }
   }
 }
 
-// Enquanto o dedo está em cima, o cartão ganha um fundo bem claro na cor do lugar. Vem depois do
-// `.grupo .cartao`, que tira o fundo dos blocos de um cartão de dia.
-.cartao:active,
+// Enquanto o dedo está em cima, o cartão ganha um fundo bem claro na cor do lugar e, se for um link,
+// afunda: a sombra encolhe e ele desce para o lugar dela, como um adesivo apertado.
+.cartao:active {
+  background: color-mix(in srgb, var(--cor-da-faixa, var(--roxo)) 10%, var(--cartao));
+}
+
+a.cartao:active {
+  box-shadow:
+    inset 6px 0 0 var(--cor-da-faixa, var(--rosa)),
+    1px 1px 0 var(--noite);
+  transform: translate(2px, 2px);
+}
+
+// Num cartão de dia, só o bloco tocado ganha o fundo: ele não afunda sozinho.
 .grupo .cartao:active {
   background: color-mix(in srgb, var(--cor-da-faixa, var(--roxo)) 10%, var(--cartao));
+  box-shadow: none;
+  transform: none;
 }
 
 // A mensagem de quando a lista fica vazia: uma caixa tracejada, no lugar onde os cartões estariam.
@@ -322,7 +362,7 @@ a:focus-visible {
   margin: 16px 0;
   padding: 20px 16px;
   border: 2px dashed var(--borda);
-  border-radius: 12px;
+  border-radius: var(--canto-do-cartao);
   text-align: center;
 }
 

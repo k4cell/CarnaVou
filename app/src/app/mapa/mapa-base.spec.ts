@@ -122,6 +122,54 @@ describe('MapaBase', () => {
     expect(escolhidos).toEqual([]);
   });
 
+  describe('os grupos de pontos que ficariam um em cima do outro', () => {
+    it('o mapa junta os pontos perto, soma os blocos e separa todos no zoom máximo', async () => {
+      const { falso, fixture } = await renderizar([SE, { ...SANTO_AMARO, quantos: 3 }]);
+      falso.mapas[0].carregar();
+      await esperarOMapa(fixture);
+      const definicao = falso.mapas[0].fontes.get('pontos')?.definicao;
+      expect(definicao?.['cluster']).toBe(true);
+      expect(definicao?.['clusterProperties']).toEqual({ quantos: ['+', ['get', 'quantos']] });
+      expect(definicao?.['clusterMaxZoom']).toBeLessThan(falso.mapas[0].opcoes['maxZoom'] as number);
+      const dados = falso.mapas[0].fontes.get('pontos')?.dados as { features: { properties: { quantos: number } }[] };
+      expect(dados.features.map((ponto) => ponto.properties.quantos)).toEqual([1, 3]);
+    });
+
+    it('mostra no grupo a soma dos blocos, em branco com a borda e o número na cor da noite', async () => {
+      const { falso, fixture } = await renderizar([SE]);
+      falso.mapas[0].carregar();
+      await esperarOMapa(fixture);
+      const numeros = falso.mapas[0].camadas.find((camada) => camada['id'] === 'pontos-numeros');
+      const layout = numeros?.['layout'] as Record<string, unknown>;
+      expect(layout['text-field']).toEqual([
+        'case',
+        ['has', 'point_count'],
+        ['to-string', ['get', 'quantos']],
+        ['get', 'numero'],
+      ]);
+      const bolinhas = falso.mapas[0].camadas.find((camada) => camada['id'] === 'pontos-bolinhas');
+      const pintura = bolinhas?.['paint'] as Record<string, unknown>;
+      expect(pintura['circle-color']).toEqual(['case', ['has', 'point_count'], '#fff', ['get', 'cor']]);
+      expect(pintura['circle-stroke-color']).toEqual(['case', ['has', 'point_count'], '#130a29', ['get', 'borda']]);
+    });
+
+    it('tocar num grupo aproxima o mapa em volta dele, sem escolher nenhum ponto', async () => {
+      const { falso, fixture, escolhidos } = await renderizar([SE, SANTO_AMARO]);
+      let toquesNoFundo = 0;
+      fixture.componentInstance.fundoTocado.subscribe(() => toquesNoFundo++);
+      falso.mapas[0].carregar();
+      await esperarOMapa(fixture);
+      falso.mapas[0].zoomQueSeparaOGrupo = 15;
+      falso.mapas[0].tocarNoGrupo(7, [-46.64, -23.545]);
+      await esperarOMapa(fixture);
+      const movimento = falso.mapas[0].movimentos.at(-1);
+      expect(movimento?.['center']).toEqual([-46.64, -23.545]);
+      expect(movimento?.['zoom']).toBe(15);
+      expect(escolhidos).toEqual([]);
+      expect(toquesNoFundo).toBe(0);
+    });
+  });
+
   it('põe o pino só no ponto selecionado, com o nome para o leitor de tela, no lugar da bolinha', async () => {
     const { falso, fixture, mudar } = await renderizar([SE, SANTO_AMARO]);
     falso.mapas[0].carregar();
@@ -217,7 +265,7 @@ describe('MapaBase', () => {
       const ids = falso.mapas[0].camadas.map((camada) => camada['id']);
       expect(ids.indexOf('pontos-bolinhas')).toBeLessThan(ids.indexOf('pontos-numeros'));
       const numeros = falso.mapas[0].camadas.find((camada) => camada['id'] === 'pontos-numeros');
-      expect(numeros?.['filter']).toEqual(['!=', ['get', 'numero'], '']);
+      expect(numeros?.['filter']).toEqual(['any', ['has', 'point_count'], ['!=', ['get', 'numero'], '']]);
       expect((numeros?.['layout'] as Record<string, unknown>)['text-font']).toEqual(['noto-sans']);
     });
 
