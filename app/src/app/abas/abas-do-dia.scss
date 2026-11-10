@@ -1,5 +1,5 @@
-// Presas no alto da tela quando a lista rola (no mapa, ficam dentro da caixa de cima). O espaço em
-// cima separa as abas da busca; o de baixo, da lista que passa por baixo delas.
+// Presas no alto da tela quando a lista rola. O espaço em cima separa as abas da busca; o de baixo,
+// da lista que passa por baixo delas.
 :host {
   position: sticky;
   top: 0;
@@ -19,6 +19,25 @@
   left: -16px;
   height: 2px;
   background: var(--roxo);
+}
+
+// No mapa, as abas ficam numa caixa branca que flutua: mais baixas, sem prender e sem o fundo e os
+// espaços de quando ficam na lista. O toque vale na altura toda da caixa (48px), e não só na pílula.
+:host(.compacta) {
+  position: static;
+  padding: 0;
+  background: none;
+
+  .aba {
+    position: relative;
+    min-height: 36px;
+
+    &::after {
+      content: '';
+      position: absolute;
+      inset: -6px 0;
+    }
+  }
 }
 
 .abas {

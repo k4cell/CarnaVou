@@ -18,7 +18,7 @@
       <a class="botao-claro" routerLink="/mapa">Todos os blocos</a>
     </div>
   } @else {
-    <app-abas-do-dia />
+    <app-abas-do-dia compacta />
     @if (vazio()) {
       <p class="vazio">{{ mensagemVazia() }}</p>
     }
@@ -99,6 +99,8 @@
         </svg>
       </button>
       <button type="button" class="fechar" aria-label="Fechar" (click)="fechar()">×</button>
+      <!-- A zona fica na linha da alça, à esquerda, para não gastar uma linha do cartão. -->
+      <app-zona-tag class="zona-do-cartao" [zona]="achado.local.zona" />
 
       <!--
         Os blocos do ponto, um por linha: o nome em destaque e, embaixo, os artistas (ou o horário,
@@ -117,11 +119,8 @@
       @if (blocos().escondidos > 0 && !aberto()) {
         <button type="button" class="mais-blocos" (click)="abrir()">+ {{ blocos().escondidos }} blocos aqui</button>
       }
-      <div class="linha">
-        <app-zona-tag [zona]="achado.local.zona" />
-        <!-- O nome do lugar leva para a página dele. -->
-        <a class="lugar" [routerLink]="['/local', achado.local.id]">{{ achado.local.nome }}</a>
-      </div>
+      <!-- O nome do lugar leva para a página dele. -->
+      <a class="lugar" [routerLink]="['/local', achado.local.id]">{{ achado.local.nome }}</a>
 
       @if (distancia(); as perto) {
         <p class="distancia">{{ perto }}</p>
@@ -167,9 +166,7 @@
           </li>
         }
       </ul>
-      <div class="linha">
-        <app-zona-tag [zona]="doAfter.zona" />
-      </div>
+      <app-zona-tag [zona]="doAfter.zona" />
 
       @if (distancia(); as perto) {
         <p class="distancia">{{ perto }}</p>

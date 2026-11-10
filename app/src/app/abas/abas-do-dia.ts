@@ -1,10 +1,12 @@
 import {
   afterNextRender,
+  booleanAttribute,
   ChangeDetectionStrategy,
   Component,
   DestroyRef,
   ElementRef,
   inject,
+  input,
   signal,
 } from '@angular/core';
 
@@ -27,10 +29,13 @@ const ABAS: { id: Aba; nome: string }[] = [
   templateUrl: './abas-do-dia.html',
   styleUrl: './abas-do-dia.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: { '[class.presa]': 'presa()' },
+  host: { '[class.presa]': 'presa()', '[class.compacta]': 'compacta()' },
 })
 export class AbasDoDia {
   private readonly filtro = inject(FiltroDeDia);
+
+  /** Mais baixas e sem prender no alto: para a caixa que flutua em cima do mapa. */
+  readonly compacta = input(false, { transform: booleanAttribute });
 
   protected readonly abas = ABAS;
   protected readonly ativa = this.filtro.ativa;

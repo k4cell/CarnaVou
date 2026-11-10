@@ -69,16 +69,31 @@ export interface PosicaoNoMapa {
 
 const CENTRO_DE_SAO_PAULO: [number, number] = [-46.655, -23.57];
 /**
- * Espaço livre em volta dos pontos. Em cima ficam as abas e a ponta do pino é que marca o lugar,
- * então o espaço de cima também tem que dar a altura do pino (50 px) para ele não ficar escondido.
+ * Espaço livre em volta dos pontos, em partes do mapa: os pontos ficam no meio, com folga, e a escala
+ * é parecida em qualquer celular. Em cima ficam as abas e a ponta do pino é que marca o lugar, então
+ * o espaço de cima é o maior.
  */
-const ESPACO_NAS_BORDAS = { top: 190, bottom: 70, left: 50, right: 50 };
+const PARTE_NAS_BORDAS = { top: 0.32, bottom: 0.22, left: 0.24, right: 0.24 };
+/** Sem saber o tamanho do mapa (nos testes, por exemplo). */
+const ESPACO_NAS_BORDAS = { top: 166, bottom: 80, left: 64, right: 64 };
+
+function espacoNasBordas(largura: number, altura: number) {
+  if (largura <= 0 || altura <= 0) {
+    return ESPACO_NAS_BORDAS;
+  }
+  return {
+    top: Math.round(altura * PARTE_NAS_BORDAS.top),
+    bottom: Math.round(altura * PARTE_NAS_BORDAS.bottom),
+    left: Math.round(largura * PARTE_NAS_BORDAS.left),
+    right: Math.round(largura * PARTE_NAS_BORDAS.right),
+  };
+}
 /**
  * Ao escolher um lugar com trajeto, o trajeto inteiro aparece entre as abas (em cima) e o cartão do
  * ponto (embaixo). O cartão ocupa mais ou menos 60% da altura do mapa no celular, então o espaço de
  * baixo acompanha a altura, sem nunca deixar menos de 80 px para o trajeto.
  */
-const ESPACO_EM_CIMA_DO_TRAJETO = 170;
+const ESPACO_EM_CIMA_DO_TRAJETO = 146;
 const ESPACO_MINIMO_EMBAIXO_DO_TRAJETO = 330;
 const PARTE_DO_MAPA_EMBAIXO_DO_CARTAO = 0.6;
 
@@ -559,7 +574,8 @@ export class MapaBase {
     for (const ponto of pontos) {
       limites.extend([ponto.lng, ponto.lat]);
     }
-    mapa.fitBounds(limites, { padding: ESPACO_NAS_BORDAS, maxZoom: 14, duration: duracao });
+    const { clientWidth, clientHeight } = this.area().nativeElement;
+    mapa.fitBounds(limites, { padding: espacoNasBordas(clientWidth, clientHeight), maxZoom: 14, duration: duracao });
   }
 
   private destruir(): void {

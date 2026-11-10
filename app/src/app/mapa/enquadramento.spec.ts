@@ -1,38 +1,51 @@
 import { pontosParaEnquadrar } from './enquadramento';
+import { estaNoCentroExpandido } from './limites';
 
-const SE = { id: 'se', lat: -23.55, lng: -46.63 };
-const PINHEIROS = { id: 'pinheiros', lat: -23.56, lng: -46.69 };
-const IBIRAPUERA = { id: 'ibirapuera', lat: -23.585, lng: -46.66 };
-// A uns 28 km da Sé, na Zona Leste.
-const SAO_MIGUEL = { id: 'sao-miguel', lat: -23.5, lng: -46.44 };
-// A uns 19 km, na Zona Norte.
-const PERUS = { id: 'perus', lat: -23.41, lng: -46.75 };
+// No centro expandido.
+const REPUBLICA = { id: 'republica', lat: -23.5435, lng: -46.6425 };
+const FARIA_LIMA = { id: 'faria-lima', lat: -23.592, lng: -46.681 };
+const IBIRAPUERA = { id: 'ibirapuera', lat: -23.585, lng: -46.656 };
+// Fora dele: ao norte do Tietê, na Zona Leste e em Perus.
+const FREGUESIA = { id: 'freguesia', lat: -23.5016, lng: -46.698 };
+const SAO_MIGUEL = { id: 'sao-miguel', lat: -23.483, lng: -46.387 };
+const PERUS = { id: 'perus', lat: -23.407, lng: -46.758 };
 
 const ids = (pontos: { id: string }[]) => pontos.map((ponto) => ponto.id);
 
 describe('pontosParaEnquadrar', () => {
-  it('deixa de fora o ponto sozinho lá longe, quando quase todos os blocos estão juntos', () => {
-    const pontos = [{ ...SE, quantos: 21 }, { ...PINHEIROS, quantos: 5 }, { ...IBIRAPUERA, quantos: 13 }, SAO_MIGUEL, PERUS];
-    expect(ids(pontosParaEnquadrar(pontos))).toEqual(['se', 'pinheiros', 'ibirapuera']);
+  it('sabe o que fica no centro expandido', () => {
+    for (const ponto of [REPUBLICA, FARIA_LIMA, IBIRAPUERA]) {
+      expect(estaNoCentroExpandido(ponto.lat, ponto.lng), ponto.id).toBe(true);
+    }
+    for (const ponto of [FREGUESIA, SAO_MIGUEL, PERUS]) {
+      expect(estaNoCentroExpandido(ponto.lat, ponto.lng), ponto.id).toBe(false);
+    }
   });
 
-  it('conta os blocos, e não os pontos: um ponto cheio pesa mais que vários de um bloco só', () => {
-    // Três pontos de um bloco e um de dois: o meio fica no centro, mas ali só tem 60% dos blocos.
-    const espalhados = [SE, PINHEIROS, IBIRAPUERA, { ...SAO_MIGUEL, quantos: 2 }];
+  it('com quase todos os blocos no centro expandido, deixa de fora os pontos de longe', () => {
+    const pontos = [
+      { ...REPUBLICA, quantos: 21 },
+      { ...FARIA_LIMA, quantos: 7 },
+      { ...IBIRAPUERA, quantos: 13 },
+      { ...FREGUESIA, quantos: 2 },
+      SAO_MIGUEL,
+      PERUS,
+    ];
+    expect(ids(pontosParaEnquadrar(pontos))).toEqual(['republica', 'faria-lima', 'ibirapuera']);
+  });
+
+  it('conta os blocos, e não os pontos', () => {
+    // Dois pontos no centro e dois fora: com um bloco em cada, o centro só tem metade.
+    const espalhados = [REPUBLICA, IBIRAPUERA, SAO_MIGUEL, PERUS];
     expect(pontosParaEnquadrar(espalhados)).toEqual(espalhados);
-    // Com o centro cheio, o de longe passa a ser a exceção.
-    const concentrados = [{ ...SE, quantos: 10 }, PINHEIROS, IBIRAPUERA, { ...SAO_MIGUEL, quantos: 2 }];
-    expect(ids(pontosParaEnquadrar(concentrados))).toEqual(['se', 'pinheiros', 'ibirapuera']);
+    // Com o centro cheio, os de longe passam a ser a exceção.
+    const concentrados = [{ ...REPUBLICA, quantos: 10 }, IBIRAPUERA, SAO_MIGUEL, PERUS];
+    expect(ids(pontosParaEnquadrar(concentrados))).toEqual(['republica', 'ibirapuera']);
   });
 
-  it('enquadra todos quando os pontos estão espalhados', () => {
-    const pontos = [SE, SAO_MIGUEL, PERUS];
+  it('enquadra todos quando nenhum está no centro expandido', () => {
+    const pontos = [FREGUESIA, SAO_MIGUEL, PERUS];
     expect(pontosParaEnquadrar(pontos)).toEqual(pontos);
-  });
-
-  it('com um ou dois pontos, enquadra o que tem', () => {
-    expect(pontosParaEnquadrar([SAO_MIGUEL])).toEqual([SAO_MIGUEL]);
-    expect(pontosParaEnquadrar([{ ...SE, quantos: 30 }, SAO_MIGUEL])).toEqual([{ ...SE, quantos: 30 }, SAO_MIGUEL]);
     expect(pontosParaEnquadrar([])).toEqual([]);
   });
 });

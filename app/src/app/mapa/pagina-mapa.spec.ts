@@ -223,11 +223,12 @@ describe('PaginaMapa', () => {
       expect(cartao()?.querySelector('.blocos-do-ponto a')?.getAttribute('href')).toBe(`/local/${bloco.localId}/${bloco.id}`);
     });
 
-    it('põe a zona e o lugar depois dos blocos', async () => {
+    it('põe a zona na linha da alça, antes dos blocos, e o lugar depois deles', async () => {
       const { cartao, tocarNoBloco } = await renderizar(SABADO_14H);
       await tocarNoBloco(acharPonto('hoje', umBloco)[0]);
-      const ordem = Array.from(cartao()!.children).map((filho) => filho.className);
-      expect(ordem.indexOf('blocos-do-ponto')).toBeLessThan(ordem.indexOf('linha'));
+      const ordem = Array.from(cartao()!.children).map((filho) => filho.classList[0]);
+      expect(ordem.indexOf('zona-do-cartao')).toBeLessThan(ordem.indexOf('blocos-do-ponto'));
+      expect(ordem.indexOf('blocos-do-ponto')).toBeLessThan(ordem.indexOf('lugar'));
     });
 
     it('mostra o itinerário oficial do bloco', async () => {

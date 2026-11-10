@@ -13,6 +13,15 @@ app-mapa-base {
   }
 }
 
+// O crédito do mapa fica à direita, logo abaixo da caixa das abas (12px + 48px de altura): embaixo, ele
+// obrigava o cartão do ponto a subir. O MapLibre o mostra aberto ao abrir o mapa e o fecha no "i" no
+// primeiro arrasto, como pede a atribuição do OpenStreetMap. O `app-mapa-base` na frente é para ganhar
+// do estilo do MapLibre, que é carregado depois.
+app-mapa-base .maplibregl-ctrl-bottom-right {
+  top: 66px;
+  bottom: auto;
+}
+
 // O pino: uma gota com a cor da zona. As cores vêm das mesmas variáveis do resto do app.
 .pino {
   --cor-do-pino: var(--roxo);

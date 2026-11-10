@@ -14,11 +14,8 @@ app-mapa-base {
   inset: 0;
 }
 
-// No mapa, as abas ficam dentro desta caixa branca: sem o fundo de quando ficam presas na lista.
-.topo-do-mapa app-abas-do-dia {
-  background: none;
-}
-
+// A caixa branca das abas (compactas, veja abas-do-dia.scss). O crédito do mapa fica logo abaixo dela
+// (veja mapa-base.scss).
 .topo-do-mapa {
   position: absolute;
   top: 12px;
@@ -26,15 +23,15 @@ app-mapa-base {
   left: 12px;
   z-index: 5;
   margin: 0 auto;
-  padding: 0 12px 12px;
+  padding: 6px;
   max-width: 480px;
-  border-radius: 16px;
+  border-radius: 24px;
   background: var(--cartao);
   box-shadow: 0 2px 10px rgb(0 0 0 / 20%);
 }
 
 .vazio {
-  margin: 12px 0 0;
+  margin: 8px 6px 6px;
 }
 
 // No After, no lugar das abas: o que o mapa mostra e o botão de voltar a ver todos os blocos.
@@ -43,7 +40,7 @@ app-mapa-base {
   gap: 12px;
   align-items: center;
   justify-content: space-between;
-  padding-top: 12px;
+  padding: 6px;
 
   strong {
     display: block;
@@ -52,13 +49,12 @@ app-mapa-base {
 }
 
 // Embaixo ficam, de cima para baixo: o botão "onde estou", o aviso, a lista "Perto de você" e o
-// cartão do ponto. Ficam um
-// pouco acima do fundo para o crédito do mapa (canto de baixo) continuar à vista. O espaço vazio
-// deixa o toque passar para o mapa; só o que está dentro recebe toques.
+// cartão do ponto. O espaço vazio deixa o toque passar para o mapa; só o que está dentro recebe
+// toques.
 .rodape {
   position: absolute;
   right: 12px;
-  bottom: 40px;
+  bottom: 12px;
   left: 12px;
   z-index: 5;
   display: flex;
@@ -240,16 +236,19 @@ app-mapa-base {
   right: 4px;
 }
 
-.linha {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  margin: 4px 0;
+// A zona fica na linha da alça, à esquerda, e deixa o toque passar para a alça.
+.zona-do-cartao {
+  position: absolute;
+  top: 7px;
+  left: 16px;
+  pointer-events: none;
 }
 
-// O nome do lugar é um link: o padding dá a altura do toque.
+// O nome do lugar é um link, numa linha só dele, do tamanho do texto.
 .lugar {
-  padding: 10px 0;
+  display: block;
+  width: fit-content;
+  padding: 4px 0;
   color: var(--texto);
 }
 
@@ -287,7 +286,7 @@ app-mapa-base {
 .acoes {
   display: flex;
   gap: 8px;
-  margin-top: 12px;
+  margin-top: 8px;
 }
 
 // A lista "Perto de você": até três blocos, cada um uma linha que se toca.
