@@ -7,22 +7,20 @@ import { blocosDaNoite } from '../dados/lista-de-blocos';
 import { LUGARES_DO_AFTER } from '../dados/lugares-do-after';
 import { distanciaEmMetros, fraseDaDistancia } from '../localizacao/distancia';
 import { Localizacao } from '../localizacao/localizacao';
-import { linksDeIr } from '../mapa/links';
 import { Relogio } from '../relogio/relogio';
 import { ZonaTag } from '../zona/zona-tag';
 
-/** Os lugares do After, cada um com a sua cor de faixa (as cores se revezam) e os links de ir. */
+/** Os lugares do After, cada um com a sua cor de faixa (as cores se revezam). */
 const LUGARES = LUGARES_DO_AFTER.map((lugar, posicao) => ({
   ...lugar,
   faixa: FAIXAS[posicao % FAIXAS.length],
-  links: linksDeIr(lugar.lat, lugar.lng, lugar.nome),
 }));
 
 /**
  * A aba After: para onde ir agora, depois dos blocos. Vale sempre o hoje (sem as abas de dia):
  * os blocos da noite de hoje e os bares e pontos de encontro. "Onde estou" leva ao mapa do After,
- * que procura a pessoa lá, e cada lugar tem o botão de ver no mapa. Se a pessoa já mostrou onde
- * está, os lugares ficam do mais perto para o mais longe.
+ * que procura a pessoa lá, e cada lugar tem o botão "Como chegar", que abre o lugar no mapa. Se a
+ * pessoa já mostrou onde está, os lugares ficam do mais perto para o mais longe.
  */
 @Component({
   selector: 'app-pagina-after',

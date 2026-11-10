@@ -74,21 +74,19 @@ describe('PaginaAfter', () => {
     expect(tela.querySelector('.vazio')).toBeNull();
   });
 
-  it('mostra os bares e pontos de encontro, com Ir a pé, Uber, Metrô e Mapa', async () => {
+  it('mostra os bares e pontos de encontro, cada um com um botão só, "Como chegar"', async () => {
     const { tela } = await renderizar();
     expect(nomesDosLugares(tela)).toEqual(LUGARES_DO_AFTER.map((lugar) => lugar.nome));
     for (const [posicao, cartao] of Array.from(tela.querySelectorAll('.lugar-do-after')).entries()) {
       const links = Array.from(cartao.querySelectorAll<HTMLAnchorElement>('.acoes a'));
-      expect(links.map((link) => link.textContent?.trim())).toEqual(['Ir a pé', 'Uber', 'Metrô', 'Mapa']);
-      // O Mapa, e também o nome (que cobre o cartão todo), abrem o mapa do After já no lugar.
+      expect(links.map((link) => link.textContent?.trim())).toEqual(['Como chegar']);
+      // O botão, e também o nome (que cobre o cartão todo), abrem o mapa do After já no lugar: é lá
+      // que ficam Ir a pé, Uber e Metrô.
       const noMapa = `/mapa?after=${LUGARES_DO_AFTER[posicao].id}`;
-      expect(links[3].getAttribute('href')).toBe(noMapa);
+      expect(links[0].getAttribute('href')).toBe(noMapa);
+      expect(links[0].getAttribute('target')).toBeNull();
+      expect(links[0].getAttribute('aria-label')).toBe(`Como chegar: ${LUGARES_DO_AFTER[posicao].nome}`);
       expect(cartao.querySelector('a.nome')?.getAttribute('href')).toBe(noMapa);
-      expect(links[3].getAttribute('target')).toBeNull();
-      links.pop();
-      expect(links[0].getAttribute('href')).toContain('travelmode=walking');
-      expect(links[2].getAttribute('href')).toContain('travelmode=transit');
-      expect(links.every((link) => link.getAttribute('target') === '_blank')).toBe(true);
     }
   });
 

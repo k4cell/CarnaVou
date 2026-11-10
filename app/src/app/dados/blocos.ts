@@ -62,7 +62,7 @@ export const BLOCOS: Bloco[] = [
   { id: 'banda-redonda-09-02', nome: 'Banda Redonda', data: '2026-02-09', inicio: '17:30', desfile: '20:00', fim: '23:00', localId: 'ipiranga-sao-joao', ponto: 3, atracoes: [] },
   { id: 'banda-do-candinho-11-02', nome: 'Banda do Candinho', data: '2026-02-11', inicio: '19:00', desfile: '21:00', fim: '00:00', localId: 'ipiranga-sao-joao', ponto: 4, atracoes: [] },
   { id: 'bloco-afro-ilu-oba-de-min-13-02', nome: 'Bloco Afro Ilú Obá De Min', data: '2026-02-13', inicio: '19:00', desfile: '20:00', fim: '23:00', localId: 'ipiranga-sao-joao', ponto: 0, atracoes: [] },
-  { id: 'bloco-afrikaliente-14-02', nome: 'BLOCO AFRIKALIENTE', data: '2026-02-14', inicio: '10:00', desfile: '11:00', fim: '15:00', localId: 'ipiranga-sao-joao', ponto: 1, atracoes: [] },
+  { id: 'bloco-afrikaliente-14-02', nome: 'Bloco Afrikaliente', data: '2026-02-14', inicio: '10:00', desfile: '11:00', fim: '15:00', localId: 'ipiranga-sao-joao', ponto: 1, atracoes: [] },
   { id: 'bloco-laco-branco-14-02', nome: 'Bloco Laço Branco', data: '2026-02-14', inicio: '10:00', desfile: '11:00', fim: '15:00', localId: 'ipiranga-sao-joao', ponto: 0, atracoes: [] },
   { id: 'bloco-segura-a-onca-14-02', nome: 'Bloco Segura a Onça', data: '2026-02-14', inicio: '10:00', desfile: '11:00', fim: '15:00', localId: 'ipiranga-sao-joao', ponto: 2, atracoes: [] },
   { id: 'djongador-o-bloco-14-02', nome: 'Djongador o Bloco', data: '2026-02-14', inicio: '10:00', desfile: '11:00', fim: '15:00', localId: 'ipiranga-sao-joao', ponto: 1, atracoes: [] },

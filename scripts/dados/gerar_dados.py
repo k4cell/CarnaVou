@@ -104,6 +104,32 @@ def chave_do_nome(nome):
     return re.sub(r"[^a-z0-9]+", "", nome)
 
 
+# Palavras que ficam em minúsculas no meio de um nome.
+PALAVRAS_PEQUENAS = {
+    "a", "as", "o", "os", "e", "de", "da", "do", "das", "dos", "com", "em", "na", "no", "nas", "nos",
+    "pra", "para", "por",
+}
+LETRAS = r"[^\W\d_]+"
+
+
+def nome_do_bloco(nome):
+    """O nome como a lista oficial escreve. Só o que vem inteiro em maiúsculas ("BLOCO DA PAZ") passa
+    para "Bloco da Paz". Um nome de uma palavra só (uma marca, uma sigla) e os que misturam maiúsculas
+    e minúsculas ("BATEKOO - Bloco de Carnaval") ficam como estão."""
+    nome = nome.strip(" .")
+    if len(re.findall(LETRAS, nome)) < 2 or any(letra.islower() for letra in nome):
+        return nome
+    comeco = re.search(LETRAS, nome).start()
+
+    def arrumar(achado):
+        palavra = achado.group().lower()
+        if palavra in PALAVRAS_PEQUENAS and achado.start() != comeco:
+            return palavra
+        return palavra.capitalize()
+
+    return re.sub(LETRAS, arrumar, nome)
+
+
 def ts(texto):
     """Uma string do TypeScript entre aspas simples."""
     return "'" + texto.replace("\\", "\\\\").replace("'", "\\'") + "'"
@@ -303,7 +329,7 @@ for bloco in ordem:
         identificador = f"{base}-{dia}-{mes}-{n}"
         n += 1
     usados.add(identificador)
-    nome = bloco["nome"].strip(" .")
+    nome = nome_do_bloco(bloco["nome"])
     antigo = antigo_do(bloco)
     partes = [
         f"id: {ts(identificador)}",
@@ -402,6 +428,10 @@ for (codigo, _), indice in indice_do_trajeto.items():
     # O retângulo da Grande São Paulo, o mesmo de app/src/app/mapa/limites.ts.
     if not all(-47.2 <= lng <= -46.2 and -23.95 <= lat <= -23.2 for lng, lat in tracado["linha"]):
         avisos.append(f"trajeto fora da Grande São Paulo: {tracado['linha'][0]}")
+# Uma sigla dentro de um nome em maiúsculas perde as maiúsculas: vale conferir à mão.
+for oficial in sorted({bloco["nome"].strip(" .") for bloco in ordem}):
+    if nome_do_bloco(oficial) != oficial:
+        avisos.append(f"nome em maiúsculas arrumado: {oficial} virou {nome_do_bloco(oficial)}")
 if len(trajeto_do_bloco) < 0.8 * len(ordem):
     avisos.append(f"só {len(trajeto_do_bloco)} de {len(ordem)} blocos têm ponto no mapa (veja relatorio.txt)")
 for aviso in avisos:

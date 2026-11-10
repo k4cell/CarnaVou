@@ -3,7 +3,10 @@ import { ChangeDetectionStrategy, Component, computed, input } from '@angular/co
 import { NOMES_DAS_ZONAS } from '../dados/formato';
 import { Zona } from '../dados/tipos';
 
-/** A etiqueta colorida da zona: Centro roxo, Sul verde, Leste amarelo, Oeste vermelho, Norte azul. */
+/**
+ * A etiqueta da zona, com uma bolinha da cor dela: Centro roxo, Sul verde, Leste amarelo, Oeste
+ * vermelho, Norte azul.
+ */
 @Component({
   selector: 'app-zona-tag',
   templateUrl: './zona-tag.html',

@@ -37,17 +37,15 @@
         @if (lugar.distancia) {
           <span class="distancia">{{ lugar.distancia }}</span>
         }
+        <!-- Um botão só: ele abre o lugar no mapa, onde ficam Ir a pé, Uber e Metrô. -->
         <span class="acoes">
-          <a class="botao botao-principal" [href]="lugar.links.aPe" target="_blank" rel="noopener">Ir a pé</a>
-          <a class="botao" [href]="lugar.links.uber" target="_blank" rel="noopener">Uber</a>
-          <a class="botao" [href]="lugar.links.metro" target="_blank" rel="noopener">Metrô</a>
           <a
-            class="botao"
+            class="botao botao-principal"
             routerLink="/mapa"
             [queryParams]="{ after: lugar.id }"
-            [attr.aria-label]="'Ver ' + lugar.nome + ' no mapa'"
+            [attr.aria-label]="'Como chegar: ' + lugar.nome"
           >
-            Mapa
+            Como chegar
           </a>
         </span>
       </span>

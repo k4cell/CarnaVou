@@ -4,36 +4,46 @@
   margin: 4px 0;
 }
 
+// A etiqueta é neutra (branca, de borda fina e texto escuro), para não disputar com a faixa e o selo
+// do cartão. A cor da zona fica só na bolinha.
 .zona {
-  display: inline-block;
-  padding: 2px 10px;
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+  padding: 1px 10px 1px 8px;
+  border: 1px solid var(--borda);
   border-radius: 999px;
+  background: var(--cartao);
+  color: var(--texto);
   font-size: 0.8125rem;
   font-weight: 700;
+
+  &::before {
+    content: '';
+    flex: none;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--cor-da-zona);
+  }
 }
 
-// Verde e amarelo pedem texto escuro; roxo, vermelho e azul aguentam texto branco.
 .centro {
-  background: var(--roxo);
-  color: #fff;
+  --cor-da-zona: var(--roxo);
 }
 
 .sul {
-  background: var(--verde);
-  color: var(--texto);
+  --cor-da-zona: var(--verde);
 }
 
 .leste {
-  background: var(--amarelo);
-  color: var(--texto);
+  --cor-da-zona: var(--amarelo);
 }
 
 .oeste {
-  background: var(--vermelho);
-  color: #fff;
+  --cor-da-zona: var(--vermelho);
 }
 
 .norte {
-  background: var(--azul);
-  color: #fff;
+  --cor-da-zona: var(--azul);
 }

@@ -8,7 +8,7 @@
   }
 
   // Tocar em qualquer parte do cartão abre o lugar no mapa: o link do nome se estica por cima do
-  // cartão todo, e os botões de ir ficam por cima dele.
+  // cartão todo, e o botão de como chegar fica por cima dele.
   .nome {
     font-weight: 700;
     text-decoration: none;
@@ -41,10 +41,13 @@
   color: var(--texto-suave);
 }
 
-// Os quatro botões numa linha; num celular estreito, eles quebram em duas.
+// O botão de como chegar: do tamanho do texto, sem ocupar a largura do cartão.
 .acoes {
   display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
   margin-top: 8px;
+
+  .botao {
+    flex: none;
+    padding: 0 16px;
+  }
 }
