@@ -2,12 +2,13 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 import { AbasDoDia } from '../abas/abas-do-dia';
+import { CartaoDaFase } from '../fase-do-carnaval/cartao-da-fase';
 import { FiltroDeDia } from '../filtro/filtro-de-dia';
 import { ZonaTag } from '../zona/zona-tag';
 
 @Component({
   selector: 'app-destaques',
-  imports: [RouterLink, ZonaTag, AbasDoDia],
+  imports: [RouterLink, ZonaTag, AbasDoDia, CartaoDaFase],
   templateUrl: './destaques.html',
   styleUrl: './destaques.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

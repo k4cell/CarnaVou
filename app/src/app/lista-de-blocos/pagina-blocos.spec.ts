@@ -64,6 +64,26 @@ describe('PaginaBlocos', () => {
     expect(vemDancar.querySelector('.lugar-do-grupo .zona')?.textContent).toBe('Zona Norte');
   });
 
+  describe('fora da época dos blocos', () => {
+    it('antes do primeiro bloco, mostra quantos dias faltam e já os blocos do primeiro dia', async () => {
+      const { tela } = await renderizar(new Date(2026, 0, 28, 12, 0));
+      expect(tela.querySelector('.cartao-da-fase .destaque')?.textContent).toBe('Faltam 10 dias para o carnaval de rua');
+      expect(tela.querySelector('.secao')?.textContent).toContain('Sábado, 7 de fevereiro');
+    });
+
+    it('depois do último, diz que o carnaval acabou, sem mandar para outra aba vazia', async () => {
+      const { tela } = await renderizar(new Date(2026, 1, 25, 12, 0));
+      expect(tela.querySelector('.cartao-da-fase .destaque')?.textContent).toBe('O carnaval de rua de 2026 acabou');
+      expect(tela.querySelector('.vazio')).toBeNull();
+    });
+
+    it('esconde o aviso enquanto a pessoa busca', async () => {
+      const { tela, buscar } = await renderizar(new Date(2026, 1, 25, 12, 0));
+      await buscar('ivete');
+      expect(tela.querySelector('.cartao-da-fase')).toBeNull();
+    });
+  });
+
   describe('a busca', () => {
     it('acha o artista em qualquer dia que ainda vai acontecer, sem ligar para acento', async () => {
       // Sábado, 07/02: o Bloco Skol, com o Zé Vaqueiro, é amanhã, e a aba aberta é a de Hoje.

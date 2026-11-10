@@ -4,12 +4,14 @@ import { AbasDoDia } from '../abas/abas-do-dia';
 import { BannerBloco } from '../banner/banner-bloco';
 import { DataDoDia } from '../banner/data-do-dia';
 import { DadosAtualizados } from '../correcoes/dados-atualizados';
+import { faseDoCarnaval } from '../dados/fase-do-carnaval';
 import { Aba } from '../dados/agenda';
 import { acharLocal, faixaDoLocal } from '../dados/consultas';
 import { NOMES_DAS_ZONAS } from '../dados/formato';
 import { SecaoDeBlocos, secaoDoQueJaAconteceu, secoesDosBlocos } from '../dados/lista-de-blocos';
 import { LOCAIS } from '../dados/locais';
 import { Bloco, Local, Zona } from '../dados/tipos';
+import { CartaoDaFase } from '../fase-do-carnaval/cartao-da-fase';
 import { Favoritos } from '../favoritos/favoritos';
 import { FiltroDeDia } from '../filtro/filtro-de-dia';
 import { Relogio } from '../relogio/relogio';
@@ -38,7 +40,7 @@ const LUGARES_POR_ZONA = ORDEM_DAS_ZONAS.map((zona) => ({
  */
 @Component({
   selector: 'app-pagina-blocos',
-  imports: [AbasDoDia, BannerBloco, DadosAtualizados, DataDoDia, ZonaTag],
+  imports: [AbasDoDia, BannerBloco, CartaoDaFase, DadosAtualizados, DataDoDia, ZonaTag],
   template: `
     <h2 class="titulo">Blocos</h2>
     <!-- A busca e os filtros numa linha só: o campo e dois botões redondos, o do lugar e o da estrela. -->
@@ -111,6 +113,8 @@ const LUGARES_POR_ZONA = ORDEM_DAS_ZONAS.map((zona) => ({
     }
     @if (!filtros.buscando()) {
       <app-abas-do-dia />
+      <!-- Antes do primeiro bloco e depois do último: quantos dias faltam, ou que o carnaval acabou. -->
+      <app-cartao-da-fase />
     }
     @for (secao of secoes(); track secao.titulo) {
       <h3 class="secao">{{ secao.titulo }}</h3>
@@ -134,7 +138,9 @@ const LUGARES_POR_ZONA = ORDEM_DAS_ZONAS.map((zona) => ({
         }
       </ul>
     } @empty {
-      <p class="vazio">{{ mensagemVazia() }}</p>
+      @if (mensagemVazia(); as mensagem) {
+        <p class="vazio">{{ mensagem }}</p>
+      }
       @if (filtros.algumFiltro()) {
         <button type="button" class="botao-claro limpar" (click)="filtros.limpar()">Limpar a busca e os filtros</button>
       }
@@ -331,9 +337,11 @@ export class PaginaBlocos {
     if (this.filtros.soFavoritos() && this.favoritos.quantos() === 0) {
       return 'Você ainda não tem favoritos. Toque na estrela de um bloco para ele aparecer aqui.';
     }
-    return this.filtros.algumFiltro()
-      ? 'Nenhum bloco com esses filtros neste dia. Veja a aba Geral.'
-      : NADA_NA_ABA[this.filtro.ativa()];
+    if (this.filtros.algumFiltro()) {
+      return 'Nenhum bloco com esses filtros neste dia. Veja a aba Geral.';
+    }
+    // Depois do carnaval, o aviso do alto já diz que acabou: não manda a pessoa para outra aba vazia.
+    return faseDoCarnaval(this.relogio.agora()) === 'depois' ? '' : NADA_NA_ABA[this.filtro.ativa()];
   });
 
   protected aoBuscar(evento: Event): void {

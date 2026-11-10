@@ -2,6 +2,31 @@ import { DestroyRef, Injectable, InjectionToken, inject, signal } from '@angular
 
 const FORMATO_DA_DATA = /^(\d{4})-(\d{2})-(\d{2})(?:[T ](\d{2}):(\d{2}))?$/;
 
+/** O carnaval é em São Paulo: o dia e a hora do app são sempre os de lá, seja qual for o fuso do celular. */
+const FUSO_DO_CARNAVAL = 'America/Sao_Paulo';
+
+let partesEmSaoPaulo: Intl.DateTimeFormat | undefined;
+
+/**
+ * O dia e a hora de São Paulo num instante. Volta uma data cujo dia e hora "do aparelho" (getDate,
+ * getHours…) são os de São Paulo: assim o resto do app compara datas sem pensar em fuso, como se o
+ * celular estivesse lá. Quem viaja com o fuso de outro lugar continua vendo o horário dos blocos.
+ */
+export function horaDeSaoPaulo(instante: Date): Date {
+  partesEmSaoPaulo ??= new Intl.DateTimeFormat('en-US', {
+    timeZone: FUSO_DO_CARNAVAL,
+    year: 'numeric',
+    month: 'numeric',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+    second: 'numeric',
+    hourCycle: 'h23',
+  });
+  const partes = Object.fromEntries(partesEmSaoPaulo.formatToParts(instante).map(({ type, value }) => [type, Number(value)]));
+  return new Date(partes['year'], partes['month'] - 1, partes['day'], partes['hour'], partes['minute'], partes['second']);
+}
+
 /**
  * O "hoje" de mentira usado enquanto o app só tem os dados de teste do carnaval de 2026: sexta,
  * 13/02/2026 (a véspera do sábado de carnaval), meio-dia. Ao trocar os dados de ano, troque esta
@@ -37,8 +62,9 @@ export function lerDataDeTeste(texto: string | null): Date | undefined {
 /**
  * Sabe que dia e hora são "agora".
  * Ordem: 1) a data do endereço, como `?hoje=2026-02-14T14:00`; 2) o "hoje" de demonstração
- * (13/02/2026), enquanto os dados forem os de teste; 3) o relógio do celular.
- * Nos dois primeiros casos "agora" fica parado e a tela avisa que é uma data de teste.
+ * (13/02/2026), enquanto os dados forem os de teste; 3) o relógio do celular, na hora de São Paulo.
+ * Nos dois primeiros casos "agora" fica parado e a tela avisa que é uma data de teste. A data de teste
+ * já é a hora de São Paulo.
  */
 @Injectable({ providedIn: 'root' })
 export class Relogio {
@@ -70,9 +96,9 @@ export class Relogio {
       return;
     }
 
-    this.definir(new Date());
+    this.definir(horaDeSaoPaulo(new Date()));
     // Atualiza a cada minuto, para o "Já começou" virar na hora certa com o site aberto.
-    const intervalo = setInterval(() => this.definir(new Date()), 60_000);
+    const intervalo = setInterval(() => this.definir(horaDeSaoPaulo(new Date())), 60_000);
     this.destruicao.onDestroy(() => clearInterval(intervalo));
   }
 

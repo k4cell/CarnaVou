@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 
-import { DATA_DE_DEMONSTRACAO, Relogio, lerDataDeTeste } from './relogio';
+import { DATA_DE_DEMONSTRACAO, Relogio, horaDeSaoPaulo, lerDataDeTeste } from './relogio';
 
 describe('lerDataDeTeste', () => {
   it('lê dia e hora', () => {
@@ -26,6 +26,24 @@ describe('lerDataDeTeste', () => {
     expect(lerDataDeTeste('2026-02-31')).toBeUndefined();
     expect(lerDataDeTeste('2026-13-01')).toBeUndefined();
     expect(lerDataDeTeste('2026-02-14T25:00')).toBeUndefined();
+  });
+});
+
+describe('horaDeSaoPaulo', () => {
+  it('dá o dia e a hora de São Paulo, seja qual for o fuso do aparelho', () => {
+    // 17h em Londres (UTC) são 14h em São Paulo.
+    const sp = horaDeSaoPaulo(new Date(Date.UTC(2026, 1, 14, 17, 0)));
+    expect([sp.getDate(), sp.getHours(), sp.getMinutes()]).toEqual([14, 14, 0]);
+  });
+
+  it('acerta o dia perto da meia-noite: 2h30 em Londres ainda é a noite anterior em São Paulo', () => {
+    const sp = horaDeSaoPaulo(new Date(Date.UTC(2026, 1, 15, 2, 30)));
+    expect([sp.getDate(), sp.getHours(), sp.getMinutes()]).toEqual([14, 23, 30]);
+  });
+
+  it('dá meia-noite como 0h, e não 24h', () => {
+    const sp = horaDeSaoPaulo(new Date(Date.UTC(2026, 1, 15, 3, 0)));
+    expect([sp.getDate(), sp.getHours()]).toEqual([15, 0]);
   });
 });
 
@@ -69,14 +87,23 @@ describe('Relogio', () => {
       TestBed.configureTestingModule({ providers: [{ provide: DATA_DE_DEMONSTRACAO, useValue: null }] });
     });
 
-    it('usa o relógio do celular quando o endereço não tem data', () => {
+    afterEach(() => vi.useRealTimers());
+
+    it('usa o relógio do celular, na hora de São Paulo, quando o endereço não tem data', () => {
+      // 17h em Londres (UTC): no app, 14h, a hora de São Paulo.
+      vi.useFakeTimers({ now: Date.UTC(2026, 1, 14, 17, 0) });
       const relogio = TestBed.inject(Relogio);
-      const antes = Date.now();
       relogio.iniciar('');
-      const agora = relogio.agora();
-      expect(agora).not.toBeNull();
-      expect((agora as Date).getTime()).toBeGreaterThanOrEqual(antes);
+      expect(relogio.agora()).toEqual(new Date(2026, 1, 14, 14, 0));
       expect(relogio.simulado()).toBe(false);
+    });
+
+    it('anda um minuto por vez, sempre na hora de São Paulo', () => {
+      vi.useFakeTimers({ now: Date.UTC(2026, 1, 14, 17, 0) });
+      const relogio = TestBed.inject(Relogio);
+      relogio.iniciar('');
+      vi.advanceTimersByTime(60_000);
+      expect(relogio.agora()).toEqual(new Date(2026, 1, 14, 14, 1));
     });
 
     it('usa o relógio do celular quando a data de teste não existe', () => {
