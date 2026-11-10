@@ -1,5 +1,28 @@
+// A ficha do bloco, logo embaixo do nome: uma informação por linha, perto uma da outra.
+.ficha {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 6px 0 4px;
+
+  p {
+    margin: 0;
+  }
+
+  app-zona-tag {
+    margin: 0 0 0 4px;
+    vertical-align: 1px;
+  }
+}
+
 .horario {
+  font-size: 1.0625rem;
   font-weight: 700;
+}
+
+.itinerario,
+.estilo {
+  color: var(--texto-suave);
 }
 
 // Um cartão só na cor do lugar, com uma linha por horário.

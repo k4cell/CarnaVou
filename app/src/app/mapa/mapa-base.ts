@@ -318,8 +318,9 @@ export class MapaBase {
       return;
     }
     mapa.addSource(FONTE_DOS_PONTOS, { type: 'geojson', data: dados });
-    // As bolinhas ficam embaixo das linhas e do círculo da pessoa, se eles já estiverem no mapa.
-    const embaixoDe = [`${FONTE_DOS_TRAJETOS}-borda`, `${FONTE_DA_PRECISAO}-area`].find((id) => mapa.getLayer(id));
+    // As bolinhas ficam por cima das linhas dos trajetos (a bolinha do fim de um trajeto não cobre
+    // outro ponto) e embaixo do círculo da pessoa, se ele já estiver no mapa.
+    const embaixoDe = mapa.getLayer(`${FONTE_DA_PRECISAO}-area`) ? `${FONTE_DA_PRECISAO}-area` : undefined;
     mapa.addLayer(
       {
         id: CAMADA_DOS_PONTOS,
@@ -443,8 +444,9 @@ export class MapaBase {
       return;
     }
     mapa.addSource(FONTE_DOS_TRAJETOS, { type: 'geojson', data: dados });
-    // Os trajetos ficam embaixo do círculo de precisão da pessoa, se ele já estiver no mapa.
-    const embaixoDe = mapa.getLayer(`${FONTE_DA_PRECISAO}-area`) ? `${FONTE_DA_PRECISAO}-area` : undefined;
+    // Os trajetos ficam embaixo das bolinhas dos pontos e do círculo de precisão da pessoa, se eles já
+    // estiverem no mapa.
+    const embaixoDe = [CAMADA_DOS_PONTOS, `${FONTE_DA_PRECISAO}-area`].find((id) => mapa.getLayer(id));
     const soLinhas: FilterSpecification = ['==', ['geometry-type'], 'LineString'];
     const borda: AddLayerObject = {
       id: `${FONTE_DOS_TRAJETOS}-borda`,

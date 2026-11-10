@@ -61,9 +61,11 @@ a:focus-visible {
 }
 
 // Pedaços que se repetem nas telas.
+// O título da página: o mesmo espaço em cima em todas as telas.
 .titulo {
-  margin: 8px 0 0;
+  margin: 16px 0 0;
   font-size: 1.5rem;
+  line-height: 1.2;
   color: var(--roxo);
 }
 
@@ -95,8 +97,11 @@ a:focus-visible {
   border-radius: 999px;
   background: var(--cartao);
   color: var(--texto);
+  // Vale também quando é um <button>, que não herda a letra sozinho.
+  font: inherit;
   font-weight: 700;
   text-decoration: none;
+  cursor: pointer;
 
   svg {
     width: 20px;
@@ -112,6 +117,12 @@ a:focus-visible {
     outline: 3px solid var(--texto);
     outline-offset: 2px;
   }
+}
+
+// Os botões escurecem um pouco enquanto o dedo está em cima: a pessoa vê que o toque pegou.
+.botao-claro:active,
+.botao:active {
+  filter: brightness(0.92);
 }
 
 // Os botões de ir até um ponto (Ir, Waze, Uber), lado a lado. O principal é amarelo.
@@ -178,8 +189,11 @@ a:focus-visible {
     border: 0;
     border-radius: 0;
     background: none;
+  }
 
-    &:hover {
+  // Num celular, o :hover fica preso depois do toque: o contorno só aparece com mouse.
+  @media (hover: hover) {
+    .cartao:hover {
       box-shadow: inset 0 0 0 2px var(--roxo);
     }
   }
@@ -289,9 +303,31 @@ a:focus-visible {
   background: var(--cartao);
   text-decoration: none;
 
-  &:hover {
-    box-shadow: 0 0 0 2px var(--roxo);
+  @media (hover: hover) {
+    &:hover {
+      box-shadow: 0 0 0 2px var(--roxo);
+    }
   }
+}
+
+// Enquanto o dedo está em cima, o cartão ganha um fundo bem claro na cor do lugar. Vem depois do
+// `.grupo .cartao`, que tira o fundo dos blocos de um cartão de dia.
+.cartao:active,
+.grupo .cartao:active {
+  background: color-mix(in srgb, var(--cor-da-faixa, var(--roxo)) 10%, var(--cartao));
+}
+
+// A mensagem de quando a lista fica vazia: uma caixa tracejada, no lugar onde os cartões estariam.
+.caixa-vazia {
+  margin: 16px 0;
+  padding: 20px 16px;
+  border: 2px dashed var(--borda);
+  border-radius: 12px;
+  text-align: center;
+}
+
+.secao + .caixa-vazia {
+  margin-top: 8px;
 }
 
 // Uma cor de faixa para cada lugar, do rosa ao azul (a ordem é a de FAIXAS, em consultas.ts).
@@ -303,8 +339,11 @@ a:focus-visible {
   }
 }
 
+// O texto do cartão ocupa a largura toda: assim o selo do Descobrir fica sempre no canto direito, e
+// não colado no nome quando a linha dos artistas é curta.
 .texto {
   display: flex;
+  flex: 1;
   flex-direction: column;
   min-width: 0;
 }

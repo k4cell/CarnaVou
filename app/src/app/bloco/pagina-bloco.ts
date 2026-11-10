@@ -10,6 +10,7 @@ import { itinerarioDoBloco } from '../dados/itinerario';
 import { Atracao } from '../dados/tipos';
 import { BotaoFavorito } from '../favoritos/botao-favorito';
 import { Relogio } from '../relogio/relogio';
+import { ZonaTag } from '../zona/zona-tag';
 
 /** "A, B e C" */
 function juntarNomes(nomes: string[]): string {
@@ -35,7 +36,7 @@ function atracoesPorHorario(atracoes: Atracao[]): { hora: string; nomes: string 
 
 @Component({
   selector: 'app-pagina-bloco',
-  imports: [BotaoFavorito, CopiarLink, DadosAtualizados, RouterLink],
+  imports: [BotaoFavorito, CopiarLink, DadosAtualizados, RouterLink, ZonaTag],
   templateUrl: './pagina-bloco.html',
   styleUrl: './pagina-bloco.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

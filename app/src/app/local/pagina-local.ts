@@ -28,15 +28,6 @@ const NADA_MAIS = 'Não tem mais blocos aqui.';
   selector: 'app-pagina-local',
   imports: [RouterLink, AbasDoDia, BannerBloco, CopiarLink, DataDoDia, ZonaTag],
   templateUrl: './pagina-local.html',
-  styles: `
-    .titulo {
-      margin-top: 16px;
-    }
-
-    .vazio {
-      margin: 24px 0;
-    }
-  `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PaginaLocal {

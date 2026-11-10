@@ -41,11 +41,11 @@ app-data-do-dia {
 .horario {
   font-weight: 700;
 
-  // Fundo forte e texto escuro, para ler no sol.
+  // Fundo forte e texto escuro, para ler no sol. Em pílula, como os selos e as etiquetas de zona.
   &[data-selo] {
     align-self: flex-start;
-    padding: 2px 8px;
-    border-radius: 6px;
+    padding: 2px 10px;
+    border-radius: 999px;
   }
 
   &[data-selo='agora'] {

@@ -13,14 +13,23 @@
     <p class="ja-passou">Esse bloco já aconteceu.</p>
   }
   <h2 class="titulo">{{ bloco.nome }}</h2>
-  <p class="subtitulo">{{ resumo()?.dia }} · {{ lugar()?.nome }}</p>
-  <p class="horario">{{ resumo()?.horario }}</p>
-  @if (resumo()?.itinerario; as itinerario) {
-    <p class="itinerario">Itinerário: {{ itinerario }}</p>
-  }
-  @if (resumo()?.estilo) {
-    <p>Estilo: {{ resumo()?.estilo }}</p>
-  }
+  <!-- O dia, o lugar (que leva para a página dele), o horário, o itinerário e o estilo, juntos. -->
+  <div class="ficha">
+    <p class="quando-e-onde">
+      {{ resumo()?.dia }}
+      @if (lugar(); as onde) {
+        · <a class="lugar" [routerLink]="['/local', onde.id]">{{ onde.nome }}</a>
+        <app-zona-tag [zona]="onde.zona" />
+      }
+    </p>
+    <p class="horario">{{ resumo()?.horario }}</p>
+    @if (resumo()?.itinerario; as itinerario) {
+      <p class="itinerario">Itinerário: {{ itinerario }}</p>
+    }
+    @if (resumo()?.estilo) {
+      <p class="estilo">Estilo: {{ resumo()?.estilo }}</p>
+    }
+  </div>
 
   <div class="acoes-da-pagina">
     <!-- O bloco cancelado sai do mapa. -->

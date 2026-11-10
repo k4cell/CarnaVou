@@ -10,6 +10,24 @@ const SE: PontoNoMapa = { id: 'se', nome: 'Praça da Sé', lat: -23.55, lng: -46
 const SANTO_AMARO: PontoNoMapa = { id: 'santo-amaro', nome: 'Santo Amaro', lat: -23.64, lng: -46.71, zona: 'sul' };
 const PINHEIROS: PontoNoMapa = { id: 'pinheiros', nome: 'Pinheiros', lat: -23.56, lng: -46.69, zona: 'oeste' };
 
+/**
+ * As camadas na ordem em que o mapa as pinta, de baixo para cima: cada uma entra no topo ou, com
+ * `embaixoDe`, logo abaixo da camada indicada (como no MapLibre).
+ */
+function pilhaDeCamadas(falso: ReturnType<typeof criarMapLibreFalso>): string[] {
+  const pilha: string[] = [];
+  for (const camada of falso.mapas[0].camadas) {
+    const id = camada['id'] as string;
+    const posicao = camada['embaixoDe'] ? pilha.indexOf(camada['embaixoDe'] as string) : -1;
+    if (posicao >= 0) {
+      pilha.splice(posicao, 0, id);
+    } else {
+      pilha.push(id);
+    }
+  }
+  return pilha;
+}
+
 describe('MapaBase', () => {
   async function renderizar(
     pontos: PontoNoMapa[],
@@ -270,12 +288,13 @@ describe('MapaBase', () => {
       expect(camadasDosTrajetos(falso)).toEqual(['trajetos-borda', 'trajetos-linha', 'trajetos-fim']);
     });
 
-    it('fica por cima das bolinhas dos pontos', async () => {
+    it('fica embaixo das bolinhas dos pontos, para o fim de um trajeto não cobrir outro ponto', async () => {
       const { falso, mudar } = await renderizar([SE]);
       falso.mapas[0].carregar();
       await mudar({ trajetos: [NA_SE] });
-      const ids = falso.mapas[0].camadas.map((camada) => camada['id']);
-      expect(ids.indexOf('pontos-bolinhas')).toBeLessThan(ids.indexOf('trajetos-borda'));
+      const pilha = pilhaDeCamadas(falso);
+      expect(pilha.indexOf('trajetos-fim')).toBeLessThan(pilha.indexOf('pontos-bolinhas'));
+      expect(pilha.slice(0, 3)).toEqual(['trajetos-borda', 'trajetos-linha', 'trajetos-fim']);
     });
 
     it('marca o trajeto do ponto selecionado, para ele ficar mais grosso', async () => {
@@ -328,8 +347,9 @@ describe('MapaBase', () => {
       falso.mapas[0].carregar();
       await esperarOMapa(fixture);
       await mudar({ trajetos: [NA_SE] });
-      const borda = falso.mapas[0].camadas.find((camada) => camada['id'] === 'trajetos-borda');
-      expect(borda?.['embaixoDe']).toBe('voce-precisao-area');
+      const pilha = pilhaDeCamadas(falso);
+      expect(pilha.indexOf('trajetos-fim')).toBeLessThan(pilha.indexOf('voce-precisao-area'));
+      expect(pilha.indexOf('pontos-numeros')).toBeLessThan(pilha.indexOf('voce-precisao-area'));
     });
   });
 

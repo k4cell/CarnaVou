@@ -38,12 +38,6 @@ import { Favoritos } from './favoritos';
       cursor: pointer;
     }
 
-    .botao-claro {
-      font: inherit;
-      font-weight: 700;
-      cursor: pointer;
-    }
-
     svg {
       width: 24px;
       height: 24px;
@@ -58,7 +52,8 @@ import { Favoritos } from './favoritos';
       stroke: var(--texto);
     }
 
-    button:focus-visible {
+    // Só a estrela sozinha, dentro do cartão: o botão com texto usa o foco do .botao-claro.
+    .favorito:not(.botao-claro):focus-visible {
       outline: 3px solid var(--roxo);
       outline-offset: -3px;
       border-radius: 8px;

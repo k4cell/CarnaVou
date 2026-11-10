@@ -49,4 +49,9 @@
     color: var(--roxo);
     font-weight: 700;
   }
+
+  // Enquanto o dedo está em cima, o item ganha um fundo claro.
+  &:active {
+    background: var(--fundo);
+  }
 }

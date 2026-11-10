@@ -1,12 +1,4 @@
-.titulo {
-  margin-top: 20px;
-}
-
-.vazio {
-  margin: 24px 0;
-}
-
-// Nome do lugar à esquerda e o selo no canto de cima, à direita. O selo ainda não tem cor.
+// Nome do lugar à esquerda e o selo no canto de cima, à direita.
 .cabeca {
   display: flex;
   // Sem espaço para os dois na mesma linha, o selo desce para baixo do nome.

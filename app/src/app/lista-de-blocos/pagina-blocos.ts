@@ -139,7 +139,7 @@ const LUGARES_POR_ZONA = ORDEM_DAS_ZONAS.map((zona) => ({
       </ul>
     } @empty {
       @if (mensagemVazia(); as mensagem) {
-        <p class="vazio">{{ mensagem }}</p>
+        <p class="vazio caixa-vazia">{{ mensagem }}</p>
       }
       @if (filtros.algumFiltro()) {
         <button type="button" class="botao-claro limpar" (click)="filtros.limpar()">Limpar a busca e os filtros</button>
@@ -173,11 +173,21 @@ const LUGARES_POR_ZONA = ORDEM_DAS_ZONAS.map((zona) => ({
       border-radius: 999px;
       background: var(--cartao);
       color: var(--texto);
+    }
 
-      &:focus-within {
-        outline: 3px solid var(--texto);
-        outline-offset: 2px;
-      }
+    // Nos botões redondos, o contorno de foco só aparece com o teclado (:focus-visible): depois de um
+    // toque, o botão continua com o foco, e um :focus-within deixaria o contorno preso nele. No campo
+    // de busca, aparece sempre, porque ali o foco é a pessoa digitando.
+    .campo:focus-within,
+    .redondo:focus-visible {
+      outline: 3px solid var(--texto);
+      outline-offset: 2px;
+    }
+
+    // Separado: um navegador que não entende o :has ignora só esta regra.
+    .redondo:has(:focus-visible) {
+      outline: 3px solid var(--texto);
+      outline-offset: 2px;
     }
 
     svg {
@@ -237,6 +247,12 @@ const LUGARES_POR_ZONA = ORDEM_DAS_ZONAS.map((zona) => ({
       font: inherit;
     }
 
+    // Enquanto o dedo está em cima, o botão escurece um pouco, como os outros botões do app.
+    .redondo:active,
+    .etiqueta:active {
+      filter: brightness(0.92);
+    }
+
     // Ligado: fundo amarelo e texto escuro (amarelo só como fundo). A estrela fica cheia.
     .ligado {
       border-color: var(--amarelo);
@@ -275,7 +291,7 @@ const LUGARES_POR_ZONA = ORDEM_DAS_ZONAS.map((zona) => ({
       display: inline-flex;
       gap: 6px;
       align-items: center;
-      min-height: 36px;
+      min-height: 44px;
       padding: 0 12px;
       border: 0;
       border-radius: 999px;
@@ -296,14 +312,11 @@ const LUGARES_POR_ZONA = ORDEM_DAS_ZONAS.map((zona) => ({
       }
     }
 
-    .vazio {
-      margin: 24px 0 12px;
-    }
-
+    // Embaixo da caixa da lista vazia, no meio, como ela.
     .limpar {
-      font: inherit;
-      font-weight: 700;
-      cursor: pointer;
+      display: flex;
+      width: fit-content;
+      margin: 0 auto;
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -4,7 +4,7 @@
 <h2 class="titulo">Principais lugares</h2>
 
 @if (cartoes().length === 0) {
-  <p class="vazio">{{ mensagemVazia() }}</p>
+  <p class="vazio caixa-vazia">{{ mensagemVazia() }}</p>
 } @else {
   <ul class="lista">
     @for (cartao of cartoes(); track cartao.local.id) {

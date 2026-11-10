@@ -100,8 +100,18 @@
   height: 24px;
 }
 
-// Espaço embaixo para o menu fixo não cobrir o fim da página.
+// O corpo ocupa pelo menos a tela inteira, e o rodapé vai para o fim dela: numa tela curta, a página
+// termina no rodapé, logo acima do menu, e não num vazio embaixo dele. O espaço de baixo é para o menu
+// fixo não cobrir o fim da página.
 .corpo {
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - var(--altura-topo));
+  min-height: calc(100dvh - var(--altura-topo));
   padding-top: 8px;
-  padding-bottom: calc(96px + env(safe-area-inset-bottom));
+  padding-bottom: calc(var(--altura-menu) + 20px);
+
+  app-rodape {
+    margin-top: auto;
+  }
 }
