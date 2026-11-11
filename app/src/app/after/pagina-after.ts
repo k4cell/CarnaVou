@@ -19,7 +19,7 @@ const LUGARES = LUGARES_DO_AFTER.map((lugar, posicao) => ({
 /**
  * A aba After: para onde ir agora, depois dos blocos. Vale sempre o hoje (sem as abas de dia):
  * os blocos da noite de hoje e os bares e pontos de encontro. "Onde estou" leva ao mapa do After,
- * que procura a pessoa lá, e cada lugar tem o botão "Como chegar", que abre o lugar no mapa. Se a
+ * que procura a pessoa lá, e cada lugar tem o botão Mapa, que abre o lugar no mapa. Se a
  * pessoa já mostrou onde está, os lugares ficam do mais perto para o mais longe.
  */
 @Component({

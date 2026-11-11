@@ -11,17 +11,18 @@
   Onde estou
 </button>
 
-<h3 class="secao">Blocos da noite</h3>
-<!-- Na página pronta ainda não se sabe o dia: a lista só aparece depois. -->
+<!--
+  Os blocos da noite só aparecem quando tem algum hoje: sem eles, a parte toda some. Na página pronta
+  ainda não se sabe o dia, então ela só aparece depois.
+-->
 @if (blocos(); as lista) {
   @if (lista.length > 0) {
+    <h3 class="secao">Blocos da noite</h3>
     <ul class="lista">
       @for (bloco of lista; track bloco.id) {
         <li><app-banner-bloco [bloco]="bloco" [mostrarLugar]="true" /></li>
       }
     </ul>
-  } @else {
-    <p class="vazio caixa-vazia">Nenhum bloco da noite hoje.</p>
   }
 }
 
@@ -43,9 +44,9 @@
             class="botao botao-principal"
             routerLink="/mapa"
             [queryParams]="{ after: lugar.id }"
-            [attr.aria-label]="'Como chegar: ' + lugar.nome"
+            [attr.aria-label]="'Ver ' + lugar.nome + ' no mapa'"
           >
-            Como chegar
+            Mapa
           </a>
         </span>
       </span>

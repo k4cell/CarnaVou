@@ -62,30 +62,38 @@ describe('PaginaAfter', () => {
     expect(tela.querySelector('app-banner-bloco .lugar')).not.toBeNull();
   });
 
-  it('avisa quando não tem mais bloco da noite hoje', async () => {
+  const titulos = (tela: HTMLElement) => Array.from(tela.querySelectorAll('.secao')).map((titulo) => titulo.textContent);
+
+  it('sem bloco da noite hoje, a parte dos blocos some e ficam só os bares', async () => {
     const { tela } = await renderizar(new Date(2026, 1, 7, 19, 0));
     expect(nomesDosBlocos(tela)).toEqual([]);
-    expect(tela.querySelector('.vazio')?.textContent).toContain('Nenhum bloco da noite hoje.');
+    expect(titulos(tela)).toEqual(['Bares e pontos de encontro']);
+    expect(tela.querySelector('.caixa-vazia')).toBeNull();
+  });
+
+  it('com bloco da noite hoje, a parte dos blocos vem antes dos bares', async () => {
+    const { tela } = await renderizar(SABADO_MEIO_DIA);
+    expect(titulos(tela)).toEqual(['Blocos da noite', 'Bares e pontos de encontro']);
   });
 
   it('na página pronta (sem saber o dia), não diz nada sobre os blocos da noite', async () => {
     const { tela } = await renderizar();
     expect(nomesDosBlocos(tela)).toEqual([]);
-    expect(tela.querySelector('.vazio')).toBeNull();
+    expect(titulos(tela)).toEqual(['Bares e pontos de encontro']);
   });
 
-  it('mostra os bares e pontos de encontro, cada um com um botão só, "Como chegar"', async () => {
+  it('mostra os bares e pontos de encontro, cada um com um botão só, "Mapa"', async () => {
     const { tela } = await renderizar();
     expect(nomesDosLugares(tela)).toEqual(LUGARES_DO_AFTER.map((lugar) => lugar.nome));
     for (const [posicao, cartao] of Array.from(tela.querySelectorAll('.lugar-do-after')).entries()) {
       const links = Array.from(cartao.querySelectorAll<HTMLAnchorElement>('.acoes a'));
-      expect(links.map((link) => link.textContent?.trim())).toEqual(['Como chegar']);
+      expect(links.map((link) => link.textContent?.trim())).toEqual(['Mapa']);
       // O botão, e também o nome (que cobre o cartão todo), abrem o mapa do After já no lugar: é lá
       // que ficam Ir a pé, Uber e Metrô.
       const noMapa = `/mapa?after=${LUGARES_DO_AFTER[posicao].id}`;
       expect(links[0].getAttribute('href')).toBe(noMapa);
       expect(links[0].getAttribute('target')).toBeNull();
-      expect(links[0].getAttribute('aria-label')).toBe(`Como chegar: ${LUGARES_DO_AFTER[posicao].nome}`);
+      expect(links[0].getAttribute('aria-label')).toBe(`Ver ${LUGARES_DO_AFTER[posicao].nome} no mapa`);
       expect(cartao.querySelector('a.nome')?.getAttribute('href')).toBe(noMapa);
     }
   });

@@ -8,7 +8,7 @@
   }
 
   // Tocar em qualquer parte do cartão abre o lugar no mapa: o link do nome se estica por cima do
-  // cartão todo, e o botão de como chegar fica por cima dele.
+  // cartão todo, e o botão do mapa fica por cima dele.
   .nome {
     font-weight: 700;
     text-decoration: none;
@@ -41,7 +41,7 @@
   color: var(--texto-suave);
 }
 
-// O botão de como chegar: do tamanho do texto, sem ocupar a largura do cartão.
+// O botão do mapa: do tamanho do texto, sem ocupar a largura do cartão.
 .acoes {
   display: flex;
   margin-top: 8px;

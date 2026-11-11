@@ -75,3 +75,18 @@
   background: var(--borda);
   font-weight: 700;
 }
+
+// O botão do Instagram tem as cores dele, para se reconhecer de longe. O amarelo e o laranja ficam só
+// embaixo do ícone; o nome fica em cima do rosa, do roxo e do azul, que aguentam texto branco.
+.instagram .botao-claro {
+  border: 0;
+  background: linear-gradient(
+    90deg,
+    var(--instagram-amarelo) 0,
+    var(--instagram-laranja) 16px,
+    var(--instagram-rosa) 40px,
+    var(--instagram-roxo) 75%,
+    var(--instagram-azul)
+  );
+  color: var(--cartao);
+}

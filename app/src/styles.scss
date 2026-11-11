@@ -18,6 +18,13 @@
   // Vermelho e azul: aguentam texto branco. Entram nas faixas dos cartões e nas zonas.
   --vermelho: #d62828;
   --azul: #2563eb;
+  // As cores do Instagram: só no botão que leva ao perfil de um artista lá, para ele se reconhecer de
+  // longe. É o único degradê do app. Rosa, roxo e azul aguentam texto branco; amarelo e laranja, não.
+  --instagram-amarelo: #feda75;
+  --instagram-laranja: #fa7e1e;
+  --instagram-rosa: #d62976;
+  --instagram-roxo: #962fbf;
+  --instagram-azul: #4f5bd5;
   // Base: fundo claro e texto escuro, para ler no sol. O fundo é um cinza bem claro, para os cartões
   // brancos se destacarem dele sem precisar de borda.
   --fundo: #eaecf0;
