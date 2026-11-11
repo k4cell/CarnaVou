@@ -269,8 +269,8 @@ describe('PaginaMapa', () => {
         const carnaLau = BLOCOS.find((bloco) => bloco.id === 'carna-lau')!;
         await tocarNoBloco(carnaLau);
         // Às 14h, o Carna Lau (12h às 16h) já começou.
-        expect(sobre(cartao(), 'Carna Lau')).toBe(textoDoHorario(carnaLau, 'rolando'));
-        expect(sobre(cartao(), 'Carna Lau')).toBe('Começou às 12h · vai até 16h');
+        expect(sobre(cartao(), 'Carna Lau')).toBe(`Rolando agora · ${textoDoHorario(carnaLau, 'rolando').toLowerCase()}`);
+        expect(sobre(cartao(), 'Carna Lau')).toBe('Rolando agora · das 12h às 16h');
       });
     });
 

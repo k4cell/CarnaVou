@@ -31,10 +31,19 @@ describe('BannerBloco', () => {
 
   describe('o horário mostra em que pé o bloco está', () => {
     // Forrozin: sábado, 07/02, das 12h às 15h.
-    it('fica verde quando já começou', async () => {
+    it('fica verde quando já começou, só com o horário, e o nome ganha o aviso "Rolando agora"', async () => {
       const tela = await renderizar('forrozin', new Date(2026, 1, 7, 13, 0));
       expect(horario(tela)?.getAttribute('data-selo')).toBe('agora');
-      expect(horario(tela)?.textContent).toContain('Começou às 12h');
+      expect(horario(tela)?.textContent).toBe('Das 12h às 15h');
+      expect(tela.querySelector('.linha-do-nome .rolando')?.textContent).toBe('Rolando agora');
+      // O aviso fica fora do nome, que continua só com o nome do bloco.
+      expect(tela.querySelector('.nome')?.textContent).toBe('Forrozin');
+    });
+
+    it('só tem o aviso "Rolando agora" enquanto o bloco está rolando', async () => {
+      expect((await renderizar('forrozin', new Date(2026, 1, 7, 10, 0))).querySelector('.rolando')).toBeNull();
+      TestBed.resetTestingModule();
+      expect((await renderizar('forrozin', new Date(2026, 1, 7, 16, 0))).querySelector('.rolando')).toBeNull();
     });
 
     it('fica amarelo quando ainda vai começar hoje', async () => {

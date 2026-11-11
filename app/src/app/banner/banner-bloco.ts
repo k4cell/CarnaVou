@@ -29,8 +29,9 @@ export class BannerBloco {
   protected readonly faixa = computed(() => faixaDoLocal(this.bloco().localId));
   protected readonly lugar = computed(() => (this.mostrarLugar() ? acharLocal(this.bloco().localId)?.nome : undefined));
   /**
-   * "Começa às 9h", ou "Começou às 9h" quando o bloco já começou (só depois de saber a hora). Um bloco
-   * corrigido diz o que mudou: "Cancelado" ou "Novo horário: começa às 9h".
+   * "Começa às 9h", ou só "Das 9h às 14h" quando o bloco está rolando (só depois de saber a hora: o
+   * aviso "Rolando agora" fica ao lado do nome). Um bloco corrigido diz o que mudou: "Cancelado" ou
+   * "Novo horário: começa às 9h".
    */
   protected readonly horario = computed(() => {
     const bloco = this.bloco();

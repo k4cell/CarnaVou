@@ -255,9 +255,10 @@ describe('agenda', () => {
       expect(textoDoHorario(ivete, 'antes')).toBe('Começa às 9h · vai até 14h');
     });
 
-    it('depois de começar: "Começou às", e ainda "vai até"', () => {
+    it('rolando: só o horário, "Das 9h às 14h" (ou "Desde as 9h", sem a hora do fim)', () => {
       expect(momentoDoBloco(ivete, sabado7(12))).toBe('rolando');
-      expect(textoDoHorario(ivete, 'rolando')).toBe('Começou às 9h · vai até 14h');
+      expect(textoDoHorario(ivete, 'rolando')).toBe('Das 9h às 14h');
+      expect(textoDoHorario({ ...ivete, fim: undefined }, 'rolando')).toBe('Desde as 9h');
     });
 
     it('depois de acabar: "Começou às" e "acabou às"', () => {

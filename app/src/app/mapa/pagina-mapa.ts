@@ -19,7 +19,7 @@ import { artistasPorFama } from '../dados/consultas';
 import { artistaEstaNoNome, formatarHora, partesDaData, textoDoHorario } from '../dados/formato';
 import { itinerarioDoBloco } from '../dados/itinerario';
 import { LUGARES_DO_AFTER } from '../dados/lugares-do-after';
-import { Bloco } from '../dados/tipos';
+import { Bloco, MomentoDoBloco } from '../dados/tipos';
 import { FiltroDeDia } from '../filtro/filtro-de-dia';
 import { Ponto, distanciaEmMetros, fraseDaDistancia, textoDaDistancia } from '../localizacao/distancia';
 import { ExplicacaoDaLocalizacao } from '../localizacao/explicacao-da-localizacao';
@@ -46,6 +46,12 @@ const PERTO_NO_AFTER = 4;
 const PUXAO = 30;
 /** Um toque que mexe menos que isso é toque, não arrasto. */
 const TREMIDA_DO_DEDO = 8;
+
+/** O horário no cartão do ponto: enquanto o bloco está rolando, ele avisa, como os cartões da lista. */
+function horarioNoCartao(bloco: Bloco, momento: MomentoDoBloco): string {
+  const texto = textoDoHorario(bloco, momento);
+  return momento === 'rolando' ? `Rolando agora · ${texto.charAt(0).toLowerCase()}${texto.slice(1)}` : texto;
+}
 
 const AVISOS = {
   procurando: 'Procurando você…',
@@ -204,7 +210,7 @@ export class PaginaMapa {
       return {
         id: bloco.id,
         nome: bloco.nome,
-        sobre: artistas || noDia + textoDoHorario(bloco, momentoDoBloco(bloco, agora)),
+        sobre: artistas || noDia + horarioNoCartao(bloco, momentoDoBloco(bloco, agora)),
         quando: noDia + formatarHora(bloco.inicio),
         caminho: ['/local', bloco.localId, bloco.id],
       };

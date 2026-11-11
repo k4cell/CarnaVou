@@ -10,7 +10,13 @@
   }
 
   <span class="info">
-    <strong class="nome">{{ bloco().nome }}</strong>
+    <!-- O aviso de que o bloco está rolando fica ao lado do nome (ou embaixo, se não couber). -->
+    <span class="linha-do-nome">
+      <strong class="nome">{{ bloco().nome }}</strong>
+      @if (selo() === 'agora') {
+        <span class="rolando">Rolando agora</span>
+      }
+    </span>
     @if (atracoes()) {
       <span class="atracoes">{{ atracoes() }}</span>
     }

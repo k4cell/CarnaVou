@@ -32,16 +32,58 @@ app-data-do-dia {
   min-width: 0;
 }
 
+// O nome e, ao lado (ou embaixo, se não couber), o aviso de que o bloco está rolando.
+.linha-do-nome {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 10px;
+  align-items: baseline;
+  min-width: 0;
+}
+
 .nome {
+  min-width: 0;
   font-size: 1.25rem;
   line-height: 1.2;
   overflow-wrap: anywhere;
 }
 
+// "Rolando agora", pequeno e vermelho, com a bolinha que pisca de quem está ao vivo.
+.rolando {
+  display: inline-flex;
+  gap: 5px;
+  align-items: center;
+  color: var(--vermelho);
+  font-size: 0.8125rem;
+  font-weight: 800;
+  white-space: nowrap;
+
+  &::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: currentcolor;
+    animation: ao-vivo 1.6s ease-in-out infinite;
+  }
+}
+
+@keyframes ao-vivo {
+  50% {
+    opacity: 0.25;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rolando::before {
+    animation: none;
+  }
+}
+
 .horario {
   font-weight: 700;
 
-  // Fundo forte e texto escuro, para ler no sol. Em pílula, como os selos e as etiquetas de zona.
+  // Em pílula, com texto escuro. O verde e o amarelo ficam bem claros, para não tirar o foco do nome.
   &[data-selo] {
     align-self: flex-start;
     padding: 2px 10px;
@@ -49,11 +91,11 @@ app-data-do-dia {
   }
 
   &[data-selo='agora'] {
-    background: var(--verde);
+    background: color-mix(in srgb, var(--verde) 22%, var(--cartao));
   }
 
   &[data-selo='em-breve'] {
-    background: var(--amarelo);
+    background: color-mix(in srgb, var(--amarelo) 28%, var(--cartao));
   }
 
   &[data-selo='acabou'] {

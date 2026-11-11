@@ -105,10 +105,16 @@ export function horariosDoBloco(bloco: Bloco): string {
 }
 
 /**
- * "Começa às 13h" e, quando a gente sabe, "Começa às 13h · vai até 20h". Depois que o bloco
- * começou, "Começou às 13h · vai até 20h"; depois que acabou, "Começou às 13h · acabou às 20h".
+ * "Começa às 13h" e, quando a gente sabe, "Começa às 13h · vai até 20h". Enquanto o bloco está
+ * rolando, só o horário: "Das 13h às 20h" (ou "Desde as 13h"), porque a tela já avisa que é agora.
+ * Depois que acabou, "Começou às 13h · acabou às 20h".
  */
 export function textoDoHorario(bloco: Bloco, momento: MomentoDoBloco = 'antes'): string {
+  if (momento === 'rolando') {
+    return bloco.fim
+      ? `Das ${formatarHora(bloco.inicio)} às ${formatarHora(bloco.fim)}`
+      : `Desde as ${formatarHora(bloco.inicio)}`;
+  }
   const inicio = `${momento === 'antes' ? 'Começa' : 'Começou'} às ${formatarHora(bloco.inicio)}`;
   if (!bloco.fim) {
     return inicio;
