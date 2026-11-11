@@ -33,7 +33,7 @@
   // O canto redondo dos cartões. Eles não têm borda nem sombra: o branco do cartão se destaca no fundo
   // cinza da página.
   --canto-do-cartao: 12px;
-  // Alturas do cabeçalho e do menu de baixo: o mapa ocupa o espaço entre os dois.
+  // Alturas do cabeçalho e do menu de baixo.
   --altura-topo: 86px;
   --altura-menu: calc(62px + env(safe-area-inset-bottom));
 }

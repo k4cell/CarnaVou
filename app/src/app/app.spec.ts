@@ -19,6 +19,18 @@ describe('App', () => {
     expect(app).toBeTruthy();
   });
 
+  it('no mapa, tira o cabeçalho (a logo e o aviso de teste): a tela toda é do mapa', async () => {
+    const fixture = TestBed.createComponent(App);
+    await TestBed.inject(Router).navigateByUrl('/mapa');
+    await fixture.whenStable();
+    const tela = fixture.nativeElement as HTMLElement;
+    expect(tela.querySelector('header.topo')).toBeNull();
+    expect(tela.querySelector('app-aviso-de-teste')).toBeNull();
+    await TestBed.inject(Router).navigateByUrl('/');
+    await fixture.whenStable();
+    expect(tela.querySelector('header.topo app-aviso-de-teste')).not.toBeNull();
+  });
+
   it('should render title', async () => {
     const fixture = TestBed.createComponent(App);
     await fixture.whenStable();

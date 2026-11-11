@@ -1,7 +1,7 @@
-// O mapa ocupa tudo o que fica entre o cabeçalho e o menu de baixo.
+// O mapa ocupa a tela toda, do alto até o menu de baixo (no mapa, o cabeçalho não aparece).
 :host {
   position: fixed;
-  top: var(--altura-topo);
+  top: 0;
   right: 0;
   bottom: var(--altura-menu);
   left: 0;

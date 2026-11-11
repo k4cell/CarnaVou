@@ -11,6 +11,8 @@ import { AvisoDeTeste } from './aviso-de-teste/aviso-de-teste';
 import { Conexao } from './conexao/conexao';
 import { Correcoes } from './correcoes/correcoes';
 import { Favoritos } from './favoritos/favoritos';
+import { AvisoDeInstalar } from './instalar/aviso-de-instalar';
+import { Instalacao } from './instalar/instalacao';
 import { MenuInferior } from './menu/menu-inferior';
 import { AvisoDeNavegacao } from './navegacao/aviso-de-navegacao';
 import { Relogio } from './relogio/relogio';
@@ -28,6 +30,7 @@ import { Trilha, soOCaminho } from './voltar/trilha';
     AvisoDeAtualizacao,
     AvisoDeNavegacao,
     AvisoDePronto,
+    AvisoDeInstalar,
     Rodape,
   ],
   templateUrl: './app.html',
@@ -76,6 +79,7 @@ export class App {
     const correcoes = inject(Correcoes);
     const favoritos = inject(Favoritos);
     const pronto = inject(ProntoSemInternet);
+    const instalacao = inject(Instalacao);
     // Só no navegador, depois da primeira pintura: assim a página pronta que vem do servidor
     // (que não sabe o dia de hoje nem se há internet) e a primeira pintura do navegador saem iguais.
     afterNextRender(() => {
@@ -85,6 +89,7 @@ export class App {
       correcoes.iniciar();
       favoritos.iniciar();
       pronto.iniciar();
+      instalacao.iniciar();
     });
   }
 }

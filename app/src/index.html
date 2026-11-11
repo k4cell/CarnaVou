@@ -14,6 +14,14 @@
     <link rel="icon" type="image/x-icon" href="favicon.ico" />
     <link rel="apple-touch-icon" href="icons/icon-192x192.png" />
     <link rel="manifest" href="manifest.webmanifest" />
+    <script>
+      // O pedido de instalar do Chrome pode chegar antes de o app carregar: fica guardado aqui até o
+      // app usar (veja instalar/instalacao.ts), e o Chrome não mostra a barra dele.
+      addEventListener('beforeinstallprompt', function (evento) {
+        evento.preventDefault();
+        window.pedidoDeInstalar = evento;
+      });
+    </script>
   </head>
   <body>
     <app-root>

@@ -58,7 +58,7 @@
       <ul>
         @for (item of lista.blocos; track item.id) {
           <li>
-            <button type="button" class="bloco-perto" (click)="escolherPerto(item.ponto)">
+            <button type="button" class="bloco-perto" (click)="escolherPerto(item.ponto, item.id)">
               <strong>{{ item.nome }}</strong>
               <span>{{ item.detalhe }}</span>
             </button>
@@ -181,7 +181,7 @@
       </button>
       <!-- Cada lugar do ponto: o nome e, embaixo, o que é e onde fica, como os blocos de um ponto. -->
       <ul class="blocos-do-ponto">
-        @for (lugar of doAfter.lugares; track lugar.id) {
+        @for (lugar of lugaresNoCartao(); track lugar.id) {
           <li>
             <strong class="nome">{{ lugar.nome }}</strong>
             <span class="sobre">{{ lugar.tipo }} · {{ lugar.endereco }}</span>

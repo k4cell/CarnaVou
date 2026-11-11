@@ -98,6 +98,11 @@ export class PaginaMapa {
 
   /** O ponto em que a pessoa tocou. */
   private readonly escolhido = signal<string | null>(null);
+  /**
+   * O bar escolhido, quando a pessoa veio de um bar da lista do After e o ponto dele junta alguns:
+   * minimizado, o cartão mostra só ele, e os botões de ir levam até ele.
+   */
+  private readonly lugarDoAfter = signal<string | null>(null);
   private readonly avisoFechado = signal(false);
 
   /** O cartão do ponto está aberto (mostrando tudo) ou pequeno (o nome, o lugar e os botões)? */
@@ -230,13 +235,30 @@ export class PaginaMapa {
     };
   });
 
+  /** O bar escolhido, se ele está no ponto do After aberto. */
+  private readonly barEscolhido = computed(() =>
+    this.pontoDoAfter()?.lugares.find((lugar) => lugar.id === this.lugarDoAfter()),
+  );
+
+  /**
+   * Os lugares no cartão do After. Minimizado, um só: o bar escolhido ou, sem ele (quem tocou no
+   * pino), o primeiro do ponto.
+   */
+  protected readonly lugaresNoCartao = computed(() => {
+    const doAfter = this.pontoDoAfter();
+    if (!doAfter) {
+      return [];
+    }
+    return this.minimizado() ? [this.barEscolhido() ?? doAfter.lugares[0]] : doAfter.lugares;
+  });
+
   protected readonly links = computed(() => {
     const ponto = this.cartao();
     if (ponto) {
       return linksDeIr(ponto.lat, ponto.lng, ponto.titulo);
     }
-    const doAfter = this.pontoDoAfter();
-    return doAfter ? linksDeIr(doAfter.lat, doAfter.lng, doAfter.nome) : undefined;
+    const alvo = this.barEscolhido() ?? this.pontoDoAfter();
+    return alvo ? linksDeIr(alvo.lat, alvo.lng, alvo.nome) : undefined;
   });
 
   /** "A 1,2 km de você, uns 25 min a pé.", se a pessoa já mostrou onde está. */
@@ -330,6 +352,7 @@ export class PaginaMapa {
       untracked(() => {
         if (!bloco && !lugar) {
           this.escolhido.set(pontoDoLugarDoAfter(after ?? '')?.ponto ?? null);
+          this.lugarDoAfter.set(after && after !== 'sim' ? after : null);
           this.mostrarPequeno();
           if (this.localizacao.veioDeUmToque()) {
             void this.ondeEstou();
@@ -349,13 +372,15 @@ export class PaginaMapa {
     });
   }
 
-  protected escolher(id: string): void {
+  protected escolher(id: string, lugarDoAfter: string | null = null): void {
     this.escolhido.set(id);
+    this.lugarDoAfter.set(lugarDoAfter);
     this.mostrarPequeno();
   }
 
   protected fechar(): void {
     this.escolhido.set(null);
+    this.lugarDoAfter.set(null);
     this.mostrarPequeno();
   }
 
@@ -380,12 +405,15 @@ export class PaginaMapa {
     this.aberto.set(true);
   }
 
-  /** Um bloco da lista "Perto de você": abre o cartão dele, na aba Hoje (a lista é de hoje). */
-  protected escolherPerto(ponto: string): void {
+  /**
+   * Um item da lista "Perto de você": abre o cartão dele, na aba Hoje (a lista é de hoje). Num bar do
+   * After, lembra qual foi.
+   */
+  protected escolherPerto(ponto: string, id: string): void {
     if (!this.modoAfter()) {
       this.filtro.escolher('hoje');
     }
-    this.escolher(ponto);
+    this.escolher(ponto, id.startsWith('after:') ? id.slice('after:'.length) : null);
   }
 
   protected fecharPerto(): void {

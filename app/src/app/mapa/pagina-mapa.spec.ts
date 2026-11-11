@@ -14,6 +14,7 @@ import { distanciaEmMetros, fraseDaDistancia, textoDaDistancia } from '../locali
 import { criarGeolocalizacaoFalsa, Resposta } from '../localizacao/geolocalizacao-falsa';
 import { CONSULTAR_PERMISSAO, GEOLOCALIZACAO, Localizacao, PermissaoDoCelular } from '../localizacao/localizacao';
 import { Relogio } from '../relogio/relogio';
+import { linksDeIr } from './links';
 import { CARREGAR_MAPLIBRE } from './maplibre';
 import { criarMapLibreFalso, esperarOMapa } from './maplibre-falso';
 import { PaginaMapa } from './pagina-mapa';
@@ -809,6 +810,29 @@ describe('PaginaMapa', () => {
       expect(nomes).toEqual(['Meretriz', 'Galo']);
       const [pino] = falso.pinos();
       expect(pino.elemento.getAttribute('aria-label')).toBe('Meretriz e Galo');
+    });
+
+    it('vindo de um bar da lista, minimizado mostra só ele, e os botões de ir levam até ele', async () => {
+      const galo = LUGARES_DO_AFTER.find((lugar) => lugar.id === 'galo')!;
+      const { fixture, cartao } = await renderizar(SABADO_14H, {}, { after: 'galo' });
+      const aPe = () => cartao()!.querySelector<HTMLAnchorElement>('.acoes a')!.getAttribute('href');
+      expect(aPe()).toBe(linksDeIr(galo.lat, galo.lng, galo.nome).aPe);
+      cartao()!.querySelector<HTMLButtonElement>('.fechar')!.click();
+      await esperarOMapa(fixture);
+      const nomes = Array.from(cartao()!.querySelectorAll('.nome')).map((nome) => nome.textContent);
+      expect(nomes).toEqual(['Galo']);
+      expect(aPe()).toBe(linksDeIr(galo.lat, galo.lng, galo.nome).aPe);
+    });
+
+    it('tocando no pino de um ponto com alguns bares, minimizado mostra só o primeiro', async () => {
+      const ponto = PONTOS_DO_AFTER.find((candidato) => candidato.lugares.length > 1)!;
+      const { fixture, cartao, falso } = await renderizar(SABADO_14H, {}, { after: 'sim' });
+      falso.mapas[0].tocarNoPonto(ponto.ponto);
+      await esperarOMapa(fixture);
+      cartao()!.querySelector<HTMLButtonElement>('.fechar')!.click();
+      await esperarOMapa(fixture);
+      const nomes = Array.from(cartao()!.querySelectorAll('.nome')).map((nome) => nome.textContent);
+      expect(nomes).toEqual([ponto.lugares[0].nome]);
     });
 
     it('sem o toque em "Onde estou", não procura a pessoa', async () => {

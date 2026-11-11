@@ -24,6 +24,10 @@ import { EMAIL_DE_CONTATO, ESTILO_DAS_PAGINAS_DE_TEXTO, TEXTOS_ATUALIZADOS_EM } 
       <li>Os blocos que você marcou com a estrela (os favoritos).</li>
       <li>A última lista de correções de horário e de blocos cancelados que o app baixou.</li>
       <li>Se o aviso de "pronto para usar sem internet" já apareceu.</li>
+      <li>
+        A data em que você tocou em "Agora não" (ou "Entendi") no convite para instalar o app, para ele
+        não aparecer de novo por uma semana.
+      </li>
       <li>As páginas e os pedaços do mapa que você abriu, para o app funcionar sem internet.</li>
     </ul>
     <p>
