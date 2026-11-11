@@ -59,7 +59,11 @@ describe('O convite para instalar o app', () => {
     expect(pedido.defaultPrevented).toBe(true);
     await atualizar();
     expect(tela.querySelector('.convite')).toBeNull();
-    await vi.advanceTimersByTimeAsync(15_000);
+    // Aparece 10 segundos depois de o app carregar.
+    await vi.advanceTimersByTimeAsync(9_000);
+    await atualizar();
+    expect(tela.querySelector('.convite')).toBeNull();
+    await vi.advanceTimersByTimeAsync(1_000);
     await atualizar();
     expect(tela.querySelector('.convite')?.textContent).toContain('Instale o CarnaVou');
     botao('Instalar')!.click();
@@ -77,7 +81,7 @@ describe('O convite para instalar o app', () => {
     janela.pedidoDeInstalar = pedido;
     instalacao.iniciar();
     expect(janela.pedidoDeInstalar).toBeUndefined();
-    await vi.advanceTimersByTimeAsync(15_000);
+    await vi.advanceTimersByTimeAsync(10_000);
     await atualizar();
     expect(tela.querySelector('.convite')?.textContent).toContain('Instale o CarnaVou');
     botao('Instalar')!.click();
@@ -89,7 +93,7 @@ describe('O convite para instalar o app', () => {
     const { instalacao, atualizar, botao } = await montar();
     instalacao.iniciar();
     window.dispatchEvent(pedidoDoNavegador('dismissed'));
-    await vi.advanceTimersByTimeAsync(15_000);
+    await vi.advanceTimersByTimeAsync(10_000);
     await atualizar();
     botao('Instalar')!.click();
     await atualizar();
@@ -100,7 +104,7 @@ describe('O convite para instalar o app', () => {
     const primeira = await montar();
     primeira.instalacao.iniciar();
     window.dispatchEvent(pedidoDoNavegador());
-    await vi.advanceTimersByTimeAsync(15_000);
+    await vi.advanceTimersByTimeAsync(10_000);
     await primeira.atualizar();
     primeira.botao('Agora não')!.click();
     await primeira.atualizar();
@@ -113,7 +117,7 @@ describe('O convite para instalar o app', () => {
     const seisDias = await montar();
     seisDias.instalacao.iniciar();
     window.dispatchEvent(pedidoDoNavegador());
-    await vi.advanceTimersByTimeAsync(15_000);
+    await vi.advanceTimersByTimeAsync(10_000);
     await seisDias.atualizar();
     expect(seisDias.tela.querySelector('.convite')).toBeNull();
 
@@ -122,7 +126,7 @@ describe('O convite para instalar o app', () => {
     const oitoDias = await montar();
     oitoDias.instalacao.iniciar();
     window.dispatchEvent(pedidoDoNavegador());
-    await vi.advanceTimersByTimeAsync(15_000);
+    await vi.advanceTimersByTimeAsync(10_000);
     await oitoDias.atualizar();
     expect(oitoDias.tela.querySelector('.convite')).not.toBeNull();
   });
@@ -130,7 +134,7 @@ describe('O convite para instalar o app', () => {
   it('no iPhone, que não tem o botão, explica o caminho pelo Compartilhar', async () => {
     const { instalacao, tela, atualizar, botao } = await montar({ ehIphone: true });
     instalacao.iniciar();
-    await vi.advanceTimersByTimeAsync(15_000);
+    await vi.advanceTimersByTimeAsync(10_000);
     await atualizar();
     expect(tela.querySelector('.convite')?.textContent).toContain('Adicionar à Tela de Início');
     botao('Entendi')!.click();
@@ -143,14 +147,14 @@ describe('O convite para instalar o app', () => {
     const instalado = await montar({ instalado: true, ehIphone: true });
     instalado.instalacao.iniciar();
     window.dispatchEvent(pedidoDoNavegador());
-    await vi.advanceTimersByTimeAsync(15_000);
+    await vi.advanceTimersByTimeAsync(10_000);
     await instalado.atualizar();
     expect(instalado.tela.querySelector('.convite')).toBeNull();
 
     TestBed.resetTestingModule();
     const semPedido = await montar();
     semPedido.instalacao.iniciar();
-    await vi.advanceTimersByTimeAsync(15_000);
+    await vi.advanceTimersByTimeAsync(10_000);
     await semPedido.atualizar();
     expect(semPedido.tela.querySelector('.convite')).toBeNull();
   });
@@ -159,7 +163,7 @@ describe('O convite para instalar o app', () => {
     const { instalacao, tela, atualizar } = await montar();
     instalacao.iniciar();
     window.dispatchEvent(pedidoDoNavegador());
-    await vi.advanceTimersByTimeAsync(15_000);
+    await vi.advanceTimersByTimeAsync(10_000);
     await atualizar();
     window.dispatchEvent(new Event('appinstalled'));
     await atualizar();
@@ -171,7 +175,7 @@ describe('O convite para instalar o app', () => {
     const pronto = TestBed.inject(ProntoSemInternet);
     pronto.avisar.set(true);
     instalacao.iniciar();
-    await vi.advanceTimersByTimeAsync(15_000);
+    await vi.advanceTimersByTimeAsync(10_000);
     await atualizar();
     expect(tela.querySelector('.convite')).toBeNull();
     pronto.avisar.set(false);

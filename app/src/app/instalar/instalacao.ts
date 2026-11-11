@@ -5,8 +5,8 @@ import { DestroyRef, Injectable, InjectionToken, inject, signal } from '@angular
 const CHAVE = 'carnavou.instalar-depois';
 /** Depois de "Agora não", o aviso só volta depois destes dias. */
 const DIAS_SEM_AVISAR = 7;
-/** O aviso espera a pessoa usar o app um pouco antes de aparecer. */
-const ESPERA = 15_000;
+/** O aviso aparece 10 segundos depois de o app carregar. */
+const ESPERA = 10_000;
 
 /** O jeito de instalar: o botão do próprio navegador (Android) ou o passo a passo do iPhone. */
 export type JeitoDeInstalar = 'botao' | 'iphone';
