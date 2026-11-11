@@ -97,7 +97,7 @@ export class Relogio {
     }
 
     this.definir(horaDeSaoPaulo(new Date()));
-    // Atualiza a cada minuto, para o "Já começou" virar na hora certa com o site aberto.
+    // Atualiza a cada minuto, para o "Rolando agora" aparecer na hora certa com o site aberto.
     const intervalo = setInterval(() => this.definir(horaDeSaoPaulo(new Date())), 60_000);
     this.destruicao.onDestroy(() => clearInterval(intervalo));
   }

@@ -48,38 +48,6 @@ app-data-do-dia {
   overflow-wrap: anywhere;
 }
 
-// "Rolando agora", pequeno e vermelho, com a bolinha que pisca de quem está ao vivo.
-.rolando {
-  display: inline-flex;
-  gap: 5px;
-  align-items: center;
-  color: var(--vermelho);
-  font-size: 0.8125rem;
-  font-weight: 800;
-  white-space: nowrap;
-
-  &::before {
-    content: '';
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: currentcolor;
-    animation: ao-vivo 1.6s ease-in-out infinite;
-  }
-}
-
-@keyframes ao-vivo {
-  50% {
-    opacity: 0.25;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .rolando::before {
-    animation: none;
-  }
-}
-
 .horario {
   font-weight: 700;
 

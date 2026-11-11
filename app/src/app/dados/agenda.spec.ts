@@ -85,9 +85,9 @@ describe('agenda', () => {
       ]);
     });
 
-    it('diz "Já começou" quando o bloco está rolando', () => {
+    it('diz "Rolando agora" quando o bloco está rolando', () => {
       // Agrada Gregos, na Ibirapuera: 13h às 18h.
-      expect(hoje['ibirapuera']).toBe('Já começou');
+      expect(hoje['ibirapuera']).toBe('Rolando agora');
     });
 
     it('mostra os artistas só do dia', () => {
@@ -125,7 +125,7 @@ describe('agenda', () => {
     it('conta como rolando até o fim do dia', () => {
       // Banda do Candinho, na República, quarta 11/02: 19h até 0h.
       const noite = selos(cartoesDaAba('hoje', new Date(2026, 1, 11, 23, 0)));
-      expect(noite['ipiranga-sao-joao']).toBe('Já começou');
+      expect(noite['ipiranga-sao-joao']).toBe('Rolando agora');
     });
   });
 
@@ -152,7 +152,7 @@ describe('agenda', () => {
         BLOCOS.some((bloco) => bloco.localId === local.id && bloco.data >= '2026-02-14'),
       );
       expect(cartoesDaAba('geral', SABADO_14H).map((c) => c.local.id)).toEqual(comBlocoPelaFrente.map((l) => l.id));
-      expect(geral['ibirapuera']).toBe('Já começou');
+      expect(geral['ibirapuera']).toBe('Rolando agora');
     });
 
     it('some com o lugar cujos blocos já passaram todos (o app mostra só o presente e o futuro)', () => {

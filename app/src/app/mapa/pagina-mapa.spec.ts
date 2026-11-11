@@ -671,7 +671,7 @@ describe('PaginaMapa', () => {
         expect(nomesDaLista(tela)).toEqual(esperados.map(({ bloco }) => bloco.nome));
         const [primeiro] = esperados;
         expect(tela.querySelector('.bloco-perto span')?.textContent).toContain(
-          `${textoDaDistancia(primeiro.metros)} · Já começou`,
+          `${textoDaDistancia(primeiro.metros)} · Rolando agora`,
         );
       });
 

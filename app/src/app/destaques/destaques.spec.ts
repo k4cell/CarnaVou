@@ -96,7 +96,7 @@ describe('Destaques', () => {
       const { abaAtiva, cartoes, selos } = await renderizar(SABADO_14H);
       expect(abaAtiva()).toBe('Hoje');
       expect(cartoes().length).toBe(5);
-      expect(selos()).toContain('Já começou');
+      expect(selos()).toContain('Rolando agora');
     });
 
     it('mostra os lugares de amanhã, cada um com a hora do primeiro bloco, ao tocar em Amanhã', async () => {
@@ -119,11 +119,11 @@ describe('Destaques', () => {
       expect(cartoes().some((cartao) => cartao.getAttribute('href') === '/local/santo-amaro')).toBe(false);
     });
 
-    it('pinta o selo de quem já começou (verde) e de quem vai começar (amarelo)', async () => {
+    it('marca o selo de quem está rolando (o aviso vermelho) e de quem vai começar (amarelo)', async () => {
       const { tela } = await renderizar(SABADO_14H);
       const tipos = Array.from(tela.querySelectorAll('.selo')).map((selo) => [selo.textContent, selo.getAttribute('data-selo')]);
-      expect(tipos).toContainEqual(['Já começou', 'agora']);
-      expect(tipos.every(([texto, tipo]) => tipo !== 'agora' || texto === 'Já começou')).toBe(true);
+      expect(tipos).toContainEqual(['Rolando agora', 'agora']);
+      expect(tipos.every(([texto, tipo]) => tipo !== 'agora' || texto === 'Rolando agora')).toBe(true);
     });
 
     it('mantém a cor da faixa do lugar quando troca de aba', async () => {

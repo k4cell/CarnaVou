@@ -15,7 +15,7 @@ export interface BlocoPerto {
   ponto: string;
   /** A distância em linha reta até a concentração. */
   metros: number;
-  /** Já começou (e não acabou)? Se não, começa mais tarde hoje. */
+  /** Está rolando (já começou e não acabou)? Se não, começa mais tarde hoje. */
   rolando: boolean;
 }
 

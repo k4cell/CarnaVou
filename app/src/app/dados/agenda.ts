@@ -7,13 +7,13 @@ import { Bloco, Local, MomentoDoBloco } from './tipos';
 export type Aba = 'hoje' | 'amanha' | 'geral';
 
 /**
- * O jeito do selo, que dá a cor dele (fundo forte e texto escuro, para ler no sol): rolando agora,
+ * O jeito do selo, que dá a cor dele: rolando agora (o aviso vermelho que pisca),
  * ainda vai começar (hoje ou amanhã), já acabou, cancelado, ou só a conta dos blocos.
  */
 export type TipoDoSelo = 'agora' | 'em-breve' | 'acabou' | 'cancelado' | 'conta';
 
 export function tipoDoSelo(selo: string): TipoDoSelo {
-  if (selo === 'Já começou') {
+  if (selo === 'Rolando agora') {
     return 'agora';
   }
   if (selo.startsWith('Hoje às') || selo.startsWith('Amanhã às')) {
@@ -27,7 +27,7 @@ export function tipoDoSelo(selo: string): TipoDoSelo {
 
 export interface CartaoDoLugar {
   local: Local;
-  /** O selo do canto do cartão: "Já começou", "Hoje às 16h", "Amanhã às 11h", "5 blocos"… */
+  /** O selo do canto do cartão: "Rolando agora", "Hoje às 16h", "Amanhã às 11h", "5 blocos"… */
   selo: string;
   /** O jeito do selo, que dá a cor dele. */
   tipoDoSelo: TipoDoSelo;
@@ -120,7 +120,7 @@ function seloDeHoje(blocosDeHoje: Bloco[], hora: string): string {
     (bloco) => bloco.inicio <= hora && (bloco.fim === undefined || bloco.fim <= bloco.inicio || hora < bloco.fim),
   );
   if (rolando) {
-    return 'Já começou';
+    return 'Rolando agora';
   }
   const proximo = blocosDeHoje.find((bloco) => bloco.inicio > hora);
   return proximo ? `Hoje às ${formatarHora(proximo.inicio)}` : JA_ACABOU;

@@ -270,10 +270,10 @@ export class PaginaMapa {
         id: bloco.id,
         ponto,
         nome: bloco.nome,
-        // "1,2 km · Já começou · Gloria Groove"
+        // "1,2 km · Rolando agora · Gloria Groove"
         detalhe: [
           textoDaDistancia(metros),
-          rolando ? 'Já começou' : `Hoje às ${formatarHora(bloco.inicio)}`,
+          rolando ? 'Rolando agora' : `Hoje às ${formatarHora(bloco.inicio)}`,
           ...artistasPorFama([bloco]).slice(0, 1),
         ].join(' · '),
       })),
@@ -504,7 +504,7 @@ export class PaginaMapa {
           // "1,2 km · Hoje às 18h · Gloria Groove"
           detalhe: [
             textoDaDistancia(metros),
-            rolando ? 'Já começou' : `Hoje às ${formatarHora(bloco.inicio)}`,
+            rolando ? 'Rolando agora' : `Hoje às ${formatarHora(bloco.inicio)}`,
             ...artistasPorFama([bloco]).slice(0, 1),
           ].join(' · '),
         };

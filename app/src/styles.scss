@@ -393,9 +393,9 @@ a:focus-visible {
   color: var(--roxo);
 }
 
-// O selo no canto do cartão do lugar, na tela inicial e no mapa. Ainda não tem cor.
-// O selo do cartão: fundo forte e texto escuro, para ler no sol. Verde = rolando agora,
-// amarelo = ainda vai começar (hoje ou amanhã), cinza = já acabou; a conta dos blocos fica branca.
+// O selo no canto do cartão do lugar, no Descobrir: fundo forte e texto escuro, para ler no sol.
+// Amarelo = ainda vai começar (hoje ou amanhã), cinza = já acabou; a conta dos blocos fica branca. O
+// de quem está rolando é o aviso vermelho que pisca (veja o .rolando).
 .selo {
   flex: none;
   padding: 4px 10px;
@@ -408,8 +408,9 @@ a:focus-visible {
   white-space: nowrap;
 
   &[data-selo='agora'] {
-    border-color: var(--verde);
-    background: var(--verde);
+    padding: 0;
+    border: 0;
+    background: none;
   }
 
   &[data-selo='em-breve'] {
@@ -432,4 +433,40 @@ a:focus-visible {
 
 .principal {
   font-size: 1.125rem;
+}
+
+// "Rolando agora": pequeno e vermelho, com a bolinha que pisca de quem está ao vivo. Fica ao lado do
+// nome do bloco e no selo do lugar que tem bloco rolando.
+.rolando,
+.selo[data-selo='agora'] {
+  display: inline-flex;
+  gap: 5px;
+  align-items: center;
+  color: var(--vermelho);
+  font-size: 0.8125rem;
+  font-weight: 800;
+  white-space: nowrap;
+
+  &::before {
+    content: '';
+    flex: none;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: currentcolor;
+    animation: ao-vivo 1.6s ease-in-out infinite;
+  }
+}
+
+@keyframes ao-vivo {
+  50% {
+    opacity: 0.25;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rolando::before,
+  .selo[data-selo='agora']::before {
+    animation: none;
+  }
 }
