@@ -64,8 +64,8 @@
   }
 
   @if (instagram().length > 0) {
-    <h3 class="secao">No Instagram</h3>
-    <p class="subtitulo">As novidades de quem toca no bloco.</p>
+    <!-- Os botões já dizem que levam ao Instagram: o título só diz de quem são. -->
+    <h3 class="secao">Quem toca no bloco</h3>
     <div class="acoes-da-pagina instagram">
       @for (artista of instagram(); track artista.endereco) {
         <a class="botao-claro" [href]="artista.endereco" target="_blank" rel="noopener" [attr.aria-label]="artista.nome + ' no Instagram'">

@@ -94,8 +94,13 @@ export class PaginaMapa {
   private readonly escolhido = signal<string | null>(null);
   private readonly avisoFechado = signal(false);
 
-  /** O cartão do ponto está aberto (mostrando tudo) ou pequeno (só o nome e os botões)? */
+  /** O cartão do ponto está aberto (mostrando tudo) ou pequeno (o nome, o lugar e os botões)? */
   protected readonly aberto = signal(false);
+  /**
+   * O cartão está minimizado (só o nome e os botões de ir)? O × minimiza, para a pessoa ver o pino
+   * sem perder o ponto escolhido; minimizado, o × fecha.
+   */
+  protected readonly minimizado = signal(false);
   /** Quanto o dedo já puxou a alça do cartão, em pixels (para baixo é positivo). */
   protected readonly arrasto = signal(0);
   private comecoDoArrasto: number | null = null;
@@ -319,7 +324,7 @@ export class PaginaMapa {
       untracked(() => {
         if (!bloco && !lugar) {
           this.escolhido.set(pontoDoLugarDoAfter(after ?? '')?.ponto ?? null);
-          this.aberto.set(false);
+          this.mostrarPequeno();
           if (this.localizacao.veioDeUmToque()) {
             void this.ondeEstou();
           }
@@ -333,22 +338,39 @@ export class PaginaMapa {
           this.filtro.escolher('geral');
         }
         this.escolhido.set(acharOPonto()?.id ?? null);
-        this.aberto.set(false);
+        this.mostrarPequeno();
       });
     });
   }
 
   protected escolher(id: string): void {
     this.escolhido.set(id);
-    this.aberto.set(false);
+    this.mostrarPequeno();
   }
 
   protected fechar(): void {
     this.escolhido.set(null);
+    this.mostrarPequeno();
+  }
+
+  /** O ×: minimiza o cartão e, se ele já está minimizado, fecha. */
+  protected minimizarOuFechar(): void {
+    if (this.minimizado()) {
+      this.fechar();
+    } else {
+      this.minimizado.set(true);
+      this.aberto.set(false);
+    }
+  }
+
+  /** O cartão no tamanho de quando abre: nem minimizado nem aberto. */
+  protected mostrarPequeno(): void {
+    this.minimizado.set(false);
     this.aberto.set(false);
   }
 
   protected abrir(): void {
+    this.minimizado.set(false);
     this.aberto.set(true);
   }
 
@@ -364,13 +386,20 @@ export class PaginaMapa {
     this.pertoFechado.set(true);
   }
 
-  /** Tocar na alça abre ou encolhe o cartão (o arrasto já cuidou disso, se teve). */
+  /**
+   * Tocar na alça abre ou encolhe o cartão; minimizado, ele volta ao tamanho de quando abre (o
+   * arrasto já cuidou disso, se teve).
+   */
   protected alternar(): void {
     if (this.acabouDeArrastar) {
       this.acabouDeArrastar = false;
       return;
     }
-    this.aberto.update((aberto) => !aberto);
+    if (this.minimizado()) {
+      this.mostrarPequeno();
+    } else {
+      this.aberto.update((aberto) => !aberto);
+    }
   }
 
   protected comecarArrasto(evento: PointerEvent): void {
@@ -389,7 +418,7 @@ export class PaginaMapa {
     this.arrasto.set(puxado > 0 ? puxado : puxado / 3);
   }
 
-  /** Puxou para cima: abre. Para baixo: encolhe e, se já estava pequeno, fecha. */
+  /** Puxou para cima: cresce um passo. Para baixo: encolhe um passo e, se já estava minimizado, fecha. */
   protected soltar(): void {
     if (this.comecoDoArrasto === null) {
       return;
@@ -401,10 +430,16 @@ export class PaginaMapa {
     }
     this.acabouDeArrastar = true;
     if (puxado <= -PUXAO) {
-      this.aberto.set(true);
+      if (this.minimizado()) {
+        this.mostrarPequeno();
+      } else {
+        this.abrir();
+      }
     } else if (puxado >= PUXAO) {
       if (this.aberto()) {
         this.aberto.set(false);
+      } else if (!this.minimizado()) {
+        this.minimizado.set(true);
       } else {
         this.fechar();
       }

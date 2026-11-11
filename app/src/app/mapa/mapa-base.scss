@@ -88,29 +88,44 @@ app-mapa-base .maplibregl-ctrl-bottom-right {
   --cor-do-pino: var(--azul);
 }
 
-// Os bares e pontos de encontro do After: fundo verde-claro e borda verde, como a bolinha deles.
+// Os bares e pontos de encontro do After: azuis, como os pinos pequenos deles.
 .pino-after {
-  path {
-    fill: var(--verde-claro);
-    stroke: var(--verde);
-    stroke-width: 3;
-  }
+  --cor-do-pino: var(--azul);
+}
 
-  circle {
-    fill: var(--verde);
+// Quem está vendo o mapa: uma bolinha escura, com a borda branca e uma onda que cresce e some em
+// volta, como a posição ao vivo dos apps de mapa. Não se confunde com os pontos, que são coloridos e
+// parados. A onda é a última sombra, que cresce para fora sem cobrir a bolinha.
+.voce {
+  --sombra-da-pessoa: 0 0 0 1px rgb(0 0 0 / 15%), 0 2px 4px rgb(0 0 0 / 30%);
+
+  width: 20px;
+  height: 20px;
+  border: 3px solid #fff;
+  border-radius: 50%;
+  background: var(--noite);
+  box-shadow:
+    var(--sombra-da-pessoa),
+    0 0 0 0 color-mix(in srgb, var(--noite) 45%, transparent);
+  animation: onda-da-pessoa 2s ease-out infinite;
+}
+
+@keyframes onda-da-pessoa {
+  to {
+    box-shadow:
+      var(--sombra-da-pessoa),
+      0 0 0 14px transparent;
   }
 }
 
-// A bolinha de quem está vendo o mapa: rosa com borda branca, para não se confundir com os pinos.
-.voce {
-  width: 22px;
-  height: 22px;
-  border: 3px solid #fff;
-  border-radius: 50%;
-  background: var(--rosa);
-  box-shadow:
-    0 0 0 1px rgb(0 0 0 / 15%),
-    0 2px 4px rgb(0 0 0 / 30%);
+// Para quem pediu menos movimento no celular, a onda fica parada.
+@media (prefers-reduced-motion: reduce) {
+  .voce {
+    animation: none;
+    box-shadow:
+      var(--sombra-da-pessoa),
+      0 0 0 8px color-mix(in srgb, var(--noite) 25%, transparent);
+  }
 }
 
 .mapa-erro {

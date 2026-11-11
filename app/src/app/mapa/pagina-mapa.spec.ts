@@ -306,12 +306,42 @@ describe('PaginaMapa', () => {
       expect(falso.pinos().map((pino) => pino.elemento.getAttribute('aria-label'))).toEqual([bloco.nome]);
     });
 
-    it('fecha o cartão no botão ×', async () => {
-      const { fixture, cartao, tocarNoBloco } = await renderizar(SABADO_14H);
-      await tocarNoBloco(acharPonto('hoje', umBloco)[0]);
-      cartao()!.querySelector<HTMLButtonElement>('.fechar')!.click();
+    it('o × minimiza o cartão (só os nomes e os botões de ir, com o pino) e, minimizado, fecha', async () => {
+      const { fixture, cartao, falso, tocarNoBloco } = await renderizar(SABADO_14H);
+      const [bloco] = acharPonto('hoje', umBloco);
+      await tocarNoBloco(bloco);
+      const fechar = () => cartao()!.querySelector<HTMLButtonElement>('.fechar')!;
+      expect(fechar().getAttribute('aria-label')).toBe('Minimizar');
+      fechar().click();
+      await esperarOMapa(fixture);
+      expect(cartao()?.classList.contains('minimizado')).toBe(true);
+      expect(cartao()?.querySelector('.nome')?.textContent).toBe(bloco.nome);
+      const links = Array.from(cartao()!.querySelectorAll<HTMLAnchorElement>('.acoes a'));
+      expect(links.map((link) => link.textContent?.trim())).toEqual(['Ir a pé', 'Uber', 'Metrô']);
+      expect(falso.pinos().map((pino) => pino.elemento.getAttribute('aria-label'))).toEqual([bloco.nome]);
+      expect(fechar().getAttribute('aria-label')).toBe('Fechar');
+      fechar().click();
       await esperarOMapa(fixture);
       expect(cartao()).toBeNull();
+      expect(falso.pinos()).toEqual([]);
+    });
+
+    it('minimizado, a alça e o toque no pino voltam o cartão ao tamanho de quando abre', async () => {
+      const { fixture, cartao, falso, tocarNoBloco } = await renderizar(SABADO_14H);
+      await tocarNoBloco(acharPonto('hoje', umBloco)[0]);
+      const minimizar = async () => {
+        cartao()!.querySelector<HTMLButtonElement>('.fechar')!.click();
+        await esperarOMapa(fixture);
+      };
+      await minimizar();
+      cartao()!.querySelector<HTMLButtonElement>('.alca')!.click();
+      await esperarOMapa(fixture);
+      expect(cartao()?.classList.contains('minimizado')).toBe(false);
+      expect(cartao()?.querySelector('.alca')?.getAttribute('aria-expanded')).toBe('false');
+      await minimizar();
+      falso.pinos()[0].elemento.click();
+      await esperarOMapa(fixture);
+      expect(cartao()?.classList.contains('minimizado')).toBe(false);
     });
 
     it('fecha o cartão quando alguém toca no mapa fora dos pontos', async () => {
@@ -395,7 +425,7 @@ describe('PaginaMapa', () => {
       expect(cartao()?.querySelector('.trajeto')).toBeNull();
     });
 
-    it('abre puxando a alça para cima e, já pequeno, fecha puxando para baixo', async () => {
+    it('cresce puxando a alça para cima; para baixo, encolhe, minimiza e, já minimizado, fecha', async () => {
       const { fixture, cartao, tocarNoBloco } = await renderizar(SABADO_14H);
       await tocarNoBloco(acharPonto('hoje', umBloco)[0]);
       const puxar = async (de: number, ate: number) => {
@@ -409,6 +439,12 @@ describe('PaginaMapa', () => {
       expect(cartao()?.querySelector('.alca')?.getAttribute('aria-expanded')).toBe('true');
       await puxar(400, 500);
       expect(cartao()?.querySelector('.alca')?.getAttribute('aria-expanded')).toBe('false');
+      expect(cartao()?.classList.contains('minimizado')).toBe(false);
+      await puxar(400, 500);
+      expect(cartao()?.classList.contains('minimizado')).toBe(true);
+      await puxar(500, 400);
+      expect(cartao()?.classList.contains('minimizado')).toBe(false);
+      await puxar(400, 500);
       await puxar(400, 500);
       expect(cartao()).toBeNull();
     });
@@ -733,10 +769,10 @@ describe('PaginaMapa', () => {
       expect(daNoite.length).toBeGreaterThan(0);
       const esperados = [...new Set([...daNoite, ...PONTOS_DO_AFTER.map(noMapa)])].sort();
       expect(posicoes()).toEqual(esperados);
-      // Os lugares do After têm o fundo verde-claro, diferente das bolinhas cheias dos blocos.
+      // Os lugares do After são azuis (no mapa, pinos pequenos, e não bolinhas como os blocos).
       const doAfter = falso.mapas[0].pontos().filter((ponto) => ponto.id.startsWith('after:'));
       expect(doAfter.length).toBe(PONTOS_DO_AFTER.length);
-      expect(new Set(doAfter.map((ponto) => ponto.cor))).toEqual(new Set(['#e3fcee']));
+      expect(new Set(doAfter.map((ponto) => ponto.cor))).toEqual(new Set(['#2563eb']));
     });
 
     it('abre já no lugar pedido, com o que ele é e os botões de ir', async () => {
@@ -749,6 +785,21 @@ describe('PaginaMapa', () => {
       const [pino] = falso.pinos();
       expect(comoTexto(pino.posicao!)).toBe(noMapa(lugar));
       expect(pino.elemento.classList.contains('pino-after')).toBe(true);
+    });
+
+    it('o × do lugar do After minimiza (só o nome e os botões de ir) e a seta volta', async () => {
+      const lugar = LUGARES_DO_AFTER[0];
+      const { fixture, cartao } = await renderizar(SABADO_14H, {}, { after: lugar.id });
+      expect(cartao()?.querySelector('.alca')).toBeNull();
+      cartao()!.querySelector<HTMLButtonElement>('.fechar')!.click();
+      await esperarOMapa(fixture);
+      expect(cartao()?.classList.contains('minimizado')).toBe(true);
+      expect(cartao()?.querySelector('.nome')?.textContent).toBe(lugar.nome);
+      expect(cartao()?.querySelectorAll('.acoes a').length).toBe(3);
+      cartao()!.querySelector<HTMLButtonElement>('.alca')!.click();
+      await esperarOMapa(fixture);
+      expect(cartao()?.classList.contains('minimizado')).toBe(false);
+      expect(cartao()?.querySelector('.alca')).toBeNull();
     });
 
     it('junta num pino só os lugares vizinhos, como o Galo e o Meretriz', async () => {

@@ -135,6 +135,18 @@ export class MapaFalso {
     return this.camadas.find((camada) => camada['id'] === id);
   }
 
+  /** As imagens que o mapa recebeu (os pinos pequenos), pelo nome. */
+  readonly imagens = new Map<string, unknown>();
+
+  hasImage(id: string): boolean {
+    return this.imagens.has(id);
+  }
+
+  addImage(id: string, imagem: unknown): this {
+    this.imagens.set(id, imagem);
+    return this;
+  }
+
   fitBounds(limites: LimitesFalsos, opcoes: Record<string, unknown>): this {
     this.enquadramentos.push({ limites, opcoes });
     return this;

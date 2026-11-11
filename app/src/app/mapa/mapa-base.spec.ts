@@ -28,6 +28,34 @@ function pilhaDeCamadas(falso: ReturnType<typeof criarMapLibreFalso>): string[] 
   return pilha;
 }
 
+/** Calcula uma expressão do MapLibre (só as que o mapa usa nas cores) com as propriedades dadas. */
+function avaliar(expressao: unknown, propriedades: Record<string, unknown>): unknown {
+  if (!Array.isArray(expressao)) {
+    return expressao;
+  }
+  const [operacao, ...partes] = expressao as [string, ...unknown[]];
+  const valor = (parte: unknown) => avaliar(parte, propriedades);
+  switch (operacao) {
+    case 'get':
+      return propriedades[partes[0] as string] ?? 0;
+    case 'has':
+      return (partes[0] as string) in propriedades;
+    case 'max':
+      return Math.max(...partes.map((parte) => valor(parte) as number));
+    case '==':
+      return valor(partes[0]) === valor(partes[1]);
+    case 'case':
+      for (let i = 0; i < partes.length - 1; i += 2) {
+        if (valor(partes[i])) {
+          return valor(partes[i + 1]);
+        }
+      }
+      return valor(partes.at(-1));
+    default:
+      throw new Error(`Expressão não conhecida: ${operacao}`);
+  }
+}
+
 describe('MapaBase', () => {
   async function renderizar(
     pontos: PontoNoMapa[],
@@ -107,7 +135,7 @@ describe('MapaBase', () => {
       [86, 186],
       [114, 214],
     ]);
-    expect(consulta?.opcoes).toEqual({ layers: ['pontos-bolinhas'] });
+    expect(consulta?.opcoes).toEqual({ layers: ['pontos-bolinhas', 'pontos-pinos-do-after'] });
   });
 
   it('avisa quando alguém toca no mapa fora dos pontos', async () => {
@@ -129,13 +157,17 @@ describe('MapaBase', () => {
       await esperarOMapa(fixture);
       const definicao = falso.mapas[0].fontes.get('pontos')?.definicao;
       expect(definicao?.['cluster']).toBe(true);
-      expect(definicao?.['clusterProperties']).toEqual({ quantos: ['+', ['get', 'quantos']] });
+      const somas = definicao?.['clusterProperties'] as Record<string, unknown>;
+      expect(somas['quantos']).toEqual(['+', ['get', 'quantos']]);
+      expect(Object.keys(somas).sort()).toEqual(
+        ['after', 'quantos', 'zona-centro', 'zona-leste', 'zona-norte', 'zona-oeste', 'zona-sul'].sort(),
+      );
       expect(definicao?.['clusterMaxZoom']).toBeLessThan(falso.mapas[0].opcoes['maxZoom'] as number);
       const dados = falso.mapas[0].fontes.get('pontos')?.dados as { features: { properties: { quantos: number } }[] };
       expect(dados.features.map((ponto) => ponto.properties.quantos)).toEqual([1, 3]);
     });
 
-    it('mostra no grupo a soma dos blocos, em branco com a borda e o número na cor da noite', async () => {
+    it('mostra no grupo a soma dos blocos, na cor da zona que tem mais blocos nele', async () => {
       const { falso, fixture } = await renderizar([SE]);
       falso.mapas[0].carregar();
       await esperarOMapa(fixture);
@@ -149,8 +181,38 @@ describe('MapaBase', () => {
       ]);
       const bolinhas = falso.mapas[0].camadas.find((camada) => camada['id'] === 'pontos-bolinhas');
       const pintura = bolinhas?.['paint'] as Record<string, unknown>;
-      expect(pintura['circle-color']).toEqual(['case', ['has', 'point_count'], '#fff', ['get', 'cor']]);
-      expect(pintura['circle-stroke-color']).toEqual(['case', ['has', 'point_count'], '#130a29', ['get', 'borda']]);
+      const corDoGrupo = (somas: Record<string, number>) =>
+        avaliar(pintura['circle-color'], { point_count: 2, after: 0, ...somas });
+      expect(corDoGrupo({ 'zona-centro': 9, 'zona-oeste': 3 })).toBe('#6a0dad');
+      expect(corDoGrupo({ 'zona-centro': 2, 'zona-sul': 13 })).toBe('#00e676');
+      expect(corDoGrupo({ after: 3, 'zona-norte': 1 })).toBe('#2563eb');
+      // O ponto sozinho continua com a cor dele.
+      expect(avaliar(pintura['circle-color'], { cor: '#d62828' })).toBe('#d62828');
+      expect(pintura['circle-stroke-color']).toBe('#fff');
+      // O número do grupo é escuro no verde e no amarelo, e branco nas outras cores.
+      const numeroDoGrupo = (somas: Record<string, number>) =>
+        avaliar((numeros?.['paint'] as Record<string, unknown>)['text-color'], { point_count: 2, after: 0, ...somas });
+      expect(numeroDoGrupo({ 'zona-sul': 5 })).toBe('#121214');
+      expect(numeroDoGrupo({ 'zona-leste': 5 })).toBe('#121214');
+      expect(numeroDoGrupo({ 'zona-oeste': 5 })).toBe('#fff');
+    });
+
+    it('desenha os lugares do After como pinos pequenos, e não como bolinhas', async () => {
+      const BAR: PontoNoMapa = { id: 'after:bar', nome: 'Bar', lat: -23.56, lng: -46.69, zona: 'oeste', after: true };
+      const { falso, fixture } = await renderizar([SE, BAR]);
+      falso.mapas[0].carregar();
+      await esperarOMapa(fixture);
+      const camada = (id: string) => falso.mapas[0].camadas.find((c) => c['id'] === id)!;
+      const pinos = camada('pontos-pinos-do-after');
+      expect(pinos['type']).toBe('symbol');
+      expect(pinos['filter']).toEqual(['all', ['!', ['has', 'point_count']], ['==', ['get', 'after'], true]]);
+      expect((pinos['layout'] as Record<string, unknown>)['icon-anchor']).toBe('bottom');
+      expect(camada('pontos-bolinhas')['filter']).toEqual([
+        'any',
+        ['has', 'point_count'],
+        ['!', ['==', ['get', 'after'], true]],
+      ]);
+      expect(falso.mapas[0].pontos().map((ponto) => ponto.cor)).toEqual(['#6a0dad', '#2563eb']);
     });
 
     it('tocar num grupo aproxima o mapa em volta dele, sem escolher nenhum ponto', async () => {
@@ -465,7 +527,7 @@ describe('MapaBase', () => {
       expect(camadasDaPessoa(falso).map((camada) => camada['type'])).toEqual(['fill', 'line']);
     });
 
-    it('desenha o círculo com o raio da precisão e na cor rosa do app', async () => {
+    it('desenha o círculo com o raio da precisão e na cor escura da pessoa', async () => {
       const { falso, mudar } = await renderizar([SE]);
       falso.mapas[0].carregar();
       await mudar({ voce: VOCE });
@@ -478,7 +540,7 @@ describe('MapaBase', () => {
         expect(metros).toBeLessThan(VOCE.precisao * 1.01);
       }
       const area = camadasDaPessoa(falso)[0]['paint'] as Record<string, unknown>;
-      expect(String(area['fill-color']).toLowerCase()).toBe('#e21d89');
+      expect(String(area['fill-color']).toLowerCase()).toBe('#130a29');
     });
 
     it('atualiza o círculo, sem criar outro, quando a posição muda ou some', async () => {

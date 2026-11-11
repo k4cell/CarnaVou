@@ -101,12 +101,13 @@ describe('PaginaBloco', () => {
       expect(links[0].getAttribute('target')).toBe('_blank');
       expect(links[0].getAttribute('rel')).toBe('noopener');
       expect(links[0].getAttribute('aria-label')).toBe('Gloria Groove no Instagram');
+      expect(tela.querySelector('.instagram')?.previousElementSibling?.textContent).toBe('Quem toca no bloco');
     });
 
     it('não aparece quando nenhum artista do bloco tem o perfil', async () => {
       const tela = await renderizar('ibirapuera', 'galo-da-madrugada');
       expect(tela.querySelector('.instagram')).toBeNull();
-      expect(tela.textContent).not.toContain('No Instagram');
+      expect(tela.textContent).not.toContain('Quem toca no bloco');
     });
   });
 

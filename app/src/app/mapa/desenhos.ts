@@ -30,9 +30,17 @@ export function corDoTema(variavel: string, padrao: string): string {
   return getComputedStyle(document.documentElement).getPropertyValue(variavel).trim() || padrao;
 }
 
-function corDaZona(zona: Zona): string {
+export function corDaZona(zona: Zona): string {
   const [variavel, padrao] = CORES_DAS_ZONAS[zona];
   return corDoTema(variavel, padrao);
+}
+
+/** As zonas cuja cor (verde e amarelo) pede número escuro; nas outras, o número é branco. */
+export const ZONAS_DE_NUMERO_ESCURO: readonly Zona[] = ['sul', 'leste'];
+
+/** A cor dos bares e pontos de encontro do After. */
+export function corDoAfter(): string {
+  return corDoTema('--azul', '#2563eb');
 }
 
 /** O círculo de precisão em volta da pessoa (ou nada, quando ela não pediu para aparecer). */
@@ -76,18 +84,21 @@ export function numeroDoPonto(ponto: PontoNoMapa): string {
   return (ponto.quantos ?? 1) >= 2 ? String(ponto.quantos) : '';
 }
 
-/** Verde e amarelo (Sul e Leste) e o verde-claro do After pedem número escuro; as outras, branco. */
+/**
+ * Verde e amarelo (Sul e Leste) pedem número escuro; as outras, branco. No pino pequeno do After, o
+ * número fica na bolinha branca do meio, então é escuro.
+ */
 function corDoNumero(ponto: PontoNoMapa): string {
-  return ponto.after || ponto.zona === 'sul' || ponto.zona === 'leste'
+  return ponto.after || ZONAS_DE_NUMERO_ESCURO.includes(ponto.zona)
     ? corDoTema('--texto', '#121214')
     : corDoTema('--cartao', '#fff');
 }
 
 /**
- * As bolinhas dos pontos. A de um bloco é cheia, na cor da zona, com a borda branca. A de um lugar do
- * After é ao contrário, para não se confundir: o fundo verde-claro e a borda verde, mais grossa. A
- * que junta dois ou mais leva o número dentro. O ponto escolhido vira o pino, então sai daqui. Os
- * pontos muito perto um do outro o próprio mapa junta num grupo (veja `MapaBase`).
+ * Os pontos. O de um bloco é uma bolinha cheia, na cor da zona, com a borda branca. O de um lugar do
+ * After é um pino pequeno azul, para não se confundir (veja `imagemDoPinoPequeno`). O que junta dois
+ * ou mais leva o número dentro. O ponto escolhido vira o pino grande, então sai daqui. Os pontos muito
+ * perto um do outro o próprio mapa junta num grupo (veja `MapaBase`).
  */
 export function bolinhasDosPontos(pontos: PontoNoMapa[], selecionado: string | null): Desenho {
   return {
@@ -98,9 +109,11 @@ export function bolinhasDosPontos(pontos: PontoNoMapa[], selecionado: string | n
         type: 'Feature',
         properties: {
           id: ponto.id,
-          ...(ponto.after
-            ? { cor: corDoTema('--verde-claro', '#e3fcee'), borda: corDoTema('--verde', '#00e676'), after: true }
-            : { cor: corDaZona(ponto.zona), borda: corDoTema('--cartao', '#fff'), after: false }),
+          cor: ponto.after ? corDoAfter() : corDaZona(ponto.zona),
+          borda: corDoTema('--cartao', '#fff'),
+          after: !!ponto.after,
+          // Para o grupo saber de que zona tem mais blocos e ficar na cor dela.
+          zona: ponto.zona,
           numero: numeroDoPonto(ponto),
           corDoNumero: corDoNumero(ponto),
           // Para o mapa somar, quando o ponto entra num grupo.
@@ -119,6 +132,43 @@ export function criarBolinhaDaPessoa(): HTMLDivElement {
   return bolinha;
 }
 
+/** A gota do pino, num quadro de 32 × 44. */
+const GOTA = 'M16 1C8 1 2 7.2 2 15c0 10.5 14 28 14 28s14-17.5 14-28C30 7.2 24 1 16 1z';
+/** O pino pequeno do After, em pixels da tela. */
+export const TAMANHO_DO_PINO_PEQUENO = { largura: 22, altura: 30 };
+
+/**
+ * O desenho do pino pequeno do After, para o mapa: a gota na cor dada, com a borda e a bolinha do meio
+ * brancas, em dobro de resolução (para ficar nítido). Volta nulo onde não dá para desenhar (nos
+ * testes, sem canvas).
+ */
+export function imagemDoPinoPequeno(cor: string): ImageData | null {
+  if (typeof Path2D === 'undefined') {
+    return null;
+  }
+  const { largura, altura } = TAMANHO_DO_PINO_PEQUENO;
+  const tela = document.createElement('canvas');
+  tela.width = largura * 2;
+  tela.height = altura * 2;
+  const pincel = tela.getContext('2d');
+  if (!pincel) {
+    return null;
+  }
+  const branco = corDoTema('--cartao', '#fff');
+  pincel.scale(tela.width / 32, tela.height / 44);
+  const gota = new Path2D(GOTA);
+  pincel.fillStyle = cor;
+  pincel.fill(gota);
+  pincel.strokeStyle = branco;
+  pincel.lineWidth = 2.5;
+  pincel.stroke(gota);
+  pincel.beginPath();
+  pincel.arc(16, 15, 9, 0, 2 * Math.PI);
+  pincel.fillStyle = branco;
+  pincel.fill();
+  return pincel.getImageData(0, 0, tela.width, tela.height);
+}
+
 /** A gota do pino com a bolinha branca no meio; com número, a bolinha cresce e leva o número. */
 function desenhoDoPino(numero: string): string {
   const meio = numero
@@ -126,7 +176,7 @@ function desenhoDoPino(numero: string): string {
     : '<circle cx="16" cy="15" r="5.5"/>';
   return (
     '<svg viewBox="0 0 32 44" aria-hidden="true" focusable="false">' +
-    `<path d="M16 1C8 1 2 7.2 2 15c0 10.5 14 28 14 28s14-17.5 14-28C30 7.2 24 1 16 1z"/>${meio}</svg>`
+    `<path d="${GOTA}"/>${meio}</svg>`
   );
 }
 

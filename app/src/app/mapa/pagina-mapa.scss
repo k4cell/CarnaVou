@@ -113,9 +113,15 @@ app-mapa-base {
   align-items: center;
   justify-content: space-between;
   padding: 12px 8px 12px 16px;
-  border-radius: 12px;
+}
+
+// As caixas brancas que flutuam embaixo, por cima do mapa.
+.aviso,
+.cartao-do-ponto,
+.perto-de-voce {
+  border-radius: 16px;
   background: var(--cartao);
-  box-shadow: 0 2px 10px rgb(0 0 0 / 20%);
+  box-shadow: 0 2px 12px rgb(0 0 0 / 25%);
 }
 
 // O cartão abre pequeno (nome, lugar e os botões), para a rota inteira ficar à vista. Aberto, não
@@ -128,9 +134,6 @@ app-mapa-base {
   padding: 0 16px 16px;
   overflow-y: auto;
   overscroll-behavior: contain;
-  border-radius: 16px;
-  background: var(--cartao);
-  box-shadow: 0 2px 12px rgb(0 0 0 / 25%);
   transition: transform 0.15s ease-out;
 
   &.arrastando {
@@ -204,11 +207,6 @@ app-mapa-base {
     stroke-linecap: round;
     stroke-linejoin: round;
   }
-
-  &:focus-visible {
-    outline: 3px solid var(--texto);
-    outline-offset: -3px;
-  }
 }
 
 .fechar {
@@ -221,11 +219,6 @@ app-mapa-base {
   font-size: 1.75rem;
   line-height: 1;
   cursor: pointer;
-
-  &:focus-visible {
-    outline: 3px solid var(--texto);
-    outline-offset: -3px;
-  }
 }
 
 // O "×" do cartão fica no canto de cima, à direita.
@@ -293,9 +286,6 @@ app-mapa-base {
 .perto-de-voce {
   position: relative;
   padding: 12px 16px 4px;
-  border-radius: 16px;
-  background: var(--cartao);
-  box-shadow: 0 2px 12px rgb(0 0 0 / 25%);
 
   h2 {
     margin: 0;
@@ -337,7 +327,26 @@ app-mapa-base {
     color: var(--texto-suave);
     font-size: 0.95rem;
   }
+}
 
+// Minimizado, o cartão mostra só os nomes e os botões de ir.
+.minimizado {
+  &.cartao-do-after {
+    padding-top: 0;
+  }
+
+  .sobre,
+  app-zona-tag,
+  .lugar,
+  .distancia {
+    display: none;
+  }
+}
+
+// O contorno do foco (com o teclado) fica por dentro dos botões que encostam na borda da caixa.
+.alca,
+.fechar,
+.bloco-perto {
   &:focus-visible {
     outline: 3px solid var(--texto);
     outline-offset: -3px;

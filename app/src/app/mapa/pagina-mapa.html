@@ -73,11 +73,13 @@
   @if (cartao(); as achado) {
     <!--
       O cartão abre pequeno, para a rota inteira ficar à vista. Puxando a alça para cima (ou tocando
-      nela), ele cresce e mostra o resto; puxando para baixo, encolhe e, já pequeno, fecha.
+      nela), ele cresce e mostra o resto; puxando para baixo, encolhe. O × minimiza (só os nomes e os
+      botões de ir, para ver o pino) e, minimizado, fecha.
     -->
     <section
       class="cartao-do-ponto"
       [class.aberto]="aberto()"
+      [class.minimizado]="minimizado()"
       [class.arrastando]="arrasto() !== 0"
       [style.transform]="arrasto() ? 'translateY(' + arrasto() + 'px)' : null"
       aria-label="Ponto escolhido"
@@ -93,12 +95,19 @@
         (pointerup)="soltar()"
         (pointercancel)="cancelarArrasto()"
       >
-        <!-- Seta para cima (dá para abrir) ou para baixo (dá para encolher). -->
+        <!-- Seta para cima (dá para crescer) ou para baixo (dá para encolher). -->
         <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
           <path [attr.d]="aberto() ? 'M6 9l6 6 6-6' : 'M6 15l6-6 6 6'" />
         </svg>
       </button>
-      <button type="button" class="fechar" aria-label="Fechar" (click)="fechar()">×</button>
+      <button
+        type="button"
+        class="fechar"
+        [attr.aria-label]="minimizado() ? 'Fechar' : 'Minimizar'"
+        (click)="minimizarOuFechar()"
+      >
+        ×
+      </button>
       <!-- A zona fica na linha da alça, à esquerda, para não gastar uma linha do cartão. -->
       <app-zona-tag class="zona-do-cartao" [zona]="achado.local.zona" />
 
@@ -116,7 +125,7 @@
           </li>
         }
       </ul>
-      @if (blocos().escondidos > 0 && !aberto()) {
+      @if (blocos().escondidos > 0 && !aberto() && !minimizado()) {
         <button type="button" class="mais-blocos" (click)="abrir()">+ {{ blocos().escondidos }} blocos aqui</button>
       }
       <!-- O nome do lugar leva para a página dele. -->
@@ -155,8 +164,21 @@
       }
     </section>
   } @else if (pontoDoAfter(); as doAfter) {
-    <section class="cartao-do-ponto cartao-do-after" aria-label="Lugar escolhido">
-      <button type="button" class="fechar" aria-label="Fechar" (click)="fechar()">×</button>
+    <section class="cartao-do-ponto cartao-do-after" [class.minimizado]="minimizado()" aria-label="Lugar escolhido">
+      @if (minimizado()) {
+        <!-- Minimizado, a seta para cima volta a mostrar o que é e onde fica. -->
+        <button type="button" class="alca" aria-label="Mostrar mais" aria-expanded="false" (click)="mostrarPequeno()">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 15l6-6 6 6" /></svg>
+        </button>
+      }
+      <button
+        type="button"
+        class="fechar"
+        [attr.aria-label]="minimizado() ? 'Fechar' : 'Minimizar'"
+        (click)="minimizarOuFechar()"
+      >
+        ×
+      </button>
       <!-- Cada lugar do ponto: o nome e, embaixo, o que é e onde fica, como os blocos de um ponto. -->
       <ul class="blocos-do-ponto">
         @for (lugar of doAfter.lugares; track lugar.id) {

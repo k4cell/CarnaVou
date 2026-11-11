@@ -25,11 +25,16 @@ import type {
 
 import { Zona } from '../dados/tipos';
 import {
+  TAMANHO_DO_PINO_PEQUENO,
+  ZONAS_DE_NUMERO_ESCURO,
   areaDaPrecisao,
   bolinhasDosPontos,
+  corDaZona,
+  corDoAfter,
   corDoTema,
   criarBolinhaDaPessoa,
   criarPino,
+  imagemDoPinoPequeno,
   linhasDosTrajetos,
 } from './desenhos';
 import { pontosParaEnquadrar } from './enquadramento';
@@ -125,6 +130,9 @@ const FONTE_DOS_TRAJETOS = 'trajetos';
  */
 const FONTE_DOS_PONTOS = 'pontos';
 const CAMADA_DOS_PONTOS = 'pontos-bolinhas';
+/** Os bares e pontos de encontro do After: pinos pequenos, e não bolinhas. */
+const CAMADA_DOS_PINOS_DO_AFTER = 'pontos-pinos-do-after';
+const IMAGEM_DO_PINO_DO_AFTER = 'pino-do-after';
 /** O número de blocos, dentro da bolinha do ponto que junta dois ou mais. */
 const CAMADA_DOS_NUMEROS = 'pontos-numeros';
 /** As letras guardadas no site (a mesma do estilo do mapa, em `public/mapa/letras`). */
@@ -140,7 +148,45 @@ const ZOOM_MAXIMO = 18;
 const RAIO_DO_GRUPO = 28;
 /** No mapa, um grupo de pontos tem o `point_count` (quantos pontos ele junta). */
 const E_GRUPO: ExpressionSpecification = ['has', 'point_count'];
+const E_DO_AFTER: ExpressionSpecification = ['==', ['get', 'after'], true];
+const ZONAS: readonly Zona[] = ['centro', 'sul', 'oeste', 'leste', 'norte'];
+/**
+ * O grupo soma os blocos de cada zona (e os lugares do After) dos pontos dele, para ficar na cor de
+ * quem tem mais.
+ */
+const SOMAS_DO_GRUPO = {
+  quantos: ['+', ['get', 'quantos']],
+  after: ['+', ['case', E_DO_AFTER, ['get', 'quantos'], 0]],
+  ...Object.fromEntries(
+    ZONAS.map((zona) => [
+      `zona-${zona}`,
+      ['+', ['case', ['all', ['!', E_DO_AFTER], ['==', ['get', 'zona'], zona]], ['get', 'quantos'], 0]],
+    ]),
+  ),
+} as Record<string, ExpressionSpecification>;
+
+/**
+ * Uma cor para o grupo, conforme quem tem mais blocos nele: o After ou uma das zonas. No empate, vale
+ * o que vem antes (o After, depois as zonas na ordem de `ZONAS`).
+ */
+function corPorQuemTemMais(doAfter: string, daZona: (zona: Zona) => string): ExpressionSpecification {
+  const nomes = ['after', ...ZONAS.map((zona) => `zona-${zona}`)];
+  const maior = ['max', ...nomes.map((nome) => ['get', nome])] as ExpressionSpecification;
+  const opcoes = [doAfter, ...ZONAS.map(daZona)];
+  return [
+    'case',
+    ...nomes.flatMap((nome, posicao) => [['==', ['get', nome], maior], opcoes[posicao]]),
+    opcoes[0],
+  ] as ExpressionSpecification;
+}
 const ZOOM_AO_ACHAR_A_PESSOA = 15;
+/** O número no pino pequeno do After, em pixels. */
+const TAMANHO_DO_NUMERO_NO_PINO = 10;
+/**
+ * Quanto o número sobe para ficar no meio da bolinha do pino pequeno, em tamanhos da letra: o meio
+ * fica a 15 de 44 do alto da gota.
+ */
+const ALTURA_DO_MEIO_DO_PINO = (TAMANHO_DO_PINO_PEQUENO.altura * (1 - 15 / 44)) / TAMANHO_DO_NUMERO_NO_PINO;
 
 interface Pino {
   id: string;
@@ -321,15 +367,17 @@ export class MapaBase {
     if (!mapa || this.destruido) {
       return;
     }
-    const tocados = mapa.getLayer(CAMADA_DOS_PONTOS)
-      ? mapa.queryRenderedFeatures(
-          [
-            [onde.x - RAIO_DO_TOQUE, onde.y - RAIO_DO_TOQUE],
-            [onde.x + RAIO_DO_TOQUE, onde.y + RAIO_DO_TOQUE],
-          ],
-          { layers: [CAMADA_DOS_PONTOS] },
-        )
-      : [];
+    const camadas = [CAMADA_DOS_PONTOS, CAMADA_DOS_PINOS_DO_AFTER].filter((camada) => mapa.getLayer(camada));
+    const tocados =
+      camadas.length > 0
+        ? mapa.queryRenderedFeatures(
+            [
+              [onde.x - RAIO_DO_TOQUE, onde.y - RAIO_DO_TOQUE],
+              [onde.x + RAIO_DO_TOQUE, onde.y + RAIO_DO_TOQUE],
+            ],
+            { layers: camadas },
+          )
+        : [];
     const [tocado] = tocados;
     const grupo = tocado?.properties?.['cluster_id'];
     if (typeof grupo === 'number' && tocado.geometry.type === 'Point') {
@@ -380,12 +428,13 @@ export class MapaBase {
       cluster: true,
       clusterRadius: RAIO_DO_GRUPO,
       clusterMaxZoom: ZOOM_MAXIMO - 1,
-      clusterProperties: { quantos: ['+', ['get', 'quantos']] },
+      clusterProperties: SOMAS_DO_GRUPO,
     });
-    // O grupo é uma bolinha branca, com a borda e o número na cor da noite: não se confunde com a cor
-    // de nenhuma zona, e um grupo pode juntar pontos de duas zonas.
+    // O grupo é uma bolinha maior, na cor de quem tem mais blocos nele, com a borda branca.
     const branco = corDoTema('--cartao', '#fff');
-    const noite = corDoTema('--noite', '#130a29');
+    const escuro = corDoTema('--texto', '#121214');
+    const corDoGrupo = corPorQuemTemMais(corDoAfter(), corDaZona);
+    const numeroDoGrupo = corPorQuemTemMais(escuro, (zona) => (ZONAS_DE_NUMERO_ESCURO.includes(zona) ? escuro : branco));
     const temNumero: ExpressionSpecification = ['!=', ['get', 'numero'], ''];
     // As bolinhas ficam por cima das linhas dos trajetos (a bolinha do fim de um trajeto não cobre
     // outro ponto) e embaixo do círculo da pessoa, se ele já estiver no mapa.
@@ -395,8 +444,10 @@ export class MapaBase {
         id: CAMADA_DOS_PONTOS,
         type: 'circle',
         source: FONTE_DOS_PONTOS,
+        // Os lugares do After sozinhos são pinos (a camada de baixo); em grupo, viram bolinha.
+        filter: ['any', E_GRUPO, ['!', E_DO_AFTER]],
         paint: {
-          'circle-color': ['case', E_GRUPO, branco, ['get', 'cor']],
+          'circle-color': ['case', E_GRUPO, corDoGrupo, ['get', 'cor']],
           // De longe ficam pequenas, para a cidade toda caber sem virar uma mancha. A que tem número
           // fica maior, para ele caber dentro, e a do grupo, maior ainda.
           'circle-radius': [
@@ -410,8 +461,27 @@ export class MapaBase {
             17,
             ['case', E_GRUPO, 16, temNumero, 13, 11],
           ],
-          'circle-stroke-color': ['case', E_GRUPO, noite, ['get', 'borda']],
-          'circle-stroke-width': ['case', E_GRUPO, 3, ['==', ['get', 'after'], true], 3, 2],
+          'circle-stroke-color': branco,
+          'circle-stroke-width': ['case', E_GRUPO, 3, 2],
+        },
+      },
+      embaixoDe,
+    );
+    const pino = imagemDoPinoPequeno(corDoAfter());
+    if (pino && !mapa.hasImage(IMAGEM_DO_PINO_DO_AFTER)) {
+      mapa.addImage(IMAGEM_DO_PINO_DO_AFTER, pino, { pixelRatio: 2 });
+    }
+    mapa.addLayer(
+      {
+        id: CAMADA_DOS_PINOS_DO_AFTER,
+        type: 'symbol',
+        source: FONTE_DOS_PONTOS,
+        filter: ['all', ['!', E_GRUPO], E_DO_AFTER],
+        layout: {
+          'icon-image': IMAGEM_DO_PINO_DO_AFTER,
+          'icon-anchor': 'bottom',
+          'icon-allow-overlap': true,
+          'icon-ignore-placement': true,
         },
       },
       embaixoDe,
@@ -426,11 +496,28 @@ export class MapaBase {
         layout: {
           'text-field': ['case', E_GRUPO, ['to-string', ['get', 'quantos']], ['get', 'numero']],
           'text-font': [LETRA_DO_MAPA],
-          'text-size': ['interpolate', ['linear'], ['zoom'], 10, 10, 14, 12, 17, 13],
+          // No pino pequeno do After, o número fica na bolinha do meio, com um tamanho só.
+          'text-size': [
+            'interpolate',
+            ['linear'],
+            ['zoom'],
+            10,
+            ['case', E_GRUPO, 10, E_DO_AFTER, TAMANHO_DO_NUMERO_NO_PINO, 10],
+            14,
+            ['case', E_GRUPO, 12, E_DO_AFTER, TAMANHO_DO_NUMERO_NO_PINO, 12],
+            17,
+            ['case', E_GRUPO, 13, E_DO_AFTER, TAMANHO_DO_NUMERO_NO_PINO, 13],
+          ],
+          'text-offset': [
+            'case',
+            ['all', ['!', E_GRUPO], E_DO_AFTER],
+            ['literal', [0, -ALTURA_DO_MEIO_DO_PINO]],
+            ['literal', [0, 0]],
+          ],
           'text-allow-overlap': true,
           'text-ignore-placement': true,
         },
-        paint: { 'text-color': ['case', E_GRUPO, noite, ['get', 'corDoNumero']] },
+        paint: { 'text-color': ['case', E_GRUPO, numeroDoGrupo, ['get', 'corDoNumero']] },
       },
       embaixoDe,
     );
@@ -482,7 +569,7 @@ export class MapaBase {
     if (!voce) {
       return;
     }
-    const cor = corDoTema('--rosa', '#e21d89');
+    const cor = corDoTema('--noite', '#130a29');
     mapa.addSource(FONTE_DA_PRECISAO, { type: 'geojson', data: dados });
     mapa.addLayer({
       id: `${FONTE_DA_PRECISAO}-area`,
