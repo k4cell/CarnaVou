@@ -11,6 +11,8 @@ Da pasta do ano (scripts/dados/2026, por exemplo) vêm:
   valem quando o bloco é o mesmo (mesmo nome e mesmo dia).
 - destaques-das-noticias.json (se tiver): blocos sem artista que as notícias chamam de destaque
   da região; valem em todos os dias do bloco (mesmo nome e mesma subprefeitura).
+- lgbt-das-noticias.json (se tiver): blocos que as notícias chamam de LGBT+ ou LGBTQIA+; valem pelo
+  nome e pelo dia.
 E de scripts/dados vem seguidores.json: os seguidores no Instagram de cada artista, para ordenar
 por fama. Ele vale para todos os anos.
 
@@ -166,6 +168,7 @@ antigos = ler(f"{pasta_do_ano}/atracoes-das-noticias.json")
 for antigo in antigos:
     antigo["nome"] = OUTROS_NOMES.get(antigo["nome"], antigo["nome"])
 destaques = {(d["nome"], d["subprefeitura"]) for d in ler(f"{pasta_do_ano}/destaques-das-noticias.json", {"blocos": []})["blocos"]}
+lgbt = {(chave_do_nome(d["nome"]), d["data"]) for d in ler(f"{pasta_do_ano}/lgbt-das-noticias.json", {"blocos": []})["blocos"]}
 artistas = {nome: dados for nome, dados in ler(f"{design}/seguidores.json").items() if not nome.startswith("_")}
 seguidores = {nome: dados["seguidores"] for nome, dados in artistas.items()}
 # O perfil de cada artista no Instagram (sem o @), para a página do bloco levar até ele.
@@ -206,6 +209,10 @@ def fama(bloco):
 
 def destaque(bloco):
     return (bloco["nome"], bloco["subprefeitura"]) in destaques
+
+
+def e_lgbt(bloco):
+    return (chave_do_nome(bloco["nome"]), bloco["data"]) in lgbt
 
 
 def entra(bloco):
@@ -344,6 +351,8 @@ for bloco in ordem:
     ]
     if antigo and antigo.get("estilo"):
         partes.append(f"estilo: {ts(antigo['estilo'])}")
+    if e_lgbt(bloco):
+        partes.append("lgbt: true")
     linhas.append("  { " + ", ".join(re.sub(r"\s*\n\s*", " ", p) for p in partes) + " },")
     if bloco["itinerario"] not in indice_do_itinerario:
         indice_do_itinerario[bloco["itinerario"]] = len(itinerarios)
@@ -432,6 +441,9 @@ for (codigo, _), indice in indice_do_trajeto.items():
 for oficial in sorted({bloco["nome"].strip(" .") for bloco in ordem}):
     if nome_do_bloco(oficial) != oficial:
         avisos.append(f"nome em maiúsculas arrumado: {oficial} virou {nome_do_bloco(oficial)}")
+# Um bloco LGBTQIA+ das notícias que não entrou no app (nome escrito diferente, ou bloco de fora).
+for chave, data in sorted(lgbt - {(chave_do_nome(b["nome"]), b["data"]) for b in ordem}):
+    avisos.append(f"bloco LGBTQIA+ das notícias que não está no app: {chave} ({data})")
 if len(trajeto_do_bloco) < 0.8 * len(ordem):
     avisos.append(f"só {len(trajeto_do_bloco)} de {len(ordem)} blocos têm ponto no mapa (veja relatorio.txt)")
 for aviso in avisos:

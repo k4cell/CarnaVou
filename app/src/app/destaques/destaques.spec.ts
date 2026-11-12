@@ -6,7 +6,7 @@ import { Router } from '@angular/router';
 import { momentoDoBloco } from '../dados/agenda';
 import { BLOCOS } from '../dados/blocos';
 import { famaDoBloco } from '../dados/consultas';
-import { NOMES_DAS_ZONAS } from '../dados/formato';
+import { NOMES_DAS_ZONAS, partesDaData } from '../dados/formato';
 import { LOCAIS } from '../dados/locais';
 import { Favoritos } from '../favoritos/favoritos';
 import { FiltrosDaLista } from '../lista-de-blocos/filtros-da-lista';
@@ -225,7 +225,37 @@ describe('Destaques', () => {
       expect(nomes).not.toContain(destaque);
       const famas = nomes.map((nome) => famaDoBloco(BLOCOS.find((bloco) => bloco.nome === nome)!));
       expect(famas).toEqual([...famas].sort((a, b) => b - a));
+      // O quadradinho destaca o dia (a semana e o número), e a hora vai para a linha de baixo.
+      const secao = Array.from(tela.querySelectorAll('.secao')).find((s) => s.textContent === 'Os mais famosos do carnaval')!;
+      const primeiro = secao.nextElementSibling!.querySelector('.item')!;
+      const bloco = BLOCOS.find((b) => b.nome === nomes[0])!;
+      const { semana, dia } = partesDaData(bloco.data);
+      expect(primeiro.querySelector('.quadro .pequeno')?.textContent).toBe(semana);
+      expect(primeiro.querySelector('.quadro .grande')?.textContent).toBe(dia);
+      expect(primeiro.querySelector('.sobre')?.textContent?.trim()).toMatch(/^\d+h\d* · /);
       expect(fileira(tela, 'Rolando e começando')).toEqual([]);
+    });
+
+    it('mostra os blocos LGBTQIA+ do dia (os que uma notícia chama assim) na parte deles', async () => {
+      const { tela, tocar } = await renderizar(SABADO_14H, true);
+      const lgbtDeHoje = deHoje.filter((bloco) => bloco.lgbt).map((bloco) => bloco.nome);
+      expect(lgbtDeHoje.length).toBeGreaterThan(0);
+      expect(new Set(fileira(tela, 'LGBTQIA+'))).toEqual(new Set(lgbtDeHoje));
+      await tocar('Geral');
+      expect(fileira(tela, 'LGBTQIA+').length).toBeGreaterThan(lgbtDeHoje.length);
+    });
+
+    it('o quadrado LGBTQIA+ do "Por estilo" abre a aba Blocos buscando "LGBT"', async () => {
+      const { tela, tocar } = await renderizar(SABADO_14H, true);
+      await tocar('Geral');
+      const quadrado = Array.from(tela.querySelectorAll<HTMLButtonElement>('app-estilos-do-dia .estilo')).find(
+        (estilo) => estilo.querySelector('.nome-do-estilo')?.textContent === 'LGBTQIA+',
+      )!;
+      expect(quadrado.classList.contains('orgulho')).toBe(true);
+      expect(quadrado.querySelector('.quantos')?.textContent).toBe('3 blocos');
+      quadrado.click();
+      await new Promise((resolver) => setTimeout(resolver));
+      expect(TestBed.inject(FiltrosDaLista).busca()).toBe('LGBT');
     });
 
     it('na Geral, os estilos abrem a aba Blocos já com a busca do estilo', async () => {

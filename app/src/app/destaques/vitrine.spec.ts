@@ -1,7 +1,15 @@
 import { CartaoDoLugar } from '../dados/agenda';
 import { BLOCOS } from '../dados/blocos';
 import { Bloco, Local } from '../dados/tipos';
-import { blocosDaVitrine, destaqueDaVitrine, estilosDaVitrine, famososDaVitrine, lugaresPorZona } from './vitrine';
+import { montarBusca } from '../dados/busca';
+import {
+  blocosDaVitrine,
+  destaqueDaVitrine,
+  estilosDaVitrine,
+  famososDaVitrine,
+  lgbtDaVitrine,
+  lugaresPorZona,
+} from './vitrine';
 
 const bloco = (id: string, inicio: string, fim: string, seguidores = 0, estilo?: Bloco['estilo']): Bloco => ({
   id,
@@ -69,6 +77,23 @@ describe('A vitrine do Descobrir', () => {
     ]);
     expect(estilosDaVitrine(blocos, 'amanha')[0].busca).toBe('Axé amanhã');
     expect(estilosDaVitrine(blocos, 'geral')[0].busca).toBe('Axé');
+  });
+
+  it('põe os blocos LGBTQIA+ junto dos estilos, com a busca por "LGBT"', () => {
+    const lgbt = { ...bloco('e', '15:00', '18:00', 0, 'pop'), lgbt: true };
+    const estilos = estilosDaVitrine([lgbt, bloco('f', '15:00', '18:00', 0, 'pop')], 'hoje');
+    expect(estilos).toEqual([
+      { estilo: 'pop', nome: 'Pop', quantos: 2, busca: 'Pop hoje' },
+      { estilo: 'lgbt', nome: 'LGBTQIA+', quantos: 1, busca: 'LGBT hoje' },
+    ]);
+  });
+
+  it('separa os blocos LGBTQIA+, que a busca também acha por "LGBT"', () => {
+    const lgbt = BLOCOS.filter((b) => b.lgbt);
+    expect(lgbt.map((b) => b.nome).sort()).toEqual(['Agrada Gregos', 'Bloco Minhoqueens', 'Bloco da Pabllo']);
+    expect(lgbtDaVitrine([...BLOCOS])).toEqual(lgbt);
+    const { combina } = montarBusca('lgbt');
+    expect(BLOCOS.filter(combina)).toEqual(lgbt);
   });
 
   it('junta os lugares por zona, na ordem em que cada zona aparece', () => {

@@ -24,12 +24,17 @@
 
   @if (vitrine.famosos.length >= 2) {
     <h3 class="secao com-marca">{{ vitrine.tituloDosFamosos }}</h3>
-    <app-fileira-de-blocos [itens]="vitrine.famosos" />
+    <app-fileira-de-blocos [itens]="vitrine.famosos" destaque="dia" />
   }
 
   @if (vitrine.proximos.length > 0) {
     <h3 class="secao com-marca">Rolando e começando</h3>
     <app-fileira-de-blocos [itens]="vitrine.proximos" />
+  }
+
+  @if (vitrine.lgbt.length > 0) {
+    <h3 class="secao com-marca orgulho">LGBTQIA+</h3>
+    <app-fileira-de-blocos [itens]="vitrine.lgbt" [destaque]="vitrine.destaqueDoLgbt" />
   }
 
   @if (vitrine.estilos.length >= 2) {

@@ -7,9 +7,10 @@ import { FiltrosDaLista } from '../lista-de-blocos/filtros-da-lista';
 import { EstiloNaVitrine } from './vitrine';
 
 /** O desenho de cada estilo. */
-type Figura = 'microfone' | 'tambor' | 'nota' | 'caixa-de-som' | 'guarda-chuva' | 'disco' | 'raio';
+type Figura = 'microfone' | 'tambor' | 'nota' | 'caixa-de-som' | 'guarda-chuva' | 'disco' | 'raio' | 'coracao';
 
-const FIGURAS: Record<Estilo, Figura> = {
+const FIGURAS: Record<Estilo | 'lgbt', Figura> = {
+  lgbt: 'coracao',
   pop: 'microfone',
   mpb: 'microfone',
   axe: 'tambor',
@@ -33,7 +34,13 @@ const FIGURAS: Record<Estilo, Figura> = {
     <ul class="estilos">
       @for (item of estilos(); track item.estilo; let posicao = $index) {
         <li>
-          <button type="button" class="estilo" [attr.data-faixa]="faixa(posicao)" (click)="abrir(item)">
+          <button
+            type="button"
+            class="estilo"
+            [class.orgulho]="item.estilo === 'lgbt'"
+            [attr.data-faixa]="faixa(posicao)"
+            (click)="abrir(item)"
+          >
             <!-- Ícones de traço: Lucide (licença ISC). -->
             <span class="figura">
               <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
@@ -66,6 +73,11 @@ const FIGURAS: Record<Estilo, Figura> = {
                   }
                   @case ('raio') {
                     <path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z" />
+                  }
+                  @case ('coracao') {
+                    <path
+                      d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"
+                    />
                   }
                   @default {
                     <path d="M9 18V5l12-2v13" />
@@ -148,6 +160,29 @@ const FIGURAS: Record<Estilo, Figura> = {
       color: var(--texto);
     }
 
+    // O dos blocos LGBTQIA+ tem a bandeira do orgulho (seis faixas, sem degradê) e o coração numa
+    // bolinha branca, para aparecer em cima de qualquer faixa.
+    .orgulho .figura {
+      background: linear-gradient(
+        var(--vermelho) 0 calc(100% / 6),
+        var(--laranja) 0 calc(200% / 6),
+        var(--amarelo) 0 calc(300% / 6),
+        var(--verde) 0 calc(400% / 6),
+        var(--azul) 0 calc(500% / 6),
+        var(--roxo) 0
+      );
+      color: var(--texto);
+
+      svg {
+        box-sizing: content-box;
+        width: 28px;
+        height: 28px;
+        padding: 10px;
+        border-radius: 50%;
+        background: var(--cartao);
+      }
+    }
+
     svg {
       width: 40px;
       height: 40px;
@@ -180,7 +215,7 @@ export class EstilosDoDia {
     return FAIXAS[posicao % FAIXAS.length];
   }
 
-  protected figura(estilo: Estilo): Figura {
+  protected figura(estilo: Estilo | 'lgbt'): Figura {
     return FIGURAS[estilo];
   }
 

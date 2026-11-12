@@ -1,14 +1,14 @@
 import { Aba, CartaoDoLugar, diaIso, diaSeguinte, momentoDoBloco } from '../dados/agenda';
 import { acharLocal, artistasPorFama, faixaDoLocal, famaDoBloco } from '../dados/consultas';
 import { todosOsBlocos } from '../dados/correcoes';
-import { artistaEstaNoNome, NOMES_DOS_ESTILOS } from '../dados/formato';
+import { artistaEstaNoNome, NOMES_DOS_ESTILOS, partesDaData } from '../dados/formato';
 import { QuandoComeca, quandoComeca } from '../dados/quando';
 import { Bloco, Estilo, Local, Zona } from '../dados/tipos';
 
 /*
  * O que a vitrine do Descobrir mostra, a partir dos blocos da aba (Hoje, Amanhã ou Geral): o
- * destaque, os mais famosos, o que está rolando e começando (em Hoje), os estilos e os lugares juntos
- * por zona. Não depende da tela: a página
+ * destaque, os mais famosos, o que está rolando e começando (em Hoje), os blocos LGBTQIA+, os estilos
+ * e os lugares juntos por zona. Não depende da tela: a página
  * pega isto pronto.
  */
 
@@ -21,12 +21,14 @@ export interface BlocoNaVitrine {
   /** Os artistas, sem quem já está no nome do bloco, separados por vírgula. */
   artistas: string;
   quando: QuandoComeca;
+  /** O dia do bloco em partes ("sáb", "21", "fev"), para o quadradinho que destaca o dia. */
+  data: { semana: string; dia: string; mes: string };
   caminho: string[];
 }
 
-/** Um estilo que tem bloco na aba: a pessoa toca e vê a lista deles na aba Blocos. */
+/** Um estilo (ou os blocos LGBTQIA+) que tem bloco na aba: a pessoa toca e vê a lista na aba Blocos. */
 export interface EstiloNaVitrine {
-  estilo: Estilo;
+  estilo: Estilo | 'lgbt';
   nome: string;
   quantos: number;
   /** O que vai para a busca da aba Blocos: o estilo e, em Hoje e Amanhã, o dia. */
@@ -65,6 +67,7 @@ export function naVitrine(bloco: Bloco, agora: Date): BlocoNaVitrine {
       .filter((nome) => !artistaEstaNoNome(bloco, nome))
       .join(', '),
     quando: quandoComeca(bloco, agora),
+    data: partesDaData(bloco.data),
     caminho: ['/local', bloco.localId, bloco.id],
   };
 }
@@ -97,12 +100,24 @@ export function proximosDaVitrine(blocos: Bloco[], destaque: Bloco | null): Bloc
   return blocos.filter((bloco) => bloco !== destaque).slice(0, FAMOSOS_NA_FILEIRA);
 }
 
-/** Os estilos que têm bloco na aba, do que tem mais para o que tem menos. */
+/** Os blocos LGBTQIA+ da aba (os que uma notícia chama assim), por horário. Podem incluir o destaque. */
+export function lgbtDaVitrine(blocos: Bloco[]): Bloco[] {
+  return blocos.filter((bloco) => bloco.lgbt);
+}
+
+/**
+ * Os estilos que têm bloco na aba, do que tem mais para o que tem menos. Os blocos LGBTQIA+ entram
+ * junto, como se fossem um estilo (a busca acha eles por "LGBT").
+ */
 export function estilosDaVitrine(blocos: Bloco[], aba: Aba): EstiloNaVitrine[] {
-  const quantos = new Map<Estilo, number>();
+  const quantos = new Map<Estilo | 'lgbt', number>();
+  const contar = (estilo: Estilo | 'lgbt') => quantos.set(estilo, (quantos.get(estilo) ?? 0) + 1);
   for (const bloco of blocos) {
     if (bloco.estilo) {
-      quantos.set(bloco.estilo, (quantos.get(bloco.estilo) ?? 0) + 1);
+      contar(bloco.estilo);
+    }
+    if (bloco.lgbt) {
+      contar('lgbt');
     }
   }
   const dia = aba === 'hoje' ? ' hoje' : aba === 'amanha' ? ' amanhã' : '';
@@ -110,9 +125,9 @@ export function estilosDaVitrine(blocos: Bloco[], aba: Aba): EstiloNaVitrine[] {
     .sort(([, a], [, b]) => b - a)
     .map(([estilo, total]) => ({
       estilo,
-      nome: NOMES_DOS_ESTILOS[estilo],
+      nome: estilo === 'lgbt' ? 'LGBTQIA+' : NOMES_DOS_ESTILOS[estilo],
       quantos: total,
-      busca: `${NOMES_DOS_ESTILOS[estilo]}${dia}`,
+      busca: `${estilo === 'lgbt' ? 'LGBT' : NOMES_DOS_ESTILOS[estilo]}${dia}`,
     }));
 }
 

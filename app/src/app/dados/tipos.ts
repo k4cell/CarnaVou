@@ -52,6 +52,8 @@ export interface Bloco {
   atracoes: Atracao[];
   /** Só quando alguma fonte diz o estilo. */
   estilo?: Estilo;
+  /** Uma notícia chama o bloco de LGBT+ ou LGBTQIA+ (veja scripts/dados/<ano>/lgbt-das-noticias.json). */
+  lgbt?: boolean;
   /** O bloco foi cancelado. Vem do arquivo de correções, como os dois campos abaixo. */
   cancelado?: boolean;
   /** A data ou um dos horários mudou depois da lista oficial. */

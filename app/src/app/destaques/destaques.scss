@@ -23,6 +23,20 @@
   }
 }
 
+// Nos blocos LGBTQIA+, a barrinha vira a bandeira do orgulho: seis faixas, uma embaixo da outra (cada
+// cor começa onde a outra termina, sem degradê).
+.orgulho::before {
+  width: 6px;
+  background: linear-gradient(
+    var(--vermelho) 0 calc(100% / 6),
+    var(--laranja) 0 calc(200% / 6),
+    var(--amarelo) 0 calc(300% / 6),
+    var(--verde) 0 calc(400% / 6),
+    var(--azul) 0 calc(500% / 6),
+    var(--roxo) 0
+  );
+}
+
 // O atalho para os favoritos: uma faixa amarela (amarelo só como fundo, com texto escuro).
 .favoritos {
   display: flex;

@@ -5,8 +5,9 @@ import { BlocoNaVitrine } from './vitrine';
 
 /**
  * Uma fileira que desliza para o lado, com dois blocos por coluna: muita opção na mesma altura de
- * tela, sem rolar tanto para baixo. Cada bloco tem um quadradinho com quando ele começa, na cor do
- * lugar, e o nome com os artistas (ou o lugar) embaixo.
+ * tela, sem rolar tanto para baixo. Cada bloco tem um quadradinho na cor do lugar, com a hora em
+ * destaque (o que está rolando e começando) ou o dia (os mais famosos, de vários dias), e o nome com
+ * os artistas (ou o lugar) embaixo.
  */
 @Component({
   selector: 'app-fileira-de-blocos',
@@ -16,13 +17,29 @@ import { BlocoNaVitrine } from './vitrine';
       @for (item of itens(); track item.bloco.id) {
         <li>
           <a class="item" [attr.data-faixa]="item.faixa" [routerLink]="item.caminho">
-            <span class="quadro" [attr.data-tipo]="item.quando.tipo" [attr.aria-label]="item.quando.texto">
-              <span class="dia" aria-hidden="true">{{ item.quando.dia }}</span>
-              <span class="hora" aria-hidden="true">{{ item.quando.hora }}</span>
+            <span
+              class="quadro"
+              [class.por-dia]="destaque() === 'dia'"
+              [attr.data-tipo]="item.quando.tipo"
+              [attr.aria-label]="item.quando.texto"
+            >
+              @if (destaque() === 'dia') {
+                <span class="pequeno" aria-hidden="true">{{ item.data.semana }}</span>
+                <span class="grande" aria-hidden="true">{{ item.data.dia }}</span>
+              } @else {
+                <span class="pequeno" aria-hidden="true">{{ item.quando.dia }}</span>
+                <span class="grande" aria-hidden="true">{{ item.quando.hora }}</span>
+              }
             </span>
             <span class="texto-do-item">
               <strong class="nome-do-item">{{ item.bloco.nome }}</strong>
-              <span class="sobre">{{ item.artistas || item.local.nome }}</span>
+              <span class="sobre">
+                <!-- Com o dia no quadradinho, a hora vem aqui, antes dos artistas. -->
+                @if (destaque() === 'dia') {
+                  {{ item.quando.tipo === 'agora' ? 'Agora' : item.quando.hora }} ·
+                }
+                {{ item.artistas || item.local.nome }}
+              </span>
             </span>
           </a>
         </li>
@@ -93,18 +110,24 @@ import { BlocoNaVitrine } from './vitrine';
       text-align: center;
     }
 
-    .dia {
+    .pequeno {
       font-size: 0.6875rem;
       font-weight: 800;
       text-transform: uppercase;
     }
 
-    .hora {
+    .grande {
       font-size: 1rem;
       font-weight: 800;
     }
 
-    .quadro[data-tipo='agora'] .dia {
+    // Com o dia em destaque, o número do dia fica maior.
+    .por-dia .grande {
+      font-size: 1.375rem;
+      line-height: 1;
+    }
+
+    .quadro[data-tipo='agora']:not(.por-dia) .pequeno {
       color: var(--vermelho);
     }
 
@@ -135,4 +158,6 @@ import { BlocoNaVitrine } from './vitrine';
 })
 export class FileiraDeBlocos {
   readonly itens = input.required<BlocoNaVitrine[]>();
+  /** O que o quadradinho destaca: a hora (o padrão) ou o dia. */
+  readonly destaque = input<'hora' | 'dia'>('hora');
 }

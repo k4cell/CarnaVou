@@ -19,6 +19,7 @@ import {
   destaqueDaVitrine,
   estilosDaVitrine,
   famososDaVitrine,
+  lgbtDaVitrine,
   lugaresPorZona,
   naVitrine,
   proximosDaVitrine,
@@ -28,8 +29,8 @@ const DIA_DA_ABA: Record<Aba, string> = { hoje: 'de hoje', amanha: 'de amanhã',
 
 /**
  * O Descobrir: a vitrine para quem ainda não decidiu aonde ir. A aba Blocos é a lista por horário;
- * aqui vêm o destaque, os mais famosos, o que está rolando e começando, os estilos e, embaixo, os
- * bairros juntos por zona (cada um abre a página dele). Tudo segue a aba Hoje / Amanhã / Geral.
+ * aqui vêm o destaque, os mais famosos, o que está rolando e começando, os blocos LGBTQIA+, os
+ * estilos e, embaixo, os bairros juntos por zona (cada um abre a página dele). Tudo segue a aba Hoje / Amanhã / Geral.
  */
 @Component({
   selector: 'app-destaques',
@@ -67,6 +68,9 @@ export class Destaques {
       tituloDosFamosos: `Os mais famosos ${DIA_DA_ABA[aba]}`,
       // Só em Hoje: em Amanhã e na Geral, "agora" não quer dizer nada.
       proximos: aba === 'hoje' ? proximosDaVitrine(blocos, destaque).map((bloco) => naVitrine(bloco, agora)) : [],
+      lgbt: lgbtDaVitrine(blocos).map((bloco) => naVitrine(bloco, agora)),
+      // Em Hoje, todos são do mesmo dia: a fileira dos LGBTQIA+ destaca a hora; nas outras abas, o dia.
+      destaqueDoLgbt: aba === 'hoje' ? ('hora' as const) : ('dia' as const),
       estilos: estilosDaVitrine(blocos, aba),
     };
   });

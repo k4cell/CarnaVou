@@ -1,0 +1,20 @@
+{
+  "_sobre": "Blocos que as notícias chamam de LGBT+ ou LGBTQIA+. Valem pelo nome e pelo dia, como os artistas das notícias. Só entra bloco com uma fonte que diga isso com todas as letras.",
+  "blocos": [
+    {
+      "nome": "Agrada Gregos",
+      "data": "2026-02-14",
+      "fonte": "Band News FM, 14/02/2026: \"O bloco, um dos mais icônicos do carnaval LGBTQIA+ de São Paulo, se concentra no Obelisco do Ibirapuera\" (band.com.br/bandnews-fm/noticias/carnaval-de-sp-78-blocos-agitam-as-ruas-da-capital-neste-sabado-14-veja-destaques-202602140043)"
+    },
+    {
+      "nome": "Bloco Minhoqueens",
+      "data": "2026-02-14",
+      "fonte": "Band, 14/02/2026: \"O bloco de rua LGBT+ Minhoqueens celebra 10 anos neste sábado (14)\" (band.com.br/entretenimento/carnaval/noticias/bloco-lgbt-minhoqueens-comemora-10-anos-em-sp-a-gente-existe-e-merece-respeito-202602141549)"
+    },
+    {
+      "nome": "Bloco da Pabllo",
+      "data": "2026-02-16",
+      "fonte": "BNews São Paulo, 16/02/2026: \"O público LGBT+ marcou presença expressiva, reforçando o perfil tradicional do evento\" (bnewssaopaulo.com.br/noticias/entretenimento/bloco-de-pabllo-vittar-lota-o-ibirapuera-com-publico-lgbt-e-fas-de-k-pop.html)"
+    }
+  ]
+}

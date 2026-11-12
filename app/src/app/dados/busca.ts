@@ -61,7 +61,7 @@ function parecida(digitada: string, palavra: string): boolean {
 
 const PALAVRAS_DO_BLOCO = new WeakMap<Bloco, string[]>();
 
-/** Onde a busca procura: o nome do bloco, os artistas, o lugar, a zona e o estilo. */
+/** Onde a busca procura: o nome do bloco, os artistas, o lugar, a zona, o estilo e se é LGBTQIA+. */
 function palavrasDoBloco(bloco: Bloco): string[] {
   let palavras = PALAVRAS_DO_BLOCO.get(bloco);
   if (!palavras) {
@@ -73,6 +73,7 @@ function palavrasDoBloco(bloco: Bloco): string[] {
         lugar?.nome ?? '',
         lugar ? NOMES_DAS_ZONAS[lugar.zona] : '',
         bloco.estilo ? NOMES_DOS_ESTILOS[bloco.estilo] : '',
+        bloco.lgbt ? 'LGBT LGBTQIA+' : '',
       ].join(' '),
     );
     PALAVRAS_DO_BLOCO.set(bloco, palavras);
