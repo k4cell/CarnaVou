@@ -20,14 +20,19 @@ import { Instalacao } from './instalacao';
             <button type="button" (click)="instalar()">Instalar</button>
           </div>
         } @else {
-          <p>
-            Para instalar o CarnaVou, toque em Compartilhar
-            <!-- O ícone de compartilhar do iPhone: Lucide (licença ISC). -->
-            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-              <path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13" />
-            </svg>
-            e depois em <strong>Adicionar à Tela de Início</strong>.
-          </p>
+          <!-- No iPhone, a Apple não deixa o site se instalar: só pelo menu do navegador. -->
+          <p>Para instalar o CarnaVou no iPhone:</p>
+          <ol>
+            <li>
+              Toque em Compartilhar
+              <!-- O ícone de compartilhar do iPhone: Lucide (licença ISC). -->
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13" />
+              </svg>
+              (fica na barra do Safari ou no menu ⋯).
+            </li>
+            <li>Escolha <strong>Adicionar à Tela de Início</strong>.</li>
+          </ol>
           <div class="botoes">
             <button type="button" (click)="instalacao.agoraNao()">Entendi</button>
           </div>
@@ -43,9 +48,14 @@ import { Instalacao } from './instalacao';
       padding: 12px 12px 8px 16px;
     }
 
-    p {
+    p,
+    ol {
       margin: 0;
       line-height: 1.4;
+    }
+
+    ol {
+      padding-left: 20px;
     }
 
     svg {

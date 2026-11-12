@@ -96,13 +96,11 @@ export class Localizacao {
       return 'procurar';
     }
     const permissao = await this.consultarPermissao();
-    if (permissao === 'denied') {
-      this.estado.set('negada');
-      return 'negada';
-    }
     // O aviso de uma tentativa anterior (um "não" que a pessoa já desfez, ou um "sem sinal") não vale mais.
     this.estado.set('desligada');
-    return permissao === 'granted' ? 'procurar' : 'explicar';
+    // Com um "não" guardado, pede mesmo assim: o iPhone às vezes pergunta de novo e, se não perguntar,
+    // a resposta é um "não" na hora, e o aviso explica como liberar.
+    return permissao === 'granted' || permissao === 'denied' ? 'procurar' : 'explicar';
   }
 
   /** Pede a posição ao celular, uma vez. É aqui que o aviso do celular aparece, na primeira vez. */

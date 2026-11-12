@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 
 import { distanciaEmMetros } from '../localizacao/distancia';
-import { MapaBase, PontoNoMapa, PosicaoNoMapa, TrajetoNoMapa } from './mapa-base';
+import { MapaBase, PontoNoMapa, PosicaoNoMapa, TrajetoNoMapa, tamanhoDaPessoa } from './mapa-base';
 import { BibliotecaDeMapa, CARREGAR_MAPLIBRE } from './maplibre';
 import { criarMapLibreFalso, esperarOMapa } from './maplibre-falso';
 
@@ -185,7 +185,7 @@ describe('MapaBase', () => {
         avaliar(pintura['circle-color'], { point_count: 2, after: 0, ...somas });
       expect(corDoGrupo({ 'zona-centro': 9, 'zona-oeste': 3 })).toBe('#6a0dad');
       expect(corDoGrupo({ 'zona-centro': 2, 'zona-sul': 13 })).toBe('#00e676');
-      expect(corDoGrupo({ after: 3, 'zona-norte': 1 })).toBe('#2563eb');
+      expect(corDoGrupo({ after: 3, 'zona-norte': 1 })).toBe('#130a29');
       // O ponto sozinho continua com a cor dele.
       expect(avaliar(pintura['circle-color'], { cor: '#d62828' })).toBe('#d62828');
       expect(pintura['circle-stroke-color']).toBe('#fff');
@@ -212,7 +212,14 @@ describe('MapaBase', () => {
         ['has', 'point_count'],
         ['!', ['==', ['get', 'after'], true]],
       ]);
-      expect(falso.mapas[0].pontos().map((ponto) => ponto.cor)).toEqual(['#6a0dad', '#2563eb']);
+      expect(falso.mapas[0].pontos().map((ponto) => ponto.cor)).toEqual(['#6a0dad', '#130a29']);
+      // A lua (um lugar só) e a bolinha branca do número (os que juntam alguns).
+      expect((pinos['layout'] as Record<string, unknown>)['icon-image']).toEqual([
+        'case',
+        ['!=', ['get', 'numero'], ''],
+        'pino-do-after-com-numero',
+        'pino-do-after',
+      ]);
     });
 
     it('tocar num grupo aproxima o mapa em volta dele, sem escolher nenhum ponto', async () => {
@@ -277,6 +284,15 @@ describe('MapaBase', () => {
     const SAO_MIGUEL: PontoNoMapa = { id: 'sao-miguel', nome: 'São Miguel', lat: -23.5, lng: -46.44, zona: 'leste' };
     // A Sé e Pinheiros ficam no centro expandido; São Miguel, a 28 km dali, tem um bloco de onze.
     const { falso } = await renderizar([{ ...SE, quantos: 9 }, PINHEIROS, SAO_MIGUEL]);
+    expect(falso.mapas[0].enquadramentos[0].limites.pontos).toEqual([
+      [SE.lng, SE.lat],
+      [PINHEIROS.lng, PINHEIROS.lat],
+    ]);
+  });
+
+  it('não conta, no zoom, os pontos que ficam fora do enquadramento (os bares fora do After)', async () => {
+    const BAR: PontoNoMapa = { id: 'after:bar', nome: 'Bar', lat: -23.5, lng: -46.45, zona: 'leste', after: true, foraDoEnquadramento: true };
+    const { falso } = await renderizar([SE, PINHEIROS, BAR]);
     expect(falso.mapas[0].enquadramentos[0].limites.pontos).toEqual([
       [SE.lng, SE.lat],
       [PINHEIROS.lng, PINHEIROS.lat],
@@ -527,7 +543,7 @@ describe('MapaBase', () => {
       expect(camadasDaPessoa(falso).map((camada) => camada['type'])).toEqual(['fill', 'line']);
     });
 
-    it('desenha o círculo com o raio da precisão e na cor escura da pessoa', async () => {
+    it('desenha o círculo com o raio da precisão e na cor azul-clara da pessoa', async () => {
       const { falso, mudar } = await renderizar([SE]);
       falso.mapas[0].carregar();
       await mudar({ voce: VOCE });
@@ -540,7 +556,7 @@ describe('MapaBase', () => {
         expect(metros).toBeLessThan(VOCE.precisao * 1.01);
       }
       const area = camadasDaPessoa(falso)[0]['paint'] as Record<string, unknown>;
-      expect(String(area['fill-color']).toLowerCase()).toBe('#130a29');
+      expect(String(area['fill-color']).toLowerCase()).toBe('#3d9bff');
     });
 
     it('atualiza o círculo, sem criar outro, quando a posição muda ou some', async () => {
@@ -633,6 +649,16 @@ describe('MapaBase', () => {
       expect(mensagem?.textContent).toContain('Não consegui abrir o mapa');
       expect(mensagem?.querySelector('a')?.getAttribute('href')).toBe('/');
       aviso.mockRestore();
+    });
+  });
+
+  describe('o tamanho da bolinha da pessoa', () => {
+    it('diminui quando o mapa se afasta: de 16 px perto da rua a 10 px com a cidade toda', () => {
+      expect(tamanhoDaPessoa(17)).toBe(16);
+      expect(tamanhoDaPessoa(15)).toBe(16);
+      expect(tamanhoDaPessoa(13)).toBe(13);
+      expect(tamanhoDaPessoa(11)).toBe(10);
+      expect(tamanhoDaPessoa(8)).toBe(10);
     });
   });
 });

@@ -1,6 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 
+import { APARELHO } from '../aparelho/aparelho';
 import { Aba, blocosDaAba, cartoesDaAba, momentoDoBloco } from '../dados/agenda';
 import { BLOCOS } from '../dados/blocos';
 import { formatarHora, textoDoHorario } from '../dados/formato';
@@ -37,6 +38,8 @@ interface Celular {
   permissao?: PermissaoDoCelular | null;
   /** O navegador não tem localização. */
   semLocalizacao?: boolean;
+  /** É um iPhone (e, se for, se o app foi aberto pelo ícone da tela de início). */
+  iphone?: { instalado: boolean };
 }
 
 /** O ponto como texto, para comparar posições sem brigar com as casas decimais. */
@@ -80,6 +83,7 @@ describe('PaginaMapa', () => {
         provideRouter([]),
         { provide: CARREGAR_MAPLIBRE, useValue: () => Promise.resolve(falso.biblioteca) },
         { provide: GEOLOCALIZACAO, useValue: celular.semLocalizacao ? null : geo.api },
+        { provide: APARELHO, useValue: { ehIphone: !!celular.iphone, instalado: !!celular.iphone?.instalado } },
         {
           provide: CONSULTAR_PERMISSAO,
           useValue: async () => {
@@ -103,8 +107,18 @@ describe('PaginaMapa', () => {
     const tela = fixture.nativeElement as HTMLElement;
 
     /** As posições das bolinhas no mapa, mais a do pino (o ponto escolhido sai das bolinhas). */
-    const posicoes = () =>
-      [...falso.mapas[0].pontos().map((ponto) => ponto.posicao), ...falso.pinos().map((pino) => pino.posicao!)]
+    /** Onde ficam os pontos dos blocos (e, com `comAfter`, também os bares do After, que estão sempre lá). */
+    const posicoes = (comAfter = false) =>
+      [
+        ...falso.mapas[0]
+          .pontos()
+          .filter((ponto) => comAfter || !ponto.id.startsWith('after:'))
+          .map((ponto) => ponto.posicao),
+        ...falso
+          .pinos()
+          .filter((pino) => comAfter || !pino.elemento.classList.contains('pino-after'))
+          .map((pino) => pino.posicao!),
+      ]
         .map(comoTexto)
         .sort();
     const cartao = () => tela.querySelector<HTMLElement>('.cartao-do-ponto');
@@ -595,13 +609,27 @@ describe('PaginaMapa', () => {
       expect(falso.bolinha()?.posicao).toEqual([-46.66, -23.57]);
     });
 
-    it('avisa, sem pedir de novo, quando a pessoa já tinha dito não', async () => {
-      const { tocarEmOndeEstou, aviso, geo, explicacao } = await renderizar(SABADO_14H, { permissao: 'denied' });
+    it('quando a pessoa já tinha dito não, pede de novo e, com outro não, avisa como mudar', async () => {
+      const { tocarEmOndeEstou, aviso, geo, explicacao } = await renderizar(SABADO_14H, {
+        permissao: 'denied',
+        resposta: { erro: 1 },
+      });
       await tocarEmOndeEstou();
-      expect(aviso()).toContain('não deixou o CarnaVou ver onde você está');
-      expect(aviso()).toContain('O mapa continua funcionando');
-      expect(geo.chamadas.length).toBe(0);
+      expect(geo.chamadas.length).toBe(1);
       expect(explicacao()).toBeNull();
+      expect(aviso()).toContain('não deixou o CarnaVou ver onde você está');
+      expect(aviso()).toContain('configurações do navegador');
+      expect(aviso()).toContain('O mapa continua funcionando');
+    });
+
+    it('no iPhone, o aviso de não mostra o caminho do Safari, ou o dos Ajustes no app instalado', async () => {
+      const noSafari = await renderizar(SABADO_14H, { permissao: 'denied', resposta: { erro: 1 }, iphone: { instalado: false } });
+      await noSafari.tocarEmOndeEstou();
+      expect(noSafari.aviso()).toContain('aA (ou ⋯) na barra › Ajustes do Site › Localização › Permitir');
+      TestBed.resetTestingModule();
+      const noApp = await renderizar(SABADO_14H, { permissao: 'denied', resposta: { erro: 1 }, iphone: { instalado: true } });
+      await noApp.tocarEmOndeEstou();
+      expect(noApp.aviso()).toContain('Sites do Safari e escolha "Ao Usar o App"');
     });
 
     it('avisa quando a pessoa diz não ao aviso do celular', async () => {
@@ -769,11 +797,24 @@ describe('PaginaMapa', () => {
       });
       expect(daNoite.length).toBeGreaterThan(0);
       const esperados = [...new Set([...daNoite, ...PONTOS_DO_AFTER.map(noMapa)])].sort();
-      expect(posicoes()).toEqual(esperados);
-      // Os lugares do After são azuis (no mapa, pinos pequenos, e não bolinhas como os blocos).
+      expect(posicoes(true)).toEqual(esperados);
+      // Os lugares do After ficam na cor da noite (no mapa, pinos pequenos com a lua, e não bolinhas).
       const doAfter = falso.mapas[0].pontos().filter((ponto) => ponto.id.startsWith('after:'));
       expect(doAfter.length).toBe(PONTOS_DO_AFTER.length);
-      expect(new Set(doAfter.map((ponto) => ponto.cor))).toEqual(new Set(['#2563eb']));
+      expect(new Set(doAfter.map((ponto) => ponto.cor))).toEqual(new Set(['#130a29']));
+    });
+
+    it('fora do After, os bares continuam no mapa, sem mudar o zoom, e abrem o cartão deles', async () => {
+      const { fixture, cartao, falso } = await renderizar(SABADO_14H);
+      const doAfter = falso.mapas[0].pontos().filter((ponto) => ponto.id.startsWith('after:'));
+      expect(doAfter.length).toBe(PONTOS_DO_AFTER.length);
+      const [enquadramento] = falso.mapas[0].enquadramentos;
+      const noZoom = (enquadramento.limites.pontos as [number, number][]).map(comoTexto);
+      expect(PONTOS_DO_AFTER.some((ponto) => noZoom.includes(noMapa(ponto)))).toBe(false);
+      const [primeiro] = PONTOS_DO_AFTER;
+      falso.mapas[0].tocarNoPonto(primeiro.ponto);
+      await esperarOMapa(fixture);
+      expect(cartao()?.querySelector('.nome')?.textContent).toBe(primeiro.lugares[0].nome);
     });
 
     it('abre já no lugar pedido, com o que ele é e os botões de ir', async () => {

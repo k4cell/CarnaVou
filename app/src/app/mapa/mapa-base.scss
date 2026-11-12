@@ -88,25 +88,29 @@ app-mapa-base .maplibregl-ctrl-bottom-right {
   --cor-do-pino: var(--azul);
 }
 
-// Os bares e pontos de encontro do After: azuis, como os pinos pequenos deles.
+// Os bares e pontos de encontro do After: na cor da noite, com a lua, como os pinos pequenos deles.
 .pino-after {
-  --cor-do-pino: var(--azul);
+  --cor-do-pino: var(--noite);
+
+  .lua {
+    fill: var(--cor-do-pino);
+  }
 }
 
-// Quem está vendo o mapa: uma bolinha escura, com a borda branca e uma onda que cresce e some em
-// volta, como a posição ao vivo dos apps de mapa. Não se confunde com os pontos, que são coloridos e
-// parados. A onda é a última sombra, que cresce para fora sem cobrir a bolinha.
+// Quem está vendo o mapa: uma bolinha azul-clara, com a borda branca e uma onda que cresce e some em
+// volta, como a posição ao vivo dos apps de mapa. O tamanho acompanha o zoom (o `--tamanho`, que o
+// MapaBase muda): de longe, ela fica menor. A onda é a última sombra, que cresce sem cobrir a bolinha.
 .voce {
-  --sombra-da-pessoa: 0 0 0 1px rgb(0 0 0 / 15%), 0 2px 4px rgb(0 0 0 / 30%);
+  --sombra-da-pessoa: 0 0 0 1px rgb(0 0 0 / 15%), 0 1px 3px rgb(0 0 0 / 30%);
 
-  width: 20px;
-  height: 20px;
-  border: 3px solid #fff;
+  width: var(--tamanho, 16px);
+  height: var(--tamanho, 16px);
+  border: 2.5px solid #fff;
   border-radius: 50%;
-  background: var(--noite);
+  background: var(--azul-da-pessoa);
   box-shadow:
     var(--sombra-da-pessoa),
-    0 0 0 0 color-mix(in srgb, var(--noite) 45%, transparent);
+    0 0 0 0 color-mix(in srgb, var(--azul-da-pessoa) 50%, transparent);
   animation: onda-da-pessoa 2s ease-out infinite;
 }
 
@@ -114,7 +118,7 @@ app-mapa-base .maplibregl-ctrl-bottom-right {
   to {
     box-shadow:
       var(--sombra-da-pessoa),
-      0 0 0 14px transparent;
+      0 0 0 12px transparent;
   }
 }
 
@@ -124,7 +128,7 @@ app-mapa-base .maplibregl-ctrl-bottom-right {
     animation: none;
     box-shadow:
       var(--sombra-da-pessoa),
-      0 0 0 8px color-mix(in srgb, var(--noite) 25%, transparent);
+      0 0 0 6px color-mix(in srgb, var(--azul-da-pessoa) 25%, transparent);
   }
 }
 

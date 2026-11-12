@@ -51,11 +51,10 @@ describe('Localizacao', () => {
       expect(await localizacao.proximoPasso()).toBe('procurar');
     });
 
-    it('avisa que está negada, sem tentar, quando a pessoa já disse não', async () => {
-      const { localizacao, falsa } = criar({ permissao: 'denied' });
-      expect(await localizacao.proximoPasso()).toBe('negada');
-      expect(localizacao.estado()).toBe('negada');
-      expect(falsa.chamadas.length).toBe(0);
+    it('quando a pessoa já disse não, pede de novo mesmo assim (o iPhone pode perguntar)', async () => {
+      const { localizacao } = criar({ permissao: 'denied' });
+      expect(await localizacao.proximoPasso()).toBe('procurar');
+      expect(localizacao.estado()).toBe('desligada');
     });
 
     it('avisa que não existe quando o navegador não tem localização', async () => {

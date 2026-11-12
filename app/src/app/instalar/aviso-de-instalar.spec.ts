@@ -3,7 +3,8 @@ import { SwUpdate } from '@angular/service-worker';
 
 import { ProntoSemInternet } from '../atualizacao/aviso-de-pronto';
 import { AvisoDeInstalar } from './aviso-de-instalar';
-import { APARELHO, Aparelho, Instalacao } from './instalacao';
+import { APARELHO, Aparelho } from '../aparelho/aparelho';
+import { Instalacao } from './instalacao';
 
 describe('O convite para instalar o app', () => {
   const CHAVE = 'carnavou.instalar-depois';

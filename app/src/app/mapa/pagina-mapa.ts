@@ -13,6 +13,7 @@ import {
 import { RouterLink } from '@angular/router';
 
 import { AbasDoDia } from '../abas/abas-do-dia';
+import { APARELHO } from '../aparelho/aparelho';
 import { momentoDoBloco } from '../dados/agenda';
 import { concentracoesDaAba, concentracoesDaNoite } from '../dados/concentracoes';
 import { artistasPorFama } from '../dados/consultas';
@@ -57,6 +58,10 @@ const AVISOS = {
   procurando: 'Procurando você…',
   negada:
     'O celular não deixou o CarnaVou ver onde você está. Para mudar, abra as configurações do navegador, em permissões do site. O mapa continua funcionando.',
+  negadaNoIphone:
+    'O iPhone não deixou o CarnaVou ver onde você está. Para liberar sem sair do Safari, toque em aA (ou ⋯) na barra › Ajustes do Site › Localização › Permitir. Se não aparecer, vá em Ajustes › Privacidade e Segurança › Serviços de Localização › Sites do Safari. O mapa continua funcionando.',
+  negadaNoAppDoIphone:
+    'O iPhone não deixou o CarnaVou ver onde você está. Para liberar, vá em Ajustes › Privacidade e Segurança › Serviços de Localização › Sites do Safari e escolha "Ao Usar o App". O mapa continua funcionando.',
   semSinal: 'Não consegui achar você agora. Tente de novo em um lugar aberto.',
   indisponivel: 'Este navegador não consegue dizer onde você está.',
   foraDeSaoPaulo:
@@ -94,6 +99,7 @@ export class PaginaMapa {
   private readonly relogio = inject(Relogio);
 
   private readonly mapa = viewChild(MapaBase);
+  private readonly aparelho = inject(APARELHO);
   private readonly botaoOndeEstou = viewChild.required<ElementRef<HTMLButtonElement>>('botaoOndeEstou');
 
   /** O ponto em que a pessoa tocou. */
@@ -150,23 +156,22 @@ export class PaginaMapa {
       zona: local.zona,
       quantos: blocos.length,
     })),
-    ...(this.modoAfter()
-      ? PONTOS_DO_AFTER.map(({ ponto, nome, lat, lng, zona, lugares }) => ({
-          id: ponto,
-          nome,
-          lat,
-          lng,
-          zona,
-          after: true,
-          quantos: lugares.length,
-        }))
-      : []),
+    // Os bares e pontos de encontro do After ficam sempre no mapa. Fora do After, o mapa enquadra só
+    // os blocos da aba: os bares estão lá, mas não mudam o zoom.
+    ...PONTOS_DO_AFTER.map(({ ponto, nome, lat, lng, zona, lugares }) => ({
+      id: ponto,
+      nome,
+      lat,
+      lng,
+      zona,
+      after: true,
+      quantos: lugares.length,
+      foraDoEnquadramento: !this.modoAfter(),
+    })),
   ]);
 
   /** O ponto do After escolhido: um bar ou ponto de encontro, ou alguns, pertinho um do outro. */
-  protected readonly pontoDoAfter = computed(() =>
-    this.modoAfter() ? PONTOS_DO_AFTER.find((ponto) => ponto.ponto === this.escolhido()) : undefined,
-  );
+  protected readonly pontoDoAfter = computed(() => PONTOS_DO_AFTER.find((ponto) => ponto.ponto === this.escolhido()));
 
   /** O ponto escolhido, se ele ainda está na aba de agora (trocar de aba pode tirá-lo). */
   protected readonly cartao = computed(() => {
@@ -313,7 +318,11 @@ export class PaginaMapa {
     }
     switch (estado) {
       case 'negada':
-        return AVISOS.negada;
+        return !this.aparelho.ehIphone
+          ? AVISOS.negada
+          : this.aparelho.instalado
+            ? AVISOS.negadaNoAppDoIphone
+            : AVISOS.negadaNoIphone;
       case 'sem-sinal':
         return AVISOS.semSinal;
       case 'indisponivel':

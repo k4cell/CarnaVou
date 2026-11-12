@@ -173,6 +173,10 @@ export class MarcadorFalso {
     return this.opcoes.element;
   }
 
+  getElement(): HTMLElement {
+    return this.opcoes.element;
+  }
+
   setLngLat(posicao: [number, number]): this {
     this.posicao = posicao;
     return this;

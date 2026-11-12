@@ -54,6 +54,8 @@ export interface PontoNoMapa {
   after?: boolean;
   /** Quantos blocos (ou bares) o ponto junta. Com dois ou mais, o número aparece no ponto. */
   quantos?: number;
+  /** Fica no mapa, mas não conta para o zoom que mostra todos os pontos. */
+  foraDoEnquadramento?: boolean;
 }
 
 /** Por onde um bloco passa: a linha, na cor da zona, da concentração (o ponto) até o fim. */
@@ -133,6 +135,7 @@ const CAMADA_DOS_PONTOS = 'pontos-bolinhas';
 /** Os bares e pontos de encontro do After: pinos pequenos, e não bolinhas. */
 const CAMADA_DOS_PINOS_DO_AFTER = 'pontos-pinos-do-after';
 const IMAGEM_DO_PINO_DO_AFTER = 'pino-do-after';
+const IMAGEM_DO_PINO_DO_AFTER_COM_NUMERO = 'pino-do-after-com-numero';
 /** O número de blocos, dentro da bolinha do ponto que junta dois ou mais. */
 const CAMADA_DOS_NUMEROS = 'pontos-numeros';
 /** As letras guardadas no site (a mesma do estilo do mapa, em `public/mapa/letras`). */
@@ -180,6 +183,11 @@ function corPorQuemTemMais(doAfter: string, daZona: (zona: Zona) => string): Exp
   ] as ExpressionSpecification;
 }
 const ZOOM_AO_ACHAR_A_PESSOA = 15;
+
+/** O tamanho da bolinha da pessoa, em pixels: 10 com a cidade toda (zoom 11) e 16 perto da rua (zoom 15). */
+export function tamanhoDaPessoa(zoom: number): number {
+  return Math.round(Math.min(16, Math.max(10, 10 + (zoom - 11) * 1.5)));
+}
 /** O número no pino pequeno do After, em pixels. */
 const TAMANHO_DO_NUMERO_NO_PINO = 10;
 /**
@@ -305,6 +313,7 @@ export class MapaBase {
       });
       this.mapa.touchZoomRotate.disableRotation();
       this.mapa.on('click', (evento) => this.tocou(evento.point));
+      this.mapa.on('zoom', () => this.ajustarABolinhaDaPessoa());
       this.mapa.on('load', () => this.estiloPronto.set(true));
       this.pronto.set(true);
     } catch (erro) {
@@ -434,7 +443,7 @@ export class MapaBase {
     const branco = corDoTema('--cartao', '#fff');
     const escuro = corDoTema('--texto', '#121214');
     const corDoGrupo = corPorQuemTemMais(corDoAfter(), corDaZona);
-    const numeroDoGrupo = corPorQuemTemMais(escuro, (zona) => (ZONAS_DE_NUMERO_ESCURO.includes(zona) ? escuro : branco));
+    const numeroDoGrupo = corPorQuemTemMais(branco, (zona) => (ZONAS_DE_NUMERO_ESCURO.includes(zona) ? escuro : branco));
     const temNumero: ExpressionSpecification = ['!=', ['get', 'numero'], ''];
     // As bolinhas ficam por cima das linhas dos trajetos (a bolinha do fim de um trajeto não cobre
     // outro ponto) e embaixo do círculo da pessoa, se ele já estiver no mapa.
@@ -467,9 +476,15 @@ export class MapaBase {
       },
       embaixoDe,
     );
-    const pino = imagemDoPinoPequeno(corDoAfter());
-    if (pino && !mapa.hasImage(IMAGEM_DO_PINO_DO_AFTER)) {
-      mapa.addImage(IMAGEM_DO_PINO_DO_AFTER, pino, { pixelRatio: 2 });
+    // Duas imagens: a da lua (um lugar só) e a da bolinha branca, onde vai o número (os que juntam alguns).
+    for (const [nome, comNumero] of [
+      [IMAGEM_DO_PINO_DO_AFTER, false],
+      [IMAGEM_DO_PINO_DO_AFTER_COM_NUMERO, true],
+    ] as const) {
+      const pino = imagemDoPinoPequeno(corDoAfter(), comNumero);
+      if (pino && !mapa.hasImage(nome)) {
+        mapa.addImage(nome, pino, { pixelRatio: 2 });
+      }
     }
     mapa.addLayer(
       {
@@ -478,7 +493,7 @@ export class MapaBase {
         source: FONTE_DOS_PONTOS,
         filter: ['all', ['!', E_GRUPO], E_DO_AFTER],
         layout: {
-          'icon-image': IMAGEM_DO_PINO_DO_AFTER,
+          'icon-image': ['case', temNumero, IMAGEM_DO_PINO_DO_AFTER_COM_NUMERO, IMAGEM_DO_PINO_DO_AFTER],
           'icon-anchor': 'bottom',
           'icon-allow-overlap': true,
           'icon-ignore-placement': true,
@@ -523,6 +538,15 @@ export class MapaBase {
     );
   }
 
+  /** A bolinha da pessoa acompanha o zoom: de 10 px, com a cidade toda, a 16 px, perto da rua. */
+  private ajustarABolinhaDaPessoa(): void {
+    const elemento = this.bolinhaDaPessoa?.getElement();
+    if (!elemento || !this.mapa) {
+      return;
+    }
+    elemento.style.setProperty('--tamanho', `${tamanhoDaPessoa(this.mapa.getZoom())}px`);
+  }
+
   /** Leva o mapa até a pessoa, chegando mais perto se ele estiver afastado. */
   irPara(lat: number, lng: number): void {
     const mapa = this.mapa;
@@ -548,6 +572,7 @@ export class MapaBase {
       this.bolinhaDaPessoa = new biblioteca.Marker({ element: criarBolinhaDaPessoa(), anchor: 'center' })
         .setLngLat([voce.lng, voce.lat])
         .addTo(mapa);
+      this.ajustarABolinhaDaPessoa();
     }
 
     if (estiloPronto) {
@@ -569,7 +594,7 @@ export class MapaBase {
     if (!voce) {
       return;
     }
-    const cor = corDoTema('--noite', '#130a29');
+    const cor = corDoTema('--azul-da-pessoa', '#3d9bff');
     mapa.addSource(FONTE_DA_PRECISAO, { type: 'geojson', data: dados });
     mapa.addLayer({
       id: `${FONTE_DA_PRECISAO}-area`,
@@ -652,7 +677,8 @@ export class MapaBase {
     if (!mapa || !biblioteca || todos.length === 0) {
       return;
     }
-    const pontos = pontosParaEnquadrar(todos);
+    const contam = todos.filter((ponto) => !ponto.foraDoEnquadramento);
+    const pontos = pontosParaEnquadrar(contam.length > 0 ? contam : todos);
     if (pontos.length === 1) {
       mapa.easeTo({ center: [pontos[0].lng, pontos[0].lat], zoom: 14, duration: duracao });
       return;

@@ -38,9 +38,12 @@ export function corDaZona(zona: Zona): string {
 /** As zonas cuja cor (verde e amarelo) pede número escuro; nas outras, o número é branco. */
 export const ZONAS_DE_NUMERO_ESCURO: readonly Zona[] = ['sul', 'leste'];
 
-/** A cor dos bares e pontos de encontro do After. */
+/**
+ * A cor dos bares e pontos de encontro do After: a da noite, que nenhuma zona usa. Com a lua no meio
+ * do pino, eles se reconhecem de longe no meio dos blocos.
+ */
 export function corDoAfter(): string {
-  return corDoTema('--azul', '#2563eb');
+  return corDoTema('--noite', '#130a29');
 }
 
 /** O círculo de precisão em volta da pessoa (ou nada, quando ela não pediu para aparecer). */
@@ -96,7 +99,7 @@ function corDoNumero(ponto: PontoNoMapa): string {
 
 /**
  * Os pontos. O de um bloco é uma bolinha cheia, na cor da zona, com a borda branca. O de um lugar do
- * After é um pino pequeno azul, para não se confundir (veja `imagemDoPinoPequeno`). O que junta dois
+ * After é um pino pequeno na cor da noite, com a lua, para não se confundir (veja `imagemDoPinoPequeno`). O que junta dois
  * ou mais leva o número dentro. O ponto escolhido vira o pino grande, então sai daqui. Os pontos muito
  * perto um do outro o próprio mapa junta num grupo (veja `MapaBase`).
  */
@@ -138,11 +141,11 @@ const GOTA = 'M16 1C8 1 2 7.2 2 15c0 10.5 14 28 14 28s14-17.5 14-28C30 7.2 24 1 
 export const TAMANHO_DO_PINO_PEQUENO = { largura: 22, altura: 30 };
 
 /**
- * O desenho do pino pequeno do After, para o mapa: a gota na cor dada, com a borda e a bolinha do meio
- * brancas, em dobro de resolução (para ficar nítido). Volta nulo onde não dá para desenhar (nos
- * testes, sem canvas).
+ * O desenho do pino pequeno do After, para o mapa: a gota na cor dada, com a borda branca e, no meio,
+ * a lua (ou, com número, a bolinha branca onde ele vai), em dobro de resolução (para ficar nítido).
+ * Volta nulo onde não dá para desenhar (nos testes, sem canvas).
  */
-export function imagemDoPinoPequeno(cor: string): ImageData | null {
+export function imagemDoPinoPequeno(cor: string, comNumero = false): ImageData | null {
   if (typeof Path2D === 'undefined') {
     return null;
   }
@@ -163,17 +166,29 @@ export function imagemDoPinoPequeno(cor: string): ImageData | null {
   pincel.lineWidth = 2.5;
   pincel.stroke(gota);
   pincel.beginPath();
-  pincel.arc(16, 15, 9, 0, 2 * Math.PI);
+  pincel.arc(16, 15, comNumero ? 9 : 7, 0, 2 * Math.PI);
   pincel.fillStyle = branco;
   pincel.fill();
+  if (!comNumero) {
+    // A lua: um círculo da cor do pino tira um pedaço da bolinha branca.
+    pincel.beginPath();
+    pincel.arc(19, 12.5, 6, 0, 2 * Math.PI);
+    pincel.fillStyle = cor;
+    pincel.fill();
+  }
   return pincel.getImageData(0, 0, tela.width, tela.height);
 }
 
-/** A gota do pino com a bolinha branca no meio; com número, a bolinha cresce e leva o número. */
-function desenhoDoPino(numero: string): string {
+/**
+ * A gota do pino com a bolinha branca no meio; com número, a bolinha cresce e leva o número. No do
+ * After, sem número, a bolinha vira a lua.
+ */
+function desenhoDoPino(numero: string, after = false): string {
   const meio = numero
     ? `<circle cx="16" cy="15" r="9"/><text class="numero" x="16" y="19.5" text-anchor="middle">${numero}</text>`
-    : '<circle cx="16" cy="15" r="5.5"/>';
+    : after
+      ? '<circle cx="16" cy="15" r="7"/><circle class="lua" cx="19" cy="12.5" r="6"/>'
+      : '<circle cx="16" cy="15" r="5.5"/>';
   return (
     '<svg viewBox="0 0 32 44" aria-hidden="true" focusable="false">' +
     `<path d="${GOTA}"/>${meio}</svg>`
@@ -187,7 +202,7 @@ export function criarPino(ponto: PontoNoMapa, aoEscolher: (id: string) => void):
   botao.className = `pino pino-${ponto.after ? 'after' : ponto.zona} selecionado`;
   botao.setAttribute('aria-label', ponto.nome);
   botao.setAttribute('aria-pressed', 'true');
-  botao.innerHTML = desenhoDoPino(numeroDoPonto(ponto));
+  botao.innerHTML = desenhoDoPino(numeroDoPonto(ponto), ponto.after);
   botao.addEventListener('click', (evento) => {
     evento.stopPropagation();
     aoEscolher(ponto.id);
