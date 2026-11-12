@@ -1,3 +1,96 @@
+.so-para-o-leitor {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+// Os títulos das partes ganham uma barrinha roxa na frente: ao rolar, cada parte se acha de relance.
+.com-marca {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+
+  &::before {
+    content: '';
+    flex: none;
+    width: 4px;
+    height: 1.1em;
+    border-radius: 2px;
+    background: var(--roxo);
+  }
+}
+
+// O atalho para os favoritos: uma faixa amarela (amarelo só como fundo, com texto escuro).
+.favoritos {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  width: 100%;
+  min-height: 52px;
+  margin-top: 12px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: var(--canto-do-cartao);
+  background: var(--amarelo);
+  color: var(--texto);
+  font: inherit;
+  font-weight: 800;
+  text-align: left;
+  cursor: pointer;
+
+  svg {
+    flex: none;
+    width: 22px;
+    height: 22px;
+    fill: currentcolor;
+  }
+
+  &:active {
+    filter: brightness(0.92);
+  }
+
+  &:focus-visible {
+    outline: 3px solid var(--texto);
+    outline-offset: 2px;
+  }
+}
+
+.conta-favoritos {
+  font-weight: 600;
+}
+
+.seta-favoritos {
+  margin-left: auto;
+  font-size: 1.5rem;
+}
+
+// O nome da zona, em cima dos bairros dela, com uma bolinha da cor da zona.
+.zona-do-grupo {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin: 16px 0 8px;
+  color: var(--texto-suave);
+  font-size: 0.875rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+
+  &::before {
+    content: '';
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--cor-da-zona);
+  }
+
+  + .lista {
+    margin-top: 0;
+  }
+}
+
 // Nome do lugar à esquerda e o selo no canto de cima, à direita.
 .cabeca {
   display: flex;

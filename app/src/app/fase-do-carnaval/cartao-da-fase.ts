@@ -47,7 +47,7 @@ function diaNaFrase(dia: string): string {
     }
 
     .destaque {
-      color: var(--roxo);
+      color: var(--roxo-escuro);
       font-size: 1.25rem;
       font-weight: 800;
     }

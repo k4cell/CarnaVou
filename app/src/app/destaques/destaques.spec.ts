@@ -1,10 +1,21 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 
+import { Router } from '@angular/router';
+
+import { momentoDoBloco } from '../dados/agenda';
 import { BLOCOS } from '../dados/blocos';
+import { famaDoBloco } from '../dados/consultas';
+import { NOMES_DAS_ZONAS } from '../dados/formato';
 import { LOCAIS } from '../dados/locais';
+import { Favoritos } from '../favoritos/favoritos';
+import { FiltrosDaLista } from '../lista-de-blocos/filtros-da-lista';
 import { Relogio } from '../relogio/relogio';
 import { Destaques } from './destaques';
+
+/** Os lugares juntos por zona, na ordem em que cada zona aparece pela primeira vez. */
+const ORDEM_DAS_ZONAS = [...new Set(LOCAIS.map((local) => local.zona))];
+const LUGARES_POR_ZONA = ORDEM_DAS_ZONAS.flatMap((zona) => LOCAIS.filter((local) => local.zona === zona));
 
 /** As sete cores das faixas, do rosa ao azul. Com mais de sete lugares, elas recomeçam. */
 const SETE_CORES = ['rosa', 'amarelo', 'verde', 'laranja', 'roxo', 'vermelho', 'azul'];
@@ -46,17 +57,27 @@ describe('Destaques', () => {
       expect(abaAtiva()).toBe('Geral');
     });
 
-    it('chama a lista de "Bairros", sem prometer o que está em alta', async () => {
+    it('chama a lista dos lugares de "Bairros", sem prometer o que está em alta', async () => {
       const { tela } = await renderizar();
-      expect(tela.querySelector('h2')?.textContent).toContain('Bairros');
+      const partes = Array.from(tela.querySelectorAll('.secao')).map((titulo) => titulo.textContent);
+      expect(partes).toEqual(['Bairros']);
     });
 
-    it('mostra um cartão para cada lugar, com o link e o nome', async () => {
+    it('ainda sem o dia, mostra só os bairros, sem o destaque nem as fileiras', async () => {
+      const { tela } = await renderizar();
+      expect(tela.querySelector('app-destaque-do-dia')).toBeNull();
+      expect(tela.querySelector('app-fileira-de-blocos')).toBeNull();
+      expect(tela.querySelector('app-estilos-do-dia')).toBeNull();
+    });
+
+    it('mostra um cartão para cada lugar, juntos por zona, com o link e o nome', async () => {
       const { tela, cartoes } = await renderizar();
       expect(cartoes().length).toBe(LOCAIS.length);
-      expect(cartoes()[0].getAttribute('href')).toBe(`/local/${LOCAIS[0].id}`);
+      expect(cartoes()[0].getAttribute('href')).toBe(`/local/${LUGARES_POR_ZONA[0].id}`);
       const nomes = Array.from(tela.querySelectorAll('.nome')).map((nome) => nome.textContent);
-      expect(nomes).toEqual(LOCAIS.map((local) => local.nome));
+      expect(nomes).toEqual(LUGARES_POR_ZONA.map((local) => local.nome));
+      const zonas = Array.from(tela.querySelectorAll('.zona-do-grupo')).map((zona) => zona.textContent);
+      expect(zonas).toEqual(ORDEM_DAS_ZONAS.map((zona) => NOMES_DAS_ZONAS[zona]));
     });
 
     it('mostra em cada cartão o selo com a conta dos blocos', async () => {
@@ -67,7 +88,7 @@ describe('Destaques', () => {
     it('mostra a zona de cada lugar na sua etiqueta de cor', async () => {
       const { tela } = await renderizar();
       const etiquetas = Array.from(tela.querySelectorAll('.zona')).map((z) => z.textContent);
-      expect(etiquetas.slice(0, 4)).toEqual(['Zona Sul', 'Centro', 'Zona Sul', 'Zona Oeste']);
+      expect(etiquetas).toEqual(LUGARES_POR_ZONA.map((local) => NOMES_DAS_ZONAS[local.zona]));
     });
 
     it('mostra os artistas, o primeiro em destaque, nos lugares que têm artista', async () => {
@@ -83,10 +104,10 @@ describe('Destaques', () => {
       expect(pauloVi?.querySelector('.nomes')?.textContent).toMatch(/^Blocos: /);
     });
 
-    it('dá a cada lugar a sua faixa de cor, do rosa ao azul', async () => {
+    it('dá a cada lugar a sua faixa de cor, do rosa ao azul, na ordem da lista dos lugares', async () => {
       const { cartoes } = await renderizar();
       const faixas = cartoes().map((c) => c.getAttribute('data-faixa'));
-      expect(faixas).toEqual(faixas.map((_, i) => SETE_CORES[i % SETE_CORES.length]));
+      expect(faixas).toEqual(LUGARES_POR_ZONA.map((local) => SETE_CORES[LOCAIS.indexOf(local) % SETE_CORES.length]));
     });
 
   });
@@ -158,6 +179,78 @@ describe('Destaques', () => {
       const { tela, tocar } = await renderizar(SEM_BLOCOS);
       await tocar('Amanhã');
       expect(tela.querySelector('.vazio')?.textContent).toBe('Nenhum bloco amanhã. Veja a aba Geral.');
+    });
+  });
+
+  describe('a vitrine, num sábado de carnaval às 14h', () => {
+    afterEach(() => localStorage.removeItem('carnavou.favoritos'));
+
+    const deHoje = BLOCOS.filter((bloco) => bloco.data === '2026-02-14');
+
+    it('põe em destaque o mais famoso do que está rolando agora, com "Rolando agora"', async () => {
+      const { tela } = await renderizar(SABADO_14H, true);
+      const rolando = deHoje.filter((bloco) => momentoDoBloco(bloco, SABADO_14H) === 'rolando');
+      const maisFamoso = rolando.reduce((melhor, bloco) => (famaDoBloco(bloco) > famaDoBloco(melhor) ? bloco : melhor));
+      const destaque = tela.querySelector('app-destaque-do-dia')!;
+      expect(destaque.querySelector('.rotulo')?.textContent).toBe('Destaque agora');
+      expect(destaque.querySelector('.quando .rolando')?.textContent).toBe('Rolando agora');
+      expect(destaque.querySelector('.nome-do-destaque')?.textContent).toBe(maisFamoso.nome);
+      expect(destaque.querySelector('a')?.getAttribute('href')).toBe(`/local/${maisFamoso.localId}/${maisFamoso.id}`);
+    });
+
+    const fileira = (tela: HTMLElement, titulo: string) => {
+      const secao = Array.from(tela.querySelectorAll('.secao')).find((s) => s.textContent === titulo);
+      const nomes = secao?.nextElementSibling?.querySelectorAll('.nome-do-item') ?? [];
+      return Array.from(nomes).map((nome) => nome.textContent);
+    };
+
+    it('em Hoje, mostra o que está rolando e começando, por horário, sem repetir o destaque', async () => {
+      const { tela } = await renderizar(SABADO_14H, true);
+      const destaque = tela.querySelector('.nome-do-destaque')?.textContent;
+      const nomes = fileira(tela, 'Rolando e começando');
+      expect(nomes.length).toBeGreaterThanOrEqual(2);
+      expect(nomes).not.toContain(destaque);
+      const inicios = nomes.map((nome) => deHoje.find((bloco) => bloco.nome === nome)!.inicio);
+      expect(inicios).toEqual([...inicios].sort());
+      // O que está rolando diz "Agora" no quadradinho.
+      expect(tela.querySelector('app-fileira-de-blocos .quadro')?.getAttribute('aria-label')).toBe('Rolando agora');
+    });
+
+    it('na Geral, mostra os mais famosos numa fileira, sem repetir o destaque', async () => {
+      const { tela, tocar } = await renderizar(SABADO_14H, true);
+      await tocar('Geral');
+      const destaque = tela.querySelector('.nome-do-destaque')?.textContent;
+      const nomes = fileira(tela, 'Os mais famosos do carnaval');
+      expect(nomes.length).toBeGreaterThanOrEqual(2);
+      expect(nomes).not.toContain(destaque);
+      const famas = nomes.map((nome) => famaDoBloco(BLOCOS.find((bloco) => bloco.nome === nome)!));
+      expect(famas).toEqual([...famas].sort((a, b) => b - a));
+      expect(fileira(tela, 'Rolando e começando')).toEqual([]);
+    });
+
+    it('na Geral, os estilos abrem a aba Blocos já com a busca do estilo', async () => {
+      const { tela, tocar } = await renderizar(SABADO_14H, true);
+      await tocar('Geral');
+      const estilos = Array.from(tela.querySelectorAll<HTMLButtonElement>('app-estilos-do-dia .estilo'));
+      expect(estilos.length).toBeGreaterThanOrEqual(2);
+      const nome = estilos[0].querySelector('.nome-do-estilo')!.textContent!;
+      estilos[0].click();
+      await new Promise((resolver) => setTimeout(resolver));
+      expect(TestBed.inject(FiltrosDaLista).busca()).toBe(nome);
+      expect(TestBed.inject(Router).url).toBe('/');
+    });
+
+    it('com favoritos, mostra o atalho que abre a aba Blocos só com eles', async () => {
+      const { tela } = await renderizar(SABADO_14H, true);
+      expect(tela.querySelector('.favoritos')).toBeNull();
+      TestBed.inject(Favoritos).trocar(deHoje[0].id);
+      await TestBed.inject(Router).navigateByUrl('/');
+      const fixture = TestBed.createComponent(Destaques);
+      await fixture.whenStable();
+      const atalho = (fixture.nativeElement as HTMLElement).querySelector<HTMLButtonElement>('.favoritos')!;
+      expect(atalho.textContent).toContain('1 bloco');
+      atalho.click();
+      expect(TestBed.inject(FiltrosDaLista).soFavoritos()).toBe(true);
     });
   });
 });

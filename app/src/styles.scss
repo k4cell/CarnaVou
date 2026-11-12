@@ -5,7 +5,10 @@
   color-scheme: only light;
   // Fundo da logo. Usado no cabeçalho e na moldura de fora da página.
   --noite: #130a29;
-  // Títulos e o dia do banner.
+  // Roxo escuro: os títulos e os números (a data dos cartões). É um pouco mais escuro que o roxo, para
+  // não se confundir com a faixa roxa dos cartões nem com os bares do After no mapa.
+  --roxo-escuro: #4c0a80;
+  // Roxo: os bares do After no mapa, a aba escolhida do menu, as setas e os links de "mais".
   --roxo: #6a0dad;
   // Amarelo, laranja e verde: só como fundo, sempre com texto escuro (nunca como texto).
   --amarelo: #ffc200;
@@ -78,7 +81,7 @@ a:focus-visible {
   margin: 16px 0 0;
   font-size: 1.5rem;
   line-height: 1.2;
-  color: var(--roxo);
+  color: var(--roxo-escuro);
 }
 
 .subtitulo {
@@ -174,7 +177,7 @@ a:focus-visible {
 .secao {
   margin: 24px 0 8px;
   font-size: 1.1rem;
-  color: var(--roxo);
+  color: var(--roxo-escuro);
 
   + .lista {
     margin-top: 0;

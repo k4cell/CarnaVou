@@ -1,28 +1,68 @@
 <app-abas-do-dia />
 <app-cartao-da-fase />
 
-<h2 class="titulo">Bairros</h2>
+<!-- O menu de baixo já diz em que aba a pessoa está: o título fica só para o leitor de tela. -->
+<h2 class="titulo so-para-o-leitor">Descobrir</h2>
 
+<!-- Na página pronta ainda não se sabe o dia: a vitrine só aparece depois; os bairros, sempre. -->
+@if (vitrine(); as vitrine) {
+  @if (vitrine.destaque; as destaque) {
+    <app-destaque-do-dia [destaque]="destaque" [rotulo]="vitrine.rotulo" />
+  }
+
+  @if (favoritos.quantos() > 0) {
+    <button type="button" class="favoritos" (click)="verFavoritos()">
+      <!-- Estrela: Lucide (licença ISC). -->
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z" />
+      </svg>
+      Seus favoritos
+      <span class="conta-favoritos">{{ favoritos.quantos() }} {{ favoritos.quantos() === 1 ? 'bloco' : 'blocos' }}</span>
+      <span class="seta-favoritos" aria-hidden="true">›</span>
+    </button>
+  }
+
+  @if (vitrine.famosos.length >= 2) {
+    <h3 class="secao com-marca">{{ vitrine.tituloDosFamosos }}</h3>
+    <app-fileira-de-blocos [itens]="vitrine.famosos" />
+  }
+
+  @if (vitrine.proximos.length > 0) {
+    <h3 class="secao com-marca">Rolando e começando</h3>
+    <app-fileira-de-blocos [itens]="vitrine.proximos" />
+  }
+
+  @if (vitrine.estilos.length >= 2) {
+    <h3 class="secao com-marca">Por estilo</h3>
+    <app-estilos-do-dia [estilos]="vitrine.estilos" />
+  }
+}
+
+<h3 class="secao com-marca">Bairros</h3>
 @if (cartoes().length === 0) {
   <p class="vazio caixa-vazia">{{ mensagemVazia() }}</p>
 } @else {
-  <ul class="lista">
-    @for (cartao of cartoes(); track cartao.local.id) {
-      <li>
-        <a class="cartao" [attr.data-faixa]="cartao.faixa" [routerLink]="['/local', cartao.local.id]">
-          <span class="texto">
-            <span class="cabeca">
-              <strong class="nome">{{ cartao.local.nome }}</strong>
-              <span class="selo" [attr.data-selo]="cartao.tipoDoSelo">{{ cartao.selo }}</span>
+  <!-- Os bairros juntos por zona, cada zona com a sua cor; a do lugar mais famoso vem primeiro. -->
+  @for (grupo of zonas(); track grupo.zona) {
+    <h4 class="zona-do-grupo" [attr.data-zona]="grupo.zona">{{ nomeDaZona(grupo.zona) }}</h4>
+    <ul class="lista">
+      @for (cartao of grupo.cartoes; track cartao.local.id) {
+        <li>
+          <a class="cartao" [attr.data-faixa]="cartao.faixa" [routerLink]="['/local', cartao.local.id]">
+            <span class="texto">
+              <span class="cabeca">
+                <strong class="nome">{{ cartao.local.nome }}</strong>
+                <span class="selo" [attr.data-selo]="cartao.tipoDoSelo">{{ cartao.selo }}</span>
+              </span>
+              <app-zona-tag [zona]="cartao.local.zona" />
+              @if (cartao.principal) {
+                <span class="nomes">{{ cartao.rotulo }}: <strong class="principal">{{ cartao.principal }}</strong>{{ cartao.resto }}</span>
+              }
             </span>
-            <app-zona-tag [zona]="cartao.local.zona" />
-            @if (cartao.principal) {
-              <span class="nomes">{{ cartao.rotulo }}: <strong class="principal">{{ cartao.principal }}</strong>{{ cartao.resto }}</span>
-            }
-          </span>
-          <span class="seta" aria-hidden="true">›</span>
-        </a>
-      </li>
-    }
-  </ul>
+            <span class="seta" aria-hidden="true">›</span>
+          </a>
+        </li>
+      }
+    </ul>
+  }
 }
