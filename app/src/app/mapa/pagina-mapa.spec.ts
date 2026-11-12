@@ -798,10 +798,10 @@ describe('PaginaMapa', () => {
       expect(daNoite.length).toBeGreaterThan(0);
       const esperados = [...new Set([...daNoite, ...PONTOS_DO_AFTER.map(noMapa)])].sort();
       expect(posicoes(true)).toEqual(esperados);
-      // Os lugares do After ficam na cor da noite (no mapa, pinos pequenos com a lua, e não bolinhas).
+      // Os lugares do After ficam roxos (no mapa, pinos pequenos com a lua, e não bolinhas).
       const doAfter = falso.mapas[0].pontos().filter((ponto) => ponto.id.startsWith('after:'));
       expect(doAfter.length).toBe(PONTOS_DO_AFTER.length);
-      expect(new Set(doAfter.map((ponto) => ponto.cor))).toEqual(new Set(['#130a29']));
+      expect(new Set(doAfter.map((ponto) => ponto.cor))).toEqual(new Set(['#6a0dad']));
     });
 
     it('fora do After, os bares continuam no mapa, sem mudar o zoom, e abrem o cartão deles', async () => {

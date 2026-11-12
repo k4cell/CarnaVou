@@ -121,7 +121,7 @@ describe('MapaBase', () => {
     const { falso, fixture } = await renderizar([SE, SANTO_AMARO, PINHEIROS]);
     falso.mapas[0].carregar();
     await esperarOMapa(fixture);
-    expect(falso.mapas[0].pontos().map((ponto) => ponto.cor)).toEqual(['#6a0dad', '#00e676', '#d62828']);
+    expect(falso.mapas[0].pontos().map((ponto) => ponto.cor)).toEqual(['#e21d89', '#00e676', '#d62828']);
   });
 
   it('avisa qual ponto foi escolhido quando alguém toca na bolinha, com folga em volta do dedo', async () => {
@@ -183,9 +183,9 @@ describe('MapaBase', () => {
       const pintura = bolinhas?.['paint'] as Record<string, unknown>;
       const corDoGrupo = (somas: Record<string, number>) =>
         avaliar(pintura['circle-color'], { point_count: 2, after: 0, ...somas });
-      expect(corDoGrupo({ 'zona-centro': 9, 'zona-oeste': 3 })).toBe('#6a0dad');
+      expect(corDoGrupo({ 'zona-centro': 9, 'zona-oeste': 3 })).toBe('#e21d89');
       expect(corDoGrupo({ 'zona-centro': 2, 'zona-sul': 13 })).toBe('#00e676');
-      expect(corDoGrupo({ after: 3, 'zona-norte': 1 })).toBe('#130a29');
+      expect(corDoGrupo({ after: 3, 'zona-norte': 1 })).toBe('#6a0dad');
       // O ponto sozinho continua com a cor dele.
       expect(avaliar(pintura['circle-color'], { cor: '#d62828' })).toBe('#d62828');
       expect(pintura['circle-stroke-color']).toBe('#fff');
@@ -212,7 +212,7 @@ describe('MapaBase', () => {
         ['has', 'point_count'],
         ['!', ['==', ['get', 'after'], true]],
       ]);
-      expect(falso.mapas[0].pontos().map((ponto) => ponto.cor)).toEqual(['#6a0dad', '#130a29']);
+      expect(falso.mapas[0].pontos().map((ponto) => ponto.cor)).toEqual(['#e21d89', '#6a0dad']);
       // A lua (um lugar só) e a bolinha branca do número (os que juntam alguns).
       expect((pinos['layout'] as Record<string, unknown>)['icon-image']).toEqual([
         'case',
@@ -404,7 +404,7 @@ describe('MapaBase', () => {
       falso.mapas[0].carregar();
       await mudar({ trajetos: [NA_SE, VOLTA] });
       expect(fins(falso).map((fim) => fim.geometry.coordinates)).toEqual([NA_SE.linha.at(-1)]);
-      expect(fins(falso)[0].properties['cor']).toBe('#6a0dad');
+      expect(fins(falso)[0].properties['cor']).toBe('#e21d89');
     });
 
     it('desenha uma linha por trajeto, seguindo os pontos, na cor da zona', async () => {
@@ -413,7 +413,7 @@ describe('MapaBase', () => {
       await mudar({ trajetos: [NA_SE, EM_SANTO_AMARO] });
       const [doCentro, doSul] = linhas(falso)!.features;
       expect(doCentro.geometry.coordinates).toEqual(NA_SE.linha);
-      expect(doCentro.properties['cor']).toBe('#6a0dad');
+      expect(doCentro.properties['cor']).toBe('#e21d89');
       expect(doSul.properties['cor']).toBe('#00e676');
     });
 

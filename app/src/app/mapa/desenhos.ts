@@ -18,7 +18,7 @@ const DISTANCIA_PARA_MARCAR_O_FIM = 0.0003;
 
 /** A cor de cada zona: a mesma dos pinos e das etiquetas (variáveis de `styles.scss`). */
 const CORES_DAS_ZONAS: Record<Zona, [string, string]> = {
-  centro: ['--roxo', '#6a0dad'],
+  centro: ['--rosa', '#e21d89'],
   sul: ['--verde', '#00e676'],
   leste: ['--amarelo', '#ffc200'],
   oeste: ['--vermelho', '#d62828'],
@@ -39,11 +39,11 @@ export function corDaZona(zona: Zona): string {
 export const ZONAS_DE_NUMERO_ESCURO: readonly Zona[] = ['sul', 'leste'];
 
 /**
- * A cor dos bares e pontos de encontro do After: a da noite, que nenhuma zona usa. Com a lua no meio
- * do pino, eles se reconhecem de longe no meio dos blocos.
+ * A cor dos bares e pontos de encontro do After: o roxo, que nenhuma zona usa. Com a lua no meio do
+ * pino, eles se reconhecem de longe no meio dos blocos.
  */
 export function corDoAfter(): string {
-  return corDoTema('--noite', '#130a29');
+  return corDoTema('--roxo', '#6a0dad');
 }
 
 /** O círculo de precisão em volta da pessoa (ou nada, quando ela não pediu para aparecer). */
@@ -99,7 +99,7 @@ function corDoNumero(ponto: PontoNoMapa): string {
 
 /**
  * Os pontos. O de um bloco é uma bolinha cheia, na cor da zona, com a borda branca. O de um lugar do
- * After é um pino pequeno na cor da noite, com a lua, para não se confundir (veja `imagemDoPinoPequeno`). O que junta dois
+ * After é um pino pequeno roxo, com a lua, para não se confundir (veja `imagemDoPinoPequeno`). O que junta dois
  * ou mais leva o número dentro. O ponto escolhido vira o pino grande, então sai daqui. Os pontos muito
  * perto um do outro o próprio mapa junta num grupo (veja `MapaBase`).
  */

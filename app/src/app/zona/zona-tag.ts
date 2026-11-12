@@ -4,7 +4,7 @@ import { NOMES_DAS_ZONAS } from '../dados/formato';
 import { Zona } from '../dados/tipos';
 
 /**
- * A etiqueta da zona, com uma bolinha da cor dela: Centro roxo, Sul verde, Leste amarelo, Oeste
+ * A etiqueta da zona, com uma bolinha da cor dela: Centro rosa, Sul verde, Leste amarelo, Oeste
  * vermelho, Norte azul.
  */
 @Component({

@@ -69,7 +69,7 @@ app-mapa-base .maplibregl-ctrl-bottom-right {
 }
 
 .pino-centro {
-  --cor-do-pino: var(--roxo);
+  --cor-do-pino: var(--rosa);
 }
 
 .pino-sul {
@@ -88,9 +88,9 @@ app-mapa-base .maplibregl-ctrl-bottom-right {
   --cor-do-pino: var(--azul);
 }
 
-// Os bares e pontos de encontro do After: na cor da noite, com a lua, como os pinos pequenos deles.
+// Os bares e pontos de encontro do After: roxos, com a lua, como os pinos pequenos deles.
 .pino-after {
-  --cor-do-pino: var(--noite);
+  --cor-do-pino: var(--roxo);
 
   .lua {
     fill: var(--cor-do-pino);
