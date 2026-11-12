@@ -46,9 +46,9 @@ describe('Destaques', () => {
       expect(abaAtiva()).toBe('Geral');
     });
 
-    it('chama a lista de "Principais lugares", sem prometer o que está em alta', async () => {
+    it('chama a lista de "Bairros", sem prometer o que está em alta', async () => {
       const { tela } = await renderizar();
-      expect(tela.querySelector('h2')?.textContent).toContain('Principais lugares');
+      expect(tela.querySelector('h2')?.textContent).toContain('Bairros');
     });
 
     it('mostra um cartão para cada lugar, com o link e o nome', async () => {

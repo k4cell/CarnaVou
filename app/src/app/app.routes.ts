@@ -19,7 +19,7 @@ const tituloDoBloco: ResolveFn<string> = (rota) => {
 export const routes: Routes = [
   // A tela principal é a aba Blocos: o que está rolando agora e o que vem.
   { path: '', component: PaginaBlocos, title: NOME_DO_SITE },
-  // O Descobrir (os principais lugares) já foi a tela principal.
+  // O Descobrir (os bairros) já foi a tela principal.
   {
     path: 'descobrir',
     loadComponent: () => import('./destaques/destaques').then((modulo) => modulo.Destaques),

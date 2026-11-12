@@ -45,7 +45,8 @@
   gap: 8px;
 }
 
-// Cada aba é uma pílula, como a busca e os botões redondos. A escolhida tem fundo amarelo cheio,
+// Cada aba é uma pílula, como a busca e os botões redondos. As outras têm um fundo um pouco mais
+// escuro que o de trás (na lista e na caixa branca do mapa); a escolhida tem fundo amarelo cheio,
 // para se ver de relance no sol (amarelo só como fundo, com texto escuro).
 .aba {
   flex: 1;
@@ -53,7 +54,7 @@
   padding: 0 8px;
   border: 0;
   border-radius: 999px;
-  background: none;
+  background: color-mix(in srgb, var(--texto) 7%, transparent);
   color: var(--texto-suave);
   font: inherit;
   font-weight: 600;
@@ -65,9 +66,9 @@
     font-weight: 800;
   }
 
-  // Enquanto o dedo está em cima de uma aba que não está escolhida, ela ganha um fundo cinza.
+  // Enquanto o dedo está em cima de uma aba que não está escolhida, o fundo escurece mais um pouco.
   &:not([aria-pressed='true']):active {
-    background: var(--borda);
+    background: color-mix(in srgb, var(--texto) 14%, transparent);
   }
 
   &:focus-visible {

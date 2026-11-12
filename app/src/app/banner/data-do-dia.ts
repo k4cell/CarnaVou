@@ -2,7 +2,10 @@ import { ChangeDetectionStrategy, Component, computed, input } from '@angular/co
 
 import { partesDaData } from '../dados/formato';
 
-/** A data em três linhas (SÁB / 14 / FEV), em roxo: no banner de um bloco e no cartão de um dia. */
+/**
+ * A data em três linhas (SÁB / 14 / FEV), na cor escura do cabeçalho: no banner de um bloco e no
+ * cartão de um dia.
+ */
 @Component({
   selector: 'app-data-do-dia',
   template: `
@@ -19,7 +22,7 @@ import { partesDaData } from '../dados/formato';
       align-items: center;
       min-width: 56px;
       line-height: 1.2;
-      color: var(--roxo);
+      color: var(--noite);
       text-transform: uppercase;
     }
 
