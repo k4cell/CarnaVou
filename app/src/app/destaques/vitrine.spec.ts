@@ -9,6 +9,8 @@ import {
   famososDaVitrine,
   lgbtDaVitrine,
   lugaresPorZona,
+  naVitrine,
+  proximosDaVitrine,
 } from './vitrine';
 
 const bloco = (id: string, inicio: string, fim: string, seguidores = 0, estilo?: Bloco['estilo']): Bloco => ({
@@ -61,6 +63,28 @@ describe('A vitrine do Descobrir', () => {
         rolandoGrande,
         rolandoPequeno,
       ]);
+    });
+  });
+
+  describe('o que está rolando e começando', () => {
+    const a = bloco('a', '13:00', '17:00');
+    const b = bloco('b', '14:30', '18:00');
+    const c = bloco('c', '15:00', '19:00');
+    const d = bloco('d', '16:00', '20:00');
+    const metros: Record<string, number | undefined> = { a: 1_500, b: 900, c: undefined, d: 200 };
+
+    it('vem por horário, sem o destaque', () => {
+      expect(proximosDaVitrine([a, b, c, d], a)).toEqual([b, c, d]);
+    });
+
+    it('sabendo onde a pessoa está, vem do mais perto para o mais longe; sem ponto no mapa, no fim', () => {
+      expect(proximosDaVitrine([a, b, c, d], null, (x) => metros[x.id])).toEqual([d, b, a, c]);
+    });
+
+    it('cada bloco diz a distância e o tempo a pé, quando se sabe', () => {
+      expect(naVitrine(d, AGORA, (x) => metros[x.id]).distancia).toBe('200 m · uns 4 min a pé');
+      expect(naVitrine(c, AGORA, (x) => metros[x.id]).distancia).toBeNull();
+      expect(naVitrine(d, AGORA).distancia).toBeNull();
     });
   });
 

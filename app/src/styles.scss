@@ -472,6 +472,21 @@ a:focus-visible {
   }
 }
 
+// "Megabloco": os gigantes que as notícias chamam assim, o mais perto que dá de saber se o bloco
+// vai lotar. Fundo escuro e letra branca, para ler no sol.
+.selo-megabloco {
+  flex: none;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--noite);
+  color: var(--cartao);
+  font-size: 0.6875rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
 @keyframes ao-vivo {
   50% {
     opacity: 0.25;

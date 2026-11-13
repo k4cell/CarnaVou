@@ -3,13 +3,14 @@ import {
   Component,
   ElementRef,
   afterNextRender,
+  input,
   output,
   viewChild,
 } from '@angular/core';
 
 /**
  * A tela que explica para que serve a localização, antes de o celular fazer a pergunta dele.
- * Quem toca em "Agora não" (ou em Esc) volta para o mapa, que funciona do mesmo jeito.
+ * Quem toca em "Agora não" (ou em Esc) volta para a tela de onde veio, que funciona do mesmo jeito.
  */
 @Component({
   selector: 'app-explicacao-da-localizacao',
@@ -26,6 +27,11 @@ import {
   },
 })
 export class ExplicacaoDaLocalizacao {
+  /** O que a pessoa ganha mostrando onde está, na tela de onde ela veio. O padrão é o do mapa. */
+  readonly paraQue = input('Aparece uma bolinha no mapa, a distância até cada lugar e os blocos rolando perto de você.');
+  /** A tela que continua funcionando sem a localização. */
+  readonly tela = input('o mapa');
+
   /** A pessoa quer continuar: aí o celular faz a pergunta dele. */
   readonly continuar = output<void>();
   readonly agoraNao = output<void>();

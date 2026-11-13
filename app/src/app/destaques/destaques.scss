@@ -114,3 +114,34 @@
   align-items: flex-start;
   justify-content: space-between;
 }
+
+// O título de "Rolando e começando" e, à direita, o botão "Perto de mim" (amarelo quando ligado).
+.cabeca-da-secao {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  justify-content: space-between;
+  margin: 24px 0 8px;
+
+  .secao {
+    margin: 0;
+  }
+}
+
+.perto[aria-pressed='true'] {
+  border-color: var(--amarelo);
+  background: var(--amarelo);
+}
+
+.aviso-de-local {
+  margin: 0 0 8px;
+  color: var(--texto-suave);
+  font-size: 0.875rem;
+}
+
+// A explicação da localização cobre a tela inteira (no mapa, ela cobre só o mapa).
+app-explicacao-da-localizacao {
+  position: fixed;
+  z-index: 50;
+}

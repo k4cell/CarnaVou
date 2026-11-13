@@ -106,6 +106,15 @@ describe('BannerBloco', () => {
     });
   });
 
+  it('o megabloco ganha o selo ao lado do nome; os outros, não', async () => {
+    const forrozin = BLOCOS.find(({ id }) => id === 'forrozin')!;
+    const tela = await renderizar('forrozin', null, { bloco: { ...forrozin, megabloco: true } });
+    expect(tela.querySelector('.linha-do-nome .selo-megabloco')?.textContent).toBe('Megabloco');
+    expect(tela.querySelector('.nome')?.textContent).toBe('Forrozin');
+    TestBed.resetTestingModule();
+    expect((await renderizar('forrozin', null)).querySelector('.selo-megabloco')).toBeNull();
+  });
+
   it('tem a estrela de favorito fora do link, para o toque não abrir o bloco', async () => {
     const tela = await renderizar('forrozin', null);
     expect(tela.querySelector('app-botao-favorito')).not.toBeNull();

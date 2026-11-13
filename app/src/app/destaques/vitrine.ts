@@ -5,6 +5,7 @@ import { todosOsBlocos } from '../dados/correcoes';
 import { artistaEstaNoNome, NOMES_DOS_ESTILOS, partesDaData } from '../dados/formato';
 import { QuandoComeca, quandoComeca } from '../dados/quando';
 import { Bloco, Estilo, Local, Zona } from '../dados/tipos';
+import { textoDaDistancia, tempoAPe } from '../localizacao/distancia';
 
 /*
  * O que a vitrine do Descobrir mostra, a partir dos blocos da aba (Hoje, Amanhã ou Geral): o
@@ -22,6 +23,8 @@ export interface BlocoNaVitrine {
   /** Os artistas, sem quem já está no nome do bloco, separados por vírgula. */
   artistas: string;
   quando: QuandoComeca;
+  /** Quando já se sabe onde a pessoa está: "1,2 km · uns 25 min a pé". */
+  distancia: string | null;
   /** O dia do bloco em partes ("sáb", "21", "fev"), para o quadradinho que destaca o dia. */
   data: { semana: string; dia: string; mes: string };
   caminho: string[];
@@ -59,7 +62,11 @@ export function blocosDaVitrine(aba: Aba, agora: Date): Bloco[] {
     .sort((a, b) => a.data.localeCompare(b.data) || a.inicio.localeCompare(b.inicio));
 }
 
-export function naVitrine(bloco: Bloco, agora: Date): BlocoNaVitrine {
+/** A distância, em metros, de onde a pessoa está até o bloco; sem o ponto do bloco no mapa, nada. */
+export type DistanciaAte = (bloco: Bloco) => number | undefined;
+
+export function naVitrine(bloco: Bloco, agora: Date, distanciaAte?: DistanciaAte | null): BlocoNaVitrine {
+  const metros = distanciaAte?.(bloco);
   return {
     bloco,
     local: acharLocal(bloco.localId)!,
@@ -68,6 +75,7 @@ export function naVitrine(bloco: Bloco, agora: Date): BlocoNaVitrine {
       .filter((nome) => !artistaEstaNoNome(bloco, nome))
       .join(', '),
     quando: quandoComeca(bloco, agora),
+    distancia: metros === undefined ? null : `${textoDaDistancia(metros)} · ${tempoAPe(metros)}`,
     data: partesDaData(bloco.data),
     caminho: ['/local', bloco.localId, bloco.id],
   };
@@ -95,10 +103,22 @@ export function famososDaVitrine(blocos: Bloco[], destaque: Bloco | null): Bloco
     .slice(0, FAMOSOS_NA_FILEIRA);
 }
 
-/** O que está rolando e o que começa daqui a pouco, por horário, sem o destaque. */
-export function proximosDaVitrine(blocos: Bloco[], destaque: Bloco | null): Bloco[] {
+/**
+ * O que está rolando e o que começa mais tarde, sem o destaque: por horário ou, quando já se sabe onde
+ * a pessoa está, do mais perto para o mais longe.
+ */
+export function proximosDaVitrine(blocos: Bloco[], destaque: Bloco | null, distanciaAte?: DistanciaAte | null): Bloco[] {
   // A lista já vem por horário: quem está rolando começou antes e fica na frente.
-  return blocos.filter((bloco) => bloco !== destaque).slice(0, FAMOSOS_NA_FILEIRA);
+  const resto = blocos.filter((bloco) => bloco !== destaque);
+  if (!distanciaAte) {
+    return resto.slice(0, FAMOSOS_NA_FILEIRA);
+  }
+  // Quem não tem ponto no mapa vai para o fim, por horário (a ordenação mantém a ordem dos empates).
+  return resto
+    .map((bloco) => ({ bloco, metros: distanciaAte(bloco) ?? Number.MAX_VALUE }))
+    .sort((a, b) => a.metros - b.metros)
+    .slice(0, FAMOSOS_NA_FILEIRA)
+    .map(({ bloco }) => bloco);
 }
 
 /** Os blocos LGBTQIA+ da aba (os que uma notícia chama assim), por horário. Podem incluir o destaque. */

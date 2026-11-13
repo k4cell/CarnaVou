@@ -1,12 +1,13 @@
-import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
+import { formatarHora, textoDoHorario } from '../dados/formato';
 import { ZonaTag } from '../zona/zona-tag';
 import { BlocoNaVitrine } from './vitrine';
 
 /**
- * O destaque do topo do Descobrir: um bloco só, num cartão de cor cheia, com quando ele começa em
- * evidência ("Rolando agora", "Começa em 35 min"). O cartão todo abre o bloco.
+ * O destaque do topo do Descobrir: um bloco só, num cartão de cor cheia, com o horário em evidência
+ * ("Rolando agora · das 12h às 18h", "Hoje às 16h · até 20h"). O cartão todo abre o bloco.
  */
 @Component({
   selector: 'app-destaque-do-dia',
@@ -14,12 +15,17 @@ import { BlocoNaVitrine } from './vitrine';
   template: `
     @let item = destaque();
     <a class="destaque" [routerLink]="item.caminho">
-      <span class="rotulo">{{ rotulo() }}</span>
+      <span class="topo">
+        <span class="rotulo">{{ rotulo() }}</span>
+        @if (item.bloco.megabloco) {
+          <span class="selo-megabloco">Megabloco</span>
+        }
+      </span>
       <span class="quando" [attr.data-tipo]="item.quando.tipo">
         @if (item.quando.tipo === 'agora') {
-          <span class="rolando">Rolando agora</span>
+          <span class="rolando">Rolando agora</span> · {{ horario() }}
         } @else {
-          {{ item.quando.texto }}
+          {{ item.quando.texto }}{{ horario() }}
         }
       </span>
       <strong class="nome-do-destaque">{{ item.bloco.nome }}</strong>
@@ -30,6 +36,9 @@ import { BlocoNaVitrine } from './vitrine';
         {{ item.local.nome }}
         <app-zona-tag [zona]="item.local.zona" />
       </span>
+      @if (item.distancia) {
+        <span class="distancia">{{ item.distancia }}</span>
+      }
       <span class="ver" aria-hidden="true">Ver o bloco ›</span>
     </a>
   `,
@@ -58,6 +67,19 @@ import { BlocoNaVitrine } from './vitrine';
         outline: 3px solid var(--texto);
         outline-offset: 2px;
       }
+    }
+
+    .topo {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px 8px;
+      align-items: center;
+    }
+
+    // No fundo escuro do destaque, o selo fica claro.
+    .selo-megabloco {
+      background: var(--cartao);
+      color: var(--noite);
     }
 
     .rotulo {
@@ -93,6 +115,10 @@ import { BlocoNaVitrine } from './vitrine';
       font-size: 1.0625rem;
     }
 
+    .distancia {
+      font-weight: 700;
+    }
+
     .onde {
       display: flex;
       flex-wrap: wrap;
@@ -121,4 +147,14 @@ export class DestaqueDoDia {
   readonly destaque = input.required<BlocoNaVitrine>();
   /** "Destaque do momento", "Destaque de amanhã"… */
   readonly rotulo = input.required<string>();
+
+  /** Rolando, de que horas a que horas ("das 12h às 18h"); senão, até quando vai (" · até 20h"). */
+  protected readonly horario = computed(() => {
+    const { bloco, quando } = this.destaque();
+    if (quando.tipo === 'agora') {
+      const texto = textoDoHorario(bloco, 'rolando');
+      return `${texto.charAt(0).toLowerCase()}${texto.slice(1)}`;
+    }
+    return bloco.fim ? ` · até ${formatarHora(bloco.fim)}` : '';
+  });
 }

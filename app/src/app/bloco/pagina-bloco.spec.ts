@@ -197,6 +197,48 @@ describe('PaginaBloco', () => {
     });
   });
 
+  describe('os dados de evento para o Google', () => {
+    afterEach(() => definirCorrecoes([]));
+
+    const dados = () => {
+      const scripts = document.head.querySelectorAll('script[type="application/ld+json"]#dados-do-evento');
+      expect(scripts.length).toBe(1);
+      return JSON.parse(scripts[0].textContent ?? '{}');
+    };
+
+    it('põem o bloco como evento no HTML, com o dia, a hora em São Paulo, o lugar e quem toca', async () => {
+      await renderizar('ibirapuera', 'agrada-gregos');
+      const evento = dados();
+      expect(evento['@type']).toBe('Event');
+      expect(evento.name).toBe('Agrada Gregos');
+      expect(evento.startDate).toBe('2026-02-14T13:00:00-03:00');
+      expect(evento.endDate).toBe('2026-02-14T18:00:00-03:00');
+      expect(evento.eventStatus).toBe('https://schema.org/EventScheduled');
+      expect(evento.location.name).toBe('Parque Ibirapuera');
+      expect(evento.location.address.addressLocality).toBe('São Paulo');
+      expect(evento.performer.map((artista: { name: string }) => artista.name)).toEqual(['Gloria Groove', 'Gretchen']);
+      expect(evento.performer[0].sameAs).toBe('https://www.instagram.com/gloriagroove/');
+    });
+
+    it('viram evento cancelado quando a correção cancela o bloco, e saem quando a página fecha', async () => {
+      await TestBed.configureTestingModule({ imports: [PaginaBloco], providers: [provideRouter([])] }).compileComponents();
+      const fixture = TestBed.createComponent(PaginaBloco);
+      fixture.componentRef.setInput('local', 'ibirapuera');
+      fixture.componentRef.setInput('bloco', 'agrada-gregos');
+      await fixture.whenStable();
+      definirCorrecoes([{ id: 'agrada-gregos', cancelado: true }]);
+      await fixture.whenStable();
+      expect(dados().eventStatus).toBe('https://schema.org/EventCancelled');
+      fixture.destroy();
+      expect(document.head.querySelector('#dados-do-evento')).toBeNull();
+    });
+
+    it('não aparecem quando o bloco não existe', async () => {
+      await renderizar('consolacao', 'agrada-gregos');
+      expect(document.head.querySelector('#dados-do-evento')).toBeNull();
+    });
+  });
+
   it('avisa quando o bloco não existe', async () => {
     const tela = await renderizar('ibirapuera', 'bloco-que-nao-existe');
     expect(tela.textContent).toContain('Não achei esse bloco');

@@ -37,10 +37,11 @@ import { EMAIL_DE_CONTATO, ESTILO_DAS_PAGINAS_DE_TEXTO, TEXTOS_ATUALIZADOS_EM } 
 
     <h3 class="secao">A sua localização</h3>
     <p>
-      O app só procura onde você está quando você toca em "Onde estou": é uma leitura por toque. A
-      posição fica só na memória do celular, enquanto o app está aberto, para mostrar você no mapa e a
-      distância até os blocos. Ela não é guardada nem enviada. O app nunca acompanha o seu caminho nem
-      usa a localização em segundo plano. Se você negar, continua usando o mapa normalmente.
+      O app só procura onde você está quando você toca em "Onde estou" (no mapa) ou em "Perto de mim"
+      (no Descobrir): é uma leitura por toque. A posição fica só na memória do celular, enquanto o app
+      está aberto, para mostrar você no mapa, a distância até os blocos e os blocos mais perto. Ela não
+      é guardada nem enviada. O app nunca acompanha o seu caminho nem usa a localização em segundo
+      plano. Se você negar, continua usando o app normalmente.
     </p>
 
     <h3 class="secao">O que chega até o site</h3>

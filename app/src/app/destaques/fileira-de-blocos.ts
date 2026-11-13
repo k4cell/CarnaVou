@@ -6,8 +6,9 @@ import { BlocoNaVitrine } from './vitrine';
 /**
  * Uma fileira que desliza para o lado, com dois blocos por coluna: muita opção na mesma altura de
  * tela, sem rolar tanto para baixo. Cada bloco tem um quadradinho na cor do lugar, com a hora em
- * destaque (o que está rolando e começando) ou o dia (os mais famosos), e o nome com os artistas (ou
- * o lugar) embaixo.
+ * destaque (a que começa ou, rolando, até quando vai) ou o dia (os mais famosos), e o nome com os
+ * artistas (ou o lugar) embaixo. Na última linha, o que ajuda a decidir: se é megabloco, se está
+ * rolando e a distância, quando já se sabe onde a pessoa está.
  */
 @Component({
   selector: 'app-fileira-de-blocos',
@@ -27,13 +28,26 @@ import { BlocoNaVitrine } from './vitrine';
                 <span class="pequeno" aria-hidden="true">{{ item.data.semana }}</span>
                 <span class="grande" aria-hidden="true">{{ item.data.dia }}</span>
               } @else {
-                <span class="pequeno" aria-hidden="true">{{ item.quando.dia }}</span>
+                <span class="pequeno" aria-hidden="true">{{ item.quando.rotulo }}</span>
                 <span class="grande" aria-hidden="true">{{ item.quando.hora }}</span>
               }
             </span>
             <span class="texto-do-item">
               <strong class="nome-do-item">{{ item.bloco.nome }}</strong>
               <span class="sobre">{{ item.artistas || item.local.nome }}</span>
+              @if (item.bloco.megabloco || item.quando.tipo === 'agora' || item.distancia) {
+                <span class="decide">
+                  @if (item.bloco.megabloco) {
+                    <span class="selo-megabloco">Megabloco</span>
+                  }
+                  @if (item.quando.tipo === 'agora') {
+                    <span class="rolando">Rolando agora</span>
+                  }
+                  @if (item.distancia) {
+                    <span class="distancia">{{ item.distancia }}</span>
+                  }
+                </span>
+              }
             </span>
           </a>
         </li>
@@ -130,7 +144,6 @@ import { BlocoNaVitrine } from './vitrine';
       line-height: 1;
     }
 
-
     .texto-do-item {
       display: flex;
       flex-direction: column;
@@ -152,6 +165,19 @@ import { BlocoNaVitrine } from './vitrine';
     .sobre {
       color: var(--texto-suave);
       font-size: 0.9375rem;
+    }
+
+    .decide {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2px 8px;
+      align-items: center;
+      margin-top: 2px;
+    }
+
+    .distancia {
+      font-size: 0.8125rem;
+      font-weight: 700;
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,

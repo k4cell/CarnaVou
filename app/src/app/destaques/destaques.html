@@ -28,7 +28,27 @@
   }
 
   @if (vitrine.proximos.length > 0) {
-    <h3 class="secao com-marca">Rolando e começando</h3>
+    <div class="cabeca-da-secao">
+      <h3 class="secao com-marca">Rolando e começando</h3>
+      <button
+        #botaoPerto
+        type="button"
+        class="botao-claro perto"
+        [attr.aria-pressed]="porPerto()"
+        [disabled]="procurando()"
+        (click)="pertoDeMim()"
+      >
+        <!-- Pino: Lucide (licença ISC). -->
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M20 10c0 4.99-5.54 10.19-7.4 11.8a1 1 0 0 1-1.2 0C9.54 20.19 4 14.99 4 10a8 8 0 0 1 16 0" />
+          <circle cx="12" cy="10" r="3" />
+        </svg>
+        {{ procurando() ? 'Procurando…' : 'Perto de mim' }}
+      </button>
+    </div>
+    @if (aviso(); as texto) {
+      <p class="aviso-de-local" role="status">{{ texto }}</p>
+    }
     <app-fileira-de-blocos [itens]="vitrine.proximos" />
   }
 
@@ -41,6 +61,15 @@
     <h3 class="secao com-marca">Por estilo</h3>
     <app-estilos-do-dia [estilos]="vitrine.estilos" />
   }
+}
+
+@if (explicando()) {
+  <app-explicacao-da-localizacao
+    paraQue="Os blocos de hoje aparecem do mais perto para o mais longe, com a distância e o tempo a pé."
+    tela="o Descobrir"
+    (continuar)="continuar()"
+    (agoraNao)="agoraNao()"
+  />
 }
 
 <h3 class="secao com-marca">Bairros</h3>

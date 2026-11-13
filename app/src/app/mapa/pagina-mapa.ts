@@ -22,6 +22,7 @@ import { itinerarioDoBloco } from '../dados/itinerario';
 import { LUGARES_DO_AFTER } from '../dados/lugares-do-after';
 import { Bloco, MomentoDoBloco } from '../dados/tipos';
 import { FiltroDeDia } from '../filtro/filtro-de-dia';
+import { avisoDoProblema } from '../localizacao/avisos';
 import { Ponto, distanciaEmMetros, fraseDaDistancia, textoDaDistancia } from '../localizacao/distancia';
 import { ExplicacaoDaLocalizacao } from '../localizacao/explicacao-da-localizacao';
 import { Localizacao } from '../localizacao/localizacao';
@@ -56,14 +57,6 @@ function horarioNoCartao(bloco: Bloco, momento: MomentoDoBloco): string {
 
 const AVISOS = {
   procurando: 'Procurando você…',
-  negada:
-    'O celular não deixou o CarnaVou ver onde você está. Para mudar, abra as configurações do navegador, em permissões do site. O mapa continua funcionando.',
-  negadaNoIphone:
-    'O iPhone não deixou o CarnaVou ver onde você está. Para liberar sem sair do Safari, toque em aA (ou ⋯) na barra › Ajustes do Site › Localização › Permitir. Se não aparecer, vá em Ajustes › Privacidade e Segurança › Serviços de Localização › Sites do Safari. O mapa continua funcionando.',
-  negadaNoAppDoIphone:
-    'O iPhone não deixou o CarnaVou ver onde você está. Para liberar, vá em Ajustes › Privacidade e Segurança › Serviços de Localização › Sites do Safari e escolha "Ao Usar o App". O mapa continua funcionando.',
-  semSinal: 'Não consegui achar você agora. Tente de novo em um lugar aberto.',
-  indisponivel: 'Este navegador não consegue dizer onde você está.',
   foraDeSaoPaulo:
     'Você parece estar fora da Grande São Paulo, então não aparece neste mapa. A distância até cada lugar aparece nos cartões.',
 };
@@ -316,24 +309,13 @@ export class PaginaMapa {
     if (this.avisoFechado()) {
       return null;
     }
-    switch (estado) {
-      case 'negada':
-        return !this.aparelho.ehIphone
-          ? AVISOS.negada
-          : this.aparelho.instalado
-            ? AVISOS.negadaNoAppDoIphone
-            : AVISOS.negadaNoIphone;
-      case 'sem-sinal':
-        return AVISOS.semSinal;
-      case 'indisponivel':
-        return AVISOS.indisponivel;
-      case 'ligada': {
-        const voce = this.voce();
-        return voce && !estaNaGrandeSP(voce.lat, voce.lng) ? AVISOS.foraDeSaoPaulo : null;
-      }
-      default:
-        return null;
+    if (estado === 'ligada') {
+      const voce = this.voce();
+      return voce && !estaNaGrandeSP(voce.lat, voce.lng) ? AVISOS.foraDeSaoPaulo : null;
     }
+    const problema = avisoDoProblema(estado, this.aparelho);
+    // Quando o celular não deixa, o aviso lembra que o mapa funciona do mesmo jeito.
+    return problema && estado === 'negada' ? `${problema} O mapa continua funcionando.` : problema;
   });
 
   constructor() {

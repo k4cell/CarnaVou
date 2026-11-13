@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
+import { ChangeDetectionStrategy, Component, DestroyRef, computed, effect, inject, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 import { CopiarLink } from '../copiar-link/copiar-link';
@@ -10,6 +11,8 @@ import { faixaDoLocal } from '../dados/cores';
 import { NOMES_DOS_ESTILOS, dataPorExtenso, formatarHora, horariosDoBloco, textoDoHorario } from '../dados/formato';
 import { itinerarioDoBloco } from '../dados/itinerario';
 import { Atracao } from '../dados/tipos';
+import { trajetoDoBloco } from '../dados/trajetos';
+import { dadosDoEvento, textoDoScript } from '../divulgacao/dados-do-evento';
 import { BotaoFavorito } from '../favoritos/botao-favorito';
 import { Relogio } from '../relogio/relogio';
 import { ZonaTag } from '../zona/zona-tag';
@@ -128,6 +131,31 @@ export class PaginaBloco {
    * Os artistas do bloco que têm o perfil do Instagram nos dados, do mais famoso para o menos: é lá
    * que costumam sair as novidades de quem toca. Só o link, sem copiar nada de lá.
    */
+  constructor() {
+    // Os dados do bloco como evento, para o Google: já saem no HTML da página pronta e acompanham as
+    // correções (um bloco cancelado vira evento cancelado). Saem do HTML quando a página fecha.
+    const documento = inject(DOCUMENT);
+    // Na página pronta, o script já vem no HTML: o navegador reaproveita, sem duplicar.
+    const script =
+      documento.head.querySelector<HTMLScriptElement>('script#dados-do-evento') ?? documento.createElement('script');
+    script.type = 'application/ld+json';
+    script.id = 'dados-do-evento';
+    effect(() => {
+      const bloco = this.achado();
+      if (!bloco) {
+        script.remove();
+        return;
+      }
+      script.textContent = textoDoScript(
+        dadosDoEvento(bloco, this.lugar(), itinerarioDoBloco(bloco.id), trajetoDoBloco(bloco.id)),
+      );
+      if (!script.isConnected) {
+        documento.head.appendChild(script);
+      }
+    });
+    inject(DestroyRef).onDestroy(() => script.remove());
+  }
+
   protected readonly instagram = computed(() =>
     (this.achado()?.atracoes ?? [])
       .filter((atracao): atracao is Atracao & { perfil: string } => !!atracao.perfil)

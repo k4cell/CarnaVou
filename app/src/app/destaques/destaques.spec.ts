@@ -1,16 +1,22 @@
-import { TestBed } from '@angular/core/testing';
+import { Provider } from '@angular/core';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 
 import { Router } from '@angular/router';
 
+import { APARELHO } from '../aparelho/aparelho';
 import { momentoDoBloco } from '../dados/agenda';
 import { BLOCOS } from '../dados/blocos';
 import { famaDoBloco } from '../dados/consultas';
 import { faixaDoLocal } from '../dados/cores';
 import { NOMES_DAS_ZONAS, partesDaData } from '../dados/formato';
 import { LOCAIS } from '../dados/locais';
+import { trajetoDoBloco } from '../dados/trajetos';
 import { Favoritos } from '../favoritos/favoritos';
 import { FiltrosDaLista } from '../lista-de-blocos/filtros-da-lista';
+import { distanciaEmMetros } from '../localizacao/distancia';
+import { criarGeolocalizacaoFalsa, Resposta } from '../localizacao/geolocalizacao-falsa';
+import { CONSULTAR_PERMISSAO, GEOLOCALIZACAO, PermissaoDoCelular } from '../localizacao/localizacao';
 import { Relogio } from '../relogio/relogio';
 import { Destaques } from './destaques';
 
@@ -22,10 +28,10 @@ const LUGARES_POR_ZONA = ORDEM_DAS_ZONAS.flatMap((zona) => LOCAIS.filter((local)
 const SABADO_14H = new Date(2026, 1, 14, 14, 0);
 
 describe('Destaques', () => {
-  async function renderizar(agora?: Date, simulado = false) {
+  async function renderizar(agora?: Date, simulado = false, providers: Provider[] = []) {
     await TestBed.configureTestingModule({
       imports: [Destaques],
-      providers: [provideRouter([])],
+      providers: [provideRouter([]), ...providers],
     }).compileComponents();
     if (agora) {
       TestBed.inject(Relogio).definir(agora, simulado);
@@ -44,7 +50,7 @@ describe('Destaques', () => {
       botao?.click();
       await fixture.whenStable();
     };
-    return { tela, abaAtiva, cartoes, selos, tocar };
+    return { fixture, tela, abaAtiva, cartoes, selos, tocar };
   }
 
   describe('sem saber a data ainda', () => {
@@ -180,6 +186,18 @@ describe('Destaques', () => {
     });
   });
 
+  /** Os itens da fileira que vem depois do título dado (pulando o botão e o aviso que podem vir entre os dois). */
+  const itens = (tela: HTMLElement, titulo: string) => {
+    const secao = Array.from(tela.querySelectorAll('.secao')).find((s) => s.textContent === titulo);
+    let atual: Element | null = secao?.closest('.cabeca-da-secao') ?? secao ?? null;
+    while (atual && atual.tagName !== 'APP-FILEIRA-DE-BLOCOS') {
+      atual = atual.nextElementSibling;
+    }
+    return Array.from(atual?.querySelectorAll('.item') ?? []);
+  };
+  const fileira = (tela: HTMLElement, titulo: string) =>
+    itens(tela, titulo).map((item) => item.querySelector('.nome-do-item')?.textContent);
+
   describe('a vitrine, num sábado de carnaval às 14h', () => {
     afterEach(() => localStorage.removeItem('carnavou.favoritos'));
 
@@ -192,15 +210,12 @@ describe('Destaques', () => {
       const destaque = tela.querySelector('app-destaque-do-dia')!;
       expect(destaque.querySelector('.rotulo')?.textContent).toBe('Destaque do momento');
       expect(destaque.querySelector('.quando .rolando')?.textContent).toBe('Rolando agora');
+      // De que horas a que horas, sem contar os minutos.
+      expect(destaque.querySelector('.quando')?.textContent).toMatch(/^Rolando agora · (das \d+h\d* às \d+h\d*|desde as \d+h\d*)\s*$/);
       expect(destaque.querySelector('.nome-do-destaque')?.textContent).toBe(maisFamoso.nome);
       expect(destaque.querySelector('a')?.getAttribute('href')).toBe(`/local/${maisFamoso.localId}/${maisFamoso.id}`);
     });
 
-    const fileira = (tela: HTMLElement, titulo: string) => {
-      const secao = Array.from(tela.querySelectorAll('.secao')).find((s) => s.textContent === titulo);
-      const nomes = secao?.nextElementSibling?.querySelectorAll('.nome-do-item') ?? [];
-      return Array.from(nomes).map((nome) => nome.textContent);
-    };
 
     it('em Hoje, mostra o que está rolando e começando, por horário, sem repetir o destaque', async () => {
       const { tela } = await renderizar(SABADO_14H, true);
@@ -210,8 +225,15 @@ describe('Destaques', () => {
       expect(nomes).not.toContain(destaque);
       const inicios = nomes.map((nome) => deHoje.find((bloco) => bloco.nome === nome)!.inicio);
       expect(inicios).toEqual([...inicios].sort());
-      // O que está rolando diz "Agora" no quadradinho.
-      expect(tela.querySelector('app-fileira-de-blocos .quadro')?.getAttribute('aria-label')).toBe('Rolando agora');
+      // O que está rolando diz até quando vai, no quadradinho, e ganha o aviso "Rolando agora".
+      const primeiro = itens(tela, 'Rolando e começando')[0];
+      const bloco = deHoje.find((b) => b.nome === nomes[0])!;
+      expect(momentoDoBloco(bloco, SABADO_14H)).toBe('rolando');
+      expect(primeiro.querySelector('.quadro')?.getAttribute('aria-label')).toMatch(/^Rolando agora, (até|desde as) /);
+      expect(primeiro.querySelector('.quadro .pequeno')?.textContent).toBe(bloco.fim ? 'Até' : 'Desde');
+      expect(primeiro.querySelector('.decide .rolando')?.textContent).toBe('Rolando agora');
+      // Ninguém conta os minutos que faltam.
+      expect(tela.querySelector('app-fileira-de-blocos')?.textContent).not.toMatch(/\d+ min(?! a pé)/);
     });
 
     it('na Geral, mostra os mais famosos numa fileira, sem repetir o destaque', async () => {
@@ -279,6 +301,89 @@ describe('Destaques', () => {
       expect(atalho.textContent).toContain('1 bloco');
       atalho.click();
       expect(TestBed.inject(FiltrosDaLista).soFavoritos()).toBe(true);
+    });
+  });
+
+  describe('"Perto de mim", num sábado de carnaval às 14h', () => {
+    // Na Avenida Paulista, perto do MASP.
+    const NA_PAULISTA: Resposta = { ok: { lat: -23.5614, lng: -46.6559, precisao: 20 } };
+
+    async function comCelular(resposta: Resposta, permissao: PermissaoDoCelular | null = 'granted') {
+      const geo = criarGeolocalizacaoFalsa(resposta);
+      const tela = await renderizar(SABADO_14H, true, [
+        { provide: GEOLOCALIZACAO, useValue: geo.api },
+        { provide: CONSULTAR_PERMISSAO, useValue: async () => permissao },
+        { provide: APARELHO, useValue: { ehIphone: false, instalado: false } },
+      ]);
+      const botao = () => tela.tela.querySelector<HTMLButtonElement>('.perto')!;
+      return { ...tela, geo, botao };
+    }
+
+    /** Espera a localização e os pontos dos blocos, que chegam depois do toque. */
+    async function esperar(fixture: ComponentFixture<unknown>, condicao: () => boolean) {
+      for (let vez = 0; vez < 100 && !condicao(); vez++) {
+        await new Promise((resolver) => setTimeout(resolver, 10));
+        await fixture.whenStable();
+      }
+    }
+
+    const metrosAte = (nome: string) => {
+      const ponto = trajetoDoBloco(BLOCOS.find((bloco) => bloco.nome === nome && bloco.data === '2026-02-14')!.id)?.inicio;
+      return ponto ? distanciaEmMetros({ lat: -23.5614, lng: -46.6559 }, { lng: ponto[0], lat: ponto[1] }) : Infinity;
+    };
+
+    it('põe o que está rolando e começando do mais perto para o mais longe, com a distância e o tempo a pé', async () => {
+      const { fixture, tela, botao, geo } = await comCelular(NA_PAULISTA);
+      expect(botao().getAttribute('aria-pressed')).toBe('false');
+      expect(tela.querySelector('.distancia')).toBeNull();
+      botao().click();
+      await esperar(fixture, () => !!tela.querySelector('.distancia'));
+      expect(geo.chamadas.length).toBe(1);
+      expect(botao().getAttribute('aria-pressed')).toBe('true');
+      const distancias = fileira(tela, 'Rolando e começando').map((nome) => metrosAte(nome!));
+      expect(distancias.length).toBeGreaterThanOrEqual(2);
+      expect(distancias).toEqual([...distancias].sort((a, b) => a - b));
+      expect(itens(tela, 'Rolando e começando')[0].querySelector('.distancia')?.textContent).toMatch(/ · (1 min|uns .+) a pé$/);
+      // O destaque também diz a que distância fica.
+      expect(tela.querySelector('app-destaque-do-dia .distancia')?.textContent).toMatch(/a pé$/);
+    });
+
+    it('tocando de novo, volta para a ordem por horário, sem procurar a pessoa outra vez', async () => {
+      const { fixture, tela, botao, geo } = await comCelular(NA_PAULISTA);
+      const porHorario = fileira(tela, 'Rolando e começando');
+      botao().click();
+      await esperar(fixture, () => !!tela.querySelector('.distancia'));
+      botao().click();
+      await fixture.whenStable();
+      expect(botao().getAttribute('aria-pressed')).toBe('false');
+      expect(tela.querySelector('.distancia')).toBeNull();
+      expect(fileira(tela, 'Rolando e começando')).toEqual(porHorario);
+      expect(geo.chamadas.length).toBe(1);
+    });
+
+    it('explica antes, quando o celular ainda vai perguntar', async () => {
+      const { fixture, tela, botao, geo } = await comCelular(NA_PAULISTA, 'prompt');
+      botao().click();
+      await esperar(fixture, () => !!tela.querySelector('app-explicacao-da-localizacao'));
+      const explicacao = tela.querySelector('app-explicacao-da-localizacao')!;
+      expect(explicacao.textContent).toContain('do mais perto para o mais longe');
+      expect(explicacao.textContent).toContain('o Descobrir funciona do mesmo jeito');
+      expect(geo.chamadas.length).toBe(0);
+      explicacao.querySelector<HTMLButtonElement>('.botao-principal')!.click();
+      await esperar(fixture, () => !!tela.querySelector('.distancia'));
+      expect(tela.querySelector('app-explicacao-da-localizacao')).toBeNull();
+      expect(botao().getAttribute('aria-pressed')).toBe('true');
+    });
+
+    it('avisa quando o celular não deixa, e a vitrine continua por horário', async () => {
+      const { fixture, tela, botao } = await comCelular({ erro: 1 });
+      const porHorario = fileira(tela, 'Rolando e começando');
+      botao().click();
+      await esperar(fixture, () => !!tela.querySelector('.aviso-de-local'));
+      expect(tela.querySelector('.aviso-de-local')?.textContent).toContain('não deixou o CarnaVou ver onde você está');
+      expect(tela.querySelector('.aviso-de-local')?.textContent).not.toContain('mapa');
+      expect(botao().getAttribute('aria-pressed')).toBe('false');
+      expect(fileira(tela, 'Rolando e começando')).toEqual(porHorario);
     });
   });
 });
