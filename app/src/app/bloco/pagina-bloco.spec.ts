@@ -1,9 +1,10 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 
-import { cartoesDaAba } from '../dados/agenda';
 import { BLOCOS } from '../dados/blocos';
+import { faixaDoBloco } from '../dados/cores-dos-cartoes';
 import { definirCorrecoes } from '../dados/correcoes';
+import { Relogio } from '../relogio/relogio';
 import { PaginaBloco } from './pagina-bloco';
 
 describe('PaginaBloco', () => {
@@ -27,21 +28,12 @@ describe('PaginaBloco', () => {
   }
 
   describe('a cor da faixa das atrações', () => {
-    it('é a cor do lugar do bloco: amarelo na Consolação, rosa no Ibirapuera', async () => {
-      const naConsolacao = await renderizar('consolacao', 'pipoca-da-rainha');
-      expect(naConsolacao.getAttribute('data-faixa')).toBe('amarelo');
-      TestBed.resetTestingModule();
-      const noIbirapuera = await renderizar('ibirapuera', 'agrada-gregos');
-      expect(noIbirapuera.getAttribute('data-faixa')).toBe('rosa');
-    });
-
-    it('é a mesma do cartão do lugar na lista, num bloco de cada lugar', async () => {
-      const corNaLista = new Map(cartoesDaAba('geral', null).map((cartao) => [cartao.local.id, cartao.faixa]));
+    it('é a cor do cartão do bloco na aba Blocos, num bloco de cada lugar', async () => {
       const umPorLugar = [...new Map(BLOCOS.map((bloco) => [bloco.localId, bloco])).values()];
       for (const bloco of umPorLugar) {
         TestBed.resetTestingModule();
         const tela = await renderizar(bloco.localId, bloco.id);
-        expect(tela.getAttribute('data-faixa'), bloco.nome).toBe(corNaLista.get(bloco.localId));
+        expect(tela.getAttribute('data-faixa'), bloco.nome).toBe(faixaDoBloco(bloco));
       }
     });
   });
@@ -70,6 +62,55 @@ describe('PaginaBloco', () => {
     expect(texto).toContain('Sábado, 14 de fevereiro');
     expect(texto).toContain('Parque Ibirapuera');
     expect(texto).toContain('Concentração às 13h · desfile às 14h · termina às 18h');
+  });
+
+  describe('em que pé o bloco está', () => {
+    // Agrada Gregos: sábado, 14/02, concentração às 13h, termina às 18h.
+    async function renderizarAs(agora: Date): Promise<HTMLElement> {
+      await TestBed.configureTestingModule({ imports: [PaginaBloco], providers: [provideRouter([])] }).compileComponents();
+      TestBed.inject(Relogio).definir(agora, true);
+      const fixture = TestBed.createComponent(PaginaBloco);
+      fixture.componentRef.setInput('local', 'ibirapuera');
+      fixture.componentRef.setInput('bloco', 'agrada-gregos');
+      await fixture.whenStable();
+      return fixture.nativeElement as HTMLElement;
+    }
+    const horario = (tela: HTMLElement) => tela.querySelector('.horario');
+
+    it('rolando: o aviso "Rolando agora" ao lado do nome e o horário em verde', async () => {
+      const tela = await renderizarAs(new Date(2026, 1, 14, 15, 0));
+      expect(tela.querySelector('.linha-do-nome .rolando')?.textContent).toBe('Rolando agora');
+      expect(tela.querySelector('h2')?.textContent).toBe('Agrada Gregos');
+      expect(horario(tela)?.getAttribute('data-selo')).toBe('agora');
+      expect(tela.textContent).toContain('Hoje, sábado, 14 de fevereiro');
+    });
+
+    it('ainda hoje: o horário em amarelo, sem o aviso', async () => {
+      const tela = await renderizarAs(new Date(2026, 1, 14, 10, 0));
+      expect(tela.querySelector('.rolando')).toBeNull();
+      expect(horario(tela)?.getAttribute('data-selo')).toBe('em-breve');
+      expect(horario(tela)?.textContent).toContain('Concentração às 13h');
+    });
+
+    it('já acabou hoje: o horário em cinza, dizendo que acabou', async () => {
+      const tela = await renderizarAs(new Date(2026, 1, 14, 20, 0));
+      expect(tela.querySelector('.rolando')).toBeNull();
+      expect(horario(tela)?.getAttribute('data-selo')).toBe('acabou');
+      expect(horario(tela)?.textContent).toBe('Começou às 13h · acabou às 18h');
+    });
+
+    it('amanhã: diz "Amanhã" no dia e o horário fica sem cor', async () => {
+      const tela = await renderizarAs(new Date(2026, 1, 13, 12, 0));
+      expect(tela.textContent).toContain('Amanhã, sábado, 14 de fevereiro');
+      expect(horario(tela)?.hasAttribute('data-selo')).toBe(false);
+    });
+
+    it('antes de saber a hora, só a data e o horário, sem cor', async () => {
+      const tela = await renderizar('ibirapuera', 'agrada-gregos');
+      expect(tela.querySelector('.rolando')).toBeNull();
+      expect(horario(tela)?.hasAttribute('data-selo')).toBe(false);
+      expect(tela.textContent).not.toContain('Hoje,');
+    });
   });
 
   it('lista as atrações sem hora divulgada numa linha só, lado a lado', async () => {

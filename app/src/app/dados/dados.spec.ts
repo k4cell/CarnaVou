@@ -1,11 +1,15 @@
 import { BLOCOS } from './blocos';
-import { acharBloco, acharLocal, artistasDoLugar, blocosDoLocal, faixaDoLocal, famaDoBloco } from './consultas';
+import {
+  FAMA_DO_MEGABLOCO,
+  acharBloco,
+  acharLocal,
+  artistasDoLugar,
+  blocosDoLocal,
+  famaDoBloco,
+} from './consultas';
 import { itinerarioDoBloco } from './itinerario';
 import { LOCAIS } from './locais';
 import { lerLinha, trajetoDoBloco } from './trajetos';
-
-/** As sete cores das faixas, do rosa ao azul. Com mais de sete lugares, elas recomeçam. */
-const SETE_CORES = ['rosa', 'amarelo', 'verde', 'laranja', 'roxo', 'vermelho', 'azul'];
 
 // Aqui, as regras e os dados conhecidos de 2026 (a cópia congelada). Quem confere os dados que vão
 // para o ar é o dados-reais.spec.ts.
@@ -80,19 +84,18 @@ describe('dados', () => {
     });
   });
 
-  describe('faixaDoLocal', () => {
-    it('reveza as cores, do rosa ao azul, na ordem dos lugares', () => {
-      const faixas = LOCAIS.map((local) => faixaDoLocal(local.id));
-      expect(faixas).toEqual(faixas.map((_, i) => SETE_CORES[i % SETE_CORES.length]));
+  describe('famaDoBloco', () => {
+    const bloco = BLOCOS.find((cada) => cada.atracoes.some((atracao) => (atracao.seguidores ?? 0) > FAMA_DO_MEGABLOCO))!;
+    const semArtista = { ...bloco, atracoes: [] };
+
+    it('soma os seguidores dos artistas, e fica com 0 sem artista conhecido', () => {
+      expect(famaDoBloco(bloco)).toBe(bloco.atracoes.reduce((soma, atracao) => soma + (atracao.seguidores ?? 0), 0));
+      expect(famaDoBloco(semArtista)).toBe(0);
     });
 
-    it('dá a mesma cor para o mesmo lugar, sempre', () => {
-      expect(faixaDoLocal('ibirapuera')).toBe('rosa');
-      expect(faixaDoLocal('consolacao')).toBe('amarelo');
-    });
-
-    it('cai na primeira cor para um lugar que não existe', () => {
-      expect(faixaDoLocal('lugar-que-nao-existe')).toBe('rosa');
+    it('dá ao megabloco sem artista famoso a fama mínima, para ele não ficar lá embaixo na ordem', () => {
+      expect(famaDoBloco({ ...semArtista, megabloco: true })).toBe(FAMA_DO_MEGABLOCO);
+      expect(famaDoBloco({ ...bloco, megabloco: true })).toBe(famaDoBloco(bloco));
     });
   });
 

@@ -6,7 +6,12 @@ Antes, ponha na pasta scripts/dados/2027 (copie a de 2026 como modelo):
 - lista-oficial.pdf: a lista dos blocos aprovados que a Prefeitura publica no Diário Oficial;
 - sobre.json: o ano e o nome da publicação oficial;
 - atracoes-das-noticias.json: os artistas que as notícias dão para os blocos (pode começar com []);
-- destaques-das-noticias.json (se tiver): blocos sem artista que as notícias destacam.
+- destaques-das-noticias.json (se tiver): blocos sem artista que as notícias destacam;
+- megablocos-das-noticias.json e nomes-das-noticias.json (se tiver): os megablocos e o nome que o
+  povo usa, sempre com a fonte (veja gerar_dados.py).
+
+Os AVISOS do fim dizem o que conferir à mão: nomes que as notícias escrevem de outro jeito, e os
+circuitos e os blocos grandes do ano anterior que sumiram da lista.
 
 O que ele faz, em ordem:
 1. Lê o PDF (pdftotext -raw) e grava blocos-oficiais.json (ler_tabela.py).

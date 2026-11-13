@@ -2,7 +2,8 @@ import { ChangeDetectionStrategy, Component, computed, inject, input } from '@an
 import { RouterLink } from '@angular/router';
 
 import { TipoDoSelo, diaIso, momentoDoBloco } from '../dados/agenda';
-import { acharLocal, faixaDoLocal } from '../dados/consultas';
+import { acharLocal } from '../dados/consultas';
+import { faixaDoBloco } from '../dados/cores-dos-cartoes';
 import { artistaEstaNoNome, textoDoHorario } from '../dados/formato';
 import { Bloco } from '../dados/tipos';
 import { BotaoFavorito } from '../favoritos/botao-favorito';
@@ -25,8 +26,8 @@ export class BannerBloco {
 
   private readonly relogio = inject(Relogio);
 
-  /** A faixa do banner tem a cor do lugar, a mesma do cartão dele na lista. */
-  protected readonly faixa = computed(() => faixaDoLocal(this.bloco().localId));
+  /** A faixa do banner tem a cor do bloco, a mesma do cartão dele na aba Blocos. */
+  protected readonly faixa = computed(() => faixaDoBloco(this.bloco()));
   protected readonly lugar = computed(() => (this.mostrarLugar() ? acharLocal(this.bloco().localId)?.nome : undefined));
   /**
    * "Começa às 9h", ou só "Das 9h às 14h" quando o bloco está rolando (só depois de saber a hora: o

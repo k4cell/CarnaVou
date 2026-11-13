@@ -1,5 +1,6 @@
 import { Aba, CartaoDoLugar, diaIso, diaSeguinte, momentoDoBloco } from '../dados/agenda';
-import { acharLocal, artistasPorFama, faixaDoLocal, famaDoBloco } from '../dados/consultas';
+import { acharLocal, artistasPorFama, famaDoBloco } from '../dados/consultas';
+import { faixaDoBloco } from '../dados/cores-dos-cartoes';
 import { todosOsBlocos } from '../dados/correcoes';
 import { artistaEstaNoNome, NOMES_DOS_ESTILOS, partesDaData } from '../dados/formato';
 import { QuandoComeca, quandoComeca } from '../dados/quando';
@@ -16,7 +17,7 @@ import { Bloco, Estilo, Local, Zona } from '../dados/tipos';
 export interface BlocoNaVitrine {
   bloco: Bloco;
   local: Local;
-  /** A cor do lugar (a mesma da faixa dos cartões dele). */
+  /** A cor do bloco (a mesma do cartão dele na aba Blocos). */
   faixa: string;
   /** Os artistas, sem quem já está no nome do bloco, separados por vírgula. */
   artistas: string;
@@ -62,7 +63,7 @@ export function naVitrine(bloco: Bloco, agora: Date): BlocoNaVitrine {
   return {
     bloco,
     local: acharLocal(bloco.localId)!,
-    faixa: faixaDoLocal(bloco.localId),
+    faixa: faixaDoBloco(bloco),
     artistas: artistasPorFama([bloco])
       .filter((nome) => !artistaEstaNoNome(bloco, nome))
       .join(', '),

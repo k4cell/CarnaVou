@@ -12,17 +12,23 @@
   @if (jaPassou() && !bloco.cancelado) {
     <p class="ja-passou">Esse bloco já aconteceu.</p>
   }
-  <h2 class="titulo">{{ bloco.nome }}</h2>
+  <!-- O nome e, ao lado (ou embaixo, se não couber), o aviso de que o bloco está rolando. -->
+  <div class="linha-do-nome">
+    <h2 class="titulo">{{ bloco.nome }}</h2>
+    @if (situacao() === 'agora') {
+      <span class="rolando">Rolando agora</span>
+    }
+  </div>
   <!-- O dia, o lugar (que leva para a página dele), o horário, o itinerário e o estilo, juntos. -->
   <div class="ficha">
     <p class="quando-e-onde">
-      {{ resumo()?.dia }}
+      {{ dia() }}
       @if (lugar(); as onde) {
         · <a class="lugar" [routerLink]="['/local', onde.id]">{{ onde.nome }}</a>
         <app-zona-tag [zona]="onde.zona" />
       }
     </p>
-    <p class="horario">{{ resumo()?.horario }}</p>
+    <p class="horario" [attr.data-selo]="situacao()">{{ horario() }}</p>
     @if (resumo()?.itinerario; as itinerario) {
       <p class="itinerario">Itinerário: {{ itinerario }}</p>
     }

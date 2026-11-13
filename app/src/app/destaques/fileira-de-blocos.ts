@@ -6,8 +6,8 @@ import { BlocoNaVitrine } from './vitrine';
 /**
  * Uma fileira que desliza para o lado, com dois blocos por coluna: muita opção na mesma altura de
  * tela, sem rolar tanto para baixo. Cada bloco tem um quadradinho na cor do lugar, com a hora em
- * destaque (o que está rolando e começando) ou o dia (os mais famosos, de vários dias), e o nome com
- * os artistas (ou o lugar) embaixo.
+ * destaque (o que está rolando e começando) ou o dia (os mais famosos), e o nome com os artistas (ou
+ * o lugar) embaixo.
  */
 @Component({
   selector: 'app-fileira-de-blocos',
@@ -33,13 +33,7 @@ import { BlocoNaVitrine } from './vitrine';
             </span>
             <span class="texto-do-item">
               <strong class="nome-do-item">{{ item.bloco.nome }}</strong>
-              <span class="sobre">
-                <!-- Com o dia no quadradinho, a hora vem aqui, antes dos artistas. -->
-                @if (destaque() === 'dia') {
-                  {{ item.quando.tipo === 'agora' ? 'Agora' : item.quando.hora }} ·
-                }
-                {{ item.artistas || item.local.nome }}
-              </span>
+              <span class="sobre">{{ item.artistas || item.local.nome }}</span>
             </span>
           </a>
         </li>
@@ -95,7 +89,8 @@ import { BlocoNaVitrine } from './vitrine';
       }
     }
 
-    // O quadradinho: a cor do lugar, bem clara, com texto escuro.
+    // O quadradinho: a cor cheia do lugar, com texto branco; no amarelo, no verde, no laranja e no
+    // verde-mar, escuro.
     .quadro {
       display: flex;
       flex: none;
@@ -105,9 +100,17 @@ import { BlocoNaVitrine } from './vitrine';
       width: 56px;
       height: 56px;
       border-radius: 10px;
-      background: color-mix(in srgb, var(--cor-da-faixa) 22%, var(--cartao));
+      background: var(--cor-da-faixa);
+      color: var(--cartao);
       line-height: 1.15;
       text-align: center;
+    }
+
+    [data-faixa='amarelo'] .quadro,
+    [data-faixa='verde'] .quadro,
+    [data-faixa='laranja'] .quadro,
+    [data-faixa='verde-mar'] .quadro {
+      color: var(--texto);
     }
 
     .pequeno {
@@ -127,9 +130,6 @@ import { BlocoNaVitrine } from './vitrine';
       line-height: 1;
     }
 
-    .quadro[data-tipo='agora']:not(.por-dia) .pequeno {
-      color: var(--vermelho);
-    }
 
     .texto-do-item {
       display: flex;

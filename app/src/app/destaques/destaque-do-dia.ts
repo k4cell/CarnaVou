@@ -119,6 +119,6 @@ import { BlocoNaVitrine } from './vitrine';
 })
 export class DestaqueDoDia {
   readonly destaque = input.required<BlocoNaVitrine>();
-  /** "Destaque agora", "Destaque de amanhã"… */
+  /** "Destaque do momento", "Destaque de amanhã"… */
   readonly rotulo = input.required<string>();
 }

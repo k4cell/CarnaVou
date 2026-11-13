@@ -170,16 +170,9 @@ app-mapa-base {
   }
 }
 
-// "+ 3 blocos aqui": abre o cartão com os outros blocos do ponto.
+// "+ 3 blocos aqui" (um .botao-claro): abre o cartão com os outros blocos do ponto.
 .mais-blocos {
-  min-height: 44px;
-  padding: 0;
-  border: 0;
-  background: none;
-  color: var(--roxo);
-  font: inherit;
-  font-weight: 700;
-  cursor: pointer;
+  margin: 4px 0;
 }
 
 // A alça de puxar: uma setinha no alto do cartão (para cima: abre; para baixo: encolhe), com

@@ -6,19 +6,24 @@
 
 .banner {
   position: relative;
+  // A altura mínima deixa a seta longe da estrela mesmo no cartão mais baixo (só o nome e o horário).
+  min-height: 88px;
   padding-right: 52px;
 }
 
+// A estrela no canto de cima e a seta encostada embaixo: o dedo que toca a seta para abrir o bloco
+// não pega a estrela.
 .seta {
   position: absolute;
   right: 18px;
-  bottom: 6px;
+  bottom: 4px;
+  line-height: 1;
 }
 
 app-botao-favorito {
   position: absolute;
-  top: 4px;
-  right: 4px;
+  top: 0;
+  right: 0;
 }
 
 app-data-do-dia {

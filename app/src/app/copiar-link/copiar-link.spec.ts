@@ -1,15 +1,19 @@
 import { TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
 
-import { COPIAR_TEXTO, CopiarLink } from './copiar-link';
+import { COMPARTILHAR, COPIAR_TEXTO, CopiarLink } from './copiar-link';
 
 describe('CopiarLink', () => {
-  async function renderizar(opcoes: { conseguiu?: boolean; endereco?: string } = {}) {
+  async function renderizar(
+    opcoes: { conseguiu?: boolean; endereco?: string; compartilhar?: (dados: ShareData) => Promise<void> } = {},
+  ) {
     const copiados: string[] = [];
     await TestBed.configureTestingModule({
       imports: [CopiarLink],
       providers: [
         provideRouter([{ path: '**', children: [] }]),
+        // O navegador dos testes não tem o menu de compartilhar, como o do computador.
+        { provide: COMPARTILHAR, useValue: opcoes.compartilhar ?? null },
         {
           provide: COPIAR_TEXTO,
           useValue: async (texto: string) => {
@@ -78,6 +82,42 @@ describe('CopiarLink', () => {
     await tocar();
     expect(aviso()).toContain('Não consegui copiar');
     expect(aviso()).toContain('Copie o endereço');
+  });
+
+  describe('no celular, com o menu de compartilhar', () => {
+    it('vira "Compartilhar" e abre o menu com o título e o endereço limpo da página', async () => {
+      const compartilhados: ShareData[] = [];
+      const { botao, copiados, tocar } = await renderizar({
+        endereco: '/local/consolacao?hoje=2026-02-07T12:00',
+        compartilhar: async (dados) => {
+          compartilhados.push(dados);
+        },
+      });
+      expect(botao().textContent).toContain('Compartilhar');
+      await tocar();
+      expect(compartilhados.length).toBe(1);
+      expect(compartilhados[0].url).toBe(new URL('/local/consolacao', document.location.origin).href);
+      expect(compartilhados[0].title).toBeDefined();
+      expect(copiados).toEqual([]);
+    });
+
+    it('não faz nada quando a pessoa fecha o menu sem escolher', async () => {
+      const { copiados, aviso, tocar } = await renderizar({
+        compartilhar: () => Promise.reject(new DOMException('fechou', 'AbortError')),
+      });
+      await tocar();
+      expect(copiados).toEqual([]);
+      expect(aviso()).toBe('');
+    });
+
+    it('copia o link quando o menu falha', async () => {
+      const { copiados, aviso, tocar } = await renderizar({
+        compartilhar: () => Promise.reject(new DOMException('bloqueado', 'NotAllowedError')),
+      });
+      await tocar();
+      expect(copiados.length).toBe(1);
+      expect(aviso()).toBe('Link copiado!');
+    });
   });
 });
 

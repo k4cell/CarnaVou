@@ -1,10 +1,8 @@
 import { CartaoDoLugar, blocosDaAba, cartoesDaAba, diaIso, diaSeguinte, horaIso, momentoDoBloco } from './agenda';
 import { BLOCOS } from './blocos';
+import { faixaDoLocal } from './cores';
 import { textoDoHorario } from './formato';
 import { LOCAIS } from './locais';
-
-/** As sete cores das faixas, do rosa ao azul. Com mais de sete lugares, elas recomeçam. */
-const SETE_CORES = ['rosa', 'amarelo', 'verde', 'laranja', 'roxo', 'vermelho', 'azul'];
 
 /** Os selos de cada lugar, no formato { id: selo }, para os testes ficarem fáceis de ler. */
 function selos(cartoes: CartaoDoLugar[]): Record<string, string> {
@@ -198,13 +196,13 @@ describe('agenda', () => {
     it('é sempre a mesma para o mesmo lugar, em qualquer aba', () => {
       const emAmanha = cartoesDaAba('amanha', SABADO_14H).find((c) => c.local.id === 'faria-lima');
       const emGeral = cartoesDaAba('geral', SABADO_14H).find((c) => c.local.id === 'faria-lima');
-      expect(emAmanha?.faixa).toBe('laranja');
+      expect(emAmanha?.faixa).toBe(faixaDoLocal('faria-lima'));
       expect(emGeral?.faixa).toBe(emAmanha?.faixa);
     });
 
-    it('vai do rosa ao azul, na ordem dos lugares', () => {
-      const faixas = cartoesDaAba('geral', null).map((cartao) => cartao.faixa);
-      expect(faixas).toEqual(faixas.map((_, i) => SETE_CORES[i % SETE_CORES.length]));
+    it('é a cor do lugar, a mesma de todas as telas', () => {
+      const cartoes = cartoesDaAba('geral', null);
+      expect(cartoes.map((cartao) => cartao.faixa)).toEqual(cartoes.map((cartao) => faixaDoLocal(cartao.local.id)));
     });
   });
 

@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { FAIXAS } from '../dados/consultas';
+import { FAIXAS } from '../dados/cores';
 import { Estilo } from '../dados/tipos';
 import { FiltrosDaLista } from '../lista-de-blocos/filtros-da-lista';
 import { EstiloNaVitrine } from './vitrine';
@@ -141,7 +141,8 @@ const FIGURAS: Record<Estilo | 'lgbt', Figura> = {
       }
     }
 
-    // O quadrado na cor cheia, com o desenho branco; no amarelo, no verde e no laranja, escuro.
+    // O quadrado na cor cheia, com o desenho branco; no amarelo, no verde, no laranja e no verde-mar,
+    // escuro.
     .figura {
       display: flex;
       align-items: center;
@@ -156,7 +157,8 @@ const FIGURAS: Record<Estilo | 'lgbt', Figura> = {
 
     [data-faixa='amarelo'] .figura,
     [data-faixa='verde'] .figura,
-    [data-faixa='laranja'] .figura {
+    [data-faixa='laranja'] .figura,
+    [data-faixa='verde-mar'] .figura {
       color: var(--texto);
     }
 
@@ -210,7 +212,7 @@ export class EstilosDoDia {
 
   readonly estilos = input.required<EstiloNaVitrine[]>();
 
-  /** As cores se revezam, do rosa ao azul, como as faixas dos cartões. */
+  /** As cores se revezam, do rosa ao verde-mar, como as faixas dos cartões. */
   protected faixa(posicao: number): string {
     return FAIXAS[posicao % FAIXAS.length];
   }

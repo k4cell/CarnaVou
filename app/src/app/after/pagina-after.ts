@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/c
 import { Router, RouterLink } from '@angular/router';
 
 import { BannerBloco } from '../banner/banner-bloco';
-import { FAIXAS } from '../dados/consultas';
+import { FAIXAS } from '../dados/cores';
 import { blocosDaNoite } from '../dados/lista-de-blocos';
 import { LUGARES_DO_AFTER } from '../dados/lugares-do-after';
 import { distanciaEmMetros, fraseDaDistancia } from '../localizacao/distancia';

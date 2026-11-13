@@ -6,7 +6,8 @@ import { BannerBloco } from '../banner/banner-bloco';
 import { DataDoDia } from '../banner/data-do-dia';
 import { CopiarLink } from '../copiar-link/copiar-link';
 import { Aba, blocosDaAba } from '../dados/agenda';
-import { acharLocal, faixaDoLocal, maisFamosos } from '../dados/consultas';
+import { acharLocal, maisFamosos } from '../dados/consultas';
+import { faixaDoBloco } from '../dados/cores-dos-cartoes';
 import { dataPorExtenso } from '../dados/formato';
 import { Bloco } from '../dados/tipos';
 import { FiltroDeDia } from '../filtro/filtro-de-dia';
@@ -38,8 +39,10 @@ export class PaginaLocal {
   private readonly relogio = inject(Relogio);
 
   protected readonly lugar = computed(() => acharLocal(this.local()));
-  /** A cor do lugar, a mesma da lista e dos banners dele. */
-  protected readonly faixa = computed(() => faixaDoLocal(this.local()));
+  /** A cor de um dia: a do cartão do primeiro bloco dele na aba Blocos. */
+  protected faixaDoDia(blocos: Bloco[]): string {
+    return faixaDoBloco(blocos[0]);
+  }
 
   /**
    * A aba escolhida (Hoje, Amanhã ou Geral), a mesma da tela inicial, da aba Blocos e do mapa,

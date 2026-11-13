@@ -1,6 +1,7 @@
 import { ApplicationConfig, provideBrowserGlobalErrorListeners, isDevMode } from '@angular/core';
 import {
   PreloadAllModules,
+  TitleStrategy,
   provideRouter,
   withComponentInputBinding,
   withInMemoryScrolling,
@@ -10,6 +11,8 @@ import {
 import { routes } from './app.routes';
 import { provideClientHydration } from '@angular/platform-browser';
 import { provideServiceWorker } from '@angular/service-worker';
+
+import { TituloEDescricao } from './divulgacao/titulo-e-descricao';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -24,6 +27,8 @@ export const appConfig: ApplicationConfig = {
       // O MapLibre fica de fora: ele só é baixado quando a aba Mapa abre.
       withPreloading(PreloadAllModules),
     ),
+    // O título, a descrição e a prévia do link de cada página.
+    { provide: TitleStrategy, useClass: TituloEDescricao },
     provideClientHydration(),
     provideServiceWorker('ngsw-worker.js', {
       enabled: !isDevMode(),

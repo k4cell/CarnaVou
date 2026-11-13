@@ -1,0 +1,30 @@
+{
+  "_sobre": "Blocos que as notícias chamam de megabloco ou põem num guia dos megablocos. Vale o nome da lista oficial, e o bloco entra em todos os dias dele, mesmo sem artista divulgado. Na ordem por fama, conta como se tivesse pelo menos 1 milhão de seguidores (FAMA_DO_MEGABLOCO).",
+  "blocos": [
+    { "nome": "Bloco Casa Comigo", "fonte": "SBT News, guia dos megablocos 2026 (07/02/2026)" },
+    { "nome": "Bicho Maluco Beleza, com Alceu Valença", "fonte": "SBT News, guia dos megablocos 2026" },
+    { "nome": "Bloco do Abrava", "fonte": "SBT News, guia dos megablocos 2026" },
+    { "nome": "Bloco Sargento Pimenta", "fonte": "SBT News, guia dos megablocos 2026" },
+    { "nome": "Monobloco", "fonte": "SBT News, guia dos megablocos 2026" },
+    { "nome": "Acadêmicos do Baixo Augusta", "fonte": "SBT News, guia dos megablocos 2026" },
+    { "nome": "Bloco Minhoqueens", "fonte": "SBT News, guia dos megablocos 2026 (MinhoQueens)" },
+    { "nome": "Bloco Vou de Táxi", "fonte": "SBT News, guia dos megablocos 2026" },
+    { "nome": "Bloco Ritaleena", "fonte": "SBT News, guia dos megablocos 2026 (o guia diz 08/02, na Vila Mariana)" },
+    { "nome": "Cordão Carnavalesco Confraria do Pasmado", "fonte": "SBT News, guia dos megablocos 2026 (Confraria do Pasmado)" },
+    { "nome": "Tarado Ni Você", "fonte": "SBT News, guia dos megablocos 2026" },
+    { "nome": "Agrada Gregos", "fonte": "SBT News, guia dos megablocos 2026" },
+    { "nome": "Galo da Madrugada", "fonte": "SBT News, guia dos megablocos 2026" },
+    { "nome": "BaianaSystem", "fonte": "SBT News, guia dos megablocos 2026 (Navio Pirata, do BaianaSystem)" },
+    { "nome": "Carnafacul - Vem com o Gigante", "fonte": "SBT News, guia dos megablocos 2026 (Vem com o Gigante)" },
+    { "nome": "Bloco Siga Bem Caminhoneira", "fonte": "SBT News, guia dos megablocos 2026 (o guia diz 21/02, na República)" },
+    { "nome": "Bloco da Pocah", "fonte": "SBT News, guia dos megablocos 2026" },
+    { "nome": "Bloco da Pabllo", "fonte": "SBT News, guia dos megablocos 2026 (Pabllo Vittar)" },
+    { "nome": "Pipoca da Rainha", "fonte": "SBT News, guia dos megablocos 2026" },
+    { "nome": "Bloco Emo", "fonte": "Lista da CET de 14/02/2026, na Jovem Pan (Megabloco Emo, na Av. Paulo VI)" }
+  ],
+  "_links": {
+    "SBT News": "https://sbtnews.sbt.com.br/noticia/cultura/guia-dos-megablocos-2026-confira-a-agenda-dos-gigantes-em-sp-rj-e-bh-de-07-a-28-de-fevereiro",
+    "Jovem Pan": "https://jovempan.com.br/?p=4815"
+  },
+  "_de_fora": "Do mesmo guia, não estão na lista oficial com esse nome: Beleza Rara (Banda Eva), Bangalafumenga, Minhocão (Drag Queen), João Capota na Alves, Bloco da Anitta, Largadinho (Claudia Leitte), Bloco da Prettos e Bem Sertanejo (Michel Teló). O Bloco do Beco está na lista em M'Boi Mirim, e o guia diz Ipiranga: fica de fora até outra fonte confirmar."
+}

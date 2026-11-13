@@ -1,0 +1,19 @@
+{
+  "_sobre": "O nome que o povo usa, no lugar do nome cru da lista oficial, só quando uma fonte escreve assim. 'oficial' é o nome da lista oficial e 'nome' é o que aparece no app. O id do bloco continua vindo do nome oficial, para os links não mudarem.",
+  "blocos": [
+    { "oficial": "BaianaSystem", "nome": "Navio Pirata", "fonte": "SBT News, guia dos megablocos 2026: Navio Pirata (BaianaSystem)" },
+    { "oficial": "Carnafacul - Vem com o Gigante", "nome": "Vem com o Gigante", "fonte": "SBT News, guia dos megablocos 2026" },
+    { "oficial": "Carnafacul - Quem Pede, Pede", "nome": "Quem Pede, Pede", "fonte": "Notícias de 2026 (atracoes-das-noticias.json)" },
+    { "oficial": "Bicho Maluco Beleza, com Alceu Valença", "nome": "Bicho Maluco Beleza", "fonte": "SBT News, guia dos megablocos 2026" },
+    { "oficial": "Bloco Minhoqueens", "nome": "MinhoQueens", "fonte": "SBT News, guia dos megablocos 2026" },
+    { "oficial": "Cordão Carnavalesco Confraria do Pasmado", "nome": "Confraria do Pasmado", "fonte": "SBT News, guia dos megablocos 2026" },
+    { "oficial": "Bloco Emo", "nome": "Megabloco Emo", "fonte": "Lista da CET de 14/02/2026, na Jovem Pan" },
+    { "oficial": "Quintal dos Pretos", "nome": "Quintal dos Prettos", "fonte": "Notícias de 2026 (atracoes-das-noticias.json)" },
+    { "oficial": "Bloco Afro Ilú Obá De Min", "nome": "Ilú Obá de Min", "fonte": "Notícias de 2026 (atracoes-das-noticias.json)" },
+    { "oficial": "Samby Junior SP", "nome": "Samby & Júnior", "fonte": "Notícias de 2026 (atracoes-das-noticias.json)" }
+  ],
+  "_links": {
+    "SBT News": "https://sbtnews.sbt.com.br/noticia/cultura/guia-dos-megablocos-2026-confira-a-agenda-dos-gigantes-em-sp-rj-e-bh-de-07-a-28-de-fevereiro",
+    "Jovem Pan": "https://jovempan.com.br/?p=4815"
+  }
+}

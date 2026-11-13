@@ -15,9 +15,40 @@
   }
 }
 
+.linha-do-nome {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 10px;
+  align-items: baseline;
+  margin-top: 16px;
+
+  .titulo {
+    margin: 0;
+  }
+}
+
 .horario {
   font-size: 1.0625rem;
   font-weight: 700;
+
+  // Em pílula, com as mesmas cores claras do horário nos cartões das listas.
+  &[data-selo] {
+    align-self: flex-start;
+    padding: 2px 10px;
+    border-radius: 999px;
+  }
+
+  &[data-selo='agora'] {
+    background: color-mix(in srgb, var(--verde) 22%, var(--cartao));
+  }
+
+  &[data-selo='em-breve'] {
+    background: color-mix(in srgb, var(--amarelo) 28%, var(--cartao));
+  }
+
+  &[data-selo='acabou'] {
+    background: var(--borda);
+  }
 }
 
 .itinerario,

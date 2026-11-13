@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { momentoDoBloco } from '../dados/agenda';
 import { BLOCOS } from '../dados/blocos';
 import { famaDoBloco } from '../dados/consultas';
+import { faixaDoLocal } from '../dados/cores';
 import { NOMES_DAS_ZONAS, partesDaData } from '../dados/formato';
 import { LOCAIS } from '../dados/locais';
 import { Favoritos } from '../favoritos/favoritos';
@@ -16,9 +17,6 @@ import { Destaques } from './destaques';
 /** Os lugares juntos por zona, na ordem em que cada zona aparece pela primeira vez. */
 const ORDEM_DAS_ZONAS = [...new Set(LOCAIS.map((local) => local.zona))];
 const LUGARES_POR_ZONA = ORDEM_DAS_ZONAS.flatMap((zona) => LOCAIS.filter((local) => local.zona === zona));
-
-/** As sete cores das faixas, do rosa ao azul. Com mais de sete lugares, elas recomeçam. */
-const SETE_CORES = ['rosa', 'amarelo', 'verde', 'laranja', 'roxo', 'vermelho', 'azul'];
 
 // Sábado de carnaval de 2026, duas da tarde.
 const SABADO_14H = new Date(2026, 1, 14, 14, 0);
@@ -104,10 +102,10 @@ describe('Destaques', () => {
       expect(pauloVi?.querySelector('.nomes')?.textContent).toMatch(/^Blocos: /);
     });
 
-    it('dá a cada lugar a sua faixa de cor, do rosa ao azul, na ordem da lista dos lugares', async () => {
+    it('dá a cada lugar a sua faixa de cor, a mesma de todas as telas', async () => {
       const { cartoes } = await renderizar();
       const faixas = cartoes().map((c) => c.getAttribute('data-faixa'));
-      expect(faixas).toEqual(LUGARES_POR_ZONA.map((local) => SETE_CORES[LOCAIS.indexOf(local) % SETE_CORES.length]));
+      expect(faixas).toEqual(LUGARES_POR_ZONA.map((local) => faixaDoLocal(local.id)));
     });
 
   });
@@ -153,7 +151,7 @@ describe('Destaques', () => {
       const faixaEm = () => tela.querySelector('a[href="/local/faria-lima"]')?.getAttribute('data-faixa');
       const emAmanha = faixaEm();
       await tocar('Geral');
-      expect(emAmanha).toBe('laranja');
+      expect(emAmanha).toBe(faixaDoLocal('faria-lima'));
       expect(faixaEm()).toBe(emAmanha);
     });
 
@@ -192,7 +190,7 @@ describe('Destaques', () => {
       const rolando = deHoje.filter((bloco) => momentoDoBloco(bloco, SABADO_14H) === 'rolando');
       const maisFamoso = rolando.reduce((melhor, bloco) => (famaDoBloco(bloco) > famaDoBloco(melhor) ? bloco : melhor));
       const destaque = tela.querySelector('app-destaque-do-dia')!;
-      expect(destaque.querySelector('.rotulo')?.textContent).toBe('Destaque agora');
+      expect(destaque.querySelector('.rotulo')?.textContent).toBe('Destaque do momento');
       expect(destaque.querySelector('.quando .rolando')?.textContent).toBe('Rolando agora');
       expect(destaque.querySelector('.nome-do-destaque')?.textContent).toBe(maisFamoso.nome);
       expect(destaque.querySelector('a')?.getAttribute('href')).toBe(`/local/${maisFamoso.localId}/${maisFamoso.id}`);
@@ -225,14 +223,14 @@ describe('Destaques', () => {
       expect(nomes).not.toContain(destaque);
       const famas = nomes.map((nome) => famaDoBloco(BLOCOS.find((bloco) => bloco.nome === nome)!));
       expect(famas).toEqual([...famas].sort((a, b) => b - a));
-      // O quadradinho destaca o dia (a semana e o número), e a hora vai para a linha de baixo.
+      // O quadradinho destaca o dia (a semana e o número); embaixo do nome, só os artistas.
       const secao = Array.from(tela.querySelectorAll('.secao')).find((s) => s.textContent === 'Os mais famosos do carnaval')!;
       const primeiro = secao.nextElementSibling!.querySelector('.item')!;
       const bloco = BLOCOS.find((b) => b.nome === nomes[0])!;
       const { semana, dia } = partesDaData(bloco.data);
       expect(primeiro.querySelector('.quadro .pequeno')?.textContent).toBe(semana);
       expect(primeiro.querySelector('.quadro .grande')?.textContent).toBe(dia);
-      expect(primeiro.querySelector('.sobre')?.textContent?.trim()).toMatch(/^\d+h\d* · /);
+      expect(primeiro.querySelector('.sobre')?.textContent?.trim()).not.toMatch(/\d+h|min/);
       expect(fileira(tela, 'Rolando e começando')).toEqual([]);
     });
 

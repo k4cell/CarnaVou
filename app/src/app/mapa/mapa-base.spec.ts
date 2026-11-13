@@ -104,6 +104,14 @@ describe('MapaBase', () => {
     expect(falso.worker()).toMatch(/\/mapa\/maplibre-gl-worker\.mjs$/);
   });
 
+  it('avisa que está carregando até o mapa aparecer', async () => {
+    const { falso, fixture, tela } = await renderizar([SE]);
+    expect(tela.querySelector('.mapa-carregando')?.textContent).toContain('Carregando o mapa');
+    falso.mapas[0].carregar();
+    await esperarOMapa(fixture);
+    expect(tela.querySelector('.mapa-carregando')).toBeNull();
+  });
+
   it('põe uma bolinha para cada ponto, na posição certa, depois de o mapa carregar', async () => {
     const { falso, fixture } = await renderizar([SE, SANTO_AMARO]);
     expect(falso.mapas[0].pontos()).toEqual([]);
@@ -647,6 +655,7 @@ describe('MapaBase', () => {
       const { tela } = await renderizar([SE], () => Promise.reject(new Error('sem internet')));
       const mensagem = tela.querySelector('.mapa-erro');
       expect(mensagem?.textContent).toContain('Não consegui abrir o mapa');
+      expect(tela.querySelector('.mapa-carregando')).toBeNull();
       expect(mensagem?.querySelector('a')?.getAttribute('href')).toBe('/');
       aviso.mockRestore();
     });

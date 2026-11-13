@@ -5,6 +5,7 @@ import {
   ElementRef,
   ViewEncapsulation,
   afterNextRender,
+  computed,
   effect,
   inject,
   input,
@@ -210,6 +211,9 @@ interface Pino {
   imports: [RouterLink],
   template: `
     <div #mapa class="mapa" role="region" aria-label="Mapa dos blocos"></div>
+    @if (carregando()) {
+      <p class="mapa-carregando" role="status">Carregando o mapa…</p>
+    }
     @if (erro() === 'sem-internet') {
       <p class="mapa-erro" role="alert">
         Sem internet, e o mapa ainda não está guardado neste celular. Ele fica guardado depois que você
@@ -245,6 +249,8 @@ export class MapaBase {
   private readonly pronto = signal(false);
   /** O estilo do mapa só aceita camadas novas (o círculo de precisão) depois de carregar. */
   private readonly estiloPronto = signal(false);
+  /** Até o mapa aparecer pela primeira vez (na primeira visita, ele baixa perto de 1 MB). */
+  protected readonly carregando = computed(() => !this.estiloPronto() && this.erro() === 'nenhum');
 
   private biblioteca?: BibliotecaDeMapa;
   private bolinhaDaPessoa?: Marker;

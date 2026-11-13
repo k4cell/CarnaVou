@@ -14,6 +14,9 @@
   --amarelo: #ffc200;
   --laranja: #fb6f18;
   --verde: #00e676;
+  // Verde-mar (um azul esverdeado): só nas faixas dos cartões, sempre com texto escuro. Não entra na
+  // faixa das sete cores do cabeçalho.
+  --verde-mar: #00b3a4;
   // Rosa: nunca em texto pequeno, o contraste não chega.
   --rosa: #e21d89;
   // Azul-claro: só a bolinha de quem está vendo o mapa (e o círculo de precisão dela), a cor de sempre
@@ -252,10 +255,15 @@ a:focus-visible {
   }
 }
 
+// A data abre o primeiro bloco do cartão, como o toque no nome. A coluna inteira responde ao toque,
+// com a data no meio da altura dos blocos.
 .data-do-grupo {
+  display: flex;
+  align-items: center;
   grid-column: 1;
-  align-self: center;
   padding-left: 20px;
+  color: inherit;
+  text-decoration: none;
 }
 
 .blocos-do-grupo {
@@ -361,10 +369,10 @@ a:focus-visible {
   margin-top: 8px;
 }
 
-// Uma cor de faixa para cada lugar, do rosa ao azul (a ordem é a de FAIXAS, em consultas.ts).
+// Uma cor de faixa para cada lugar, do rosa ao verde-mar (a ordem é a de FAIXAS, em consultas.ts).
 // Quem tem `data-faixa` passa a cor para tudo o que está dentro dele (`--cor-da-faixa`): o cartão
 // da lista, os banners da página do lugar e as atrações da página do bloco. A cor acompanha o lugar.
-@each $cor in (rosa, amarelo, verde, laranja, roxo, vermelho, azul) {
+@each $cor in (rosa, amarelo, verde, laranja, roxo, vermelho, azul, verde-mar) {
   [data-faixa='#{$cor}'] {
     --cor-da-faixa: var(--#{$cor});
   }

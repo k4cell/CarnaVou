@@ -10,18 +10,12 @@ export function acharLocal(id: string): Local | undefined {
   return LOCAIS.find((local) => local.id === id);
 }
 
-// As cores das faixas, do rosa ao azul: são as variáveis de cor de `styles.scss`, na mesma ordem
-// do `@each` que pinta `.cartao[data-faixa]`.
-export const FAIXAS = ['rosa', 'amarelo', 'verde', 'laranja', 'roxo', 'vermelho', 'azul'];
-
 /**
- * A cor da faixa de um lugar (rosa, amarelo…). É sempre a mesma para o mesmo lugar, onde quer que
- * ele apareça: no cartão da lista e nos banners da página dele. As cores se revezam na ordem dos
- * lugares; um lugar que não existe fica com a primeira.
+ * O cartão do bloco na aba Blocos: os blocos do mesmo dia que saem do mesmo ponto (a menos de 300 m,
+ * veja `gerar_dados.py`) dividem o cartão. O bloco sem ponto conhecido fica sozinho.
  */
-export function faixaDoLocal(localId: string): string {
-  const posicao = LOCAIS.findIndex((local) => local.id === localId);
-  return FAIXAS[Math.max(posicao, 0) % FAIXAS.length];
+export function cartaoDoBloco(bloco: Bloco): string {
+  return bloco.ponto === undefined ? bloco.id : `${bloco.data}|${bloco.localId}|${bloco.ponto}`;
 }
 
 /** Os blocos de um lugar, em ordem de data e hora. */
@@ -36,9 +30,20 @@ export function blocosAtivosDoLocal(localId: string): Bloco[] {
   return blocosDoLocal(localId).filter((bloco) => !bloco.cancelado);
 }
 
-/** A fama do bloco: a soma dos seguidores dos artistas dele. Bloco sem artista conhecido fica com 0. */
+/**
+ * O megabloco conta, na ordem por fama, como se tivesse pelo menos estes seguidores: assim um gigante
+ * sem artista divulgado (como o Galo da Madrugada) não fica lá embaixo. É o mesmo número de
+ * FAMA_DO_MEGABLOCO, em scripts/dados/gerar_dados.py, que ordena os lugares.
+ */
+export const FAMA_DO_MEGABLOCO = 1_000_000;
+
+/**
+ * A fama do bloco: a soma dos seguidores dos artistas dele, e pelo menos FAMA_DO_MEGABLOCO num
+ * megabloco. Bloco sem artista conhecido fica com 0.
+ */
 export function famaDoBloco(bloco: Bloco): number {
-  return bloco.atracoes.reduce((soma, atracao) => soma + (atracao.seguidores ?? 0), 0);
+  const soma = bloco.atracoes.reduce((total, atracao) => total + (atracao.seguidores ?? 0), 0);
+  return bloco.megabloco ? Math.max(soma, FAMA_DO_MEGABLOCO) : soma;
 }
 
 /** Os nomes dos artistas dos blocos, sem repetir, do mais famoso para o menos. */
@@ -54,7 +59,7 @@ export function artistasPorFama(blocos: Bloco[]): string[] {
   return [...seguidores].sort(([, a], [, b]) => b - a).map(([nome]) => nome);
 }
 
-/** Os mais famosos entre os blocos (só os que têm artista conhecido e sem os cancelados), do mais para o menos. */
+/** Os mais famosos entre os blocos (só os que têm artista conhecido ou são megablocos, sem os cancelados), do mais para o menos. */
 export function maisFamosos(blocos: Bloco[], quantos: number): Bloco[] {
   return blocos
     .filter((bloco) => famaDoBloco(bloco) > 0 && !bloco.cancelado)

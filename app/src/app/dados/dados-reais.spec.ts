@@ -1,7 +1,7 @@
 import arquivoDeCorrecoes from '../../../public/correcoes.json';
 import { estaNaGrandeSP } from '../mapa/limites';
 import { BLOCOS } from './blocos';
-import { blocosDoLocal, famaDoBloco } from './consultas';
+import { FAMA_DO_MEGABLOCO, blocosDoLocal, famaDoBloco } from './consultas';
 import { problemasDoArquivo } from './correcoes';
 import { itinerarioDoBloco } from './itinerario';
 import { LOCAIS } from './locais';
@@ -86,6 +86,11 @@ describe('os dados que vão para o ar', () => {
 
     it('têm artista divulgado em pelo menos alguns', () => {
       expect(BLOCOS.filter((bloco) => bloco.atracoes.length > 0).length).toBeGreaterThan(10);
+    });
+
+    it('não deixam um megabloco lá embaixo na ordem por fama', () => {
+      const megablocos = BLOCOS.filter((bloco) => bloco.megabloco);
+      expect(megablocos.filter((bloco) => famaDoBloco(bloco) < FAMA_DO_MEGABLOCO).map((bloco) => bloco.id)).toEqual([]);
     });
 
     it('escrevem o perfil do Instagram dos artistas só com letras, números, ponto e sublinhado', () => {

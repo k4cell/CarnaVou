@@ -19,7 +19,8 @@
   color: #fff;
 
   // A faixa das sete cores, em sete blocos do mesmo tamanho, na ordem das faixas dos cartões (do rosa
-  // ao azul). Cada cor começa onde a outra termina: são blocos, sem degradê.
+  // ao azul; o verde-mar fica só nos cartões). Cada cor começa onde a outra termina: são blocos, sem
+  // degradê.
   &::after {
     content: '';
     position: absolute;

@@ -63,7 +63,7 @@ export class Destaques {
     return {
       destaque: noDestaque,
       rotulo:
-        aba === 'hoje' && noDestaque?.quando.tipo === 'agora' ? 'Destaque agora' : `Destaque ${DIA_DA_ABA[aba]}`,
+        aba === 'hoje' && noDestaque?.quando.tipo === 'agora' ? 'Destaque do momento' : `Destaque ${DIA_DA_ABA[aba]}`,
       famosos: famososDaVitrine(blocos, destaque).map((bloco) => naVitrine(bloco, agora)),
       tituloDosFamosos: `Os mais famosos ${DIA_DA_ABA[aba]}`,
       // Só em Hoje: em Amanhã e na Geral, "agora" não quer dizer nada.

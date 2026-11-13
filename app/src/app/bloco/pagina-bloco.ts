@@ -3,9 +3,11 @@ import { RouterLink } from '@angular/router';
 
 import { CopiarLink } from '../copiar-link/copiar-link';
 import { DadosAtualizados } from '../correcoes/dados-atualizados';
-import { diaIso } from '../dados/agenda';
-import { acharBloco, acharLocal, faixaDoLocal } from '../dados/consultas';
-import { NOMES_DOS_ESTILOS, dataPorExtenso, formatarHora, horariosDoBloco } from '../dados/formato';
+import { TipoDoSelo, diaIso, diaSeguinte, momentoDoBloco } from '../dados/agenda';
+import { acharBloco, acharLocal } from '../dados/consultas';
+import { faixaDoBloco } from '../dados/cores-dos-cartoes';
+import { faixaDoLocal } from '../dados/cores';
+import { NOMES_DOS_ESTILOS, dataPorExtenso, formatarHora, horariosDoBloco, textoDoHorario } from '../dados/formato';
 import { itinerarioDoBloco } from '../dados/itinerario';
 import { Atracao } from '../dados/tipos';
 import { BotaoFavorito } from '../favoritos/botao-favorito';
@@ -40,7 +42,7 @@ function atracoesPorHorario(atracoes: Atracao[]): { hora: string; nomes: string 
   templateUrl: './pagina-bloco.html',
   styleUrl: './pagina-bloco.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  // A página inteira leva a cor do lugar, e as atrações herdam essa cor na faixa.
+  // A página inteira leva a cor do bloco (a do cartão dele na aba Blocos), e as atrações herdam essa cor na faixa.
   host: { '[attr.data-faixa]': 'faixa()' },
 })
 export class PaginaBloco {
@@ -48,7 +50,10 @@ export class PaginaBloco {
   readonly local = input.required<string>();
   readonly bloco = input.required<string>();
 
-  protected readonly faixa = computed(() => faixaDoLocal(this.local()));
+  protected readonly faixa = computed(() => {
+    const bloco = this.achado();
+    return bloco ? faixaDoBloco(bloco) : faixaDoLocal(this.local());
+  });
 
   protected readonly lugar = computed(() => acharLocal(this.local()));
   protected readonly achado = computed(() => acharBloco(this.local(), this.bloco()));
@@ -65,14 +70,54 @@ export class PaginaBloco {
     return !!agora && !!bloco && bloco.data < diaIso(agora);
   });
 
+  /**
+   * Em que pé o bloco está, como nos cartões das listas: rolando (o aviso vermelho ao lado do nome e o
+   * horário em verde), ainda vai começar hoje (amarelo) ou já acabou hoje (cinza). Num outro dia, num
+   * bloco cancelado ou antes de saber a hora, fica sem.
+   */
+  protected readonly situacao = computed<TipoDoSelo | null>(() => {
+    const bloco = this.achado();
+    const agora = this.relogio.agora();
+    if (!bloco || !agora || bloco.cancelado || bloco.data !== diaIso(agora)) {
+      return null;
+    }
+    const momento = momentoDoBloco(bloco, agora);
+    return momento === 'rolando' ? 'agora' : momento === 'antes' ? 'em-breve' : 'acabou';
+  });
+
+  /** "Hoje, sábado, 14 de fevereiro", "Amanhã, domingo, 15 de fevereiro" ou só a data. */
+  protected readonly dia = computed(() => {
+    const bloco = this.achado();
+    if (!bloco) {
+      return '';
+    }
+    const extenso = dataPorExtenso(bloco.data);
+    const agora = this.relogio.agora();
+    const quando = !agora
+      ? ''
+      : bloco.data === diaIso(agora)
+        ? 'Hoje'
+        : bloco.data === diaIso(diaSeguinte(agora))
+          ? 'Amanhã'
+          : '';
+    return quando ? `${quando}, ${extenso.charAt(0).toLowerCase()}${extenso.slice(1)}` : extenso;
+  });
+
+  /** O horário completo e, depois que o bloco acabou, "Começou às 13h · acabou às 18h". */
+  protected readonly horario = computed(() => {
+    const bloco = this.achado();
+    if (!bloco) {
+      return '';
+    }
+    return this.situacao() === 'acabou' ? textoDoHorario(bloco, 'acabou') : horariosDoBloco(bloco);
+  });
+
   protected readonly resumo = computed(() => {
     const bloco = this.achado();
     if (!bloco) {
       return undefined;
     }
     return {
-      dia: dataPorExtenso(bloco.data),
-      horario: horariosDoBloco(bloco),
       itinerario: itinerarioDoBloco(bloco.id),
       estilo: bloco.estilo ? NOMES_DOS_ESTILOS[bloco.estilo] : undefined,
       atracoes: atracoesPorHorario(bloco.atracoes),

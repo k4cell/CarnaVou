@@ -1,6 +1,8 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 
+import { BLOCOS } from '../dados/blocos';
+import { faixaDoBloco } from '../dados/cores-dos-cartoes';
 import { Favoritos } from '../favoritos/favoritos';
 import { Relogio } from '../relogio/relogio';
 import { PaginaBlocos } from './pagina-blocos';
@@ -50,13 +52,17 @@ describe('PaginaBlocos', () => {
     expect(cartao.firstElementChild?.classList.contains('lugar-do-grupo')).toBe(true);
     expect(cartao.querySelector('.lugar-do-grupo .nome-do-lugar')?.textContent?.trim()).toBe('Parque Ibirapuera');
     expect(cartao.querySelector('.lugar-do-grupo .zona')?.textContent).toBe('Zona Sul');
-    expect(cartao.getAttribute('data-faixa')).toBe('rosa');
+    expect(cartao.getAttribute('data-faixa')).toBe(faixaDoBloco(BLOCOS.find((bloco) => bloco.nome === 'Carnafacul - Quem Pede, Pede')!));
     // O lugar fica só no alto, e não repete dentro dos blocos.
     expect(cartao.querySelectorAll('app-banner-bloco .lugar').length).toBe(0);
     // A data aparece uma vez só, no cartão, e não em cada bloco.
     expect(cartao.querySelectorAll('time').length).toBe(1);
     expect(cartao.querySelectorAll('app-banner-bloco time').length).toBe(0);
     expect(cartao.querySelector('.data-do-grupo time')?.getAttribute('datetime')).toBe('2026-02-07');
+    // Tocar na data abre o primeiro bloco do cartão, como tocar no nome dele.
+    const primeiroBloco = cartao.querySelector('app-banner-bloco a.cartao')?.getAttribute('href');
+    expect(primeiroBloco).toMatch(/^\/local\/ibirapuera\//);
+    expect(cartao.querySelector('a.data-do-grupo')?.getAttribute('href')).toBe(primeiroBloco);
   });
 
   it('deixa sozinho o bloco que não tem outro no mesmo lugar e dia, também com o lugar no alto', async () => {

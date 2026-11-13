@@ -1,4 +1,5 @@
-import { artistasDoLugar, artistasPorFama, blocosAtivosDoLocal, blocosDoLocal, faixaDoLocal, famaDoBloco } from './consultas';
+import { artistasDoLugar, artistasPorFama, blocosAtivosDoLocal, blocosDoLocal, famaDoBloco } from './consultas';
+import { faixaDoLocal } from './cores';
 import { formatarHora } from './formato';
 import { LOCAIS } from './locais';
 import { Bloco, Local, MomentoDoBloco } from './tipos';

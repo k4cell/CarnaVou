@@ -13,11 +13,21 @@ Da pasta do ano (scripts/dados/2026, por exemplo) vêm:
   da região; valem em todos os dias do bloco (mesmo nome e mesma subprefeitura).
 - lgbt-das-noticias.json (se tiver): blocos que as notícias chamam de LGBT+ ou LGBTQIA+; valem pelo
   nome e pelo dia.
+- megablocos-das-noticias.json (se tiver): blocos que as notícias chamam de megabloco; valem pelo
+  nome da lista oficial, em todos os dias do bloco.
+- nomes-das-noticias.json (se tiver): o nome que o povo usa, no lugar do nome cru da lista oficial,
+  só quando uma fonte escreve assim. O id do bloco continua vindo do nome oficial.
 E de scripts/dados vem seguidores.json: os seguidores no Instagram de cada artista, para ordenar
 por fama. Ele vale para todos os anos.
 
 Entram os blocos que têm atração divulgada, que desfilam num circuito de megabloco (os trajetos
-que a CET fecha) ou que as notícias chamam de destaque da região. Os outros ficam de fora.
+que a CET fecha), que as notícias chamam de megabloco ou de destaque da região. Os outros ficam de
+fora. O megabloco sem artista famoso conta como se tivesse FAMA_DO_MEGABLOCO seguidores, para não
+ficar lá embaixo na ordem.
+
+No fim, o script avisa o que parece errado e o que sumiu desde o ano anterior: os circuitos e os
+blocos grandes do histórico (privado/historico-dos-megablocos.json, se tiver) e os megablocos da
+pasta do ano anterior.
 """
 
 import json
@@ -89,8 +99,12 @@ def lugar_do(bloco):
         return ponto[:3]
     sub = bloco["subprefeitura"]
     return slug(sub), sub, ZONAS[sub]
-# Nomes que as notícias escrevem diferente da lista oficial (mesmo bloco, mesmo dia).
-OUTROS_NOMES = {"Quintal dos Prettos": "Quintal dos Pretos"}
+# Nomes que as notícias escrevem diferente da lista oficial (mesmo bloco, mesmo dia), só para achar
+# os artistas. O nome que aparece no app vem de nomes-das-noticias.json.
+OUTROS_NOMES = {"Quintal dos Prettos": "Quintal dos Pretos", "Navio Pirata": "BaianaSystem"}
+# O megabloco conta, na ordem por fama, como se tivesse pelo menos estes seguidores. É o mesmo número
+# de FAMA_DO_MEGABLOCO, em app/src/app/dados/consultas.ts.
+FAMA_DO_MEGABLOCO = 1_000_000
 
 
 def sem_acento(texto):
@@ -161,14 +175,18 @@ def ler(caminho, sem_o_arquivo=None):
 
 pasta_do_ano, pasta = sys.argv[1], sys.argv[2]
 design = os.path.dirname(os.path.abspath(__file__))
+projeto = os.path.dirname(os.path.dirname(design))
 sobre = ler(f"{pasta_do_ano}/sobre.json")
 todos_os_oficiais = ler(f"{pasta_do_ano}/blocos-oficiais.json")
 tracados = ler(f"{pasta_do_ano}/tracados.json")
 antigos = ler(f"{pasta_do_ano}/atracoes-das-noticias.json")
 for antigo in antigos:
+    antigo["nome_nas_noticias"] = antigo["nome"]
     antigo["nome"] = OUTROS_NOMES.get(antigo["nome"], antigo["nome"])
 destaques = {(d["nome"], d["subprefeitura"]) for d in ler(f"{pasta_do_ano}/destaques-das-noticias.json", {"blocos": []})["blocos"]}
 lgbt = {(chave_do_nome(d["nome"]), d["data"]) for d in ler(f"{pasta_do_ano}/lgbt-das-noticias.json", {"blocos": []})["blocos"]}
+megablocos = {d["nome"] for d in ler(f"{pasta_do_ano}/megablocos-das-noticias.json", {"blocos": []})["blocos"]}
+nomes_do_povo = {d["oficial"]: d["nome"] for d in ler(f"{pasta_do_ano}/nomes-das-noticias.json", {"blocos": []})["blocos"]}
 artistas = {nome: dados for nome, dados in ler(f"{design}/seguidores.json").items() if not nome.startswith("_")}
 seguidores = {nome: dados["seguidores"] for nome, dados in artistas.items()}
 # O perfil de cada artista no Instagram (sem o @), para a página do bloco levar até ele.
@@ -203,8 +221,13 @@ def atracoes_do(bloco):
     return antigo["atracoes"] if antigo else []
 
 
+def e_megabloco(bloco):
+    return bloco["nome"] in megablocos
+
+
 def fama(bloco):
-    return sum(seguidores.get(a["nome"], 0) for a in atracoes_do(bloco))
+    soma = sum(seguidores.get(a["nome"], 0) for a in atracoes_do(bloco))
+    return max(soma, FAMA_DO_MEGABLOCO) if e_megabloco(bloco) else soma
 
 
 def destaque(bloco):
@@ -216,13 +239,17 @@ def e_lgbt(bloco):
 
 
 def entra(bloco):
-    return bool(atracoes_do(bloco)) or grande_ponto_do(bloco) is not None or destaque(bloco)
+    return bool(atracoes_do(bloco)) or grande_ponto_do(bloco) is not None or destaque(bloco) or e_megabloco(bloco)
 
 
 oficiais = [b for b in todos_os_oficiais if entra(b)]
 faltou = destaques - {(b["nome"], b["subprefeitura"]) for b in todos_os_oficiais}
 if faltou:
     sys.exit(f"destaques-das-noticias.json tem blocos que não estão na lista oficial: {sorted(faltou)}")
+nomes_oficiais = {b["nome"] for b in todos_os_oficiais}
+for arquivo, lista in (("megablocos-das-noticias.json", megablocos), ("nomes-das-noticias.json", nomes_do_povo)):
+    if set(lista) - nomes_oficiais:
+        sys.exit(f"{arquivo} tem nomes que não estão na lista oficial: {sorted(set(lista) - nomes_oficiais)}")
 
 # ------------------------------------------------------------------ os lugares
 contagem, fama_do_lugar, dados_do_lugar = {}, {}, {}
@@ -336,7 +363,7 @@ for bloco in ordem:
         identificador = f"{base}-{dia}-{mes}-{n}"
         n += 1
     usados.add(identificador)
-    nome = nome_do_bloco(bloco["nome"])
+    nome = nomes_do_povo.get(bloco["nome"]) or nome_do_bloco(bloco["nome"])
     antigo = antigo_do(bloco)
     partes = [
         f"id: {ts(identificador)}",
@@ -353,6 +380,8 @@ for bloco in ordem:
         partes.append(f"estilo: {ts(antigo['estilo'])}")
     if e_lgbt(bloco):
         partes.append("lgbt: true")
+    if e_megabloco(bloco):
+        partes.append("megabloco: true")
     linhas.append("  { " + ", ".join(re.sub(r"\s*\n\s*", " ", p) for p in partes) + " },")
     if bloco["itinerario"] not in indice_do_itinerario:
         indice_do_itinerario[bloco["itinerario"]] = len(itinerarios)
@@ -415,7 +444,8 @@ linhas += ["};", ""]
 open(f"{pasta}/pontos-dos-blocos.ts", "w", encoding="utf-8", newline="\n").write("\n".join(linhas))
 
 print(len(lugares), "lugares;", len(ordem), "blocos;", len(trajeto_do_bloco), "com ponto;", len(trajetos), "trajetos diferentes")
-print("com artistas:", sum(1 for b in ordem if atracoes_do(b)), "· destaques sem artista:", sum(1 for b in ordem if destaque(b) and not atracoes_do(b)))
+print("com artistas:", sum(1 for b in ordem if atracoes_do(b)), "· destaques sem artista:", sum(1 for b in ordem if destaque(b) and not atracoes_do(b)),
+      "· megablocos:", sum(1 for b in ordem if e_megabloco(b)))
 por_zona = {}
 for bloco in ordem:
     por_zona[lugar_do(bloco)[2]] = por_zona.get(lugar_do(bloco)[2], 0) + 1
@@ -444,6 +474,64 @@ for oficial in sorted({bloco["nome"].strip(" .") for bloco in ordem}):
 # Um bloco LGBTQIA+ das notícias que não entrou no app (nome escrito diferente, ou bloco de fora).
 for chave, data in sorted(lgbt - {(chave_do_nome(b["nome"]), b["data"]) for b in ordem}):
     avisos.append(f"bloco LGBTQIA+ das notícias que não está no app: {chave} ({data})")
+
+
+# O nome que o povo usa: o que as notícias escrevem diferente da lista oficial vira sugestão, e um
+# nome com o ano no fim ("Fico fei nunca 2025") parece cru. Só muda com uma fonte, em
+# nomes-das-noticias.json.
+def nome_comparavel(nome):
+    return re.sub(r"[^a-z0-9]+", "", re.sub(r"^bloco\b", "", sem_acento(nome).strip()))
+
+
+sugeridos = set()
+for bloco in ordem:
+    antigo = antigo_do(bloco)
+    if bloco["nome"] in nomes_do_povo or not antigo:
+        continue
+    na_noticia = antigo["nome_nas_noticias"]
+    if nome_comparavel(na_noticia) != nome_comparavel(bloco["nome"]) and (bloco["nome"], na_noticia) not in sugeridos:
+        sugeridos.add((bloco["nome"], na_noticia))
+        avisos.append(f"as notícias chamam de outro jeito: {bloco['nome']} é \"{na_noticia}\" (se for o nome que o povo usa, ponha em nomes-das-noticias.json)")
+for oficial in sorted({bloco["nome"] for bloco in ordem if bloco["nome"] not in nomes_do_povo}):
+    if re.search(r"\b(19|20)\d\d\s*$", oficial):
+        avisos.append(f"nome com o ano no fim, talvez cru: {oficial} (troque só se uma fonte der o nome)")
+# Um nome que diz "megabloco" sem notícia que confirme fica de fora, se não tiver outro motivo para entrar.
+for oficial in sorted({b["nome"] for b in todos_os_oficiais if "megabloco" in sem_acento(b["nome"]) and b["nome"] not in megablocos}):
+    avisos.append(f"o nome diz megabloco, mas nenhuma notícia confirma: {oficial} (se alguma disser, ponha em megablocos-das-noticias.json)")
+
+# O que sumiu desde o ano anterior: os circuitos e os blocos grandes do histórico e os megablocos do
+# ano anterior. Vale conferir: o bloco pode estar com outro nome, e o circuito, em outra rua.
+ano_anterior = str(sobre["ano"] - 1)
+historico = ler(os.path.join(projeto, "privado", "historico-dos-megablocos.json"), {})
+pasta_anterior = os.path.join(os.path.dirname(os.path.abspath(pasta_do_ano)), ano_anterior)
+conhecidos = {ponto[0] for ponto in GRANDES_PONTOS} | {CIRCUITO_DO_CENTRO[0]}
+circuitos_do_ano = {grande_ponto_do(b)[0] for b in todos_os_oficiais if grande_ponto_do(b)}
+for identificador, circuito in historico.get("circuitos", {}).items():
+    if ano_anterior not in circuito["anos"]:
+        continue
+    if identificador not in conhecidos:
+        avisos.append(f"circuito de {ano_anterior} que o script não reconhece: {circuito['nome']} (confira se ainda tem megabloco)")
+    elif identificador not in circuitos_do_ano:
+        avisos.append(f"circuito de {ano_anterior} sem nenhum bloco em {sobre['ano']}: {circuito['nome']}")
+
+
+def esta_na_lista(nome):
+    """Algum bloco da lista oficial tem este nome (ou o que vem entre parênteses, como o artista)."""
+    partes = [re.sub(r"\(.*?\)", "", nome), *re.findall(r"\((.*?)\)", nome)]
+    chaves = [chave_do_nome(parte) for parte in partes if len(chave_do_nome(parte)) >= 4]
+    da_lista = [chave_do_nome(b["nome"]) for b in todos_os_oficiais]
+    # Um nome dentro do outro vale ("Casa Comigo" e "Bloco Casa Comigo"), mas um pedaço pequeno não:
+    # o "Bloco do Galo" não é o "Galo da Madrugada".
+    return any(k in outra or (outra in k and len(outra) >= 0.6 * len(k)) for k in chaves for outra in da_lista)
+
+
+grandes_do_ano_anterior = [b["nome"] for b in historico.get("blocos_que_voltam", []) if ano_anterior in b["anos"]]
+grandes_do_ano_anterior += [d["nome"] for d in ler(os.path.join(pasta_anterior, "megablocos-das-noticias.json"), {"blocos": []})["blocos"]]
+for nome in sorted(set(grandes_do_ano_anterior)):
+    if not esta_na_lista(nome):
+        avisos.append(f"bloco grande de {ano_anterior} que não está na lista de {sobre['ano']}: {nome}")
+if not historico:
+    avisos.append("sem privado/historico-dos-megablocos.json: não deu para conferir os circuitos e os blocos que sumiram")
 if len(trajeto_do_bloco) < 0.8 * len(ordem):
     avisos.append(f"só {len(trajeto_do_bloco)} de {len(ordem)} blocos têm ponto no mapa (veja relatorio.txt)")
 for aviso in avisos:

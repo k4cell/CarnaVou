@@ -1,5 +1,5 @@
 import { Aba, diaIso, diaSeguinte, horaIso, jaAcabou } from './agenda';
-import { famaDoBloco } from './consultas';
+import { cartaoDoBloco, famaDoBloco } from './consultas';
 import { todosOsBlocos } from './correcoes';
 import { dataPorExtenso } from './formato';
 import { Bloco } from './tipos';
@@ -31,14 +31,6 @@ function porHorario(blocos: Bloco[]): Bloco[] {
 }
 
 /**
- * Os blocos do mesmo dia que saem do mesmo ponto (a menos de 300 m, veja `gerar_dados.py`) são do
- * mesmo lugar, para quem está ali. O bloco sem ponto conhecido fica sozinho.
- */
-function chaveDoLugar(bloco: Bloco): string {
-  return bloco.ponto === undefined ? bloco.id : `${bloco.data}|${bloco.localId}|${bloco.ponto}`;
-}
-
-/**
  * Junta os blocos do mesmo dia e do mesmo lugar, na ordem da lista: o grupo fica onde aparece o
  * primeiro deles e leva junto, por horário, os outros do mesmo lugar que ainda estão em `restantes`
  * (quem entra num grupo sai de lá). Assim quem está num bloco já vê que o próximo é ali mesmo.
@@ -49,8 +41,8 @@ function juntarPorLugar(ordem: Bloco[], restantes: Set<Bloco>): Bloco[][] {
     if (!restantes.has(bloco)) {
       continue;
     }
-    const chave = chaveDoLugar(bloco);
-    const grupo = porHorario([...restantes].filter((outro) => chaveDoLugar(outro) === chave));
+    const chave = cartaoDoBloco(bloco);
+    const grupo = porHorario([...restantes].filter((outro) => cartaoDoBloco(outro) === chave));
     grupo.forEach((outro) => restantes.delete(outro));
     grupos.push(grupo);
   }

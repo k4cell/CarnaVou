@@ -1,5 +1,15 @@
 import { Location } from '@angular/common';
-import { ChangeDetectionStrategy, Component, DestroyRef, InjectionToken, computed, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  InjectionToken,
+  afterNextRender,
+  computed,
+  inject,
+  signal,
+} from '@angular/core';
+import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 
 /** Para navegadores sem a área de transferência moderna (ou em páginas sem https). */
@@ -35,11 +45,28 @@ export const COPIAR_TEXTO = new InjectionToken<(texto: string) => Promise<boolea
   factory: () => copiarTexto,
 });
 
+/**
+ * O menu de compartilhar do celular (Web Share), quando o navegador tem: abre o WhatsApp, o
+ * Instagram e os outros apps. Sem ele (no computador, quase sempre), fica `null` e o botão copia o
+ * link. Nos testes, é trocado por um falso.
+ */
+export const COMPARTILHAR = new InjectionToken<((dados: ShareData) => Promise<void>) | null>('COMPARTILHAR', {
+  providedIn: 'root',
+  factory: () =>
+    typeof navigator !== 'undefined' && typeof navigator.share === 'function'
+      ? (dados: ShareData) => navigator.share(dados)
+      : null,
+});
+
 const SEGUNDOS_DO_AVISO = 3;
 
 type Resultado = 'nenhum' | 'copiado' | 'falhou';
 
-/** O botão que copia o link da página em que a pessoa está, para mandar para o grupo. */
+/**
+ * O botão de mandar a página para o grupo: no celular, abre o menu de compartilhar; onde não tem
+ * esse menu, copia o link. A página pronta sai com o "Copiar link", e o botão vira "Compartilhar"
+ * depois que o app entra no navegador.
+ */
 @Component({
   selector: 'app-copiar-link',
   templateUrl: './copiar-link.html',
@@ -48,9 +75,13 @@ type Resultado = 'nenhum' | 'copiado' | 'falhou';
 })
 export class CopiarLink {
   private readonly copiarTexto = inject(COPIAR_TEXTO);
+  private readonly compartilhar = inject(COMPARTILHAR);
   private readonly router = inject(Router);
   private readonly enderecos = inject(Location);
+  private readonly titulo = inject(Title);
 
+  /** O celular tem o menu de compartilhar. Só se sabe no navegador, depois da primeira pintura. */
+  protected readonly podeCompartilhar = signal(false);
   private readonly resultado = signal<Resultado>('nenhum');
   private temporizador?: ReturnType<typeof setTimeout>;
 
@@ -67,9 +98,25 @@ export class CopiarLink {
 
   constructor() {
     inject(DestroyRef).onDestroy(() => clearTimeout(this.temporizador));
+    afterNextRender(() => this.podeCompartilhar.set(this.compartilhar !== null));
   }
 
-  protected async copiar(): Promise<void> {
+  protected async tocar(): Promise<void> {
+    if (this.compartilhar && this.podeCompartilhar()) {
+      try {
+        await this.compartilhar({ title: this.titulo.getTitle(), url: this.endereco() });
+        return;
+      } catch (erro) {
+        // Fechar o menu sem escolher um app não é erro. Outro problema cai no copiar o link.
+        if (erro instanceof DOMException && erro.name === 'AbortError') {
+          return;
+        }
+      }
+    }
+    await this.copiar();
+  }
+
+  private async copiar(): Promise<void> {
     const copiou = await this.copiarTexto(this.endereco());
     this.resultado.set(copiou ? 'copiado' : 'falhou');
     clearTimeout(this.temporizador);

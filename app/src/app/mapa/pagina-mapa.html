@@ -126,7 +126,10 @@
         }
       </ul>
       @if (blocos().escondidos > 0 && !aberto() && !minimizado()) {
-        <button type="button" class="mais-blocos" (click)="abrir()">+ {{ blocos().escondidos }} blocos aqui</button>
+        <button type="button" class="botao-claro mais-blocos" (click)="abrir()">
+          + {{ blocos().escondidos }} blocos aqui
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 9l6 6 6-6" /></svg>
+        </button>
       }
       <!-- O nome do lugar leva para a página dele. -->
       <a class="lugar" [routerLink]="['/local', achado.local.id]">{{ achado.local.nome }}</a>

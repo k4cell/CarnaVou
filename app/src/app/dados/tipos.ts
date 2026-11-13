@@ -54,6 +54,11 @@ export interface Bloco {
   estilo?: Estilo;
   /** Uma notícia chama o bloco de LGBT+ ou LGBTQIA+ (veja scripts/dados/<ano>/lgbt-das-noticias.json). */
   lgbt?: boolean;
+  /**
+   * Uma notícia chama o bloco de megabloco (veja scripts/dados/<ano>/megablocos-das-noticias.json):
+   * ele entra mesmo sem artista divulgado e, na ordem por fama, não fica lá embaixo.
+   */
+  megabloco?: boolean;
   /** O bloco foi cancelado. Vem do arquivo de correções, como os dois campos abaixo. */
   cancelado?: boolean;
   /** A data ou um dos horários mudou depois da lista oficial. */

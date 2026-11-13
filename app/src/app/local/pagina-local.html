@@ -34,8 +34,11 @@
   <!-- Os blocos do mesmo dia ficam juntos num cartão só, um embaixo do outro. -->
   <ul class="lista">
     @for (dia of dias(); track dia.data) {
-      <li class="grupo" [attr.aria-label]="dia.nome" [attr.data-faixa]="faixa()">
-        <app-data-do-dia class="data-do-grupo" [data]="dia.data" />
+      <li class="grupo" [attr.aria-label]="dia.nome" [attr.data-faixa]="faixaDoDia(dia.blocos)">
+        <!-- A data abre o primeiro bloco do dia, como o nome dele. O leitor de tela já tem o link do nome. -->
+        <a class="data-do-grupo" [routerLink]="['/local', dia.blocos[0].localId, dia.blocos[0].id]" tabindex="-1" aria-hidden="true">
+          <app-data-do-dia [data]="dia.data" />
+        </a>
         <div class="blocos-do-grupo">
           @for (bloco of dia.blocos; track bloco.id) {
             <app-banner-bloco [bloco]="bloco" [mostrarData]="false" />

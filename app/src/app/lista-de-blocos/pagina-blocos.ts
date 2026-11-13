@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, ElementRef, computed, inject, signal, viewChild } from '@angular/core';
+import { RouterLink } from '@angular/router';
 
 import { AbasDoDia } from '../abas/abas-do-dia';
 import { BannerBloco } from '../banner/banner-bloco';
@@ -6,7 +7,8 @@ import { DataDoDia } from '../banner/data-do-dia';
 import { DadosAtualizados } from '../correcoes/dados-atualizados';
 import { faseDoCarnaval } from '../dados/fase-do-carnaval';
 import { Aba } from '../dados/agenda';
-import { acharLocal, faixaDoLocal } from '../dados/consultas';
+import { acharLocal } from '../dados/consultas';
+import { faixaDoBloco } from '../dados/cores-dos-cartoes';
 import { NOMES_DAS_ZONAS } from '../dados/formato';
 import { SecaoDeBlocos, secaoDoQueJaAconteceu, secoesDosBlocos } from '../dados/lista-de-blocos';
 import { Bloco, Local } from '../dados/tipos';
@@ -32,7 +34,7 @@ const NADA_NA_ABA: Record<Aba, string> = {
  */
 @Component({
   selector: 'app-pagina-blocos',
-  imports: [AbasDoDia, BannerBloco, CartaoDaFase, DadosAtualizados, DataDoDia, ListaDeLugares, ZonaTag],
+  imports: [AbasDoDia, BannerBloco, CartaoDaFase, DadosAtualizados, DataDoDia, ListaDeLugares, RouterLink, ZonaTag],
   template: `
     <h2 class="titulo">Blocos</h2>
     <!-- A busca e os filtros numa linha só: o campo e dois botões redondos, o do lugar e o da estrela. -->
@@ -122,7 +124,10 @@ const NADA_NA_ABA: Record<Aba, string> = {
                 <app-zona-tag [zona]="local.zona" />
               }
             </span>
-            <app-data-do-dia class="data-do-grupo" [data]="grupo[0].data" />
+            <!-- A data abre o primeiro bloco do cartão, como o nome dele. O leitor de tela já tem o link do nome. -->
+            <a class="data-do-grupo" [routerLink]="['/local', grupo[0].localId, grupo[0].id]" tabindex="-1" aria-hidden="true">
+              <app-data-do-dia [data]="grupo[0].data" />
+            </a>
             <div class="blocos-do-grupo">
               @for (bloco of grupo; track bloco.id) {
                 <app-banner-bloco [bloco]="bloco" [mostrarData]="false" />
@@ -370,7 +375,8 @@ export class PaginaBlocos {
     return acharLocal(bloco.localId);
   }
 
+  /** A cor do cartão: cada cartão tem a sua, diferente da dos vizinhos (veja dados/cores.ts). */
   protected faixaDo(bloco: Bloco): string {
-    return faixaDoLocal(bloco.localId);
+    return faixaDoBloco(bloco);
   }
 }

@@ -3,7 +3,8 @@ import { provideRouter } from '@angular/router';
 
 import { cartoesDaAba } from '../dados/agenda';
 import { BLOCOS } from '../dados/blocos';
-import { destaquesDoLocal } from '../dados/consultas';
+import { acharBlocoPeloId, destaquesDoLocal } from '../dados/consultas';
+import { faixaDoBloco } from '../dados/cores-dos-cartoes';
 import { FiltroDeDia } from '../filtro/filtro-de-dia';
 import { Relogio } from '../relogio/relogio';
 import { PaginaLocal } from './pagina-local';
@@ -62,26 +63,25 @@ describe('PaginaLocal', () => {
     expect(etiqueta?.classList.contains('sul')).toBe(true);
   });
 
-  describe('a cor da faixa dos banners', () => {
-    const faixasDosBanners = (tela: HTMLElement) =>
-      Array.from(tela.querySelectorAll('.banner')).map((banner) => banner.getAttribute('data-faixa'));
-
-    it('é a cor do lugar: rosa para o Ibirapuera, amarelo para a Consolação', async () => {
-      const ibirapuera = await renderizar('ibirapuera');
-      expect(new Set(faixasDosBanners(ibirapuera))).toEqual(new Set(['rosa']));
-      TestBed.resetTestingModule();
-      const consolacao = await renderizar('consolacao');
-      expect(new Set(faixasDosBanners(consolacao))).toEqual(new Set(['amarelo']));
-    });
-
-    it('é a mesma do cartão do lugar na lista, em todos os lugares', async () => {
+  describe('a cor da faixa', () => {
+    it('em cada banner, é a cor do cartão do bloco na aba Blocos, em todos os lugares', async () => {
       for (const cartao of cartoesDaAba('geral', null)) {
         TestBed.resetTestingModule();
         const tela = await renderizar(cartao.local.id);
-        const faixas = faixasDosBanners(tela);
-        expect(faixas.length, cartao.local.nome).toBeGreaterThan(0);
-        expect(new Set(faixas), cartao.local.nome).toEqual(new Set([cartao.faixa]));
+        const banners = Array.from(tela.querySelectorAll<HTMLAnchorElement>('a.banner'));
+        expect(banners.length, cartao.local.nome).toBeGreaterThan(0);
+        for (const banner of banners) {
+          const bloco = acharBlocoPeloId(banner.getAttribute('href')!.split('/').at(-1)!)!;
+          expect(banner.getAttribute('data-faixa'), bloco.nome).toBe(faixaDoBloco(bloco));
+        }
       }
+    });
+
+    it('não repete de um dia para o outro', async () => {
+      const tela = await renderizar('ibirapuera');
+      const cores = Array.from(tela.querySelectorAll('li.grupo')).map((dia) => dia.getAttribute('data-faixa'));
+      expect(cores.length).toBeGreaterThan(1);
+      expect(cores.filter((cor, i) => i > 0 && cor === cores[i - 1])).toEqual([]);
     });
   });
 

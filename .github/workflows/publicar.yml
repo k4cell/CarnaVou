@@ -55,10 +55,13 @@ jobs:
 
       # 404.html: endereço que não existe abre o site, que manda para o início.
       # .nojekyll: o GitHub Pages entrega os arquivos como estão, sem processar.
+      # sitemap.xml e robots.txt: as páginas prontas, para os buscadores (a cópia da Cloudflare fica
+      # fora dos buscadores, então não precisa).
       - name: Ajustes do GitHub Pages
         run: |
           cp dist/app/browser/index.csr.html dist/app/browser/404.html
           touch dist/app/browser/.nojekyll
+          node ../scripts/publicar/mapa-do-site.mjs dist/app/browser
 
       - uses: actions/configure-pages@v5
 
