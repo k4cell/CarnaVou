@@ -63,6 +63,22 @@ jobs:
           touch dist/app/browser/.nojekyll
           node ../scripts/publicar/mapa-do-site.mjs dist/app/browser
 
+      # O teste no navegador: o site montado acima, num Chrome de verdade com a tela de um celular (o
+      # mapa desenhando, sem internet, a localização e o relógio de verdade). Se falhar, nada vai para o ar.
+      - name: Instalar o navegador do teste
+        run: npx playwright install --with-deps chromium
+
+      - name: Teste no navegador
+        run: npx playwright test
+
+      - name: Guardar o que o teste no navegador viu, se ele falhou
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: teste-no-navegador
+          path: app/test-results
+          retention-days: 7
+
       - uses: actions/configure-pages@v5
 
       - uses: actions/upload-pages-artifact@v3

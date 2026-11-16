@@ -17,6 +17,8 @@ Da pasta do ano (scripts/dados/2026, por exemplo) vêm:
   nome da lista oficial, em todos os dias do bloco.
 - nomes-das-noticias.json (se tiver): o nome que o povo usa, no lugar do nome cru da lista oficial,
   só quando uma fonte escreve assim. O id do bloco continua vindo do nome oficial.
+- pinos-conferidos.json (se tiver): os pinos que eu conferi à mão na ferramenta (conferir_pinos.py).
+  Valem por cima do que o tracar.py achou e nenhum script apaga.
 E de scripts/dados vem seguidores.json: os seguidores no Instagram de cada artista, para ordenar
 por fama. Ele vale para todos os anos.
 
@@ -27,7 +29,8 @@ ficar lá embaixo na ordem.
 
 No fim, o script avisa o que parece errado e o que sumiu desde o ano anterior: os circuitos e os
 blocos grandes do histórico (privado/historico-dos-megablocos.json, se tiver) e os megablocos da
-pasta do ano anterior.
+pasta do ano anterior. Grava também, na pasta do ano, o pinos-para-conferir.json: a lista que a
+ferramenta de conferir os pinos mostra (um item por itinerário, dos blocos mais famosos para os menos).
 """
 
 import json
@@ -179,6 +182,7 @@ projeto = os.path.dirname(os.path.dirname(design))
 sobre = ler(f"{pasta_do_ano}/sobre.json")
 todos_os_oficiais = ler(f"{pasta_do_ano}/blocos-oficiais.json")
 tracados = ler(f"{pasta_do_ano}/tracados.json")
+conferidos = ler(f"{pasta_do_ano}/pinos-conferidos.json", {"pinos": {}})["pinos"]
 antigos = ler(f"{pasta_do_ano}/atracoes-das-noticias.json")
 for antigo in antigos:
     antigo["nome_nas_noticias"] = antigo["nome"]
@@ -299,13 +303,40 @@ def atracoes_em_ts(atracoes):
 ordem = sorted(oficiais, key=lambda b: (lugares.index(lugar_do(b)[0]), b["data"], b["concentracao"], sem_acento(b["nome"])))
 
 
-def tracado_do(bloco):
-    tracado = tracados.get(f"{bloco['subprefeitura']}|{bloco['itinerario']}")
+def chave_do_tracado(bloco):
+    return f"{bloco['subprefeitura']}|{bloco['itinerario']}"
+
+
+def e_aproximado(jeito):
+    """O ponto não é exato: o itinerário não disse o bastante, ou o bloco ficou só num ponto da rua."""
+    return "aproximado" in jeito or jeito in ("na rua", "lugar", "cruzamento")
+
+
+def tracado_automatico(bloco):
+    tracado = tracados.get(chave_do_tracado(bloco))
     if not tracado or not tracado.get("linha"):
         # A lista às vezes põe o bloco numa subprefeitura vizinha (a Faria Lima 4100 aparece em
         # Santo Amaro): vale o traçado do mesmo itinerário em outra subprefeitura.
         tracado = next((v for k, v in tracados.items() if k.split("|", 1)[1] == bloco["itinerario"] and v.get("linha")), tracado)
     return tracado if tracado and tracado.get("linha") else None
+
+
+def tracado_do(bloco):
+    """O traçado que vai para o app: o que o tracar.py achou ou, por cima, o que eu conferi à mão."""
+    automatico = tracado_automatico(bloco)
+    conferido = conferidos.get(chave_do_tracado(bloco))
+    if conferido is None:
+        return automatico
+    if conferido["tipo"] == "sem-ponto":
+        return None
+    if conferido["tipo"] == "certo":
+        return {**automatico, "jeito": "conferido"} if automatico else None
+    ponto = conferido["ponto"]
+    linha = [ponto]
+    if conferido.get("linha") and automatico and len(automatico["linha"]) > 1:
+        # A linha automática continua, saindo do pino novo (sem repetir o ponto, se for o mesmo).
+        linha += [p for i, p in enumerate(automatico["linha"]) if i > 0 or distancia_em_metros(p, ponto) > 5]
+    return {"jeito": "conferido", "linha": linha}
 
 
 def distancia_em_metros(a, b):
@@ -330,7 +361,7 @@ for bloco in ordem:
         saidas.append(inicio)
         numero = len(saidas) - 1
     ponto_do_bloco[id(bloco)] = numero
-trajetos, indice_do_trajeto, trajeto_do_bloco = [], {}, {}
+trajetos, indice_do_trajeto, trajeto_do_bloco, linha_do_codigo = [], {}, {}, {}
 itinerarios, indice_do_itinerario, itinerario_do_bloco = [], {}, {}
 linhas = [
     "import { Bloco } from './tipos';",
@@ -391,7 +422,8 @@ for bloco in ordem:
     tracado = tracado_do(bloco)
     if tracado:
         codigo = codificar(tracado["linha"])
-        aproximado = 1 if "aproximado" in tracado["jeito"] or tracado["jeito"] in ("na rua", "lugar", "cruzamento") else 0
+        aproximado = 1 if e_aproximado(tracado["jeito"]) else 0
+        linha_do_codigo[codigo] = tracado["linha"]
         if (codigo, aproximado) not in indice_do_trajeto:
             indice_do_trajeto[(codigo, aproximado)] = len(trajetos)
             trajetos.append((codigo, aproximado))
@@ -462,11 +494,10 @@ for bloco in todos_os_oficiais:
 for bloco in ordem:
     if not bloco["concentracao"] <= bloco["desfile"] or not (bloco["termino"] > bloco["desfile"] or bloco["termino"] == "00:00"):
         avisos.append(f"horários fora de ordem: {bloco['nome']} ({bloco['data']}, {bloco['concentracao']}, {bloco['desfile']}, {bloco['termino']})")
-for (codigo, _), indice in indice_do_trajeto.items():
-    tracado = next(t for t in tracados.values() if t.get("linha") and codificar(t["linha"]) == codigo)
+for linha in linha_do_codigo.values():
     # O retângulo da Grande São Paulo, o mesmo de app/src/app/mapa/limites.ts.
-    if not all(-47.2 <= lng <= -46.2 and -23.95 <= lat <= -23.2 for lng, lat in tracado["linha"]):
-        avisos.append(f"trajeto fora da Grande São Paulo: {tracado['linha'][0]}")
+    if not all(-47.2 <= lng <= -46.2 and -23.95 <= lat <= -23.2 for lng, lat in linha):
+        avisos.append(f"trajeto fora da Grande São Paulo: {linha[0]}")
 # Uma sigla dentro de um nome em maiúsculas perde as maiúsculas: vale conferir à mão.
 for oficial in sorted({bloco["nome"].strip(" .") for bloco in ordem}):
     if nome_do_bloco(oficial) != oficial:
@@ -534,5 +565,48 @@ if not historico:
     avisos.append("sem privado/historico-dos-megablocos.json: não deu para conferir os circuitos e os blocos que sumiram")
 if len(trajeto_do_bloco) < 0.8 * len(ordem):
     avisos.append(f"só {len(trajeto_do_bloco)} de {len(ordem)} blocos têm ponto no mapa (veja relatorio.txt)")
+
+# ------------------------------------------------------------------ os pinos para conferir à mão
+# A lista da ferramenta de conferir os pinos (conferir_pinos.py): um item por itinerário do app, com o
+# pino e a linha que o tracar.py achou, dos blocos mais famosos para os menos.
+para_conferir = {}
+for bloco in ordem:
+    chave = chave_do_tracado(bloco)
+    if chave not in para_conferir:
+        automatico = tracado_automatico(bloco)
+        cru = tracados.get(chave) or {}
+        para_conferir[chave] = {
+            "chave": chave,
+            "subprefeitura": bloco["subprefeitura"],
+            "itinerario": bloco["itinerario"],
+            "lugar": lugar_do(bloco)[1],
+            "jeito": automatico["jeito"] if automatico else cru.get("jeito", "sem traçado"),
+            "aproximado": bool(automatico) and e_aproximado(automatico["jeito"]),
+            "linha": automatico["linha"] if automatico else None,
+            **({"motivo": cru["motivo"]} if not automatico and cru.get("motivo") else {}),
+            "fama": 0,
+            "blocos": [],
+        }
+    item = para_conferir[chave]
+    item["fama"] = max(item["fama"], fama(bloco))
+    nome = nomes_do_povo.get(bloco["nome"]) or nome_do_bloco(bloco["nome"])
+    item["blocos"].append({"nome": nome, "data": bloco["data"], "inicio": bloco["concentracao"], "fama": fama(bloco)})
+lista_para_conferir = sorted(para_conferir.values(), key=lambda item: -item["fama"])
+for item in lista_para_conferir:
+    item["blocos"].sort(key=lambda b: (-b["fama"], b["data"], b["inicio"]))
+    for b in item["blocos"]:
+        del b["fama"]
+with open(f"{pasta_do_ano}/pinos-para-conferir.json", "w", encoding="utf-8", newline="\n") as arquivo:
+    json.dump(lista_para_conferir, arquivo, ensure_ascii=False, indent=1)
+    arquivo.write("\n")
+for chave in sorted(set(conferidos) - set(para_conferir)):
+    avisos.append(f"pino conferido de um itinerário que não está mais no app (o texto mudou ou o bloco saiu): {chave}")
+faltam_conferir = [i for i in lista_para_conferir if (i["aproximado"] or not i["linha"]) and i["chave"] not in conferidos]
+if faltam_conferir:
+    maiores = ", ".join(i["blocos"][0]["nome"] for i in faltam_conferir[:3])
+    avisos.append(
+        f"{len(faltam_conferir)} pinos aproximados ou sem ponto, sem conferir (os maiores: {maiores}). "
+        f"Para conferir: python -I scripts/dados/conferir_pinos.py {sobre['ano']}"
+    )
 for aviso in avisos:
     print("AVISO:", aviso)

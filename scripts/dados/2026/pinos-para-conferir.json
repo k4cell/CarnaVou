@@ -1,0 +1,3719 @@
+[
+ {
+  "chave": "Santo Amaro|R. Laguna, entre R. Bragança Paulista e R. Castro Verde",
+  "subprefeitura": "Santo Amaro",
+  "itinerario": "R. Laguna, entre R. Bragança Paulista e R. Castro Verde",
+  "lugar": "Santo Amaro",
+  "jeito": "entre",
+  "aproximado": false,
+  "linha": [
+   [
+    -46.71603,
+    -23.63802
+   ],
+   [
+    -46.71627,
+    -23.63759
+   ]
+  ],
+  "fama": 46090778,
+  "blocos": [
+   {
+    "nome": "Bloco Modo Surto",
+    "data": "2026-02-08",
+    "inicio": "14:00"
+   }
+  ]
+ },
+ {
+  "chave": "Sé|R. Da Consolação, 2101 ao 585",
+  "subprefeitura": "Sé",
+  "itinerario": "R. Da Consolação, 2101 ao 585",
+  "lugar": "Rua da Consolação e Baixo Augusta",
+  "jeito": "na rua",
+  "aproximado": true,
+  "linha": [
+   [
+    -46.65451,
+    -23.55036
+   ]
+  ],
+  "fama": 45247826,
+  "blocos": [
+   {
+    "nome": "Bloco Skol",
+    "data": "2026-02-08",
+    "inicio": "11:00"
+   }
+  ]
+ },
+ {
+  "chave": "Vila Mariana|Ibirapuera - Av. Pedro Álvares Cabral, entre Obelisco e Monumento às Bandeiras",
+  "subprefeitura": "Vila Mariana",
+  "itinerario": "Ibirapuera - Av. Pedro Álvares Cabral, entre Obelisco e Monumento às Bandeiras",
+  "lugar": "Parque Ibirapuera",
+  "jeito": "entre",
+  "aproximado": false,
+  "linha": [
+   [
+    -46.65587,
+    -23.58492
+   ],
+   [
+    -46.65602,
+    -23.58471
+   ],
+   [
+    -46.65718,
+    -23.58246
+   ],
+   [
+    -46.65752,
+    -23.58207
+   ],
+   [
+    -46.65803,
+    -23.58175
+   ],
+   [
+    -46.66065,
+    -23.58051
+   ]
+  ],
+  "fama": 36318157,
+  "blocos": [
+   {
+    "nome": "Quem Pede, Pede",
+    "data": "2026-02-07",
+    "inicio": "09:00"
+   },
+   {
+    "nome": "Vem com o Gigante",
+    "data": "2026-02-22",
+    "inicio": "09:00"
+   },
+   {
+    "nome": "Bloco da Pabllo",
+    "data": "2026-02-16",
+    "inicio": "13:00"
+   },
+   {
+    "nome": "Bloco da Pocah",
+    "data": "2026-02-15",
+    "inicio": "13:00"
+   },
+   {
+    "nome": "Sertanejinho do Teló",
+    "data": "2026-02-15",
+    "inicio": "11:00"
+   },
+   {
+    "nome": "Bloco Solteiro não Trai",
+    "data": "2026-02-17",
+    "inicio": "11:00"
+   },
+   {
+    "nome": "Agrada Gregos",
+    "data": "2026-02-14",
+    "inicio": "13:00"
+   },
+   {
+    "nome": "Bloco Beats",
+    "data": "2026-02-22",
+    "inicio": "13:00"
+   },
+   {
+    "nome": "Quintal dos Prettos",
+    "data": "2026-02-08",
+    "inicio": "12:00"
+   },
+   {
+    "nome": "Monobloco",
+    "data": "2026-02-08",
+    "inicio": "15:00"
+   },
+   {
+    "nome": "Carna Lau",
+    "data": "2026-02-14",
+    "inicio": "12:00"
+   },
+   {
+    "nome": "Investe Ni Mim",
+    "data": "2026-02-21",
+    "inicio": "11:00"
+   }
+  ]
+ },
+ {
+  "chave": "Sé|R. da Consolação, 2101 ao 585",
+  "subprefeitura": "Sé",
+  "itinerario": "R. da Consolação, 2101 ao 585",
+  "lugar": "Rua da Consolação e Baixo Augusta",
+  "jeito": "na rua",
+  "aproximado": true,
+  "linha": [
+   [
+    -46.65451,
+    -23.55036
+   ]
+  ],
+  "fama": 7014765,
+  "blocos": [
+   {
+    "nome": "Acadêmicos do Baixo Augusta",
+    "data": "2026-02-08",
+    "inicio": "15:00"
+   },
+   {
+    "nome": "Pipoca da Rainha",
+    "data": "2026-02-22",
+    "inicio": "13:00"
+   }
+  ]
+ },
+ {
+  "chave": "Pinheiros|Av. Brigadeiro Faria Lima, 4100 ao 4500",
+  "subprefeitura": "Pinheiros",
+  "itinerario": "Av. Brigadeiro Faria Lima, 4100 ao 4500",
+  "lugar": "Avenida Faria Lima",
+  "jeito": "numeros",
+  "aproximado": false,
+  "linha": [
+   [
+    -46.68114,
+    -23.59176
+   ],
+   [
+    -46.68008,
+    -23.59556
+   ]
+  ],
+  "fama": 3730929,
+  "blocos": [
+   {
+    "nome": "Bloco do Abrava",
+    "data": "2026-02-07",
+    "inicio": "11:00"
+   },
+   {
+    "nome": "Os Arrebatados (Baby do Brasil)",
+    "data": "2026-02-07",
+    "inicio": "13:00"
+   },
+   {
+    "nome": "Bloco 89",
+    "data": "2026-02-15",
+    "inicio": "13:00"
+   },
+   {
+    "nome": "Bloco Dré Tarde",
+    "data": "2026-02-16",
+    "inicio": "13:00"
+   }
+  ]
+ },
+ {
+  "chave": "Vila Mariana|Ibirapuera - Av. Pedro Álvares Cabral, entre Obelisco e Monumento as Bandeiras",
+  "subprefeitura": "Vila Mariana",
+  "itinerario": "Ibirapuera - Av. Pedro Álvares Cabral, entre Obelisco e Monumento as Bandeiras",
+  "lugar": "Parque Ibirapuera",
+  "jeito": "entre",
+  "aproximado": false,
+  "linha": [
+   [
+    -46.65587,
+    -23.58492
+   ],
+   [
+    -46.65602,
+    -23.58471
+   ],
+   [
+    -46.65718,
+    -23.58246
+   ],
+   [
+    -46.65752,
+    -23.58207
+   ],
+   [
+    -46.65803,
+    -23.58175
+   ],
+   [
+    -46.66065,
+    -23.58051
+   ]
+  ],
+  "fama": 1504108,
+  "blocos": [
+   {
+    "nome": "Bicho Maluco Beleza",
+    "data": "2026-02-07",
+    "inicio": "14:00"
+   },
+   {
+    "nome": "Bloco Vou de Táxi",
+    "data": "2026-02-16",
+    "inicio": "11:00"
+   },
+   {
+    "nome": "Galo da Madrugada",
+    "data": "2026-02-17",
+    "inicio": "09:00"
+   },
+   {
+    "nome": "Navio Pirata",
+    "data": "2026-02-21",
+    "inicio": "15:00"
+   },
+   {
+    "nome": "Forrozin",
+    "data": "2026-02-07",
+    "inicio": "12:00"
+   },
+   {
+    "nome": "Bloco da Latinha Mix",
+    "data": "2026-02-17",
+    "inicio": "13:00"
+   }
+  ]
+ },
+ {
+  "chave": "Pinheiros|Av. Brigadeiro Faria Lima, 4100 a 4500",
+  "subprefeitura": "Pinheiros",
+  "itinerario": "Av. Brigadeiro Faria Lima, 4100 a 4500",
+  "lugar": "Avenida Faria Lima",
+  "jeito": "numeros",
+  "aproximado": false,
+  "linha": [
+   [
+    -46.68114,
+    -23.59176
+   ],
+   [
+    -46.68008,
+    -23.59556
+   ]
+  ],
+  "fama": 1239701,
+  "blocos": [
+   {
+    "nome": "Se fui triste nao me lembro",
+    "data": "2026-02-17",
+    "inicio": "13:00"
+   },
+   {
+    "nome": "Bloco Boca (Antigo Bloco Boca de Veludo)",
+    "data": "2026-02-08",
+    "inicio": "14:00"
+   },
+   {
+    "nome": "Bloco Besame Mucho",
+    "data": "2026-02-14",
+    "inicio": "10:00"
+   },
+   {
+    "nome": "Bloco Bateria de Rua",
+    "data": "2026-02-14",
+    "inicio": "13:00"
+   }
+  ]
+ },
+ {
+  "chave": "Santo Amaro|Av. Eng. Eusébio Estevaux (entre R. Maria Clara Martins da Silveira e R. Moacir Padilha)",
+  "subprefeitura": "Santo Amaro",
+  "itinerario": "Av. Eng. Eusébio Estevaux (entre R. Maria Clara Martins da Silveira e R. Moacir Padilha)",
+  "lugar": "Santo Amaro",
+  "jeito": "entre",
+  "aproximado": false,
+  "linha": [
+   [
+    -46.69825,
+    -23.6735
+   ],
+   [
+    -46.70293,
+    -23.66818
+   ],
+   [
+    -46.70309,
+    -23.66815
+   ],
+   [
+    -46.70346,
+    -23.66846
+   ]
+  ],
+  "fama": 1000000,
+  "blocos": [
+   {
+    "nome": "Bloco Ritaleena",
+    "data": "2026-02-15",
+    "inicio": "12:00"
+   }
+  ]
+ },
+ {
+  "chave": "Pinheiros|Av. Brigadeiro Faria Lima, 4150 ao 4500",
+  "subprefeitura": "Pinheiros",
+  "itinerario": "Av. Brigadeiro Faria Lima, 4150 ao 4500",
+  "lugar": "Avenida Faria Lima",
+  "jeito": "numeros",
+  "aproximado": false,
+  "linha": [
+   [
+    -46.68099,
+    -23.59223
+   ],
+   [
+    -46.68046,
+    -23.5943
+   ],
+   [
+    -46.68008,
+    -23.59556
+   ]
+  ],
+  "fama": 1000000,
+  "blocos": [
+   {
+    "nome": "Bloco Vou de Táxi",
+    "data": "2026-02-08",
+    "inicio": "14:00"
+   },
+   {
+    "nome": "Bloco Toca",
+    "data": "2026-02-08",
+    "inicio": "13:00"
+   },
+   {
+    "nome": "Bloco Te Amo sem Culpa",
+    "data": "2026-02-17",
+    "inicio": "11:00"
+   }
+  ]
+ },
+ {
+  "chave": "Sé|Av. Ipiranga, Av. São Luiz, Av. Cel. Xavier de Toledo, Teatro Municipal",
+  "subprefeitura": "Sé",
+  "itinerario": "Av. Ipiranga, Av. São Luiz, Av. Cel. Xavier de Toledo, Teatro Municipal",
+  "lugar": "Av. Ipiranga, São João e República",
+  "jeito": "ruas aproximado",
+  "aproximado": true,
+  "linha": [
+   [
+    -46.64115,
+    -23.54299
+   ],
+   [
+    -46.6411,
+    -23.54297
+   ],
+   [
+    -46.64096,
+    -23.5431
+   ],
+   [
+    -46.64101,
+    -23.54319
+   ],
+   [
+    -46.63888,
+    -23.54487
+   ],
+   [
+    -46.63923,
+    -23.54535
+   ],
+   [
+    -46.63912,
+    -23.54543
+   ],
+   [
+    -46.63912,
+    -23.54548
+   ],
+   [
+    -46.63877,
+    -23.54572
+   ],
+   [
+    -46.63876,
+    -23.54593
+   ]
+  ],
+  "fama": 1000000,
+  "blocos": [
+   {
+    "nome": "Tarado Ni Você",
+    "data": "2026-02-14",
+    "inicio": "11:00"
+   }
+  ]
+ },
+ {
+  "chave": "Sé|Av. Ipiranga, Av. São Luis, R. da Consolação, R. Cel. Xavier de Toledo, Shopping Light",
+  "subprefeitura": "Sé",
+  "itinerario": "Av. Ipiranga, Av. São Luis, R. da Consolação, R. Cel. Xavier de Toledo, Shopping Light",
+  "lugar": "Av. Ipiranga, São João e República",
+  "jeito": "ruas",
+  "aproximado": false,
+  "linha": [
+   [
+    -46.64345,
+    -23.54503
+   ],
+   [
+    -46.64326,
+    -23.5452
+   ],
+   [
+    -46.64329,
+    -23.54529
+   ],
+   [
+    -46.6427,
+    -23.54796
+   ],
+   [
+    -46.6426,
+    -23.54788
+   ],
+   [
+    -46.64143,
+    -23.54774
+   ],
+   [
+    -46.63976,
+    -23.54742
+   ],
+   [
+    -46.63934,
+    -23.54678
+   ]
+  ],
+  "fama": 1000000,
+  "blocos": [
+   {
+    "nome": "MinhoQueens",
+    "data": "2026-02-14",
+    "inicio": "13:00"
+   }
+  ]
+ },
+ {
+  "chave": "Sé|Largo do Arouche, Av. Vieira de Carvalho. Pça.da República, Av. Ipiranga",
+  "subprefeitura": "Sé",
+  "itinerario": "Largo do Arouche, Av. Vieira de Carvalho. Pça.da República, Av. Ipiranga",
+  "lugar": "Av. Ipiranga, São João e República",
+  "jeito": "ruas",
+  "aproximado": false,
+  "linha": [
+   [
+    -46.64443,
+    -23.54114
+   ],
+   [
+    -46.64308,
+    -23.54265
+   ],
+   [
+    -46.64444,
+    -23.54383
+   ],
+   [
+    -46.64437,
+    -23.54415
+   ],
+   [
+    -46.64357,
+    -23.54494
+   ],
+   [
+    -46.64113,
+    -23.54308
+   ]
+  ],
+  "fama": 1000000,
+  "blocos": [
+   {
+    "nome": "Bloco Siga Bem Caminhoneira",
+    "data": "2026-02-15",
+    "inicio": "14:00"
+   }
+  ]
+ },
+ {
+  "chave": "Lapa|Av. Paulo VI, entre Praça Marcia Alberti Mammana e Av. Sumaré, 1529",
+  "subprefeitura": "Lapa",
+  "itinerario": "Av. Paulo VI, entre Praça Marcia Alberti Mammana e Av. Sumaré, 1529",
+  "lugar": "Avenida Paulo VI",
+  "jeito": "entre",
+  "aproximado": false,
+  "linha": [
+   [
+    -46.67718,
+    -23.55012
+   ],
+   [
+    -46.67725,
+    -23.55012
+   ],
+   [
+    -46.6771,
+    -23.54932
+   ],
+   [
+    -46.67698,
+    -23.54835
+   ],
+   [
+    -46.67662,
+    -23.54448
+   ]
+  ],
+  "fama": 1000000,
+  "blocos": [
+   {
+    "nome": "Bloco Ritaleena",
+    "data": "2026-02-07",
+    "inicio": "12:00"
+   },
+   {
+    "nome": "Megabloco Emo",
+    "data": "2026-02-14",
+    "inicio": "13:00"
+   },
+   {
+    "nome": "Fico fei nunca 2025",
+    "data": "2026-02-14",
+    "inicio": "11:00"
+   },
+   {
+    "nome": "É Tão Bom!",
+    "data": "2026-02-17",
+    "inicio": "12:00"
+   }
+  ]
+ },
+ {
+  "chave": "Pinheiros|R. dos Pinheiros, 600 ao 54",
+  "subprefeitura": "Pinheiros",
+  "itinerario": "R. dos Pinheiros, 600 ao 54",
+  "lugar": "Pinheiros",
+  "jeito": "na rua",
+  "aproximado": true,
+  "linha": [
+   [
+    -46.68474,
+    -23.56643
+   ]
+  ],
+  "fama": 1000000,
+  "blocos": [
+   {
+    "nome": "Bloco Sargento Pimenta",
+    "data": "2026-02-07",
+    "inicio": "11:00"
+   }
+  ]
+ },
+ {
+  "chave": "Pinheiros|R. dos Pinheiros, 1037 ao 57",
+  "subprefeitura": "Pinheiros",
+  "itinerario": "R. dos Pinheiros, 1037 ao 57",
+  "lugar": "Pinheiros",
+  "jeito": "numeros",
+  "aproximado": false,
+  "linha": [
+   [
+    -46.68776,
+    -23.56767
+   ],
+   [
+    -46.68723,
+    -23.56748
+   ],
+   [
+    -46.67981,
+    -23.56439
+   ],
+   [
+    -46.67942,
+    -23.5643
+   ],
+   [
+    -46.67896,
+    -23.56432
+   ]
+  ],
+  "fama": 1000000,
+  "blocos": [
+   {
+    "nome": "Confraria do Pasmado",
+    "data": "2026-02-08",
+    "inicio": "11:00"
+   }
+  ]
+ },
+ {
+  "chave": "Pinheiros|R. Henrique Schaumann, 567 a 125",
+  "subprefeitura": "Pinheiros",
+  "itinerario": "R. Henrique Schaumann, 567 a 125",
+  "lugar": "Rua Henrique Schaumann",
+  "jeito": "na rua",
+  "aproximado": true,
+  "linha": [
+   [
+    -46.68135,
+    -23.55914
+   ]
+  ],
+  "fama": 1000000,
+  "blocos": [
+   {
+    "nome": "Bloco Casa Comigo",
+    "data": "2026-02-07",
+    "inicio": "11:00"
+   },
+   {
+    "nome": "Bloco Toca Um Samba Aí",
+    "data": "2026-02-07",
+    "inicio": "14:00"
+   },
+   {
+    "nome": "Bloco Quizomba",
+    "data": "2026-02-08",
+    "inicio": "09:00"
+   },
+   {
+    "nome": "Sambão",
+    "data": "2026-02-08",
+    "inicio": "13:00"
+   },
+   {
+    "nome": "Bloco Praieiro - Jammil",
+    "data": "2026-02-21",
+    "inicio": "11:00"
+   },
+   {
+    "nome": "Bloco Se Te Pego não Te Largo",
+    "data": "2026-02-21",
+    "inicio": "13:00"
+   }
+  ]
+ },
+ {
+  "chave": "Santo Amaro|Av. Brigadeiro Faria Lima, 4100 a 4500",
+  "subprefeitura": "Santo Amaro",
+  "itinerario": "Av. Brigadeiro Faria Lima, 4100 a 4500",
+  "lugar": "Avenida Faria Lima",
+  "jeito": "numeros",
+  "aproximado": false,
+  "linha": [
+   [
+    -46.68114,
+    -23.59176
+   ],
+   [
+    -46.68008,
+    -23.59556
+   ]
+  ],
+  "fama": 0,
+  "blocos": [
+   {
+    "nome": "Bloco GoFun Experience",
+    "data": "2026-02-16",
+    "inicio": "11:00"
+   }
+  ]
+ },
+ {
+  "chave": "Sé|Av. Ipiranga, Pça. da República, Av. São Luís, R. da Consolação, R. Cel. Xavier de Toledo, Pça. Ramos de Azevedo",
+  "subprefeitura": "Sé",
+  "itinerario": "Av. Ipiranga, Pça. da República, Av. São Luís, R. da Consolação, R. Cel. Xavier de Toledo, Pça. Ramos de Azevedo",
+  "lugar": "Av. Ipiranga, São João e República",
+  "jeito": "ruas",
+  "aproximado": false,
+  "linha": [
+   [
+    -46.64357,
+    -23.54494
+   ],
+   [
+    -46.64338,
+    -23.54482
+   ],
+   [
+    -46.64324,
+    -23.54493
+   ],
+   [
+    -46.64329,
+    -23.54529
+   ],
+   [
+    -46.6427,
+    -23.54796
+   ],
+   [
+    -46.6426,
+    -23.54788
+   ],
+   [
+    -46.64143,
+    -23.54774
+   ],
+   [
+    -46.63976,
+    -23.54742
+   ],
+   [
+    -46.63955,
+    -23.54713
+   ],
+   [
+    -46.63898,
+    -23.54617
+   ],
+   [
+    -46.63876,
+    -23.54593
+   ]
+  ],
+  "fama": 0,
+  "blocos": [
+   {
+    "nome": "Bloco Bahia Sampa",
+    "data": "2026-02-07",
+    "inicio": "11:00"
+   },
+   {
+    "nome": "Bloco Afro Percussivo Batuquedum",
+    "data": "2026-02-15",
+    "inicio": "14:00"
+   }
+  ]
+ },
+ {
+  "chave": "Sé|Av. São João, Av. Ipiranga, Av. São Luis, R. Cel Xavier Toledo, Theatro Municipal, Av. São João",
+  "subprefeitura": "Sé",
+  "itinerario": "Av. São João, Av. Ipiranga, Av. São Luis, R. Cel Xavier Toledo, Theatro Municipal, Av. São João",
+  "lugar": "Av. Ipiranga, São João e República",
+  "jeito": "volta aproximado",
+  "aproximado": true,
+  "linha": [
+   [
+    -46.64029,
+    -23.54233
+   ],
+   [
+    -46.64024,
+    -23.54236
+   ],
+   [
+    -46.6404,
+    -23.54248
+   ],
+   [
+    -46.64031,
+    -23.54254
+   ],
+   [
+    -46.64093,
+    -23.54304
+   ],
+   [
+    -46.64101,
+    -23.54319
+   ],
+   [
+    -46.64111,
+    -23.54318
+   ],
+   [
+    -46.64178,
+    -23.54371
+   ],
+   [
+    -46.64292,
+    -23.54466
+   ],
+   [
+    -46.64289,
+    -23.54472
+   ],
+   [
+    -46.64316,
+    -23.54487
+   ],
+   [
+    -46.64318,
+    -23.54496
+   ],
+   [
+    -46.64333,
+    -23.54489
+   ],
+   [
+    -46.64348,
+    -23.54501
+   ],
+   [
+    -46.6434,
+    -23.54507
+   ],
+   [
+    -46.64348,
+    -23.54501
+   ],
+   [
+    -46.64333,
+    -23.54489
+   ],
+   [
+    -46.64318,
+    -23.54496
+   ],
+   [
+    -46.64316,
+    -23.54487
+   ],
+   [
+    -46.64289,
+    -23.54472
+   ],
+   [
+    -46.64292,
+    -23.54466
+   ],
+   [
+    -46.64178,
+    -23.54371
+   ],
+   [
+    -46.63943,
+    -23.5456
+   ],
+   [
+    -46.639,
+    -23.5459
+   ],
+   [
+    -46.63876,
+    -23.54593
+   ],
+   [
+    -46.63887,
+    -23.54605
+   ],
+   [
+    -46.63876,
+    -23.54593
+   ],
+   [
+    -46.63861,
+    -23.54593
+   ],
+   [
+    -46.63841,
+    -23.5457
+   ],
+   [
+    -46.6383,
+    -23.54571
+   ],
+   [
+    -46.63814,
+    -23.54551
+   ],
+   [
+    -46.63795,
+    -23.54554
+   ],
+   [
+    -46.63781,
+    -23.54562
+   ],
+   [
+    -46.63758,
+    -23.54546
+   ],
+   [
+    -46.63735,
+    -23.54561
+   ],
+   [
+    -46.63696,
+    -23.54515
+   ],
+   [
+    -46.63649,
+    -23.54449
+   ],
+   [
+    -46.63695,
+    -23.54422
+   ],
+   [
+    -46.63706,
+    -23.54437
+   ],
+   [
+    -46.63779,
+    -23.54373
+   ],
+   [
+    -46.64029,
+    -23.54233
+   ]
+  ],
+  "fama": 0,
+  "blocos": [
+   {
+    "nome": "BATEKOO - Bloco de Carnaval",
+    "data": "2026-02-07",
+    "inicio": "13:00"
+   }
+  ]
+ },
+ {
+  "chave": "Sé|Av. Ipiranga, Praça da República, Av. São Luís, R. da Consolação, R. Cel. Xavier de Toledo, Praça Ramos de Azevedo.",
+  "subprefeitura": "Sé",
+  "itinerario": "Av. Ipiranga, Praça da República, Av. São Luís, R. da Consolação, R. Cel. Xavier de Toledo, Praça Ramos de Azevedo.",
+  "lugar": "Av. Ipiranga, São João e República",
+  "jeito": "ruas",
+  "aproximado": false,
+  "linha": [
+   [
+    -46.64357,
+    -23.54494
+   ],
+   [
+    -46.64338,
+    -23.54482
+   ],
+   [
+    -46.64324,
+    -23.54493
+   ],
+   [
+    -46.64329,
+    -23.54529
+   ],
+   [
+    -46.6427,
+    -23.54796
+   ],
+   [
+    -46.6426,
+    -23.54788
+   ],
+   [
+    -46.64143,
+    -23.54774
+   ],
+   [
+    -46.63976,
+    -23.54742
+   ],
+   [
+    -46.63955,
+    -23.54713
+   ],
+   [
+    -46.63898,
+    -23.54617
+   ],
+   [
+    -46.63876,
+    -23.54593
+   ]
+  ],
+  "fama": 0,
+  "blocos": [
+   {
+    "nome": "Bloco Afro Pioneiros do Samba Reggae",
+    "data": "2026-02-07",
+    "inicio": "13:00"
+   }
+  ]
+ },
+ {
+  "chave": "Sé|R. Pedro Américo, Pça. da República, Av. Vieira de Carvalho, Lgo. do Arouche, Av. Vieira de Carvalho, Pça. da República, R. Pedro Américo",
+  "subprefeitura": "Sé",
+  "itinerario": "R. Pedro Américo, Pça. da República, Av. Vieira de Carvalho, Lgo. do Arouche, Av. Vieira de Carvalho, Pça. da República, R. Pedro Américo",
+  "lugar": "Av. Ipiranga, São João e República",
+  "jeito": "volta aproximado",
+  "aproximado": true,
+  "linha": [
+   [
+    -46.64241,
+    -23.54205
+   ],
+   [
+    -46.64304,
+    -23.54261
+   ],
+   [
+    -46.64313,
+    -23.5426
+   ],
+   [
+    -46.64447,
+    -23.54117
+   ],
+   [
+    -46.64443,
+    -23.54114
+   ],
+   [
+    -46.64308,
+    -23.54265
+   ],
+   [
+    -46.64241,
+    -23.54205
+   ]
+  ],
+  "fama": 0,
+  "blocos": [
+   {
+    "nome": "Bloco Xique Xique do Cairo",
+    "data": "2026-02-07",
+    "inicio": "13:00"
+   }
+  ]
+ },
+ {
+  "chave": "Sé|Lgo. do Arouche, R. Vieira de Carvalho, Praça da Republica R. Marques de Itu, Praça da Republica, Av. Ipiranga",
+  "subprefeitura": "Sé",
+  "itinerario": "Lgo. do Arouche, R. Vieira de Carvalho, Praça da Republica R. Marques de Itu, Praça da Republica, Av. Ipiranga",
+  "lugar": "Av. Ipiranga, São João e República",
+  "jeito": "ruas",
+  "aproximado": false,
+  "linha": [
+   [
+    -46.64443,
+    -23.54114
+   ],
+   [
+    -46.64308,
+    -23.54265
+   ],
+   [
+    -46.64444,
+    -23.54383
+   ],
+   [
+    -46.64437,
+    -23.54415
+   ],
+   [
+    -46.64357,
+    -23.54494
+   ]
+  ],
+  "fama": 0,
+  "blocos": [
+   {
+    "nome": "Bloco Carnavalesco tô no Vermelho",
+    "data": "2026-02-07",
+    "inicio": "15:00"
+   }
+  ]
+ },
+ {
+  "chave": "Sé|Lgo. do Paissandu, Av. São João, Av Ipiranga, R. 24 de Maio, Pça. Ramos de Azevedo (em frente ao Theatro Municipal)",
+  "subprefeitura": "Sé",
+  "itinerario": "Lgo. do Paissandu, Av. São João, Av Ipiranga, R. 24 de Maio, Pça. Ramos de Azevedo (em frente ao Theatro Municipal)",
+  "lugar": "Av. Ipiranga, São João e República",
+  "jeito": "ruas aproximado",
+  "aproximado": true,
+  "linha": [
+   [
+    -46.6388,
+    -23.54315
+   ],
+   [
+    -46.64029,
+    -23.54233
+   ],
+   [
+    -46.64024,
+    -23.54236
+   ],
+   [
+    -46.64035,
+    -23.54245
+   ]
+  ],
+  "fama": 0,
+  "blocos": [
+   {
+    "nome": "Bloco das Putas Vampiras",
+    "data": "2026-02-07",
+    "inicio": "15:00"
+   }
+  ]
+ },
+ {
+  "chave": "Sé|Av. São João, Av. Ipiranga, Av. São Luís, R. Coronel Xavier de Toledo, Pça. Ramos, Av. São João",
+  "subprefeitura": "Sé",
+  "itinerario": "Av. São João, Av. Ipiranga, Av. São Luís, R. Coronel Xavier de Toledo, Pça. Ramos, Av. São João",
+  "lugar": "Av. Ipiranga, São João e República",
+  "jeito": "volta aproximado",
+  "aproximado": true,
+  "linha": [
+   [
+    -46.64029,
+    -23.54233
+   ],
+   [
+    -46.64024,
+    -23.54236
+   ],
+   [
+    -46.6404,
+    -23.54248
+   ],
+   [
+    -46.64031,
+    -23.54254
+   ],
+   [
+    -46.64093,
+    -23.54304
+   ],
+   [
+    -46.64095,
+    -23.54314
+   ],
+   [
+    -46.64101,
+    -23.54319
+   ],
+   [
+    -46.64111,
+    -23.54318
+   ],
+   [
+    -46.64178,
+    -23.54371
+   ],
+   [
+    -46.64292,
+    -23.54466
+   ],
+   [
+    -46.64289,
+    -23.54472
+   ],
+   [
+    -46.64316,
+    -23.54487
+   ],
+   [
+    -46.64318,
+    -23.54496
+   ],
+   [
+    -46.64333,
+    -23.54489
+   ],
+   [
+    -46.64348,
+    -23.54501
+   ],
+   [
+    -46.6434,
+    -23.54507
+   ],
+   [
+    -46.64359,
+    -23.54516
+   ],
+   [
+    -46.64339,
+    -23.54527
+   ],
+   [
+    -46.64282,
+    -23.54774
+   ],
+   [
+    -46.64257,
+    -23.54779
+   ],
+   [
+    -46.64248,
+    -23.54785
+   ],
+   [
+    -46.6413,
+    -23.54764
+   ],
+   [
+    -46.64129,
+    -23.54772
+   ],
+   [
+    -46.63993,
+    -23.54748
+   ],
+   [
+    -46.64005,
+    -23.5474
+   ],
+   [
+    -46.63975,
+    -23.54727
+   ],
+   [
+    -46.63895,
+    -23.54601
+   ],
+   [
+    -46.639,
+    -23.5459
+   ],
+   [
+    -46.63883,
+    -23.54567
+   ],
+   [
+    -46.63912,
+    -23.54548
+   ],
+   [
+    -46.63912,
+    -23.54543
+   ],
+   [
+    -46.63923,
+    -23.54535
+   ],
+   [
+    -46.63888,
+    -23.54487
+   ],
+   [
+    -46.64101,
+    -23.54319
+   ],
+   [
+    -46.64093,
+    -23.54304
+   ],
+   [
+    -46.64031,
+    -23.54254
+   ],
+   [
+    -46.6404,
+    -23.54248
+   ],
+   [
+    -46.64024,
+    -23.54236
+   ],
+   [
+    -46.64029,
+    -23.54233
+   ]
+  ],
+  "fama": 0,
+  "blocos": [
+   {
+    "nome": "Blocos dos Sem Tetos",
+    "data": "2026-02-07",
+    "inicio": "16:00"
+   }
+  ]
+ },
+ {
+  "chave": "Sé|Av. Vieira de Carvalho, Pça. da República, Av. São Luís, R. Cel. Xavier de Toledo, Pça. Ramos de Azevedo, Teatro Municipal, R. Conselheiro Crispiniano, Lgo. do Paissandu, Av. São João, Av. Ipiranga, Pça. da República, Av. Vieira de Carvalho, Lgo. do Arouche.",
+  "subprefeitura": "Sé",
+  "itinerario": "Av. Vieira de Carvalho, Pça. da República, Av. São Luís, R. Cel. Xavier de Toledo, Pça. Ramos de Azevedo, Teatro Municipal, R. Conselheiro Crispiniano, Lgo. do Paissandu, Av. São João, Av. Ipiranga, Pça. da República, Av. Vieira de Carvalho, Lgo. do Arouche.",
+  "lugar": "Av. Ipiranga, São João e República",
+  "jeito": "ruas aproximado",
+  "aproximado": true,
+  "linha": [
+   [
+    -46.64304,
+    -23.54261
+   ],
+   [
+    -46.64444,
+    -23.54383
+   ],
+   [
+    -46.64437,
+    -23.54415
+   ],
+   [
+    -46.64367,
+    -23.54485
+   ],
+   [
+    -46.64357,
+    -23.54494
+   ],
+   [
+    -46.64338,
+    -23.54482
+   ],
+   [
+    -46.64324,
+    -23.54493
+   ],
+   [
+    -46.64326,
+    -23.5452
+   ],
+   [
+    -46.64348,
+    -23.54501
+   ],
+   [
+    -46.64333,
+    -23.54489
+   ],
+   [
+    -46.64318,
+    -23.54496
+   ],
+   [
+    -46.64316,
+    -23.54487
+   ],
+   [
+    -46.64289,
+    -23.54472
+   ],
+   [
+    -46.64292,
+    -23.54466
+   ],
+   [
+    -46.64178,
+    -23.54371
+   ],
+   [
+    -46.63943,
+    -23.5456
+   ],
+   [
+    -46.639,
+    -23.5459
+   ],
+   [
+    -46.63876,
+    -23.54593
+   ],
+   [
+    -46.63883,
+    -23.54567
+   ],
+   [
+    -46.63913,
+    -23.54544
+   ],
+   [
+    -46.63863,
+    -23.54481
+   ],
+   [
+    -46.63853,
+    -23.54483
+   ],
+   [
+    -46.63855,
+    -23.54487
+   ],
+   [
+    -46.63857,
+    -23.54458
+   ],
+   [
+    -46.63809,
+    -23.54384
+   ],
+   [
+    -46.63806,
+    -23.54369
+   ],
+   [
+    -46.63809,
+    -23.54355
+   ],
+   [
+    -46.64029,
+    -23.54233
+   ],
+   [
+    -46.64024,
+    -23.54236
+   ],
+   [
+    -46.6404,
+    -23.54248
+   ],
+   [
+    -46.64031,
+    -23.54254
+   ],
+   [
+    -46.64096,
+    -23.5431
+   ],
+   [
+    -46.6411,
+    -23.54297
+   ],
+   [
+    -46.6412,
+    -23.543
+   ],
+   [
+    -46.64118,
+    -23.54311
+   ],
+   [
+    -46.64357,
+    -23.54494
+   ],
+   [
+    -46.64437,
+    -23.54415
+   ],
+   [
+    -46.64444,
+    -23.54383
+   ],
+   [
+    -46.64304,
+    -23.54261
+   ],
+   [
+    -46.64313,
+    -23.5426
+   ],
+   [
+    -46.64447,
+    -23.54117
+   ]
+  ],
+  "fama": 0,
+  "blocos": [
+   {
+    "nome": "Banda do Fuxico",
+    "data": "2026-02-08",
+    "inicio": "12:00"
+   }
+  ]
+ },
+ {
+  "chave": "Sé|R. Theodoro Baima, R. da Consolação, R. Cel. Xavier de Toledo, Pça. Ramos de Azevedo, Teatro Municipal, R. Conselheiro Crispiniano, Lgo. do Paissandu, Av. São João, Av. Ipiranga, Pça. da República, R. Theodoro Baima",
+  "subprefeitura": "Sé",
+  "itinerario": "R. Theodoro Baima, R. da Consolação, R. Cel. Xavier de Toledo, Pça. Ramos de Azevedo, Teatro Municipal, R. Conselheiro Crispiniano, Lgo. do Paissandu, Av. São João, Av. Ipiranga, Pça. da República, R. Theodoro Baima",
+  "lugar": "Av. Ipiranga, São João e República",
+  "jeito": "ruas aproximado",
+  "aproximado": true,
+  "linha": [
+   [
+    -46.64143,
+    -23.54774
+   ],
+   [
+    -46.63991,
+    -23.54747
+   ],
+   [
+    -46.63969,
+    -23.54736
+   ],
+   [
+    -46.63898,
+    -23.54617
+   ],
+   [
+    -46.63876,
+    -23.54593
+   ],
+   [
+    -46.63883,
+    -23.54567
+   ],
+   [
+    -46.63913,
+    -23.54544
+   ],
+   [
+    -46.63863,
+    -23.54481
+   ],
+   [
+    -46.63853,
+    -23.54483
+   ],
+   [
+    -46.63855,
+    -23.54487
+   ],
+   [
+    -46.63857,
+    -23.54458
+   ],
+   [
+    -46.63809,
+    -23.54384
+   ],
+   [
+    -46.63806,
+    -23.54369
+   ],
+   [
+    -46.63809,
+    -23.54355
+   ],
+   [
+    -46.64029,
+    -23.54233
+   ],
+   [
+    -46.64024,
+    -23.54236
+   ],
+   [
+    -46.6404,
+    -23.54248
+   ],
+   [
+    -46.64031,
+    -23.54254
+   ],
+   [
+    -46.64096,
+    -23.5431
+   ],
+   [
+    -46.6411,
+    -23.54297
+   ],
+   [
+    -46.6412,
+    -23.543
+   ]
+  ],
+  "fama": 0,
+  "blocos": [
+   {
+    "nome": "Banda Redonda",
+    "data": "2026-02-09",
+    "inicio": "17:30"
+   }
+  ]
+ },
+ {
+  "chave": "Sé|R. Treze de Maio, R. Martinho Prado, R. Martins Fontes, R. da Consolação, R. Cel. Xavier de Toledo, Pça. Ramos de Azevedo, R. Conselheiro Crispiniano, Lgo. do Paissandu, Av. São João, Av. Ipiranga, Pça. da República, Av. São Luiz, Vd. 9 de Julho, R. Santo Antônio, R. Treze de Maio.",
+  "subprefeitura": "Sé",
+  "itinerario": "R. Treze de Maio, R. Martinho Prado, R. Martins Fontes, R. da Consolação, R. Cel. Xavier de Toledo, Pça. Ramos de Azevedo, R. Conselheiro Crispiniano, Lgo. do Paissandu, Av. São João, Av. Ipiranga, Pça. da República, Av. São Luiz, Vd. 9 de Julho, R. Santo Antônio, R. Treze de Maio.",
+  "lugar": "Av. Ipiranga, São João e República",
+  "jeito": "volta aproximado",
+  "aproximado": true,
+  "linha": [
+   [
+    -46.64699,
+    -23.55316
+   ],
+   [
+    -46.64681,
+    -23.55292
+   ],
+   [
+    -46.64612,
+    -23.55232
+   ],
+   [
+    -46.64549,
+    -23.55193
+   ],
+   [
+    -46.64617,
+    -23.54997
+   ],
+   [
+    -46.6451,
+    -23.54964
+   ],
+   [
+    -46.6445,
+    -23.5494
+   ],
+   [
+    -46.6428,
+    -23.54792
+   ],
+   [
+    -46.64278,
+    -23.548
+   ],
+   [
+    -46.64269,
+    -23.54802
+   ],
+   [
+    -46.6426,
+    -23.54788
+   ],
+   [
+    -46.64143,
+    -23.54774
+   ],
+   [
+    -46.63976,
+    -23.54742
+   ],
+   [
+    -46.63955,
+    -23.54713
+   ],
+   [
+    -46.63898,
+    -23.54617
+   ],
+   [
+    -46.63876,
+    -23.54593
+   ],
+   [
+    -46.63932,
+    -23.54554
+   ],
+   [
+    -46.63864,
+    -23.5447
+   ],
+   [
+    -46.63809,
+    -23.54384
+   ],
+   [
+    -46.63806,
+    -23.54369
+   ],
+   [
+    -46.63809,
+    -23.54355
+   ],
+   [
+    -46.64029,
+    -23.54233
+   ],
+   [
+    -46.64024,
+    -23.54236
+   ],
+   [
+    -46.6404,
+    -23.54248
+   ],
+   [
+    -46.64031,
+    -23.54254
+   ],
+   [
+    -46.64093,
+    -23.54304
+   ],
+   [
+    -46.64101,
+    -23.54319
+   ],
+   [
+    -46.64111,
+    -23.54318
+   ],
+   [
+    -46.64178,
+    -23.54371
+   ],
+   [
+    -46.64196,
+    -23.54355
+   ],
+   [
+    -46.64348,
+    -23.54478
+   ],
+   [
+    -46.64342,
+    -23.54484
+   ],
+   [
+    -46.64369,
+    -23.54505
+   ],
+   [
+    -46.64354,
+    -23.5452
+   ],
+   [
+    -46.64339,
+    -23.54527
+   ],
+   [
+    -46.64282,
+    -23.54774
+   ],
+   [
+    -46.64274,
+    -23.54776
+   ],
+   [
+    -46.64263,
+    -23.54835
+   ],
+   [
+    -46.64294,
+    -23.54929
+   ],
+   [
+    -46.64344,
+    -23.5511
+   ],
+   [
+    -46.64574,
+    -23.55206
+   ],
+   [
+    -46.64612,
+    -23.55232
+   ],
+   [
+    -46.64677,
+    -23.55288
+   ],
+   [
+    -46.64699,
+    -23.55316
+   ]
+  ],
+  "fama": 0,
+  "blocos": [
+   {
+    "nome": "Banda do Candinho",
+    "data": "2026-02-11",
+    "inicio": "19:00"
+   }
+  ]
+ },
+ {
+  "chave": "Sé|Pça.da Republica, Av. Sao Luis, R. da Consolação , R. Cel. Xavier de Toledo, Pça.Ramos, R. Conselheiro Crispiniano, Lgo. do Paissandu",
+  "subprefeitura": "Sé",
+  "itinerario": "Pça.da Republica, Av. Sao Luis, R. da Consolação , R. Cel. Xavier de Toledo, Pça.Ramos, R. Conselheiro Crispiniano, Lgo. do Paissandu",
+  "lugar": "Av. Ipiranga, São João e República",
+  "jeito": "ruas aproximado",
+  "aproximado": true,
+  "linha": [
+   [
+    -46.64339,
+    -23.54482
+   ],
+   [
+    -46.64324,
+    -23.54493
+   ],
+   [
+    -46.64329,
+    -23.54529
+   ],
+   [
+    -46.6427,
+    -23.54796
+   ],
+   [
+    -46.6426,
+    -23.54788
+   ],
+   [
+    -46.64152,
+    -23.54776
+   ],
+   [
+    -46.63991,
+    -23.54747
+   ],
+   [
+    -46.63969,
+    -23.54736
+   ],
+   [
+    -46.63898,
+    -23.54617
+   ],
+   [
+    -46.63876,
+    -23.54593
+   ],
+   [
+    -46.63877,
+    -23.54572
+   ],
+   [
+    -46.63913,
+    -23.54544
+   ],
+   [
+    -46.63863,
+    -23.54481
+   ],
+   [
+    -46.63857,
+    -23.54481
+   ],
+   [
+    -46.63851,
+    -23.54473
+   ],
+   [
+    -46.63856,
+    -23.5447
+   ],
+   [
+    -46.63855,
+    -23.54465
+   ],
+   [
+    -46.63797,
+    -23.5438
+   ],
+   [
+    -46.6379,
+    -23.54366
+   ],
+   [
+    -46.63809,
+    -23.54355
+   ]
+  ],
+  "fama": 0,
+  "blocos": [
+   {
+    "nome": "Ilú Obá de Min",
+    "data": "2026-02-13",
+    "inicio": "19:00"
+   }
+  ]
+ },
+ {
+  "chave": "Sé|R. 24 de Maio, R. Dom José Barros, Av. São João, Av.Ipiranga",
+  "subprefeitura": "Sé",
+  "itinerario": "R. 24 de Maio, R. Dom José Barros, Av. São João, Av.Ipiranga",
+  "lugar": "Av. Ipiranga, São João e República",
+  "jeito": "ruas aproximado",
+  "aproximado": true,
+  "linha": [
+   [
+    -46.639,
+    -23.54304
+   ],
+   [
+    -46.64029,
+    -23.54233
+   ]
+  ],
+  "fama": 0,
+  "blocos": [
+   {
+    "nome": "Bloco Afrikaliente",
+    "data": "2026-02-14",
+    "inicio": "10:00"
+   }
+  ]
+ },
+ {
+  "chave": "Sé|Pça. da Republica, R. São Luiz, R. Xavier de Toledo",
+  "subprefeitura": "Sé",
+  "itinerario": "Pça. da Republica, R. São Luiz, R. Xavier de Toledo",
+  "lugar": "Av. Ipiranga, São João e República",
+  "jeito": "cruzamento",
+  "aproximado": true,
+  "linha": [
+   [
+    -46.64332,
+    -23.5447
+   ]
+  ],
+  "fama": 0,
+  "blocos": [
+   {
+    "nome": "Bloco Laço Branco",
+    "data": "2026-02-14",
+    "inicio": "10:00"
+   }
+  ]
+ },
+ {
+  "chave": "Sé|R. Bento Freitas, Lgo. do Arouche, R. Vieira de Carvalho, Pça. Da República, Av. São Luis, R. Cel. Xavier de Toledo, R. Cons. Crispiniano, Av. São João, Av. Ipiranga, Pça. Da República, R. Marquês de Itu e R. Bento Freitas",
+  "subprefeitura": "Sé",
+  "itinerario": "R. Bento Freitas, Lgo. do Arouche, R. Vieira de Carvalho, Pça. Da República, Av. São Luis, R. Cel. Xavier de Toledo, R. Cons. Crispiniano, Av. São João, Av. Ipiranga, Pça. Da República, R. Marquês de Itu e R. Bento Freitas",
+  "lugar": "Av. Ipiranga, São João e República",
+  "jeito": "volta aproximado",
+  "aproximado": true,
+  "linha": [
+   [
+    -46.64544,
+    -23.54193
+   ],
+   [
+    -46.64543,
+    -23.54188
+   ],
+   [
+    -46.64548,
+    -23.54184
+   ],
+   [
+    -46.64538,
+    -23.54179
+   ],
+   [
+    -46.64541,
+    -23.54171
+   ],
+   [
+    -46.64443,
+    -23.54114
+   ],
+   [
+    -46.64308,
+    -23.54265
+   ],
+   [
+    -46.64444,
+    -23.54383
+   ],
+   [
+    -46.64437,
+    -23.54415
+   ],
+   [
+    -46.64367,
+    -23.54485
+   ],
+   [
+    -46.64357,
+    -23.54494
+   ],
+   [
+    -46.64338,
+    -23.54482
+   ],
+   [
+    -46.64324,
+    -23.54493
+   ],
+   [
+    -46.64326,
+    -23.5452
+   ],
+   [
+    -46.64348,
+    -23.54501
+   ],
+   [
+    -46.64333,
+    -23.54489
+   ],
+   [
+    -46.64318,
+    -23.54496
+   ],
+   [
+    -46.64316,
+    -23.54487
+   ],
+   [
+    -46.64289,
+    -23.54472
+   ],
+   [
+    -46.64292,
+    -23.54466
+   ],
+   [
+    -46.64178,
+    -23.54371
+   ],
+   [
+    -46.63943,
+    -23.5456
+   ],
+   [
+    -46.63895,
+    -23.54593
+   ],
+   [
+    -46.63895,
+    -23.54601
+   ],
+   [
+    -46.63903,
+    -23.54614
+   ],
+   [
+    -46.63898,
+    -23.54617
+   ],
+   [
+    -46.63876,
+    -23.54593
+   ],
+   [
+    -46.63877,
+    -23.54572
+   ],
+   [
+    -46.63913,
+    -23.54544
+   ],
+   [
+    -46.63863,
+    -23.54481
+   ],
+   [
+    -46.63857,
+    -23.54481
+   ],
+   [
+    -46.63851,
+    -23.54473
+   ],
+   [
+    -46.63856,
+    -23.5447
+   ],
+   [
+    -46.63855,
+    -23.54465
+   ],
+   [
+    -46.6379,
+    -23.54366
+   ],
+   [
+    -46.64029,
+    -23.54233
+   ],
+   [
+    -46.64024,
+    -23.54236
+   ],
+   [
+    -46.6404,
+    -23.54248
+   ],
+   [
+    -46.64031,
+    -23.54254
+   ],
+   [
+    -46.64096,
+    -23.5431
+   ],
+   [
+    -46.6411,
+    -23.54297
+   ],
+   [
+    -46.6412,
+    -23.543
+   ],
+   [
+    -46.64118,
+    -23.54311
+   ],
+   [
+    -46.64357,
+    -23.54494
+   ],
+   [
+    -46.64437,
+    -23.54415
+   ],
+   [
+    -46.64444,
+    -23.5439
+   ],
+   [
+    -46.6444,
+    -23.54379
+   ],
+   [
+    -46.64472,
+    -23.54389
+   ],
+   [
+    -46.64552,
+    -23.54387
+   ],
+   [
+    -46.64544,
+    -23.54193
+   ]
+  ],
+  "fama": 0,
+  "blocos": [
+   {
+    "nome": "Bloco Segura a Onça",
+    "data": "2026-02-14",
+    "inicio": "10:00"
+   }
+  ]
+ },
+ {
+  "chave": "Sé|Av. São Joao, Av ipiranga, R. Xavier de Toledo, Pça. Ramos de Azevedo, Theatro Municipal",
+  "subprefeitura": "Sé",
+  "itinerario": "Av. São Joao, Av ipiranga, R. Xavier de Toledo, Pça. Ramos de Azevedo, Theatro Municipal",
+  "lugar": "Av. Ipiranga, São João e República",
+  "jeito": "ruas aproximado",
+  "aproximado": true,
+  "linha": [
+   [
+    -46.64029,
+    -23.54233
+   ],
+   [
+    -46.64024,
+    -23.54236
+   ],
+   [
+    -46.64029,
+    -23.54233
+   ],
+   [
+    -46.64024,
+    -23.54236
+   ],
+   [
+    -46.6404,
+    -23.54248
+   ],
+   [
+    -46.64031,
+    -23.54254
+   ],
+   [
+    -46.64093,
+    -23.54304
+   ],
+   [
+    -46.64101,
+    -23.54319
+   ],
+   [
+    -46.63888,
+    -23.54487
+   ],
+   [
+    -46.63923,
+    -23.54535
+   ],
+   [
+    -46.63912,
+    -23.54543
+   ],
+   [
+    -46.63912,
+    -23.54548
+   ],
+   [
+    -46.63877,
+    -23.54572
+   ],
+   [
+    -46.63876,
+    -23.54593
+   ],
+   [
+    -46.63871,
+    -23.54587
+   ]
+  ],
+  "fama": 0,
+  "blocos": [
+   {
+    "nome": "Djongador o Bloco",
+    "data": "2026-02-14",
+    "inicio": "10:00"
+   }
+  ]
+ },
+ {
+  "chave": "Sé|Lgo. do Arouche, Av. Vieira de Carvalho, Pça. da República, Av. Ipiranga (Edifício Copan)",
+  "subprefeitura": "Sé",
+  "itinerario": "Lgo. do Arouche, Av. Vieira de Carvalho, Pça. da República, Av. Ipiranga (Edifício Copan)",
+  "lugar": "Av. Ipiranga, São João e República",
+  "jeito": "ruas",
+  "aproximado": false,
+  "linha": [
+   [
+    -46.64443,
+    -23.54114
+   ],
+   [
+    -46.64308,
+    -23.54265
+   ],
+   [
+    -46.64444,
+    -23.54383
+   ],
+   [
+    -46.64437,
+    -23.54415
+   ],
+   [
+    -46.64357,
+    -23.54494
+   ],
+   [
+    -46.64113,
+    -23.54308
+   ]
+  ],
+  "fama": 0,
+  "blocos": [
+   {
+    "nome": "Samby & Júnior",
+    "data": "2026-02-14",
+    "inicio": "11:00"
+   }
+  ]
+ },
+ {
+  "chave": "Sé|Av. Ipiranga, Av. São Luís, R. Cel. Xavier de Toledo, Pça. Ramos de Azevedo, R. Conselheiro Crispiniano, Av. São João",
+  "subprefeitura": "Sé",
+  "itinerario": "Av. Ipiranga, Av. São Luís, R. Cel. Xavier de Toledo, Pça. Ramos de Azevedo, R. Conselheiro Crispiniano, Av. São João",
+  "lugar": "Av. Ipiranga, São João e República",
+  "jeito": "ruas aproximado",
+  "aproximado": true,
+  "linha": [
+   [
+    -46.64345,
+    -23.54503
+   ],
+   [
+    -46.6434,
+    -23.54507
+   ],
+   [
+    -46.64348,
+    -23.54501
+   ],
+   [
+    -46.64333,
+    -23.54489
+   ],
+   [
+    -46.64318,
+    -23.54496
+   ],
+   [
+    -46.64316,
+    -23.54487
+   ],
+   [
+    -46.64289,
+    -23.54472
+   ],
+   [
+    -46.64292,
+    -23.54466
+   ],
+   [
+    -46.64178,
+    -23.54371
+   ],
+   [
+    -46.63943,
+    -23.5456
+   ],
+   [
+    -46.639,
+    -23.5459
+   ],
+   [
+    -46.63876,
+    -23.54593
+   ],
+   [
+    -46.63932,
+    -23.54554
+   ],
+   [
+    -46.63864,
+    -23.5447
+   ],
+   [
+    -46.63809,
+    -23.54384
+   ],
+   [
+    -46.63806,
+    -23.54369
+   ],
+   [
+    -46.63809,
+    -23.54355
+   ]
+  ],
+  "fama": 0,
+  "blocos": [
+   {
+    "nome": "Bloco Tardes de Emoriô",
+    "data": "2026-02-14",
+    "inicio": "12:00"
+   },
+   {
+    "nome": "CarnaVrah",
+    "data": "2026-02-14",
+    "inicio": "13:00"
+   }
+  ]
+ },
+ {
+  "chave": "Sé|Lgo. do Arouche, Av. Dr. Vieira de Carvalho, Pça. da República, R. Marquês de Itu, R. Bento Freitas, Lgo. do Arouche",
+  "subprefeitura": "Sé",
+  "itinerario": "Lgo. do Arouche, Av. Dr. Vieira de Carvalho, Pça. da República, R. Marquês de Itu, R. Bento Freitas, Lgo. do Arouche",
+  "lugar": "Av. Ipiranga, São João e República",
+  "jeito": "volta aproximado",
+  "aproximado": true,
+  "linha": [
+   [
+    -46.64443,
+    -23.54114
+   ],
+   [
+    -46.64308,
+    -23.54265
+   ],
+   [
+    -46.6444,
+    -23.54379
+   ],
+   [
+    -46.64454,
+    -23.54386
+   ],
+   [
+    -46.64472,
+    -23.54389
+   ],
+   [
+    -46.64552,
+    -23.54387
+   ],
+   [
+    -46.64543,
+    -23.54188
+   ],
+   [
+    -46.64548,
+    -23.54184
+   ],
+   [
+    -46.64538,
+    -23.54179
+   ],
+   [
+    -46.64541,
+    -23.54171
+   ],
+   [
+    -46.64443,
+    -23.54114
+   ]
+  ],
+  "fama": 0,
+  "blocos": [
+   {
+    "nome": "Perdi foi Tudo/Big Bear",
+    "data": "2026-02-14",
+    "inicio": "14:00"
+   }
+  ]
+ },
+ {
+  "chave": "Sé|Lgo. do Paissandu, Av. São João, Av. Ipiranga, Av. São Luiz, R. da Consolação, R. Cel. Xavier de Toledo, Pça. Ramos de Azevedo, Lgo. do Paissandu",
+  "subprefeitura": "Sé",
+  "itinerario": "Lgo. do Paissandu, Av. São João, Av. Ipiranga, Av. São Luiz, R. da Consolação, R. Cel. Xavier de Toledo, Pça. Ramos de Azevedo, Lgo. do Paissandu",
+  "lugar": "Av. Ipiranga, São João e República",
+  "jeito": "volta aproximado",
+  "aproximado": true,
+  "linha": [
+   [
+    -46.6388,
+    -23.54315
+   ],
+   [
+    -46.64029,
+    -23.54233
+   ],
+   [
+    -46.64024,
+    -23.54236
+   ],
+   [
+    -46.6404,
+    -23.54248
+   ],
+   [
+    -46.64031,
+    -23.54254
+   ],
+   [
+    -46.64093,
+    -23.54304
+   ],
+   [
+    -46.64101,
+    -23.54319
+   ],
+   [
+    -46.64111,
+    -23.54318
+   ],
+   [
+    -46.64178,
+    -23.54371
+   ],
+   [
+    -46.64196,
+    -23.54355
+   ],
+   [
+    -46.64348,
+    -23.54478
+   ],
+   [
+    -46.64361,
+    -23.5448
+   ],
+   [
+    -46.64374,
+    -23.54491
+   ],
+   [
+    -46.6437,
+    -23.54497
+   ],
+   [
+    -46.64426,
+    -23.54545
+   ],
+   [
+    -46.64433,
+    -23.54545
+   ],
+   [
+    -46.64443,
+    -23.54555
+   ],
+   [
+    -46.6448,
+    -23.54557
+   ],
+   [
+    -46.64491,
+    -23.54596
+   ],
+   [
+    -46.64608,
+    -23.54696
+   ],
+   [
+    -46.6459,
+    -23.54711
+   ],
+   [
+    -46.64608,
+    -23.54716
+   ],
+   [
+    -46.64608,
+    -23.54713
+   ],
+   [
+    -46.64247,
+    -23.54789
+   ],
+   [
+    -46.64143,
+    -23.54774
+   ],
+   [
+    -46.63976,
+    -23.54742
+   ],
+   [
+    -46.63955,
+    -23.54713
+   ],
+   [
+    -46.63898,
+    -23.54617
+   ],
+   [
+    -46.63865,
+    -23.5458
+   ],
+   [
+    -46.63869,
+    -23.54577
+   ],
+   [
+    -46.63817,
+    -23.5451
+   ],
+   [
+    -46.63857,
+    -23.54481
+   ],
+   [
+    -46.63851,
+    -23.54473
+   ],
+   [
+    -46.63856,
+    -23.5447
+   ],
+   [
+    -46.63852,
+    -23.54461
+   ],
+   [
+    -46.63866,
+    -23.54453
+   ],
+   [
+    -46.63811,
+    -23.5437
+   ],
+   [
+    -46.6388,
+    -23.5433
+   ],
+   [
+    -46.63872,
+    -23.5432
+   ],
+   [
+    -46.6388,
+    -23.54315
+   ]
+  ],
+  "fama": 0,
+  "blocos": [
+   {
+    "nome": "Bloco Preto ZUMBIIDO Afropercussivo",
+    "data": "2026-02-14",
+    "inicio": "15:00"
+   }
+  ]
+ },
+ {
+  "chave": "Sé|Av. Ipiranga, Av. São João, Praça da República, Av. São Luís, R. da Consolação, R. Cel. Xavier de Toledo",
+  "subprefeitura": "Sé",
+  "itinerario": "Av. Ipiranga, Av. São João, Praça da República, Av. São Luís, R. da Consolação, R. Cel. Xavier de Toledo",
+  "lugar": "Av. Ipiranga, São João e República",
+  "jeito": "ruas aproximado",
+  "aproximado": true,
+  "linha": [
+   [
+    -46.64029,
+    -23.54233
+   ],
+   [
+    -46.64046,
+    -23.54223
+   ],
+   [
+    -46.64052,
+    -23.54229
+   ],
+   [
+    -46.64055,
+    -23.54237
+   ],
+   [
+    -46.64031,
+    -23.54254
+   ],
+   [
+    -46.64093,
+    -23.54304
+   ],
+   [
+    -46.64101,
+    -23.54319
+   ],
+   [
+    -46.64111,
+    -23.54318
+   ],
+   [
+    -46.64178,
+    -23.54371
+   ],
+   [
+    -46.64196,
+    -23.54355
+   ],
+   [
+    -46.64348,
+    -23.54478
+   ],
+   [
+    -46.64324,
+    -23.54493
+   ],
+   [
+    -46.64329,
+    -23.54529
+   ],
+   [
+    -46.6427,
+    -23.54796
+   ],
+   [
+    -46.6426,
+    -23.54788
+   ],
+   [
+    -46.64143,
+    -23.54774
+   ]
+  ],
+  "fama": 0,
+  "blocos": [
+   {
+    "nome": "Domingo Ela não Vai",
+    "data": "2026-02-15",
+    "inicio": "11:00"
+   }
+  ]
+ },
+ {
+  "chave": "Sé|Lgo. do Paissandu, Av. São João, Av. Ipiranga, Av. São Luís, R. da Consolação, R. Cel. Xavier Toledo, Pça. Ramos de Azevedo",
+  "subprefeitura": "Sé",
+  "itinerario": "Lgo. do Paissandu, Av. São João, Av. Ipiranga, Av. São Luís, R. da Consolação, R. Cel. Xavier Toledo, Pça. Ramos de Azevedo",
+  "lugar": "Av. Ipiranga, São João e República",
+  "jeito": "ruas aproximado",
+  "aproximado": true,
+  "linha": [
+   [
+    -46.6388,
+    -23.54315
+   ],
+   [
+    -46.64029,
+    -23.54233
+   ],
+   [
+    -46.64024,
+    -23.54236
+   ],
+   [
+    -46.6404,
+    -23.54248
+   ],
+   [
+    -46.64031,
+    -23.54254
+   ],
+   [
+    -46.64093,
+    -23.54304
+   ],
+   [
+    -46.64101,
+    -23.54319
+   ],
+   [
+    -46.64111,
+    -23.54318
+   ],
+   [
+    -46.64178,
+    -23.54371
+   ],
+   [
+    -46.64292,
+    -23.54466
+   ],
+   [
+    -46.64289,
+    -23.54472
+   ],
+   [
+    -46.64316,
+    -23.54487
+   ],
+   [
+    -46.64318,
+    -23.54496
+   ],
+   [
+    -46.64333,
+    -23.54489
+   ],
+   [
+    -46.64348,
+    -23.54501
+   ],
+   [
+    -46.64326,
+    -23.5452
+   ],
+   [
+    -46.64329,
+    -23.54529
+   ],
+   [
+    -46.6427,
+    -23.54796
+   ],
+   [
+    -46.6426,
+    -23.54788
+   ],
+   [
+    -46.64143,
+    -23.54774
+   ],
+   [
+    -46.63976,
+    -23.54742
+   ],
+   [
+    -46.63955,
+    -23.54713
+   ],
+   [
+    -46.63898,
+    -23.54617
+   ],
+   [
+    -46.63876,
+    -23.54593
+   ]
+  ],
+  "fama": 0,
+  "blocos": [
+   {
+    "nome": "Bloco Diquebra",
+    "data": "2026-02-15",
+    "inicio": "14:00"
+   }
+  ]
+ },
+ {
+  "chave": "Sé|Pça. da República, Av. Ipiranga, Av. São Luis, R. Cel Xavier de Toledo, Shopping Light, Pça.Ramos de Azevedo, R. Conselheiro Crispiniano, Lgo. do Paissandú, Av. São João",
+  "subprefeitura": "Sé",
+  "itinerario": "Pça. da República, Av. Ipiranga, Av. São Luis, R. Cel Xavier de Toledo, Shopping Light, Pça.Ramos de Azevedo, R. Conselheiro Crispiniano, Lgo. do Paissandú, Av. São João",
+  "lugar": "Av. Ipiranga, São João e República",
+  "jeito": "ruas aproximado",
+  "aproximado": true,
+  "linha": [
+   [
+    -46.64357,
+    -23.54494
+   ],
+   [
+    -46.6434,
+    -23.54507
+   ],
+   [
+    -46.64348,
+    -23.54501
+   ],
+   [
+    -46.64333,
+    -23.54489
+   ],
+   [
+    -46.64318,
+    -23.54496
+   ],
+   [
+    -46.64316,
+    -23.54487
+   ],
+   [
+    -46.64289,
+    -23.54472
+   ],
+   [
+    -46.64292,
+    -23.54466
+   ],
+   [
+    -46.64178,
+    -23.54371
+   ],
+   [
+    -46.63943,
+    -23.5456
+   ],
+   [
+    -46.63895,
+    -23.54593
+   ],
+   [
+    -46.63895,
+    -23.54601
+   ],
+   [
+    -46.63903,
+    -23.54614
+   ],
+   [
+    -46.63898,
+    -23.54617
+   ],
+   [
+    -46.63901,
+    -23.54622
+   ],
+   [
+    -46.63883,
+    -23.54622
+   ],
+   [
+    -46.63893,
+    -23.54581
+   ],
+   [
+    -46.63932,
+    -23.54554
+   ],
+   [
+    -46.63864,
+    -23.5447
+   ],
+   [
+    -46.63809,
+    -23.54384
+   ],
+   [
+    -46.63806,
+    -23.54369
+   ],
+   [
+    -46.63809,
+    -23.54355
+   ]
+  ],
+  "fama": 0,
+  "blocos": [
+   {
+    "nome": "Explode Coração",
+    "data": "2026-02-15",
+    "inicio": "14:00"
+   }
+  ]
+ },
+ {
+  "chave": "Sé|Av. Ipiranga, Av. São João, Av. São Luis, R.Cel. Xavier de Toledo, Lgo. do Paissandu, Av. São João, Av. Ipiranga",
+  "subprefeitura": "Sé",
+  "itinerario": "Av. Ipiranga, Av. São João, Av. São Luis, R.Cel. Xavier de Toledo, Lgo. do Paissandu, Av. São João, Av. Ipiranga",
+  "lugar": "Av. Ipiranga, São João e República",
+  "jeito": "volta aproximado",
+  "aproximado": true,
+  "linha": [
+   [
+    -46.64029,
+    -23.54233
+   ],
+   [
+    -46.64038,
+    -23.54227
+   ],
+   [
+    -46.64035,
+    -23.54229
+   ],
+   [
+    -46.64051,
+    -23.54242
+   ],
+   [
+    -46.64031,
+    -23.54254
+   ],
+   [
+    -46.64093,
+    -23.54304
+   ],
+   [
+    -46.64095,
+    -23.54314
+   ],
+   [
+    -46.64101,
+    -23.54319
+   ],
+   [
+    -46.64111,
+    -23.54318
+   ],
+   [
+    -46.64178,
+    -23.54371
+   ],
+   [
+    -46.64292,
+    -23.54466
+   ],
+   [
+    -46.64289,
+    -23.54472
+   ],
+   [
+    -46.64316,
+    -23.54487
+   ],
+   [
+    -46.64318,
+    -23.54496
+   ],
+   [
+    -46.64324,
+    -23.54493
+   ],
+   [
+    -46.64328,
+    -23.54534
+   ],
+   [
+    -46.64325,
+    -23.54534
+   ],
+   [
+    -46.64329,
+    -23.54529
+   ],
+   [
+    -46.64324,
+    -23.54493
+   ],
+   [
+    -46.64318,
+    -23.54496
+   ],
+   [
+    -46.64316,
+    -23.54487
+   ],
+   [
+    -46.64289,
+    -23.54472
+   ],
+   [
+    -46.64292,
+    -23.54466
+   ],
+   [
+    -46.64178,
+    -23.54371
+   ],
+   [
+    -46.63943,
+    -23.5456
+   ],
+   [
+    -46.639,
+    -23.5459
+   ],
+   [
+    -46.63876,
+    -23.54593
+   ],
+   [
+    -46.63887,
+    -23.54605
+   ],
+   [
+    -46.63876,
+    -23.54593
+   ],
+   [
+    -46.63877,
+    -23.54572
+   ],
+   [
+    -46.63913,
+    -23.54544
+   ],
+   [
+    -46.63865,
+    -23.54485
+   ],
+   [
+    -46.63882,
+    -23.54475
+   ],
+   [
+    -46.6384,
+    -23.54419
+   ],
+   [
+    -46.63811,
+    -23.5437
+   ],
+   [
+    -46.6388,
+    -23.5433
+   ],
+   [
+    -46.63872,
+    -23.5432
+   ],
+   [
+    -46.64029,
+    -23.54233
+   ],
+   [
+    -46.64025,
+    -23.54237
+   ]
+  ],
+  "fama": 0,
+  "blocos": [
+   {
+    "nome": "SP Forró",
+    "data": "2026-02-15",
+    "inicio": "14:00"
+   }
+  ]
+ },
+ {
+  "chave": "Sé|Av. Praça da Republica, Av, Ipiranga, Av. São Luis, R. Consolação, R. Cel Xavier de Toledo, Praça Ramos de Azevedo",
+  "subprefeitura": "Sé",
+  "itinerario": "Av. Praça da Republica, Av, Ipiranga, Av. São Luis, R. Consolação, R. Cel Xavier de Toledo, Praça Ramos de Azevedo",
+  "lugar": "Av. Ipiranga, São João e República",
+  "jeito": "ruas aproximado",
+  "aproximado": true,
+  "linha": [
+   [
+    -46.64357,
+    -23.54494
+   ],
+   [
+    -46.64326,
+    -23.5452
+   ],
+   [
+    -46.64329,
+    -23.54529
+   ],
+   [
+    -46.6427,
+    -23.54796
+   ],
+   [
+    -46.6426,
+    -23.54788
+   ],
+   [
+    -46.64143,
+    -23.54774
+   ],
+   [
+    -46.63976,
+    -23.54742
+   ],
+   [
+    -46.63955,
+    -23.54713
+   ],
+   [
+    -46.63898,
+    -23.54617
+   ],
+   [
+    -46.63876,
+    -23.54593
+   ]
+  ],
+  "fama": 0,
+  "blocos": [
+   {
+    "nome": "BrasAfro tô na Rua",
+    "data": "2026-02-15",
+    "inicio": "15:00"
+   }
+  ]
+ },
+ {
+  "chave": "Sé|Pça. da República, Av. São Luiz, R. Xavier de Toledo, R. Conselheiro Crispiniano, Av. São João, Av. Ipiranga, Pça. da República",
+  "subprefeitura": "Sé",
+  "itinerario": "Pça. da República, Av. São Luiz, R. Xavier de Toledo, R. Conselheiro Crispiniano, Av. São João, Av. Ipiranga, Pça. da República",
+  "lugar": "Av. Ipiranga, São João e República",
+  "jeito": "volta aproximado",
+  "aproximado": true,
+  "linha": [
+   [
+    -46.64136,
+    -23.54306
+   ],
+   [
+    -46.6414,
+    -23.54306
+   ],
+   [
+    -46.64141,
+    -23.54301
+   ],
+   [
+    -46.64136,
+    -23.54297
+   ],
+   [
+    -46.64123,
+    -23.54303
+   ],
+   [
+    -46.64111,
+    -23.54318
+   ],
+   [
+    -46.64101,
+    -23.54318
+   ],
+   [
+    -46.63888,
+    -23.54487
+   ],
+   [
+    -46.63923,
+    -23.54535
+   ],
+   [
+    -46.63912,
+    -23.54543
+   ],
+   [
+    -46.63912,
+    -23.54548
+   ],
+   [
+    -46.63877,
+    -23.54572
+   ],
+   [
+    -46.63876,
+    -23.54593
+   ],
+   [
+    -46.63891,
+    -23.54609
+   ],
+   [
+    -46.63876,
+    -23.54593
+   ],
+   [
+    -46.63877,
+    -23.54572
+   ],
+   [
+    -46.63913,
+    -23.54544
+   ],
+   [
+    -46.63863,
+    -23.54481
+   ],
+   [
+    -46.63857,
+    -23.54481
+   ],
+   [
+    -46.63851,
+    -23.54473
+   ],
+   [
+    -46.63856,
+    -23.5447
+   ],
+   [
+    -46.63855,
+    -23.54465
+   ],
+   [
+    -46.6379,
+    -23.54366
+   ],
+   [
+    -46.64029,
+    -23.54233
+   ],
+   [
+    -46.64024,
+    -23.54236
+   ],
+   [
+    -46.6404,
+    -23.54248
+   ],
+   [
+    -46.64031,
+    -23.54254
+   ],
+   [
+    -46.64096,
+    -23.5431
+   ],
+   [
+    -46.6411,
+    -23.54297
+   ],
+   [
+    -46.6412,
+    -23.543
+   ],
+   [
+    -46.64118,
+    -23.54311
+   ],
+   [
+    -46.64357,
+    -23.54494
+   ],
+   [
+    -46.64437,
+    -23.54415
+   ],
+   [
+    -46.64444,
+    -23.5439
+   ],
+   [
+    -46.6444,
+    -23.54379
+   ],
+   [
+    -46.64241,
+    -23.54205
+   ],
+   [
+    -46.64129,
+    -23.54294
+   ]
+  ],
+  "fama": 0,
+  "blocos": [
+   {
+    "nome": "Bloco éduca",
+    "data": "2026-02-16",
+    "inicio": "13:00"
+   }
+  ]
+ },
+ {
+  "chave": "Sé|R. 24 de Maio, R. Dom José de Barros, Av. São João, Av. Ipiranga",
+  "subprefeitura": "Sé",
+  "itinerario": "R. 24 de Maio, R. Dom José de Barros, Av. São João, Av. Ipiranga",
+  "lugar": "Av. Ipiranga, São João e República",
+  "jeito": "ruas aproximado",
+  "aproximado": true,
+  "linha": [
+   [
+    -46.639,
+    -23.54304
+   ],
+   [
+    -46.64029,
+    -23.54233
+   ]
+  ],
+  "fama": 0,
+  "blocos": [
+   {
+    "nome": "Moita",
+    "data": "2026-02-17",
+    "inicio": "10:00"
+   }
+  ]
+ },
+ {
+  "chave": "Sé|Av. Ipiranga, Av. São João, Praça da República, Av. São Luís, R. Coronel Xavier de Toledo, Pça. Ramos de Azevedo",
+  "subprefeitura": "Sé",
+  "itinerario": "Av. Ipiranga, Av. São João, Praça da República, Av. São Luís, R. Coronel Xavier de Toledo, Pça. Ramos de Azevedo",
+  "lugar": "Av. Ipiranga, São João e República",
+  "jeito": "ruas aproximado",
+  "aproximado": true,
+  "linha": [
+   [
+    -46.64029,
+    -23.54233
+   ],
+   [
+    -46.64046,
+    -23.54223
+   ],
+   [
+    -46.64052,
+    -23.54229
+   ],
+   [
+    -46.64055,
+    -23.54237
+   ],
+   [
+    -46.64031,
+    -23.54254
+   ],
+   [
+    -46.64093,
+    -23.54304
+   ],
+   [
+    -46.64101,
+    -23.54319
+   ],
+   [
+    -46.64111,
+    -23.54318
+   ],
+   [
+    -46.64178,
+    -23.54371
+   ],
+   [
+    -46.64196,
+    -23.54355
+   ],
+   [
+    -46.64348,
+    -23.54478
+   ],
+   [
+    -46.64324,
+    -23.54493
+   ],
+   [
+    -46.64326,
+    -23.5452
+   ],
+   [
+    -46.64348,
+    -23.54501
+   ],
+   [
+    -46.64333,
+    -23.54489
+   ],
+   [
+    -46.64318,
+    -23.54496
+   ],
+   [
+    -46.64316,
+    -23.54487
+   ],
+   [
+    -46.64289,
+    -23.54472
+   ],
+   [
+    -46.64292,
+    -23.54466
+   ],
+   [
+    -46.64178,
+    -23.54371
+   ],
+   [
+    -46.63943,
+    -23.5456
+   ],
+   [
+    -46.639,
+    -23.5459
+   ],
+   [
+    -46.63876,
+    -23.54593
+   ]
+  ],
+  "fama": 0,
+  "blocos": [
+   {
+    "nome": "Bloco Pagu",
+    "data": "2026-02-17",
+    "inicio": "11:00"
+   }
+  ]
+ },
+ {
+  "chave": "Pinheiros|R. Henrique Schaumann, 567 ao 125",
+  "subprefeitura": "Pinheiros",
+  "itinerario": "R. Henrique Schaumann, 567 ao 125",
+  "lugar": "Rua Henrique Schaumann",
+  "jeito": "na rua",
+  "aproximado": true,
+  "linha": [
+   [
+    -46.68135,
+    -23.55914
+   ]
+  ],
+  "fama": 0,
+  "blocos": [
+   {
+    "nome": "Bloco Me Lembra Que Eu Vou",
+    "data": "2026-02-16",
+    "inicio": "09:00"
+   },
+   {
+    "nome": "Não Serve Mestre",
+    "data": "2026-02-16",
+    "inicio": "14:00"
+   },
+   {
+    "nome": "Bloco Quebraê",
+    "data": "2026-02-22",
+    "inicio": "13:00"
+   }
+  ]
+ },
+ {
+  "chave": "Freguesia/Brasilândia|Largo da Matriz de Nossa Senhora do Ó",
+  "subprefeitura": "Freguesia/Brasilândia",
+  "itinerario": "Largo da Matriz de Nossa Senhora do Ó",
+  "lugar": "Freguesia/Brasilândia",
+  "jeito": "lugar",
+  "aproximado": true,
+  "linha": [
+   [
+    -46.69842,
+    -23.50156
+   ]
+  ],
+  "fama": 0,
+  "blocos": [
+   {
+    "nome": "Bloco Urubó",
+    "data": "2026-02-08",
+    "inicio": "09:00"
+   },
+   {
+    "nome": "Bloco Urubó",
+    "data": "2026-02-14",
+    "inicio": "13:00"
+   },
+   {
+    "nome": "Bloco Urubó",
+    "data": "2026-02-15",
+    "inicio": "13:00"
+   }
+  ]
+ },
+ {
+  "chave": "Santana/Tucuruvi|R. Dr. Saturnino Villalva, R. dos Mártires Armênios, R. Leopoldo Brentano, R. Alcindo Bueno de Assis, R. Lavínia Pacheco e Silva, R. Dr. Saturnino Villalva",
+  "subprefeitura": "Santana/Tucuruvi",
+  "itinerario": "R. Dr. Saturnino Villalva, R. dos Mártires Armênios, R. Leopoldo Brentano, R. Alcindo Bueno de Assis, R. Lavínia Pacheco e Silva, R. Dr. Saturnino Villalva",
+  "lugar": "Santana/Tucuruvi",
+  "jeito": "volta",
+  "aproximado": false,
+  "linha": [
+   [
+    -46.60839,
+    -23.46585
+   ],
+   [
+    -46.60854,
+    -23.4662
+   ],
+   [
+    -46.60751,
+    -23.46803
+   ],
+   [
+    -46.60702,
+    -23.46779
+   ],
+   [
+    -46.60694,
+    -23.46758
+   ],
+   [
+    -46.60662,
+    -23.46713
+   ],
+   [
+    -46.60642,
+    -23.46665
+   ],
+   [
+    -46.60839,
+    -23.46585
+   ]
+  ],
+  "fama": 0,
+  "blocos": [
+   {
+    "nome": "Banda Grone's - G.C.E. Grone's",
+    "data": "2026-02-08",
+    "inicio": "13:00"
+   }
+  ]
+ },
+ {
+  "chave": "Santana/Tucuruvi|Av. Engenheiro Caetano Álvares, 6580 a 7900",
+  "subprefeitura": "Santana/Tucuruvi",
+  "itinerario": "Av. Engenheiro Caetano Álvares, 6580 a 7900",
+  "lugar": "Santana/Tucuruvi",
+  "jeito": "na rua",
+  "aproximado": true,
+  "linha": [
+   [
+    -46.64653,
+    -23.48739
+   ]
+  ],
+  "fama": 0,
+  "blocos": [
+   {
+    "nome": "Bloco #VemDançar",
+    "data": "2026-02-08",
+    "inicio": "13:00"
+   }
+  ]
+ },
+ {
+  "chave": "Santana/Tucuruvi|Av. Águas de São Pedro, R. Maria do Carmo Sene, R. Professor Alfredo Bresser, R. Julia Lopes de Almeida, Pça. Lions",
+  "subprefeitura": "Santana/Tucuruvi",
+  "itinerario": "Av. Águas de São Pedro, R. Maria do Carmo Sene, R. Professor Alfredo Bresser, R. Julia Lopes de Almeida, Pça. Lions",
+  "lugar": "Santana/Tucuruvi",
+  "jeito": "ruas aproximado",
+  "aproximado": true,
+  "linha": [
+   [
+    -46.61235,
+    -23.48744
+   ],
+   [
+    -46.61237,
+    -23.4892
+   ],
+   [
+    -46.61421,
+    -23.48922
+   ]
+  ],
+  "fama": 0,
+  "blocos": [
+   {
+    "nome": "Bloco do Paulicéia",
+    "data": "2026-02-08",
+    "inicio": "14:00"
+   }
+  ]
+ },
+ {
+  "chave": "Aricanduva/Vila Formosa|R. Serra de Botucatu",
+  "subprefeitura": "Aricanduva/Vila Formosa",
+  "itinerario": "R. Serra de Botucatu",
+  "lugar": "Aricanduva/Vila Formosa",
+  "jeito": "lugar",
+  "aproximado": true,
+  "linha": [
+   [
+    -46.55739,
+    -23.54174
+   ]
+  ],
+  "fama": 0,
+  "blocos": [
+   {
+    "nome": "Bloco Tatuzinho",
+    "data": "2026-02-08",
+    "inicio": "09:00"
+   }
+  ]
+ },
+ {
+  "chave": "Jaçanã/Tremembé|Pça. Comendador Alberto de Souza",
+  "subprefeitura": "Jaçanã/Tremembé",
+  "itinerario": "Pça. Comendador Alberto de Souza",
+  "lugar": "Jaçanã/Tremembé",
+  "jeito": "lugar",
+  "aproximado": true,
+  "linha": [
+   [
+    -46.58467,
+    -23.46536
+   ]
+  ],
+  "fama": 0,
+  "blocos": [
+   {
+    "nome": "Bloco do Salve",
+    "data": "2026-02-16",
+    "inicio": "12:00"
+   }
+  ]
+ },
+ {
+  "chave": "Perus|Av. Dr. Sylvio de Campos, 225 a 229",
+  "subprefeitura": "Perus",
+  "itinerario": "Av. Dr. Sylvio de Campos, 225 a 229",
+  "lugar": "Perus",
+  "jeito": "na rua",
+  "aproximado": true,
+  "linha": [
+   [
+    -46.75778,
+    -23.40696
+   ]
+  ],
+  "fama": 0,
+  "blocos": [
+   {
+    "nome": "Bloco Turminha do Bem",
+    "data": "2026-02-17",
+    "inicio": "13:00"
+   }
+  ]
+ },
+ {
+  "chave": "São Miguel Paulista|R. Miguel de Quadros Marinho, R. Rio do Sono",
+  "subprefeitura": "São Miguel Paulista",
+  "itinerario": "R. Miguel de Quadros Marinho, R. Rio do Sono",
+  "lugar": "São Miguel Paulista",
+  "jeito": "cruzamento",
+  "aproximado": true,
+  "linha": [
+   [
+    -46.38679,
+    -23.48338
+   ]
+  ],
+  "fama": 0,
+  "blocos": [
+   {
+    "nome": "Bloco Afro da Vovó Zulma",
+    "data": "2026-02-17",
+    "inicio": "14:00"
+   }
+  ]
+ }
+]

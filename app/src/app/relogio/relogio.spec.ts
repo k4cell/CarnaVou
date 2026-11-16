@@ -74,6 +74,32 @@ describe('Relogio', () => {
     expect(relogio.agora()).toEqual(new Date(2026, 1, 14, 12, 0));
   });
 
+  describe('com ?hoje=relogio', () => {
+    afterEach(() => vi.useRealTimers());
+
+    it('usa o relógio de verdade mesmo com a data de demonstração, sem o aviso de teste', () => {
+      vi.useFakeTimers({ now: Date.UTC(2026, 1, 15, 2, 58) });
+      const relogio = TestBed.inject(Relogio);
+      relogio.iniciar('?hoje=relogio');
+      // 2h58 em Londres: 23h58 do dia 14 em São Paulo.
+      expect(relogio.agora()).toEqual(new Date(2026, 1, 14, 23, 58));
+      expect(relogio.simulado()).toBe(false);
+      vi.advanceTimersByTime(3 * 60_000);
+      expect(relogio.agora()).toEqual(new Date(2026, 1, 15, 0, 1));
+    });
+
+    it('acerta a hora assim que o app volta do segundo plano, sem esperar o intervalo', () => {
+      vi.useFakeTimers({ now: Date.UTC(2026, 1, 14, 17, 0) });
+      const relogio = TestBed.inject(Relogio);
+      relogio.iniciar('?hoje=relogio');
+      // Em segundo plano, o relógio anda três horas sem nenhum intervalo rodar.
+      vi.setSystemTime(Date.UTC(2026, 1, 14, 20, 0, 30));
+      expect(relogio.agora()).toEqual(new Date(2026, 1, 14, 14, 0));
+      document.dispatchEvent(new Event('visibilitychange'));
+      expect(relogio.agora()).toEqual(new Date(2026, 1, 14, 17, 0, 30));
+    });
+  });
+
   it('só começa uma vez: voltar para a tela inicial não perde a data de teste', () => {
     const relogio = TestBed.inject(Relogio);
     relogio.iniciar('?hoje=2026-02-14T14:00');

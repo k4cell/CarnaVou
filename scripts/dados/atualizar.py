@@ -23,8 +23,12 @@ O que ele faz, em ordem:
    leva bem mais de 8 minutos. Os endereços e as rotas já procurados ficam em
    scripts/dados/cache e não são pedidos de novo; cada endereço novo leva 15 segundos, a regra do
    Nominatim para scripts longos (veja tracar.py).
-4. Grava os arquivos do app (gerar_dados.py).
+4. Grava os arquivos do app (gerar_dados.py), já com os pinos que eu conferi à mão
+   (pinos-conferidos.json), e a lista dos pinos para conferir (pinos-para-conferir.json).
 5. Troca o ano na descrição do site (app/src/index.html).
+
+Depois, confira os pinos dos maiores blocos no mapa: python -I scripts/dados/conferir_pinos.py 2027
+(e rode o gerar_dados.py de novo, para o que eu conferi entrar no app).
 
 O aviso de teste mostra o ano dos blocos sozinho, mas o "hoje" de demonstração é fixo: troque a
 data em app/src/app/relogio/relogio.ts (DATA_DE_DEMONSTRACAO). Depois, rode os testes: os que conferem um bloco de 2026 pelo
@@ -104,3 +108,4 @@ if novo != texto:
     open(index, "w", encoding="utf-8", newline="\n").write(novo)
 
 print(f"\nPronto: os dados de {ano} estão em app/src/app/dados. Rode os testes e o build (dentro de app/).")
+print(f"Para conferir os pinos no mapa: python -I scripts/dados/conferir_pinos.py {ano}")

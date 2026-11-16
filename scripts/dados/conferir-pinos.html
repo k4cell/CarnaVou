@@ -1,0 +1,355 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Conferir os pinos · CarnaVou</title>
+<link rel="stylesheet" href="/maplibre/maplibre-gl.css">
+<!--
+  A ferramenta de conferir os pinos (aberta por scripts/dados/conferir_pinos.py). À esquerda, a lista dos
+  itinerários do app, dos blocos mais famosos para os menos; à direita, o mapa do app com o pino e a
+  linha que o tracar.py achou. Cada escolha é gravada na hora em pinos-conferidos.json.
+-->
+<style>
+  :root {
+    --noite: #130a29;
+    --roxo: #6a0dad;
+    --amarelo: #ffc200;
+    --verde: #00a854;
+    --vermelho: #d62828;
+    --borda: #d9dbe1;
+    --fundo: #eaecf0;
+    --suave: #5c5f6a;
+  }
+  * { box-sizing: border-box; }
+  body {
+    display: grid;
+    grid-template-columns: 380px 1fr;
+    height: 100vh;
+    margin: 0;
+    background: var(--fundo);
+    color: #121214;
+    font: 15px/1.4 system-ui, sans-serif;
+  }
+  aside {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    background: #fff;
+    border-right: 1px solid var(--borda);
+  }
+  header { padding: 12px 14px; background: var(--noite); color: #fff; }
+  header h1 { margin: 0; font-size: 1.05rem; }
+  .contas { margin-top: 4px; font-size: 0.85rem; opacity: 0.85; }
+  .filtro { display: flex; gap: 6px; margin-top: 8px; }
+  .filtro button { flex: 1; }
+  button {
+    min-height: 34px;
+    padding: 0 10px;
+    border: 1px solid var(--borda);
+    border-radius: 999px;
+    background: #fff;
+    color: #121214;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  button:disabled { opacity: 0.4; cursor: default; }
+  button[aria-pressed="true"] { border-color: var(--amarelo); background: var(--amarelo); }
+  #lista { flex: 1; margin: 0; padding: 0; overflow-y: auto; list-style: none; }
+  #lista li { padding: 8px 14px; border-bottom: 1px solid var(--borda); cursor: pointer; }
+  #lista li[aria-current="true"] { background: #f3ecfb; box-shadow: inset 4px 0 var(--roxo); }
+  .nome-do-item { font-weight: 700; }
+  .sobre-o-item { color: var(--suave); font-size: 0.85rem; }
+  .etiqueta {
+    display: inline-block;
+    padding: 0 7px;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 800;
+  }
+  .etiqueta[data-estado="aproximado"] { background: #ffe9a6; }
+  .etiqueta[data-estado="sem-ponto"] { background: #ffd2d2; }
+  .etiqueta[data-estado="exato"] { background: var(--borda); }
+  .etiqueta[data-estado="conferido"] { background: #c8f5dc; }
+  #ficha { padding: 12px 14px; border-top: 1px solid var(--borda); background: #fafafb; }
+  #ficha h2 { margin: 0 0 4px; font-size: 1rem; }
+  .blocos { margin: 0 0 6px; padding-left: 18px; font-size: 0.9rem; }
+  .itinerario { margin: 0 0 6px; font-size: 0.9rem; }
+  .motivo { margin: 0 0 6px; color: var(--vermelho); font-size: 0.85rem; }
+  .acoes { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .acoes .principal { border-color: var(--amarelo); background: var(--amarelo); }
+  .sugestao { margin: 6px 0; padding: 6px 8px; border-radius: 8px; background: #e8f0ff; font-size: 0.85rem; }
+  .atalhos { margin-top: 8px; color: var(--suave); font-size: 0.78rem; }
+  #estado { min-height: 1.2em; margin-top: 6px; font-size: 0.85rem; font-weight: 700; }
+  #mapa { position: relative; }
+  #mapa.movendo canvas { cursor: crosshair; }
+  #aviso-do-mapa {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    z-index: 2;
+    padding: 6px 14px;
+    border-radius: 999px;
+    background: var(--noite);
+    color: #fff;
+    font-weight: 700;
+    transform: translateX(-50%);
+  }
+  #aviso-do-mapa[hidden] { display: none; }
+  label { display: flex; gap: 6px; align-items: center; margin-top: 6px; font-size: 0.9rem; }
+</style>
+</head>
+<body>
+<aside>
+  <header>
+    <h1>Conferir os pinos de <span id="ano"></span></h1>
+    <div class="contas" id="contas"></div>
+    <div class="filtro">
+      <button type="button" id="so-falta" aria-pressed="true">O que falta</button>
+      <button type="button" id="todos" aria-pressed="false">Todos</button>
+    </div>
+  </header>
+  <ul id="lista"></ul>
+  <section id="ficha"></section>
+</aside>
+<div id="mapa">
+  <div id="aviso-do-mapa" hidden>Toque no mapa onde o bloco se concentra (Esc cancela)</div>
+</div>
+
+<script type="module">
+  import * as maplibregl from '/maplibre/maplibre-gl.mjs';
+
+  const CENTRO_DE_SP = [-46.6333, -23.5505];
+  const NOMES_DOS_TIPOS = { certo: 'o pino e a linha estão certos', ponto: 'o pino foi movido', 'sem-ponto': 'sem ponto' };
+
+  const resposta = await fetch('/dados');
+  const { ano, para_conferir: itens, conferidos, do_ano_anterior: doAnoAnterior } = await resposta.json();
+  document.getElementById('ano').textContent = ano;
+
+  let filtro = 'falta';
+  let atual = null;
+  let movendo = false;
+
+  /** Em que pé o itinerário está: conferido por mim, sem ponto, aproximado ou exato. */
+  const estadoDo = (item) =>
+    conferidos[item.chave] ? 'conferido' : !item.linha ? 'sem-ponto' : item.aproximado ? 'aproximado' : 'exato';
+  const falta = (item) => ['sem-ponto', 'aproximado'].includes(estadoDo(item));
+  const visiveis = () => (filtro === 'falta' ? itens.filter((item) => falta(item) || item === atual) : itens);
+  const NOMES_DOS_ESTADOS = { conferido: 'conferido', 'sem-ponto': 'sem ponto', aproximado: 'aproximado', exato: 'exato' };
+  const texto = (valor) => String(valor).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+  const descricao = (decisao) =>
+    decisao.tipo === 'ponto'
+      ? `${NOMES_DOS_TIPOS.ponto}${decisao.linha ? ', com a linha automática' : ', sem a linha'}`
+      : NOMES_DOS_TIPOS[decisao.tipo];
+
+  // ------------------------------------------------------------------ o mapa do app
+  maplibregl.setWorkerUrl(new URL('/maplibre/maplibre-gl-worker.mjs', location.href).href);
+  maplibregl.addProtocol('guardado', async (pedido, controle) => {
+    const caminho = pedido.url.slice('guardado://'.length);
+    const arquivo = await fetch(`/${caminho}`, { signal: controle.signal });
+    if (arquivo.status === 404 && caminho.startsWith('mapa/pedacos/')) {
+      return { data: new ArrayBuffer(0) };
+    }
+    return { data: await arquivo.arrayBuffer() };
+  });
+  const estilo = await (await fetch('/mapa/estilo-carnavou.json')).json();
+  const mapa = new maplibregl.Map({ container: 'mapa', style: estilo, center: CENTRO_DE_SP, zoom: 11, maxZoom: 19 });
+  mapa.addControl(new maplibregl.NavigationControl({ showCompass: false }));
+  await new Promise((pronto) => mapa.on('load', pronto));
+  const vazio = { type: 'FeatureCollection', features: [] };
+  mapa.addSource('linha', { type: 'geojson', data: vazio });
+  mapa.addSource('pinos', { type: 'geojson', data: vazio });
+  mapa.addLayer({ id: 'linha', type: 'line', source: 'linha', paint: { 'line-color': '#6a0dad', 'line-width': 5, 'line-opacity': 0.75 } });
+  mapa.addLayer({
+    id: 'pinos',
+    type: 'circle',
+    source: 'pinos',
+    paint: {
+      'circle-radius': ['match', ['get', 'tipo'], 'escolhido', 10, 8],
+      'circle-color': ['match', ['get', 'tipo'], 'escolhido', '#00a854', 'automatico-velho', '#9a9aa5', '#6a0dad'],
+      'circle-stroke-color': '#ffffff',
+      'circle-stroke-width': 3,
+    },
+  });
+
+  function desenhar(item) {
+    const decisao = conferidos[item.chave];
+    const comLinha = item.linha && item.linha.length > 1 && (!decisao || decisao.tipo === 'certo' || decisao.linha);
+    mapa.getSource('linha').setData(
+      comLinha ? { type: 'Feature', geometry: { type: 'LineString', coordinates: item.linha }, properties: {} } : vazio,
+    );
+    const pinos = [];
+    if (item.linha) {
+      const movido = decisao?.tipo === 'ponto' || decisao?.tipo === 'sem-ponto';
+      pinos.push({ type: 'Feature', geometry: { type: 'Point', coordinates: item.linha[0] }, properties: { tipo: movido ? 'automatico-velho' : 'automatico' } });
+    }
+    if (decisao?.tipo === 'ponto') {
+      pinos.push({ type: 'Feature', geometry: { type: 'Point', coordinates: decisao.ponto }, properties: { tipo: 'escolhido' } });
+    }
+    mapa.getSource('pinos').setData({ type: 'FeatureCollection', features: pinos });
+  }
+
+  function enquadrar(item) {
+    const decisao = conferidos[item.chave];
+    const pontos = [...(item.linha ?? []), ...(decisao?.tipo === 'ponto' ? [decisao.ponto] : [])];
+    if (pontos.length === 0) {
+      mapa.jumpTo({ center: CENTRO_DE_SP, zoom: 11 });
+      return;
+    }
+    const limites = pontos.reduce((caixa, ponto) => caixa.extend(ponto), new maplibregl.LngLatBounds(pontos[0], pontos[0]));
+    mapa.fitBounds(limites, { padding: 80, maxZoom: 17, duration: 0 });
+  }
+
+  // ------------------------------------------------------------------ a lista e a ficha
+  function desenharALista() {
+    const conta = itens.filter(falta).length;
+    document.getElementById('contas').textContent =
+      `Faltam ${conta} de ${itens.length} (aproximados e sem ponto) · ${Object.keys(conferidos).length} conferidos`;
+    const lista = document.getElementById('lista');
+    lista.innerHTML = visiveis()
+      .map((item) => {
+        const estado = estadoDo(item);
+        const outros = item.blocos.length > 1 ? ` +${item.blocos.length - 1}` : '';
+        return `<li data-chave="${texto(item.chave)}" aria-current="${item === atual}">
+          <div class="nome-do-item">${texto(item.blocos[0].nome)}${outros}</div>
+          <div class="sobre-o-item">${texto(item.lugar)} · <span class="etiqueta" data-estado="${estado}">${NOMES_DOS_ESTADOS[estado]}</span></div>
+        </li>`;
+      })
+      .join('');
+    lista.querySelector('[aria-current="true"]')?.scrollIntoView({ block: 'nearest' });
+  }
+
+  function desenharAFicha() {
+    const ficha = document.getElementById('ficha');
+    if (!atual) {
+      ficha.innerHTML = '<p>Nada para conferir aqui. Veja "Todos".</p>';
+      return;
+    }
+    const decisao = conferidos[atual.chave];
+    const anterior = doAnoAnterior[atual.chave];
+    const blocos = atual.blocos.map((bloco) => `<li>${texto(bloco.nome)} · ${texto(bloco.data.split('-').reverse().slice(0, 2).join('/'))}, ${texto(bloco.inicio)}</li>`).join('');
+    ficha.innerHTML = `
+      <h2>${texto(atual.lugar)}</h2>
+      <ul class="blocos">${blocos}</ul>
+      <p class="itinerario"><strong>Itinerário:</strong> ${texto(atual.itinerario)}</p>
+      ${atual.motivo ? `<p class="motivo">O tracar.py não achou: ${texto(atual.motivo)}</p>` : ''}
+      <p class="itinerario"><strong>Automático:</strong> ${atual.linha ? texto(atual.jeito) : 'sem ponto'}${decisao ? ` · <strong>Conferido:</strong> ${texto(descricao(decisao))}` : ''}</p>
+      ${anterior && !decisao ? `<div class="sugestao">Em ${ano - 1} eu conferi este mesmo itinerário: ${texto(descricao(anterior))}. <button type="button" id="usar">Usar o mesmo (U)</button></div>` : ''}
+      ${decisao?.tipo === 'ponto' && atual.linha?.length > 1 ? `<label><input type="checkbox" id="manter-linha" ${decisao.linha ? 'checked' : ''}> Manter a linha automática</label>` : ''}
+      <div class="acoes">
+        <button type="button" class="principal" id="certo" ${atual.linha ? '' : 'disabled'}>Está certo (C)</button>
+        <button type="button" id="mover" aria-pressed="${movendo}">Mover o pino (M)</button>
+        <button type="button" id="sem-ponto">Sem ponto (S)</button>
+        ${decisao ? '<button type="button" id="desfazer">Desfazer</button>' : ''}
+        <button type="button" id="proximo">Próximo (N)</button>
+      </div>
+      <div id="estado"></div>
+      <div class="atalhos">N/↓ próximo · P/↑ anterior · Esc cancela o mover</div>`;
+    ficha.querySelector('#certo')?.addEventListener('click', () => decidir({ tipo: 'certo' }));
+    ficha.querySelector('#mover')?.addEventListener('click', () => mover(!movendo));
+    ficha.querySelector('#sem-ponto')?.addEventListener('click', () => decidir({ tipo: 'sem-ponto' }));
+    ficha.querySelector('#desfazer')?.addEventListener('click', () => decidir(null));
+    ficha.querySelector('#proximo')?.addEventListener('click', () => andar(1));
+    ficha.querySelector('#usar')?.addEventListener('click', () => decidir(anterior));
+    ficha.querySelector('#manter-linha')?.addEventListener('change', (evento) =>
+      decidir({ ...conferidos[atual.chave], linha: evento.target.checked }, false),
+    );
+  }
+
+  function escolher(item) {
+    atual = item;
+    mover(false);
+    desenharALista();
+    desenharAFicha();
+    if (item) {
+      desenhar(item);
+      enquadrar(item);
+    }
+  }
+
+  function andar(passo) {
+    const lista = visiveis();
+    const posicao = lista.indexOf(atual);
+    const seguinte = lista[posicao + passo] ?? (passo > 0 ? lista.find((item) => item !== atual && falta(item)) : undefined);
+    if (seguinte) {
+      escolher(seguinte);
+    }
+  }
+
+  function mover(ligar) {
+    movendo = ligar;
+    document.getElementById('mapa').classList.toggle('movendo', ligar);
+    document.getElementById('aviso-do-mapa').hidden = !ligar;
+    document.getElementById('mover')?.setAttribute('aria-pressed', String(ligar));
+  }
+
+  /** Grava a escolha (ou a tira, com null) no pinos-conferidos.json. */
+  async function decidir(decisao, irParaOProximo = true) {
+    const item = atual;
+    const pedido = await fetch('/conferidos', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ chave: item.chave, decisao }),
+    });
+    if (!pedido.ok) {
+      document.getElementById('estado').textContent = `Não gravou: ${(await pedido.json()).erro}`;
+      return;
+    }
+    // Vale o que o servidor gravou (ele arredonda o ponto e confere cada campo).
+    const gravada = (await pedido.json()).decisao;
+    if (gravada) {
+      conferidos[item.chave] = gravada;
+    } else {
+      delete conferidos[item.chave];
+    }
+    mover(false);
+    desenhar(item);
+    desenharALista();
+    desenharAFicha();
+    document.getElementById('estado').textContent = 'Gravado.';
+    // Ao mover o pino, fica no mesmo itinerário, para escolher se a linha continua.
+    if (irParaOProximo && decisao && decisao.tipo !== 'ponto' && filtro === 'falta') {
+      andar(1);
+    }
+  }
+
+  mapa.on('click', (evento) => {
+    if (movendo && atual) {
+      const { lng, lat } = evento.lngLat;
+      decidir({ tipo: 'ponto', ponto: [Number(lng.toFixed(5)), Number(lat.toFixed(5))], linha: false });
+    }
+  });
+
+  document.getElementById('lista').addEventListener('click', (evento) => {
+    const chave = evento.target.closest('li')?.dataset.chave;
+    escolher(itens.find((item) => item.chave === chave));
+  });
+  for (const [botao, valor] of [['so-falta', 'falta'], ['todos', 'todos']]) {
+    document.getElementById(botao).addEventListener('click', () => {
+      filtro = valor;
+      document.getElementById('so-falta').setAttribute('aria-pressed', String(valor === 'falta'));
+      document.getElementById('todos').setAttribute('aria-pressed', String(valor === 'todos'));
+      desenharALista();
+    });
+  }
+  document.addEventListener('keydown', (evento) => {
+    if (evento.target.closest?.('input, textarea') || evento.ctrlKey || evento.metaKey || evento.altKey || !atual) {
+      return;
+    }
+    const tecla = evento.key.toLowerCase();
+    if (tecla === 'c' && atual.linha) decidir({ tipo: 'certo' });
+    else if (tecla === 'm') mover(!movendo);
+    else if (tecla === 's') decidir({ tipo: 'sem-ponto' });
+    else if (tecla === 'u' && doAnoAnterior[atual.chave] && !conferidos[atual.chave]) decidir(doAnoAnterior[atual.chave]);
+    else if (tecla === 'n' || evento.key === 'ArrowDown') andar(1);
+    else if (tecla === 'p' || evento.key === 'ArrowUp') andar(-1);
+    else if (evento.key === 'Escape') mover(false);
+    else return;
+    evento.preventDefault();
+  });
+
+  escolher(itens.find(falta) ?? itens[0] ?? null);
+</script>
+</body>
+</html>

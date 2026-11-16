@@ -1,3 +1,4 @@
+import { DOCUMENT } from '@angular/common';
 import { DestroyRef, Injectable, InjectionToken, inject, signal } from '@angular/core';
 
 const FORMATO_DA_DATA = /^(\d{4})-(\d{2})-(\d{2})(?:[T ](\d{2}):(\d{2}))?$/;
@@ -39,6 +40,12 @@ export const DATA_DE_DEMONSTRACAO = new InjectionToken<Date | null>('DATA_DE_DEM
 });
 
 /**
+ * `?hoje=relogio` usa o relógio de verdade mesmo enquanto existe a data de demonstração: é como o site
+ * publicado vai funcionar no carnaval (e é o que o teste no navegador usa para a virada do dia).
+ */
+export const RELOGIO_DE_VERDADE = 'relogio';
+
+/**
  * Lê "2026-02-14" ou "2026-02-14T14:00". Sem hora, vale meio-dia.
  * Volta undefined quando o texto não é uma data de verdade (por exemplo, 2026-02-31).
  */
@@ -62,13 +69,14 @@ export function lerDataDeTeste(texto: string | null): Date | undefined {
 /**
  * Sabe que dia e hora são "agora".
  * Ordem: 1) a data do endereço, como `?hoje=2026-02-14T14:00`; 2) o "hoje" de demonstração
- * (14/02/2026), enquanto os dados forem os de teste; 3) o relógio do celular, na hora de São Paulo.
- * Nos dois primeiros casos "agora" fica parado e a tela avisa que é uma data de teste. A data de teste
- * já é a hora de São Paulo.
+ * (14/02/2026), enquanto os dados forem os de teste (menos com `?hoje=relogio`); 3) o relógio do
+ * celular, na hora de São Paulo. Nos dois primeiros casos "agora" fica parado e a tela avisa que é uma
+ * data de teste. A data de teste já é a hora de São Paulo.
  */
 @Injectable({ providedIn: 'root' })
 export class Relogio {
   private readonly destruicao = inject(DestroyRef);
+  private readonly documento = inject(DOCUMENT);
   private readonly demonstracao = inject(DATA_DE_DEMONSTRACAO);
   private readonly dataAtual = signal<Date | null>(null);
   private readonly dataDeTeste = signal(false);
@@ -86,20 +94,33 @@ export class Relogio {
     }
     this.iniciado = true;
 
-    const doEndereco = lerDataDeTeste(new URLSearchParams(busca).get('hoje'));
+    const pedido = new URLSearchParams(busca).get('hoje');
+    const doEndereco = lerDataDeTeste(pedido);
     if (doEndereco) {
       this.definir(doEndereco, true);
       return;
     }
-    if (this.demonstracao) {
+    if (this.demonstracao && pedido !== RELOGIO_DE_VERDADE) {
       this.definir(new Date(this.demonstracao), true);
       return;
     }
 
-    this.definir(horaDeSaoPaulo(new Date()));
+    const acertar = () => this.definir(horaDeSaoPaulo(new Date()));
+    acertar();
     // Atualiza a cada minuto, para o "Rolando agora" aparecer na hora certa com o site aberto.
-    const intervalo = setInterval(() => this.definir(horaDeSaoPaulo(new Date())), 60_000);
-    this.destruicao.onDestroy(() => clearInterval(intervalo));
+    const intervalo = setInterval(acertar, 60_000);
+    // Com o app em segundo plano, o celular segura o intervalo (às vezes por horas): a hora se acerta
+    // assim que a tela volta.
+    const aoVoltar = () => {
+      if (this.documento.visibilityState === 'visible') {
+        acertar();
+      }
+    };
+    this.documento.addEventListener('visibilitychange', aoVoltar);
+    this.destruicao.onDestroy(() => {
+      clearInterval(intervalo);
+      this.documento.removeEventListener('visibilitychange', aoVoltar);
+    });
   }
 
   definir(data: Date, simulado = false): void {
