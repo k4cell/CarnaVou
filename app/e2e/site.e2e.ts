@@ -21,17 +21,21 @@ function anotarErros(page: Page): string[] {
   return erros;
 }
 
+/** O endereço completo do início do site (no GitHub Pages, com a pasta /CarnaVou/). */
+const inicioDoSite = (page: Page) => new URL('./', test.info().project.use.baseURL ?? page.url()).href;
+
 /** O primeiro bloco da aba Geral: o endereço da página dele e quando ele começa e acaba. */
 async function umBloco(page: Page) {
   await page.goto('');
   await page.getByRole('button', { name: 'Geral' }).click();
-  const endereco = await page.locator('app-banner-bloco a.cartao').first().getAttribute('href');
-  expect(endereco).toBeTruthy();
-  await page.goto(endereco!.replace(/^\/CarnaVou\//, ''));
+  const href = await page.locator('app-banner-bloco a.cartao').first().getAttribute('href');
+  expect(href).toBeTruthy();
+  const endereco = new URL(href!, page.url()).href;
+  await page.goto(endereco);
   const evento = JSON.parse((await page.locator('script#dados-do-evento').textContent()) ?? '{}');
   expect(evento['@type']).toBe('Event');
   return {
-    endereco: endereco!.replace(/^\/CarnaVou\//, ''),
+    endereco,
     nome: evento.name as string,
     dia: (evento.startDate as string).slice(0, 10),
     inicio: new Date(evento.startDate),
@@ -60,7 +64,8 @@ test('um cartão abre a página do bloco, com os dados de evento, e a seta volta
   const evento = JSON.parse((await page.locator('script#dados-do-evento').textContent()) ?? '{}');
   expect(evento.name).toBe(nome);
   await page.locator('a.voltar').click();
-  await expect(page).toHaveURL(/\/CarnaVou\/(\?.*)?$/);
+  const inicio = inicioDoSite(page);
+  await expect(page).toHaveURL((endereco) => endereco.href.split('?')[0] === inicio);
   expect(erros).toEqual([]);
 });
 

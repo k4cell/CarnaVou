@@ -1,5 +1,8 @@
 import { defineConfig, devices } from '@playwright/test';
 
+/** Outro endereço para testar, como o site no ar (`E2E_ENDERECO=https://…/ npx playwright test`). */
+const ENDERECO = process.env['E2E_ENDERECO'];
+
 /**
  * O teste no navegador: abre o site montado (o mesmo que vai para o GitHub Pages) num Chrome de
  * verdade, com a tela e o toque de um celular, e confere o que os testes de unidade não veem: o mapa
@@ -22,7 +25,7 @@ export default defineConfig({
   retries: process.env['CI'] ? 1 : 0,
   reporter: process.env['CI'] ? [['list'], ['github']] : 'list',
   use: {
-    baseURL: 'http://127.0.0.1:4300/CarnaVou/',
+    baseURL: ENDERECO ?? 'http://127.0.0.1:4300/CarnaVou/',
     ...devices['Pixel 7'],
     locale: 'pt-BR',
     timezoneId: 'America/Sao_Paulo',
@@ -33,9 +36,12 @@ export default defineConfig({
     },
   },
   projects: [{ name: 'celular', use: { browserName: 'chromium' } }],
-  webServer: {
-    command: 'node e2e/servidor.mjs 4300',
-    url: 'http://127.0.0.1:4300/CarnaVou/',
-    reuseExistingServer: !process.env['CI'],
-  },
+  // Com outro endereço, o teste vai até ele; sem, serve o site montado aqui.
+  webServer: ENDERECO
+    ? undefined
+    : {
+        command: 'node e2e/servidor.mjs 4300',
+        url: 'http://127.0.0.1:4300/CarnaVou/',
+        reuseExistingServer: !process.env['CI'],
+      },
 });

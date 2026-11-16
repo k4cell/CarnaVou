@@ -5,3 +5,6 @@ __pycache__/
 .claude/
 /CLAUDE.md
 /privado/
+
+# Arquivos locais do wrangler (Cloudflare).
+.wrangler/

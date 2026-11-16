@@ -1,0 +1,14 @@
+// O CarnaVou nos Workers da Cloudflare: só os arquivos do site, sem código rodando no servidor.
+// A publicação (.github/workflows/publicar.yml) monta o site na raiz do endereço (ng build
+// --configuration production) e manda o que sai em app/dist/app/browser.
+{
+  "name": "carnavou",
+  "compatibility_date": "2026-10-26",
+  "assets": {
+    "directory": "./app/dist/app/browser",
+    // Endereço que não existe: o 404.html (a casca do app, que manda para o início), com o status 404.
+    "not_found_handling": "404-page",
+    // /local/ibirapuera abre a página pronta local/ibirapuera/index.html.
+    "html_handling": "auto-trailing-slash"
+  }
+}
