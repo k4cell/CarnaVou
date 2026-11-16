@@ -53,6 +53,12 @@ app-data-do-dia {
   overflow-wrap: anywhere;
 }
 
+// Quem toca é o que mais chama para o bloco: em negrito, logo abaixo do nome.
+.atracoes {
+  font-size: 1.0625rem;
+  font-weight: 700;
+}
+
 .horario {
   font-weight: 700;
 

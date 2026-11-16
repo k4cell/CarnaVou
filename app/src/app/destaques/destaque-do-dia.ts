@@ -15,12 +15,7 @@ import { BlocoNaVitrine } from './vitrine';
   template: `
     @let item = destaque();
     <a class="destaque" [routerLink]="item.caminho">
-      <span class="topo">
-        <span class="rotulo">{{ rotulo() }}</span>
-        @if (item.bloco.megabloco) {
-          <span class="selo-megabloco">Megabloco</span>
-        }
-      </span>
+      <span class="rotulo">{{ rotulo() }}</span>
       <span class="quando" [attr.data-tipo]="item.quando.tipo">
         @if (item.quando.tipo === 'agora') {
           <span class="rolando">Rolando agora</span> · {{ horario() }}
@@ -69,19 +64,6 @@ import { BlocoNaVitrine } from './vitrine';
       }
     }
 
-    .topo {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 4px 8px;
-      align-items: center;
-    }
-
-    // No fundo escuro do destaque, o selo fica claro.
-    .selo-megabloco {
-      background: var(--cartao);
-      color: var(--noite);
-    }
-
     .rotulo {
       font-size: 0.8125rem;
       font-weight: 700;
@@ -113,6 +95,7 @@ import { BlocoNaVitrine } from './vitrine';
 
     .artistas-do-destaque {
       font-size: 1.0625rem;
+      font-weight: 700;
     }
 
     .distancia {

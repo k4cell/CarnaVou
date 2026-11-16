@@ -7,8 +7,8 @@ import { BlocoNaVitrine } from './vitrine';
  * Uma fileira que desliza para o lado, com dois blocos por coluna: muita opção na mesma altura de
  * tela, sem rolar tanto para baixo. Cada bloco tem um quadradinho na cor do lugar, com a hora em
  * destaque (a que começa ou, rolando, até quando vai) ou o dia (os mais famosos), e o nome com os
- * artistas (ou o lugar) embaixo. Na última linha, o que ajuda a decidir: se é megabloco, se está
- * rolando e a distância, quando já se sabe onde a pessoa está.
+ * artistas (em negrito) ou o lugar embaixo. Na última linha, o que ajuda a decidir: se está rolando
+ * e a distância, quando já se sabe onde a pessoa está.
  */
 @Component({
   selector: 'app-fileira-de-blocos',
@@ -34,12 +34,9 @@ import { BlocoNaVitrine } from './vitrine';
             </span>
             <span class="texto-do-item">
               <strong class="nome-do-item">{{ item.bloco.nome }}</strong>
-              <span class="sobre">{{ item.artistas || item.local.nome }}</span>
-              @if (item.bloco.megabloco || item.quando.tipo === 'agora' || item.distancia) {
+              <span class="sobre" [class.com-artistas]="!!item.artistas">{{ item.artistas || item.local.nome }}</span>
+              @if (item.quando.tipo === 'agora' || item.distancia) {
                 <span class="decide">
-                  @if (item.bloco.megabloco) {
-                    <span class="selo-megabloco">Megabloco</span>
-                  }
                   @if (item.quando.tipo === 'agora') {
                     <span class="rolando">Rolando agora</span>
                   }
@@ -165,6 +162,12 @@ import { BlocoNaVitrine } from './vitrine';
     .sobre {
       color: var(--texto-suave);
       font-size: 0.9375rem;
+    }
+
+    // Quem toca é o que mais chama para o bloco: escuro e em negrito (o lugar fica cinza).
+    .com-artistas {
+      color: var(--texto);
+      font-weight: 700;
     }
 
     .decide {
